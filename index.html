@@ -6,12 +6,7 @@
     <title>Portal de Reservas - Chácara das Garças</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --azul-parnaiba: #0056a2; 
-            --azul-claro: #00adef; 
-            --verde: #2ecc71; --amarelo: #f1c40f; --vermelho: #e74c3c;
-            --neon: #00f3ff;
-        }
+        :root { --azul-parnaiba: #0056a2; --azul-claro: #00adef; --branco: rgba(255, 255, 255, 0.85); --verde: #2ecc71; --amarelo: #f1c40f; --vermelho: #e74c3c; }
         
         body { 
             margin: 0; font-family: 'Poppins', sans-serif; 
@@ -19,134 +14,154 @@
             background-size: cover; min-height: 100vh;
         }
 
-        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 40, 80, 0.65); z-index: -1; }
+        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 40, 80, 0.6); z-index: -1; }
 
         header { background: white; padding: 15px; text-align: center; border-bottom: 5px solid var(--azul-claro); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .logo-text { font-family: 'Montserrat', sans-serif; color: var(--azul-parnaiba); font-size: 20px; text-transform: uppercase; margin: 0; letter-spacing: 1px; }
+        .logo-text { font-family: 'Montserrat', sans-serif; color: var(--azul-parnaiba); font-size: 20px; text-transform: uppercase; margin: 0; }
 
         .container { max-width: 480px; margin: 25px auto; padding: 0 20px; }
 
         .glass-card { 
-            background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.2); 
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             border-radius: 25px; padding: 25px; border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4); color: white;
-            transition: all 0.5s ease;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
 
-        h2 { text-align: center; font-size: 16px; text-transform: uppercase; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; font-family: 'Montserrat'; }
-        label { display: block; margin: 12px 0 5px 5px; font-weight: 600; font-size: 12px; text-transform: uppercase; }
+        h2 { color: white; text-align: center; font-size: 17px; text-transform: uppercase; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; }
+        label { display: block; margin: 12px 0 5px 5px; color: white; font-weight: 600; font-size: 13px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
         
         input, select, textarea { 
-            width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); 
-            background: rgba(255, 255, 255, 0.95); font-family: 'Poppins'; 
-            box-sizing: border-box; font-size: 14px; color: #333; outline: none;
+            width: 100%; padding: 12px; border-radius: 10px; border: none; 
+            background: rgba(255, 255, 255, 0.9); font-family: 'Poppins'; 
+            box-sizing: border-box; font-size: 14px; 
         }
 
-        /* Menu Principal Foda */
-        .main-menu-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
-        .btn-portal {
-            background: rgba(255,255,255,0.1); border: 1px solid var(--azul-claro);
-            padding: 25px; border-radius: 15px; cursor: pointer; color: white;
-            font-weight: bold; font-size: 15px; display: flex; align-items: center; justify-content: space-between;
-            transition: 0.3s;
-        }
-        .btn-portal:hover { background: var(--azul-claro); box-shadow: 0 0 20px var(--azul-claro); transform: scale(1.02); }
+        .grid-menu { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; }
 
-        /* Gravidade TI Reatores */
-        .grav-box { display: flex; gap: 10px; margin: 15px 0; }
-        .grav-btn {
-            flex: 1; padding: 12px; border-radius: 10px; border: 2px solid transparent;
-            cursor: pointer; font-weight: bold; font-size: 10px; color: white; opacity: 0.4; transition: 0.3s;
+        .opt-item { 
+            background: rgba(255, 255, 255, 0.15); 
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 15px; border-radius: 12px; text-align: center; 
+            cursor: pointer; font-weight: 600; color: white; transition: 0.3s; 
         }
-        .grav-btn.active { opacity: 1; border-color: white; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .opt-item.active { background: var(--azul-claro); color: white; border-color: white; box-shadow: 0 0 15px var(--azul-claro); }
 
-        .btn-confirm { 
-            width: 100%; padding: 16px; margin-top: 20px; border-radius: 12px; border: none; 
+        /* Estilo Suporte TI Gravidade */
+        .grav-box { display: flex; gap: 8px; margin: 10px 0; }
+        .grav-btn { flex: 1; padding: 12px; border-radius: 10px; border: none; cursor: pointer; color: white; font-weight: bold; font-size: 10px; opacity: 0.5; transition: 0.3s; }
+        .grav-btn.active { opacity: 1; transform: scale(1.05); box-shadow: 0 0 10px rgba(255,255,255,0.5); }
+
+        .btn-enviar { 
+            width: 100%; padding: 16px; margin-top: 25px; border-radius: 10px; border: none; 
             background: linear-gradient(135deg, var(--azul-parnaiba), var(--azul-claro)); 
-            color: white; font-family: 'Montserrat'; font-size: 15px; cursor: pointer; font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            color: white; font-family: 'Montserrat'; font-size: 15px; cursor: pointer; font-weight: bold; 
         }
-
         .hidden { display: none; }
-        .btn-voltar { background: none; border: none; color: #ccc; margin-top: 20px; cursor: pointer; text-decoration: underline; font-size: 12px; width: 100%; }
+        .btn-voltar { background: none; border: 1px solid white; color: white; padding: 10px; border-radius: 10px; width: 100%; cursor: pointer; margin-top: 15px; font-size: 12px; }
     </style>
 </head>
 <body>
 
 <header>
     <p class="logo-text">SANTANA DE PARNAÍBA</p>
-    <p style="margin:0; color:#666; font-size:11px; font-weight: bold;">C.M. CHÁCARA DAS GARÇAS • TECH SYSTEM</p>
+    <p style="margin:0; color:#666; font-size:11px;">C.M. Chácara das Garças • Sistema Integrado</p>
 </header>
 
 <div class="container">
-    <div id="tela-login" class="glass-card">
-        <h2>IDENTIFICAÇÃO_USER</h2>
-        <label>Gênero</label>
-        <select id="u-gen">
+    <div id="loginArea" class="glass-card">
+        <h2>IDENTIFICAÇÃO</h2>
+        <label>Gênero:</label>
+        <select id="genero">
             <option value="Professor">♂ Professor</option>
             <option value="Professora">♀ Professora</option>
         </select>
-        <label>Nome Completo</label>
-        <input type="text" id="u-nome" placeholder="Digite seu nome">
-        <label>Prontuário</label>
-        <input type="text" id="u-pront" placeholder="Número do registro">
-        <button class="btn-confirm" onclick="registrar()">INICIALIZAR SISTEMA</button>
+        <label>Nome do Professor:</label>
+        <input type="text" id="profNome" placeholder="Nome completo">
+        <label>Prontuário:</label>
+        <input type="text" id="profPront" placeholder="Digite seu prontuário">
+        <label>Matéria:</label>
+        <input type="text" id="materia" placeholder="Ex: Matemática">
+        <button class="btn-enviar" onclick="proximo()">ACESSAR SISTEMA</button>
     </div>
 
-    <div id="tela-menu" class="glass-card hidden">
-        <h2 id="msg-boasvindas">OLÁ!</h2>
-        <div class="main-menu-grid">
-            <div class="btn-portal" onclick="irPara('tela-reserva')">
-                <span>📅 RESERVAR HARDWARE</span>
-                <span>➜</span>
-            </div>
-            <div class="btn-portal" onclick="irPara('tela-ti')" style="border-color: var(--verde);">
-                <span style="color: var(--verde);">🛠️ SUPORTE TI (KELVIN)</span>
-                <span style="color: var(--verde);">➜</span>
+    <div id="menuPrincipal" class="glass-card hidden">
+        <h2 id="boasVindas">OLÁ!</h2>
+        <div class="grid-menu">
+            <div class="opt-item" onclick="irPara('reservaArea')">📅 REALIZAR RESERVA</div>
+            <div class="opt-item" onclick="irPara('suporteArea')" style="background: rgba(46, 204, 113, 0.2);">🛠️ SUPORTE TI (KELVIN)</div>
+        </div>
+        <button class="btn-voltar" onclick="localStorage.clear(); location.reload();">Trocar Usuário</button>
+    </div>
+
+    <div id="reservaArea" class="glass-card hidden">
+        <h2>DETALHES DA RESERVA</h2>
+        <label>Selecione a Turma:</label>
+        <select id="turma">
+            <option value="1º Ano A">1º Ano A</option><option value="2º Ano A">2º Ano A</option>
+            <option value="3º Ano A">3º Ano A</option><option value="4º Ano A">4º Ano A</option>
+            <option value="5º Ano A">5º Ano A</option><option value="6º Ano A">6º Ano A</option>
+            <option value="7º Ano A">7º Ano A</option><option value="8º Ano A">8º Ano A</option>
+            <option value="9º Ano A">9º Ano A</option>
+        </select>
+
+        <label>O que deseja reservar?</label>
+        <div class="grid-menu">
+            <div class="opt-item" onclick="setEscoha('SALA DE INFORMÁTICA', this)">🖥️ SALA DE INFORMÁTICA</div>
+            <div class="opt-item" onclick="setEscoha('CHROMEBOOKS', this)">💻 CHROMEBOOKS</div>
+            <div class="opt-item" onclick="setEscoha('TV DIGITAL', this)">📺 TV DIGITAL</div>
+        </div>
+
+        <div id="areaPatrimonio" class="hidden">
+            <label>Nº de Patrimônio da TV:</label>
+            <input type="text" id="patrimonio" placeholder="Digite o patrimônio da TV">
+        </div>
+
+        <div id="chromeOpcoes" class="hidden">
+            <label>Tipo de Retirada:</label>
+            <select id="tipoChrome" onchange="toggleQtd()">
+                <option value="Carrinho Completo">Carrinho Completo</option>
+                <option value="Unidades">Por Unidade</option>
+            </select>
+            <div id="campoQtd" class="hidden">
+                <label>Quantidade:</label>
+                <input type="number" id="qtdUni" placeholder="Ex: 10">
             </div>
         </div>
-        <button class="btn-voltar" onclick="localStorage.clear(); location.reload();">Sair / Trocar Professor</button>
+
+        <label>Horário de Retirada:</label>
+        <input type="datetime-local" id="hInicio">
+        <label>Horário de Entrega:</label>
+        <input type="datetime-local" id="hFim">
+
+        <button class="btn-enviar" onclick="confirmar()">FINALIZAR AGENDAMENTO</button>
+        <button class="btn-voltar" onclick="irPara('menuPrincipal')">← Voltar</button>
     </div>
 
-    <div id="tela-reserva" class="glass-card hidden">
-        <h2>NOVA_RESERVA</h2>
-        <label>Equipamento</label>
-        <select id="r-item">
-            <option>SALA DE INFORMÁTICA</option>
-            <option>CHROMEBOOKS</option>
-            <option>TV DIGITAL</option>
-        </select>
-        <label>Turma</label>
-        <select id="r-turma">
-            <option>1º Ano A</option><option>2º Ano A</option><option>3º Ano A</option>
-            <option>4º Ano A</option><option>5º Ano A</option><option>6º Ano A</option>
-        </select>
-        <label>Horário de Retirada</label>
-        <input type="datetime-local" id="r-saida">
-        <label>Horário de Entrega</label>
-        <input type="datetime-local" id="r-volta">
-        <button class="btn-confirm" onclick="salvarReserva()">CONFIRMAR AGENDAMENTO</button>
-        <button class="btn-voltar" onclick="irPara('tela-menu')">Voltar ao Menu</button>
-    </div>
-
-    <div id="tela-ti" class="glass-card hidden">
-        <h2>SUPORTE_TI</h2>
-        <p style="font-size: 11px; text-align: center; color: var(--verde);">"Prazer, eu sou o Kelvin. Em que posso ajudar?"</p>
+    <div id="suporteArea" class="glass-card hidden">
+        <h2>SUPORTE TI</h2>
+        <p style="color: white; font-size: 12px; text-align: center; margin-bottom: 15px;">"Relate o problema para o Kelvin"</p>
         
-        <label>Gravidade da Situação</label>
+        <label>Gravidade:</label>
         <div class="grav-box">
-            <button class="grav-btn" id="g-v" style="background:var(--verde);" onclick="setG('Verde', 'g-v')">VERDE</button>
-            <button class="grav-btn" id="g-a" style="background:var(--amarelo); color:black;" onclick="setG('Amarelo', 'g-a')">AMARELO</button>
-            <button class="grav-btn" id="g-r" style="background:var(--vermelho);" onclick="setG('Vermelho', 'g-r')">VERMELHO</button>
+            <button class="grav-btn" id="gV" style="background:var(--verde);" onclick="setG('Verde', this)">VERDE</button>
+            <button class="grav-btn" id="gA" style="background:var(--amarelo); color:black;" onclick="setG('Amarelo', this)">AMARELO</button>
+            <button class="grav-btn" id="gR" style="background:var(--vermelho);" onclick="setG('Vermelho', this)">VERMELHO</button>
         </div>
 
-        <label>Sala Atual</label>
-        <input type="text" id="t-sala" placeholder="Ex: Sala 02">
+        <label>Sala/Local:</label>
+        <input type="text" id="tiSala" placeholder="Ex: Sala 05">
         <label>O que aconteceu?</label>
-        <textarea id="t-msg" rows="3" style="width:100%; border-radius:10px; padding:10px; box-sizing:border-box;" placeholder="Descreva o problema..."></textarea>
-        
-        <button class="btn-confirm" onclick="salvarTI()">ENVIAR PARA O KELVIN</button>
-        <button class="btn-voltar" onclick="irPara('tela-menu')">Voltar ao Menu</button>
+        <textarea id="tiDesc" rows="3" style="width:100%; border-radius:10px; padding:10px;"></textarea>
+
+        <button class="btn-enviar" onclick="enviarTI()">ENVIAR CHAMADO</button>
+        <button class="btn-voltar" onclick="irPara('menuPrincipal')">← Voltar</button>
+    </div>
+
+    <div id="finalArea" class="glass-card hidden">
+        <h2>CONFIRMADO</h2>
+        <div id="infoReserva" style="color: white; margin: 15px 0;"></div>
+        <button class="btn-enviar" onclick="location.reload()">NOVA OPERAÇÃO</button>
     </div>
 </div>
 
@@ -167,50 +182,73 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
+    let dadosUser = {};
+    let localSel = "";
     let gSel = "";
-    let user = JSON.parse(localStorage.getItem('cmcg_tech_user'));
-
-    window.onload = () => { if(user) irPara('tela-menu'); };
 
     window.irPara = (id) => {
         document.querySelectorAll('.glass-card').forEach(c => c.classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
-        if(id === 'tela-menu' && user) {
-            const saudacao = user.gen === 'Professor' ? "BEM-VINDO, PROF. " : "BEM-VINDA, PROFA. ";
-            document.getElementById('msg-boasvindas').innerText = saudacao + user.nome.split(' ')[0].toUpperCase();
-        }
     };
 
-    window.registrar = () => {
-        const n = document.getElementById('u-nome').value;
-        const p = document.getElementById('u-pront').value;
-        if(n && p) {
-            user = { nome: n, pront: p, gen: document.getElementById('u-gen').value };
-            localStorage.setItem('cmcg_tech_user', JSON.stringify(user));
-            irPara('tela-menu');
+    window.proximo = () => {
+        const gen = document.getElementById('genero').value;
+        const n = document.getElementById('profNome').value;
+        const p = document.getElementById('profPront').value;
+        const m = document.getElementById('materia').value;
+
+        if(n && p && m) {
+            dadosUser = { gen, n, p, m };
+            const saudacao = gen === 'Professor' ? "BEM-VINDO, PROF. " : "BEM-VINDA, PROFA. ";
+            document.getElementById('boasVindas').innerText = saudacao + n.split(' ')[0].toUpperCase();
+            irPara('menuPrincipal');
         } else { alert("Preencha todos os campos!"); }
     };
 
-    window.setG = (cor, id) => {
+    window.setEscoha = (item, el) => {
+        localSel = item;
+        document.querySelectorAll('.opt-item').forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
+        document.getElementById('areaPatrimonio').classList.toggle('hidden', item !== 'TV DIGITAL');
+        document.getElementById('chromeOpcoes').classList.toggle('hidden', item !== 'CHROMEBOOKS');
+    };
+
+    window.toggleQtd = () => {
+        const t = document.getElementById('tipoChrome').value;
+        document.getElementById('campoQtd').classList.toggle('hidden', t !== 'Unidades');
+    };
+
+    window.setG = (cor, el) => {
         gSel = cor;
         document.querySelectorAll('.grav-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
+        el.classList.add('active');
     };
 
-    window.salvarReserva = () => {
-        const s = document.getElementById('r-saida').value;
-        const v = document.getElementById('r-volta').value;
-        if(!s || !v) return alert("Defina os horários!");
-        set(push(ref(db, 'reservas')), { ...user, item: document.getElementById('r-item').value, turma: document.getElementById('r-turma').value, inicio: s, entrega: v })
-        .then(() => { alert("Reserva realizada!"); irPara('tela-menu'); });
+    window.confirmar = () => {
+        const turma = document.getElementById('turma').value;
+        const hi = document.getElementById('hInicio').value;
+        const hf = document.getElementById('hFim').value;
+        if(!localSel || !hi || !hf) return alert("Preencha os detalhes da reserva!");
+
+        set(push(ref(db, 'reservas')), {
+            ...dadosUser, item: localSel, turma: turma, inicio: hi, entrega: hf
+        }).then(() => {
+            irPara('finalArea');
+            document.getElementById('infoReserva').innerHTML = `<p>Reserva de ${localSel} confirmada para ${turma}.</p>`;
+        });
     };
 
-    window.salvarTI = () => {
-        const sala = document.getElementById('t-sala').value;
-        const msg = document.getElementById('t-msg').value;
-        if(!gSel || !sala || !msg) return alert("Preencha todos os campos!");
-        set(push(ref(db, 'chamados_ti')), { ...user, sala: sala, problema: msg, gravidade: gSel, data: new Date().toLocaleString() })
-        .then(() => { alert("Kelvin foi notificado!"); irPara('tela-menu'); });
+    window.enviarTI = () => {
+        const sala = document.getElementById('tiSala').value;
+        const desc = document.getElementById('tiDesc').value;
+        if(!gSel || !sala || !desc) return alert("Preencha os dados do suporte!");
+
+        set(push(ref(db, 'chamados_ti')), {
+            ...dadosUser, sala, desc, gravidade: gSel, data: new Date().toLocaleString()
+        }).then(() => {
+            alert("Chamado enviado ao Kelvin!");
+            irPara('menuPrincipal');
+        });
     };
 </script>
 </body>
