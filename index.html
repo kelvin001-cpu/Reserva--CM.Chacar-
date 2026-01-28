@@ -32,7 +32,7 @@
 
 <header>
     <p class="logo-text">SANTANA DE PARNAÍBA</p>
-    <p style="margin:0; color:#666; font-size:11px;">C.M. Chácara das Garças • Sistema de Reservas</p>
+    <p style="margin:0; color:#666; font-size:11px;">C.M. Chácara das Garças • Reservas Manhã</p>
 </header>
 
 <div class="container">
@@ -48,9 +48,9 @@
     </div>
 
     <div id="reservaArea" class="glass-card hidden">
-        <h2>DETALHES DA RESERVA</h2>
+        <h2>DETALHES DO USO</h2>
         
-        <label>Selecione a Turma (Manhã):</label>
+        <label>Selecione a Turma:</label>
         <select id="turma">
             <option value="1º Ano A">1º Ano A</option><option value="2º Ano A">2º Ano A</option>
             <option value="3º Ano A">3º Ano A</option><option value="4º Ano A">4º Ano A</option>
@@ -66,9 +66,9 @@
             <div class="opt-item" onclick="setEscoha('TV DIGITAL', this)">📺 TV DIGITAL</div>
         </div>
 
-        <div id="campoPatrimonio" class="hidden">
-            <label id="labelPatrimonio">Nº de Patrimônio:</label>
-            <input type="text" id="patrimonio" placeholder="Digite o número de patrimônio">
+        <div id="areaPatrimonio" class="hidden">
+            <label>Nº de Patrimônio da TV:</label>
+            <input type="text" id="patrimonio" placeholder="Digite o patrimônio da TV">
         </div>
 
         <div id="chromeOpcoes" class="hidden">
@@ -85,16 +85,16 @@
 
         <label>Horário de Retirada:</label>
         <input type="datetime-local" id="hInicio">
-        <label>Horário de Entrega (Previsão):</label>
+        <label>Horário de Entrega:</label>
         <input type="datetime-local" id="hFim">
 
-        <button class="btn-enviar" onclick="confirmar()">CONFIRMAR AGENDAMENTO</button>
+        <button class="btn-enviar" onclick="confirmar()">FINALIZAR AGENDAMENTO</button>
     </div>
 
     <div id="finalArea" class="glass-card hidden">
-        <h2 style="color: #27ae60;">RESERVA ATIVA</h2>
+        <h2 style="color: #27ae60;">RESERVA CONFIRMADA</h2>
         <div id="infoReserva" style="text-align: left; color: #444; font-size: 13px; background: #f9f9f9; padding: 15px; border-radius: 10px; line-height: 1.8;"></div>
-        <button class="btn-finalizar" onclick="liberar()">FINALIZAR E ENTREGAR</button>
+        <button class="btn-finalizar" onclick="liberar()">CONCLUIR E LIBERAR</button>
     </div>
 </div>
 
@@ -132,14 +132,14 @@
         document.querySelectorAll('.opt-item').forEach(i => i.classList.remove('active'));
         el.classList.add('active');
         
-        // Lógica de Patrimônio: Esconde para Sala Info, Mostra para os outros
-        const areaPat = document.getElementById('campoPatrimonio');
-        if(item === 'SALA DE INFORMÁTICA') {
-            areaPat.classList.add('hidden');
-            document.getElementById('patrimonio').value = "SALA FIXA";
-        } else {
+        // Patrimônio: SÓ mostra para TV DIGITAL
+        const areaPat = document.getElementById('areaPatrimonio');
+        if(item === 'TV DIGITAL') {
             areaPat.classList.remove('hidden');
             document.getElementById('patrimonio').value = "";
+        } else {
+            areaPat.classList.add('hidden');
+            document.getElementById('patrimonio').value = "N/A";
         }
         
         document.getElementById('chromeOpcoes').classList.toggle('hidden', item !== 'CHROMEBOOKS');
@@ -156,9 +156,7 @@
         const hi = document.getElementById('hInicio').value;
         const hf = document.getElementById('hFim').value;
         
-        if(!localSel || !hi || !hf || (localSel !== 'SALA DE INFORMÁTICA' && !pat)) {
-            return alert("Verifique se selecionou o item, horários e preencheu o patrimônio!");
-        }
+        if(!localSel || !hi || !hf || (localSel === 'TV DIGITAL' && !pat)) return alert("Preencha os campos obrigatórios!");
 
         let equipFinal = localSel;
         if(localSel === 'CHROMEBOOKS') {
@@ -170,12 +168,8 @@
         rID = nova.key;
 
         set(nova, {
-            prof: dadosUser.n,
-            prontuario: dadosUser.p,
-            materia: dadosUser.m,
-            patrimonio: pat,
-            turma: turma,
-            equipamento: equipFinal,
+            prof: dadosUser.n, pront: dadosUser.p, mat: dadosUser.m,
+            patrimonio: pat, turma: turma, equipamento: equipFinal,
             inicio: new Date(hi).toLocaleString('pt-BR'),
             entrega: new Date(hf).toLocaleString('pt-BR')
         }).then(() => {
@@ -183,7 +177,7 @@
             document.getElementById('finalArea').classList.remove('hidden');
             document.getElementById('infoReserva').innerHTML = `
                 <strong>Local:</strong> ${equipFinal}<br>
-                ${localSel !== 'SALA DE INFORMÁTICA' ? `<strong>Patrimônio:</strong> ${pat}<br>` : ''}
+                ${localSel === 'TV DIGITAL' ? `<strong>Patrimônio TV:</strong> ${pat}<br>` : ''}
                 <strong>Turma:</strong> ${turma}<br>
                 <strong>Professor:</strong> ${dadosUser.n}
             `;
