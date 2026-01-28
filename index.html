@@ -50,7 +50,7 @@
     <div id="reservaArea" class="glass-card hidden">
         <h2>DETALHES DA RESERVA</h2>
         
-        <label>Selecione a Turma:</label>
+        <label>Selecione a Turma (Manhã):</label>
         <select id="turma">
             <option value="1º Ano A">1º Ano A</option><option value="2º Ano A">2º Ano A</option>
             <option value="3º Ano A">3º Ano A</option><option value="4º Ano A">4º Ano A</option>
@@ -75,17 +75,17 @@
             <label>Tipo de Retirada:</label>
             <select id="tipoChrome" onchange="toggleQtd()">
                 <option value="Carrinho Completo">Carrinho Completo</option>
-                <option value="Unidades">Por Unidade</option>
+                <option value="Unidades">Por Unidade (Digitar quantidade)</option>
             </select>
             <div id="campoQtd" class="hidden">
-                <label>Quantas unidades?</label>
-                <input type="number" id="qtdUni" placeholder="Ex: 15">
+                <label>Quantas unidades levará?</label>
+                <input type="number" id="qtdUni" placeholder="Ex: 10">
             </div>
         </div>
 
         <label>Horário de Retirada:</label>
         <input type="datetime-local" id="hInicio">
-        <label>Horário de Entrega:</label>
+        <label>Horário de Entrega (Previsão):</label>
         <input type="datetime-local" id="hFim">
 
         <button class="btn-enviar" onclick="confirmar()">CONFIRMAR AGENDAMENTO</button>
@@ -125,7 +125,7 @@
             p: document.getElementById('profPront').value,
             m: document.getElementById('materia').value
         };
-        if(Object.values(dadosUser).every(v => v)) {
+        if(dadosUser.n && dadosUser.p && dadosUser.m) {
             document.getElementById('loginArea').classList.add('hidden');
             document.getElementById('reservaArea').classList.remove('hidden');
         } else { alert("Preencha Nome, Prontuário e Matéria!"); }
@@ -136,7 +136,7 @@
         document.querySelectorAll('.opt-item').forEach(i => i.classList.remove('active'));
         el.classList.add('active');
         
-        // Mostra patrimônio para todos e opções extras só para Chromebooks
+        // Patrimônio aparece ao escolher item
         document.getElementById('campoPatrimonio').classList.remove('hidden');
         document.getElementById('chromeOpcoes').classList.toggle('hidden', item !== 'CHROMEBOOKS');
     };
@@ -175,7 +175,12 @@
         }).then(() => {
             document.getElementById('reservaArea').classList.add('hidden');
             document.getElementById('finalArea').classList.remove('hidden');
-            document.getElementById('infoReserva').innerHTML = `<strong>Item:</strong> ${equipFinal}<br><strong>Patrimônio:</strong> ${pat}<br><strong>Turma:</strong> ${turma}<br><strong>Prof:</strong> ${dadosUser.n}`;
+            document.getElementById('infoReserva').innerHTML = `
+                <strong>Professor:</strong> ${dadosUser.n}<br>
+                <strong>Local:</strong> ${equipFinal}<br>
+                <strong>Patrimônio:</strong> ${pat}<br>
+                <strong>Turma:</strong> ${turma}
+            `;
         });
     };
 
