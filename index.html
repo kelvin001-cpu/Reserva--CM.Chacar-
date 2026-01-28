@@ -14,15 +14,16 @@
         }
         body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 40, 80, 0.75); z-index: -1; }
         header { background: var(--branco); padding: 15px; text-align: center; border-bottom: 5px solid var(--azul-claro); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .logo-text { font-family: 'Montserrat', sans-serif; color: var(--azul-parnaiba); font-size: 22px; text-transform: uppercase; margin: 0; }
-        .container { max-width: 500px; margin: 30px auto; padding: 0 20px; }
-        .glass-card { background: rgba(255, 255, 255, 0.98); border-radius: 20px; padding: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
-        h2 { color: var(--azul-parnaiba); text-align: center; font-size: 18px; text-transform: uppercase; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        label { display: block; margin: 15px 0 5px 5px; color: var(--azul-parnaiba); font-weight: 600; font-size: 14px; }
-        input, select { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #ddd; font-family: 'Poppins'; box-sizing: border-box; }
-        .grid-menu { display: grid; grid-template-columns: 1fr; gap: 10px; }
-        .opt-item { background: #f1f3f5; border: 2px solid #e9ecef; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; font-weight: 600; color: #444; }
-        .opt-item.active { background: var(--azul-parnaiba); color: white; border-color: var(--azul-parnaiba); }
+        .logo-text { font-family: 'Montserrat', sans-serif; color: var(--azul-parnaiba); font-size: 20px; text-transform: uppercase; margin: 0; }
+        .container { max-width: 480px; margin: 25px auto; padding: 0 20px; }
+        .glass-card { background: rgba(255, 255, 255, 0.98); border-radius: 20px; padding: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        h2 { color: var(--azul-parnaiba); text-align: center; font-size: 17px; text-transform: uppercase; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        label { display: block; margin: 12px 0 5px 5px; color: var(--azul-parnaiba); font-weight: 600; font-size: 13px; }
+        input, select { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #ddd; font-family: 'Poppins'; box-sizing: border-box; font-size: 14px; }
+        .grid-menu { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; }
+        .opt-item { background: #f1f3f5; border: 2px solid #e9ecef; padding: 18px; border-radius: 12px; text-align: center; cursor: pointer; font-weight: 600; color: #444; transition: 0.3s; }
+        .opt-item:hover { border-color: var(--azul-claro); }
+        .opt-item.active { background: var(--azul-parnaiba); color: white; border-color: var(--azul-parnaiba); box-shadow: 0 4px 10px rgba(0, 86, 162, 0.3); }
         .btn-enviar { width: 100%; padding: 16px; margin-top: 25px; border-radius: 10px; border: none; background: linear-gradient(135deg, var(--azul-parnaiba), var(--azul-claro)); color: white; font-family: 'Montserrat'; font-size: 15px; cursor: pointer; font-weight: bold; }
         .hidden { display: none; }
         .btn-finalizar { background: #d63031; color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; cursor: pointer; font-weight: bold; margin-top: 20px; }
@@ -32,25 +33,25 @@
 
 <header>
     <p class="logo-text">SANTANA DE PARNAÍBA</p>
-    <p style="margin:0; color:#666; font-size:12px;">C.M. Chácara das Garças • Gestão de TI</p>
+    <p style="margin:0; color:#666; font-size:11px;">C.M. Chácara das Garças • Gestão Escolar Manhã</p>
 </header>
 
 <div class="container">
     <div id="loginArea" class="glass-card">
-        <h2>IDENTIFICAÇÃO</h2>
+        <h2>IDENTIFICAÇÃO DOCENTE</h2>
         <label>Nome do Professor:</label>
         <input type="text" id="profNome" placeholder="Nome completo">
         <label>Prontuário:</label>
         <input type="text" id="profPront" placeholder="Digite seu prontuário">
         <label>Matéria / Disciplina:</label>
         <input type="text" id="materia" placeholder="Ex: Matemática, Português...">
-        <button class="btn-enviar" onclick="proximo()">AVANÇAR</button>
+        <button class="btn-enviar" onclick="proximo()">AVANÇAR PARA RESERVA</button>
     </div>
 
     <div id="reservaArea" class="glass-card hidden">
         <h2>DETALHES DA AULA</h2>
         
-        <label>Selecione a Turma (Período Manhã):</label>
+        <label>Selecione a Turma (Manhã):</label>
         <select id="turma">
             <option value="1º Ano A">1º Ano A</option>
             <option value="2º Ano A">2º Ano A</option>
@@ -63,7 +64,7 @@
             <option value="9º Ano A">9º Ano A</option>
         </select>
 
-        <label>Local de Uso:</label>
+        <label>O que deseja reservar?</label>
         <div class="grid-menu">
             <div class="opt-item" onclick="setEscoha('SALA DE INFORMÁTICA', this)">🖥️ SALA DE INFORMÁTICA</div>
             <div class="opt-item" onclick="setEscoha('CARRINHO DE CHROMEBOOKS', this)">💻 CHROMEBOOKS</div>
@@ -71,16 +72,17 @@
 
         <label>Horário de Retirada:</label>
         <input type="datetime-local" id="hInicio">
-        <label>Horário de Entrega:</label>
+        <label>Horário de Entrega (Previsão):</label>
         <input type="datetime-local" id="hFim">
 
         <button class="btn-enviar" onclick="confirmar()">FINALIZAR AGENDAMENTO</button>
     </div>
 
     <div id="finalArea" class="glass-card hidden">
-        <h2 style="color: #27ae60;">RESERVA CONFIRMADA</h2>
-        <p id="infoReserva" style="text-align: center; color: #444; font-size: 14px; background: #f9f9f9; padding: 15px; border-radius: 10px; line-height: 1.6;"></p>
-        <button class="btn-finalizar" onclick="liberar()">CONCLUIR E LIBERAR SISTEMA</button>
+        <h2 style="color: #27ae60;">RESERVA ATIVA</h2>
+        <div id="infoReserva" style="text-align: left; color: #444; font-size: 13px; background: #f9f9f9; padding: 15px; border-radius: 10px; line-height: 1.8;"></div>
+        <p style="font-size: 11px; color: #777; text-align: center; margin-top: 15px;">Ao terminar o uso, clique abaixo para liberar o equipamento no sistema.</p>
+        <button class="btn-finalizar" onclick="liberar()">ENTREGAR E FINALIZAR</button>
     </div>
 </div>
 
@@ -101,56 +103,61 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    let dados = { nome: "", pront: "", materia: "" };
-    let itemSelecionado = "";
+    let dadosDocente = { nome: "", pront: "", materia: "" };
+    let localSelecionado = "";
     let rID = "";
 
     window.proximo = () => {
-        dados.nome = document.getElementById('profNome').value;
-        dados.pront = document.getElementById('profPront').value;
-        dados.materia = document.getElementById('materia').value;
-        if(dados.nome && dados.pront && dados.materia) {
+        dadosDocente.nome = document.getElementById('profNome').value;
+        dadosDocente.pront = document.getElementById('profPront').value;
+        dadosDocente.materia = document.getElementById('materia').value;
+        if(dadosDocente.nome && dadosDocente.pront && dadosDocente.materia) {
             document.getElementById('loginArea').classList.add('hidden');
             document.getElementById('reservaArea').classList.remove('hidden');
-        } else { alert("Preencha todos os campos de identificação!"); }
+        } else { alert("Preencha Nome, Prontuário e Matéria!"); }
     };
 
     window.setEscoha = (item, el) => {
-        itemSelecionado = item;
+        localSelecionado = item;
         document.querySelectorAll('.opt-item').forEach(i => i.classList.remove('active'));
         el.classList.add('active');
     };
 
     window.confirmar = () => {
-        const turma = document.getElementById('turma').value;
-        const h1 = document.getElementById('hInicio').value;
-        const h2 = document.getElementById('hFim').value;
-        if(!itemSelecionado || !h1 || !h2) return alert("Selecione o local e os horários!");
+        const turmaEsc = document.getElementById('turma').value;
+        const hi = document.getElementById('hInicio').value;
+        const hf = document.getElementById('hFim').value;
+        if(!localSelecionado || !hi || !hf) return alert("Selecione o local e os horários!");
 
-        const refReserva = push(ref(db, 'reservas'));
-        rID = refReserva.key;
+        const novaReserva = push(ref(db, 'reservas'));
+        rID = novaReserva.key;
 
-        set(refReserva, {
-            prof: dados.nome,
-            prontuario: dados.pront,
-            materia: dados.materia,
-            turma: turma,
-            equipamento: itemSelecionado,
-            inicio: new Date(h1).toLocaleString('pt-BR'),
-            termino: new Date(h2).toLocaleString('pt-BR')
+        set(novaReserva, {
+            prof: dadosDocente.nome,
+            prontuario: dadosDocente.pront,
+            materia: dadosDocente.materia,
+            turma: turmaEsc,
+            equipamento: localSelecionado,
+            inicio: new Date(hi).toLocaleString('pt-BR'),
+            entrega: new Date(hf).toLocaleString('pt-BR')
         }).then(() => {
             document.getElementById('reservaArea').classList.add('hidden');
             document.getElementById('finalArea').classList.remove('hidden');
-            document.getElementById('infoReserva').innerHTML = `<strong>Local:</strong> ${itemSelecionado}<br><strong>Turma:</strong> ${turma}<br><strong>Matéria:</strong> ${dados.materia}<br><strong>Responsável:</strong> ${dados.nome}`;
+            document.getElementById('infoReserva').innerHTML = `
+                <strong>Professor:</strong> ${dadosDocente.nome}<br>
+                <strong>Matéria:</strong> ${dadosDocente.materia}<br>
+                <strong>Turma:</strong> ${turmaEsc}<br>
+                <strong>Local:</strong> ${localSelecionado}<br>
+                <strong>Até as:</strong> ${new Date(hf).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}
+            `;
         });
     };
 
     window.liberar = () => {
-        if(confirm("Confirmar a entrega e liberar para outros professores?")) {
+        if(confirm("Deseja confirmar a entrega do material e liberar o sistema?")) {
             remove(ref(db, 'reservas/' + rID)).then(() => { location.reload(); });
         }
     };
 </script>
 </body>
 </html>
-
