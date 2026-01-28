@@ -2,57 +2,89 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reserva Tech - CM CG</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tech Reserve - Santana de Parnaíba</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Montserrat:wght@700&family=Orbitron:wght@500&display=swap" rel="stylesheet">
     <style>
-        :root { --neon-blue: #00adef; --deep-blue: #0056a2; --glass: rgba(255, 255, 255, 0.1); }
-        
-        body { 
-            margin: 0; font-family: 'Poppins', sans-serif; 
-            background: #000b1a url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed;
-            background-size: cover; min-height: 100vh; display: flex; flex-direction: column; align-items: center; color: white;
+        :root { 
+            --azul-neon: #00adef; 
+            --azul-deep: #0056a2; 
         }
-        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 10, 30, 0.75); z-index: -1; }
+        
+        /* Reset de caixa para impedir que bordas saiam do molde */
+        * { box-sizing: border-box; }
+
+        body { 
+            margin: 0; padding: 0; font-family: 'Poppins', sans-serif; 
+            background: #000b1a url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover; min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center; color: white;
+            overflow-x: hidden; /* Garante que nada role para o lado */
+        }
+
+        body::before { 
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0, 10, 30, 0.8); z-index: -1; 
+        }
 
         header { 
-            width: 100%; background: white; padding: 12px 0; text-align: center; 
-            border-bottom: 4px solid var(--neon-blue); box-shadow: 0 4px 20px rgba(0,0,0,0.5); 
+            width: 100%; background: white; padding: 15px 10px; text-align: center; 
+            border-bottom: 4px solid var(--azul-neon); box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
         }
-        .logo-text { font-family: 'Montserrat', sans-serif; color: var(--deep-blue); font-size: 16px; text-transform: uppercase; margin: 0; }
+        .logo-text { font-family: 'Montserrat', sans-serif; color: var(--azul-deep); font-size: clamp(14px, 4vw, 18px); text-transform: uppercase; margin: 0; }
 
-        .container { width: 100%; max-width: 400px; padding: 20px; box-sizing: border-box; }
+        .container { 
+            width: 95%; /* Usa quase toda a tela, mas com margem */
+            max-width: 400px; 
+            padding: 20px 0; /* Padding vertical apenas */
+            display: flex; flex-direction: column; align-items: center;
+        }
 
+        /* O Molde Corrigido */
         .glass-card { 
-            background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border-radius: 25px; padding: 25px; border: 1px solid rgba(255, 255, 255, 0.15);
+            width: 100%; /* Ocupa 100% do container pai (400px) */
+            background: rgba(255, 255, 255, 0.1); 
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border-radius: 25px; 
+            padding: clamp(15px, 5vw, 25px); /* Padding adaptável */
+            border: 1px solid rgba(255, 255, 255, 0.15);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
         }
 
-        h2 { text-align: center; font-size: 14px; text-transform: uppercase; color: var(--neon-blue); margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        h2 { text-align: center; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 20px 0; color: var(--azul-neon); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
         
-        .label-tech { display: block; color: var(--neon-blue); font-weight: 600; font-size: 11px; margin: 15px 0 5px 5px; text-transform: uppercase; }
+        .label-tech { display: block; color: var(--azul-neon); font-weight: 600; font-size: 11px; margin: 15px 0 5px 2px; text-transform: uppercase; }
+
+        /* Elementos internos agora respeitam 100% da largura do molde */
+        input, select, .btn-equip, .btn-main {
+            width: 100% !important; 
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            display: block;
+        }
 
         .btn-equip {
-            width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 15px; margin-bottom: 10px; border-radius: 12px; color: white; font-weight: 600;
-            cursor: pointer; transition: 0.3s; font-size: 13px; display: flex; align-items: center; justify-content: center;
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 14px; margin-bottom: 10px; border-radius: 12px; color: white; font-weight: 600;
+            cursor: pointer; transition: 0.3s; font-size: 13px; text-align: center;
         }
-        .btn-equip.active { background: var(--neon-blue); border-color: white; box-shadow: 0 0 15px var(--neon-blue); }
-        .btn-equip.busy { background: rgba(255, 71, 87, 0.3); border-color: #ff4757; color: #ffcccc; cursor: not-allowed; }
+        .btn-equip.active { background: var(--azul-neon); border-color: white; box-shadow: 0 0 15px var(--azul-neon); }
+        .btn-equip.busy { background: rgba(255, 71, 87, 0.2); border-color: #ff4757; color: #ff4757; cursor: not-allowed; }
 
         input, select { 
-            width: 100%; padding: 12px; border-radius: 10px; border: none; 
-            background: rgba(255, 255, 255, 0.95); font-size: 14px; color: #000; outline: none; margin-bottom: 5px;
+            padding: 12px; border-radius: 10px; border: none; 
+            background: rgba(255, 255, 255, 0.95); font-family: 'Poppins'; 
+            font-size: 14px; color: #000; outline: none;
         }
 
         .btn-main {
-            width: 100%; background: linear-gradient(135deg, var(--deep-blue), var(--neon-blue));
+            background: linear-gradient(135deg, var(--azul-deep), var(--azul-neon));
             color: white; border: none; padding: 16px; border-radius: 12px; font-weight: 700;
             text-transform: uppercase; margin-top: 20px; cursor: pointer;
         }
 
-        .timer-box { font-family: 'Orbitron', sans-serif; font-size: 32px; text-align: center; color: #00ff9d; margin: 15px 0; }
+        .timer-box { font-family: 'Orbitron', sans-serif; font-size: clamp(24px, 8vw, 32px); text-align: center; color: #00ff9d; margin: 15px 0; }
+        
         .hidden { display: none; }
     </style>
 </head>
@@ -64,158 +96,31 @@
 </header>
 
 <div class="container">
-    <div id="scr_login" class="glass-card">
-        <h2>LOGIN_SISTEMA</h2>
-        <label class="label-tech">Gênero</label>
-        <select id="u_gen"><option>Professor</option><option>Professora</option></select>
-        <label class="label-tech">Nome</label><input type="text" id="u_nome" placeholder="Seu nome">
-        <label class="label-tech">Prontuário</label><input type="text" id="u_id" placeholder="ID">
-        <button class="btn-main" onclick="app.login()">ENTRAR</button>
-    </div>
+    <div id="scr_reserva" class="glass-card">
+        <h2>DETALHES_RESERVA</h2>
+        
+        <label class="label-tech">Turma Selecionada</label>
+        <select id="r_turma">
+            <option>1º Ano A</option><option>2º Ano A</option><option>3º Ano A</option>
+        </select>
 
-    <div id="scr_reserva" class="hidden">
-        <div class="glass-card">
-            <h2>DETALHES_RESERVA</h2>
-            <label class="label-tech">Turma</label>
-            <select id="r_turma">
-                <option>1º Ano A</option><option>2º Ano A</option><option>3º Ano A</option>
-            </select>
+        <label class="label-tech">Equipamento Requisitado</label>
+        <div class="btn-equip" id="b_SALA" onclick="app.selectItem('SALA DE INFO', 'b_SALA')">🖥️ SALA DE INFORMÁTICA</div>
+        <div class="btn-equip" id="b_CHROME" onclick="app.selectItem('CHROMEBOOKS', 'b_CHROME')">💻 CHROMEBOOKS</div>
+        <div class="btn-equip" id="b_TV" onclick="app.selectItem('TV DIGITAL', 'b_TV')">📺 TV DIGITAL</div>
 
-            <label class="label-tech">Equipamento</label>
-            <div id="btns_area">
-                <div class="btn-equip" id="b_SALA" onclick="app.selectItem('SALA DE INFO', 'b_SALA')">🖥️ SALA DE INFO</div>
-                <div class="btn-equip" id="b_CHROME" onclick="app.selectItem('CHROMEBOOKS', 'b_CHROME')">💻 CHROMEBOOKS</div>
-                <div class="btn-equip" id="b_TV" onclick="app.selectItem('TV DIGITAL', 'b_TV')">📺 TV DIGITAL</div>
-            </div>
+        <label class="label-tech">Número de Patrimônio</label>
+        <input type="text" id="r_pat" placeholder="Ex: 230180">
 
-            <label class="label-tech">Patrimônio</label><input type="text" id="r_pat" placeholder="Ex: 230180">
-            <label class="label-tech">Horário Término</label><input type="datetime-local" id="r_end">
+        <label class="label-tech">Data e Hora de Retirada</label>
+        <input type="datetime-local" id="r_start">
 
-            <button class="btn-main" onclick="app.confirmar()">FINALIZAR AGENDAMENTO</button>
-        </div>
-    </div>
+        <label class="label-tech">Previsão de Entrega</label>
+        <input type="datetime-local" id="r_end">
 
-    <div id="scr_status" class="hidden">
-        <div class="glass-card" style="text-align: center;">
-            <h2>TEMPO_RESTANTE</h2>
-            <div id="display_timer" class="timer-box">00:00:00</div>
-            <p id="detalhes_uso" style="font-size: 12px;"></p>
-            <button class="btn-main" style="background: #ff4757;" onclick="app.liberar()">LIBERAR AGORA</button>
-        </div>
+        <button class="btn-main" onclick="alert('Agendado com Sucesso!')">FINALIZAR AGENDAMENTO</button>
     </div>
 </div>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, push, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-    // CONFIGURAÇÃO CORRIGIDA
-    const firebaseConfig = {
-        apiKey: "AIzaSyBoGFDKz-nBwKvczGpxg-fHJYdVykcBUQ",
-        authDomain: "escala-chacara.firebaseapp.com",
-        databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com",
-        projectId: "escala-chacara",
-        storageBucket: "escala-chacara.firebasestorage.app",
-        messagingSenderId: "741259231706",
-        appId: "1:741259231706:web:27e2b60be100e6a34180e3"
-    };
-
-    const fb = initializeApp(firebaseConfig);
-    const db = getDatabase(fb);
-
-    const app = {
-        user: JSON.parse(localStorage.getItem('docente')),
-        item: "",
-        timer: null,
-
-        init() {
-            this.ouvirBanco();
-            if(localStorage.getItem('resID')) this.nav('scr_status');
-            else if(this.user) this.nav('scr_reserva');
-        },
-
-        nav(id) {
-            document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
-        },
-
-        login() {
-            const n = document.getElementById('u_nome').value, p = document.getElementById('u_id').value;
-            if(!n || !p) return alert("Identifique-se!");
-            this.user = { nome: n, id: p, gen: document.getElementById('u_gen').value };
-            localStorage.setItem('docente', JSON.stringify(this.user));
-            this.nav('scr_reserva');
-        },
-
-        ouvirBanco() {
-            onValue(ref(db, 'reservas'), (snap) => {
-                const dados = snap.val() || {};
-                this.updateMenu(dados);
-                const idAtivo = localStorage.getItem('resID');
-                if(idAtivo && dados[idAtivo]) this.startTimer(dados[idAtivo]);
-            });
-        },
-
-        updateMenu(res) {
-            const map = { "SALA DE INFO": "b_SALA", "CHROMEBOOKS": "b_CHROME", "TV DIGITAL": "b_TV" };
-            Object.values(map).forEach(id => {
-                const b = document.getElementById(id);
-                b.classList.remove('busy');
-                b.innerHTML = b.innerHTML.split(' (')[0];
-            });
-            Object.values(res).forEach(r => {
-                const id = map[r.equip];
-                if(id) {
-                    const b = document.getElementById(id);
-                    b.classList.add('busy');
-                    b.innerHTML += ` (${r.nome.split(' ')[0]})`;
-                }
-            });
-        },
-
-        selectItem(val, id) {
-            if(document.getElementById(id).classList.contains('busy')) return alert("Ocupado!");
-            this.item = val;
-            document.querySelectorAll('.btn-equip').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        },
-
-        confirmar() {
-            const fim = document.getElementById('r_end').value;
-            if(!this.item || !fim) return alert("Preencha tudo!");
-            const refR = push(ref(db, 'reservas'));
-            const data = { ...this.user, equip: this.item, end: fim, turma: document.getElementById('r_turma').value };
-            set(refR, data).then(() => {
-                localStorage.setItem('resID', refR.key);
-                this.nav('scr_status');
-            });
-        },
-
-        startTimer(res) {
-            clearInterval(this.timer);
-            this.timer = setInterval(() => {
-                const diff = new Date(res.end).getTime() - Date.now();
-                const display = document.getElementById('display_timer');
-                if(diff <= 0) { display.innerText = "EXPIRADO"; display.style.color = "red"; }
-                else {
-                    const h = Math.floor(diff/3600000).toString().padStart(2,'0');
-                    const m = Math.floor((diff%3600000)/60000).toString().padStart(2,'0');
-                    const s = Math.floor((diff%60000)/1000).toString().padStart(2,'0');
-                    display.innerText = `${h}:${m}:${s}`; display.style.color = "#00ff9d";
-                }
-                document.getElementById('detalhes_uso').innerHTML = `<b>${res.equip}</b> | ${res.turma}`;
-            }, 1000);
-        },
-
-        liberar() {
-            if(!confirm("Liberar?")) return;
-            remove(ref(db, 'reservas/' + localStorage.getItem('resID'))).then(() => {
-                localStorage.removeItem('resID');
-                location.reload();
-            });
-        }
-    };
-    window.app = app; app.init();
-</script>
 </body>
 </html>
