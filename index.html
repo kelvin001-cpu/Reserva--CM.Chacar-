@@ -44,15 +44,13 @@
         <input type="text" id="profPront" placeholder="Digite seu prontuário">
         <label>Matéria:</label>
         <input type="text" id="materia" placeholder="Ex: Matemática">
-        <label>Nº de Patrimônio (Ex: 230180):</label>
-        <input type="text" id="patrimonio" placeholder="Digite o número do patrimônio">
         <button class="btn-enviar" onclick="proximo()">AVANÇAR</button>
     </div>
 
     <div id="reservaArea" class="glass-card hidden">
-        <h2>DETALHES DO USO</h2>
+        <h2>DETALHES DA RESERVA</h2>
         
-        <label>Selecione a Turma (Manhã):</label>
+        <label>Selecione a Turma:</label>
         <select id="turma">
             <option value="1º Ano A">1º Ano A</option><option value="2º Ano A">2º Ano A</option>
             <option value="3º Ano A">3º Ano A</option><option value="4º Ano A">4º Ano A</option>
@@ -68,21 +66,26 @@
             <div class="opt-item" onclick="setEscoha('TV DIGITAL', this)">📺 TV DIGITAL</div>
         </div>
 
+        <div id="campoPatrimonio" class="hidden">
+            <label>Nº de Patrimônio (Ex: 230180):</label>
+            <input type="text" id="patrimonio" placeholder="Digite o patrimônio do item">
+        </div>
+
         <div id="chromeOpcoes" class="hidden">
             <label>Tipo de Retirada:</label>
             <select id="tipoChrome" onchange="toggleQtd()">
                 <option value="Carrinho Completo">Carrinho Completo</option>
-                <option value="Unidades">Por Unidade (Digitar quantidade)</option>
+                <option value="Unidades">Por Unidade</option>
             </select>
             <div id="campoQtd" class="hidden">
-                <label>Quantas unidades levará?</label>
-                <input type="number" id="qtdUni" placeholder="Ex: 10">
+                <label>Quantas unidades?</label>
+                <input type="number" id="qtdUni" placeholder="Ex: 15">
             </div>
         </div>
 
         <label>Horário de Retirada:</label>
         <input type="datetime-local" id="hInicio">
-        <label>Horário de Entrega (Previsão):</label>
+        <label>Horário de Entrega:</label>
         <input type="datetime-local" id="hFim">
 
         <button class="btn-enviar" onclick="confirmar()">CONFIRMAR AGENDAMENTO</button>
@@ -120,19 +123,21 @@
         dadosUser = {
             n: document.getElementById('profNome').value,
             p: document.getElementById('profPront').value,
-            m: document.getElementById('materia').value,
-            pat: document.getElementById('patrimonio').value
+            m: document.getElementById('materia').value
         };
         if(Object.values(dadosUser).every(v => v)) {
             document.getElementById('loginArea').classList.add('hidden');
             document.getElementById('reservaArea').classList.remove('hidden');
-        } else { alert("Preencha todos os campos!"); }
+        } else { alert("Preencha Nome, Prontuário e Matéria!"); }
     };
 
     window.setEscoha = (item, el) => {
         localSel = item;
         document.querySelectorAll('.opt-item').forEach(i => i.classList.remove('active'));
         el.classList.add('active');
+        
+        // Mostra patrimônio para todos e opções extras só para Chromebooks
+        document.getElementById('campoPatrimonio').classList.remove('hidden');
         document.getElementById('chromeOpcoes').classList.toggle('hidden', item !== 'CHROMEBOOKS');
     };
 
@@ -143,16 +148,17 @@
 
     window.confirmar = () => {
         const turma = document.getElementById('turma').value;
+        const pat = document.getElementById('patrimonio').value;
         const hi = document.getElementById('hInicio').value;
         const hf = document.getElementById('hFim').value;
         
+        if(!localSel || !pat || !hi || !hf) return alert("Selecione o equipamento, digite o patrimônio e os horários!");
+
         let equipFinal = localSel;
         if(localSel === 'CHROMEBOOKS') {
             const t = document.getElementById('tipoChrome').value;
-            equipFinal = t === 'Unidades' ? `CHROMEBOOKS (${document.getElementById('qtdUni').value} unidades)` : "CHROMEBOOKS (Carrinho Completo)";
+            equipFinal = t === 'Unidades' ? `CHROMEBOOKS (${document.getElementById('qtdUni').value} un)` : "CHROMEBOOKS (Carrinho)";
         }
-
-        if(!localSel || !hi || !hf) return alert("Complete os campos de horário e local!");
 
         const nova = push(ref(db, 'reservas'));
         rID = nova.key;
@@ -161,7 +167,7 @@
             prof: dadosUser.n,
             prontuario: dadosUser.p,
             materia: dadosUser.m,
-            patrimonio: dadosUser.pat,
+            patrimonio: pat,
             turma: turma,
             equipamento: equipFinal,
             inicio: new Date(hi).toLocaleString('pt-BR'),
@@ -169,20 +175,12 @@
         }).then(() => {
             document.getElementById('reservaArea').classList.add('hidden');
             document.getElementById('finalArea').classList.remove('hidden');
-            document.getElementById('infoReserva').innerHTML = `
-                <strong>Professor:</strong> ${dadosUser.n}<br>
-                <strong>Local:</strong> ${equipFinal}<br>
-                <strong>Patrimônio:</strong> ${dadosUser.pat}<br>
-                <strong>Turma:</strong> ${turma}<br>
-                <strong>Previsão de Entrega:</strong> ${new Date(hf).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}
-            `;
+            document.getElementById('infoReserva').innerHTML = `<strong>Item:</strong> ${equipFinal}<br><strong>Patrimônio:</strong> ${pat}<br><strong>Turma:</strong> ${turma}<br><strong>Prof:</strong> ${dadosUser.n}`;
         });
     };
 
     window.liberar = () => {
-        if(confirm("Confirmar a entrega e liberar para outros professores?")) {
-            remove(ref(db, 'reservas/' + rID)).then(() => location.reload());
-        }
+        if(confirm("Confirmar entrega?")) remove(ref(db, 'reservas/' + rID)).then(() => location.reload());
     };
 </script>
 </body>
