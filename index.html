@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Escolar - TI & Reservas</title>
+    <title>Portal CM Chácara das Garças</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root { --azul: #0056a2; --claro: #00adef; --verde: #2ecc71; --amarelo: #f1c40f; --vermelho: #e74c3c; }
@@ -12,29 +12,30 @@
             background: url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1000') no-repeat center center fixed;
             background-size: cover; min-height: 100vh; display: flex; align-items: center; justify-content: center;
         }
-        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 30, 60, 0.75); z-index: -1; }
+        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 30, 60, 0.8); z-index: -1; }
         .container { width: 95%; max-width: 420px; }
         .glass { 
-            background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             border-radius: 20px; padding: 25px; border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); text-align: center; color: white;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); text-align: center; color: white;
         }
-        h2 { font-size: 16px; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 1px; }
-        label { display: block; text-align: left; font-size: 11px; margin: 10px 0 5px; font-weight: 600; text-transform: uppercase; }
+        h2 { font-size: 16px; text-transform: uppercase; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; }
+        label { display: block; text-align: left; font-size: 11px; margin: 10px 0 5px 5px; font-weight: 600; text-transform: uppercase; }
         input, select, textarea { width: 100%; padding: 12px; border-radius: 10px; border: none; margin-bottom: 12px; background: white; box-sizing: border-box; font-family: 'Poppins'; }
         
-        /* Menu de Escolha */
-        .main-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .menu-btn { background: rgba(255,255,255,0.1); border: 1px solid white; padding: 20px; border-radius: 15px; cursor: pointer; color: white; font-weight: bold; }
+        /* Menu Principal */
+        .main-menu { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        .menu-btn { background: rgba(255,255,255,0.1); border: 1px solid white; padding: 20px; border-radius: 15px; cursor: pointer; color: white; font-weight: bold; font-size: 14px; transition: 0.3s; }
         .menu-btn:hover { background: var(--claro); }
 
-        /* Gravidade */
-        .grav-box { display: flex; gap: 5px; margin-bottom: 15px; }
-        .grav-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; font-size: 10px; color: white; opacity: 0.4; }
-        .grav-btn.active { opacity: 1; transform: scale(1.05); }
+        /* Gravidade TI */
+        .grav-box { display: flex; gap: 8px; margin-bottom: 15px; }
+        .grav-btn { flex: 1; padding: 12px; border-radius: 10px; border: 2px solid transparent; cursor: pointer; font-weight: bold; font-size: 10px; color: white; opacity: 0.5; }
+        .grav-btn.active { opacity: 1; border-color: white; transform: scale(1.05); }
 
-        .btn { width: 100%; padding: 15px; border-radius: 10px; border: none; background: linear-gradient(135deg, var(--azul), var(--claro)); color: white; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .btn-confirmar { width: 100%; padding: 16px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--azul), var(--claro)); color: white; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-top: 10px; }
         .hidden { display: none; }
+        .btn-voltar { background: none; border: none; color: #ddd; margin-top: 15px; cursor: pointer; font-size: 12px; }
     </style>
 </head>
 <body>
@@ -42,49 +43,70 @@
 <div class="container">
     <div id="loginArea" class="glass hidden">
         <h2>Identificação</h2>
-        <select id="setGenero" style="margin-bottom: 10px;">
+        <label>Gênero:</label>
+        <select id="setGenero">
             <option value="Professor">♂ Professor</option>
             <option value="Professora">♀ Professora</option>
         </select>
-        <input type="text" id="profNome" placeholder="Nome Completo">
-        <input type="text" id="profPront" placeholder="Prontuário">
-        <button class="btn" onclick="salvarDados()">Salvar e Entrar</button>
+        <input type="text" id="profNome" placeholder="Seu Nome Completo">
+        <input type="text" id="profPront" placeholder="Seu Prontuário">
+        <input type="text" id="profMat" placeholder="Sua Matéria">
+        <button class="btn-confirmar" onclick="salvarCadastro()">Salvar Dados</button>
     </div>
 
     <div id="mainMenu" class="glass hidden">
-        <h2 id="boasVindas">Olá!</h2>
+        <h2 id="msgBoasVindas">Olá!</h2>
         <div class="main-menu">
-            <button class="menu-btn" onclick="abrirTela('reservaArea')">📅 RESERVAR<br>EQUIPAMENTO</button>
-            <button class="menu-btn" onclick="abrirTela('tiArea')" style="border-color: var(--claro);">🛠️ CHAMAR<br>T.I.</button>
+            <button class="menu-btn" onclick="mostrar('reservaArea')">📅 RESERVAR EQUIPAMENTO</button>
+            <button class="menu-btn" onclick="mostrar('tiArea')" style="border-color: var(--claro);">🛠️ SUPORTE T.I. (KELVIN)</button>
         </div>
-        <button onclick="localStorage.clear(); location.reload();" style="background:none; border:none; color:#ccc; margin-top:20px; cursor:pointer; text-decoration:underline; font-size:10px;">Trocar Usuário</button>
+        <button onclick="localStorage.clear(); location.reload();" class="btn-voltar" style="text-decoration:underline;">Trocar Professor(a)</button>
     </div>
 
     <div id="reservaArea" class="glass hidden">
         <h2>Nova Reserva</h2>
-        <select id="turma"><option>1º Ano A</option><option>2º Ano A</option><option>3º Ano A</option></select>
-        <select id="equip"><option>SALA DE INFORMÁTICA</option><option>CHROMEBOOKS</option><option>TV DIGITAL</option></select>
-        <input type="datetime-local" id="hInicio">
-        <button class="btn" onclick="enviarReserva()">Confirmar Reserva</button>
-        <button onclick="abrirTela('mainMenu')" style="background:none; border:none; color:white; margin-top:10px; cursor:pointer;">← Voltar</button>
+        <label>Equipamento:</label>
+        <select id="resItem">
+            <option>SALA DE INFORMÁTICA</option>
+            <option>CHROMEBOOKS</option>
+            <option>TV DIGITAL</option>
+        </select>
+        <label>Turma:</label>
+        <select id="resTurma">
+            <option>1º Ano A</option><option>2º Ano A</option><option>3º Ano A</option>
+            <option>4º Ano A</option><option>5º Ano A</option><option>6º Ano A</option>
+            <option>7º Ano A</option><option>8º Ano A</option><option>9º Ano A</option>
+        </select>
+        
+        <label>Horário de Retirada:</label>
+        <input type="datetime-local" id="hSaida">
+        
+        <label>Horário de Devolução:</label>
+        <input type="datetime-local" id="hRetorno">
+
+        <button class="btn-confirmar" onclick="enviarReserva()">Confirmar Reserva</button>
+        <button class="btn-voltar" onclick="mostrar('mainMenu')">← Voltar</button>
     </div>
 
     <div id="tiArea" class="glass hidden">
-        <h2 style="margin-bottom:5px;">Suporte TI</h2>
-        <p style="font-size:11px; margin-bottom:20px;">"Prazer, meu nome é Kelvin. Em que posso ajudar?"</p>
+        <h2 style="margin-bottom:2px;">Suporte TI</h2>
+        <p style="font-size:11px; margin-bottom:15px; opacity:0.8;">"Prazer, meu nome é Kelvin. Em que posso ajudar?"</p>
         
         <label>Gravidade do Problema:</label>
         <div class="grav-box">
-            <button class="grav-btn" id="gV" style="background:var(--verde);" onclick="setGrav('Verde', this)">Tranquilo</button>
-            <button class="grav-btn" id="gA" style="background:var(--amarelo); color:black;" onclick="setGrav('Amarelo', this)">Rápido</button>
-            <button class="grav-btn" id="gR" style="background:var(--vermelho);" onclick="setGrav('Vermelho', this)">URGENTE</button>
+            <button class="grav-btn" id="gV" style="background:var(--verde);" onclick="setG('Verde', this)">Verde (Tranquilo)</button>
+            <button class="grav-btn" id="gA" style="background:var(--amarelo); color:black;" onclick="setG('Amarelo', this)">Amarelo (Rápido)</button>
+            <button class="grav-btn" id="gR" style="background:var(--vermelho);" onclick="setG('Vermelho', this)">Vermelho (URGENTE)</button>
         </div>
 
-        <input type="text" id="tiSala" placeholder="Qual a sua sala agora?">
-        <textarea id="tiDesc" placeholder="O que aconteceu?" rows="3"></textarea>
+        <label>Sua Sala Atual:</label>
+        <input type="text" id="tiSala" placeholder="Ex: Sala 05">
         
-        <button class="btn" onclick="enviarChamado()" style="background: var(--azul);">Enviar para o Kelvin</button>
-        <button onclick="abrirTela('mainMenu')" style="background:none; border:none; color:white; margin-top:10px; cursor:pointer;">← Voltar</button>
+        <label>O que aconteceu?</label>
+        <textarea id="tiProblema" rows="3" placeholder="Descreva o problema aqui..."></textarea>
+        
+        <button class="btn-confirmar" onclick="enviarChamado()" style="background: var(--azul);">Enviar Chamado</button>
+        <button class="btn-voltar" onclick="mostrar('mainMenu')">← Voltar</button>
     </div>
 </div>
 
@@ -105,66 +127,66 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    let gravidadeSel = "";
-    let user = JSON.parse(localStorage.getItem('user_v2'));
+    let gravSel = "";
+    let user = JSON.parse(localStorage.getItem('user_cmcg'));
 
     window.onload = () => {
-        if (user) { abrirTela('mainMenu'); } else { abrirTela('loginArea'); }
+        if(user) { mostrar('mainMenu'); } else { mostrar('loginArea'); }
     };
 
-    window.abrirTela = (id) => {
-        document.querySelectorAll('.glass').forEach(g => g.classList.add('hidden'));
+    window.mostrar = (id) => {
+        document.querySelectorAll('.glass').forEach(el => el.classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
         if(id === 'mainMenu' && user) {
-            const saudacao = user.gen === 'Professor' ? "Bem-vindo, Prof. " : "Bem-vinda, Profa. ";
-            document.getElementById('boasVindas').innerText = saudacao + user.nome.split(' ')[0];
+            const prefixo = user.gen === 'Professor' ? "Bem-vindo, Prof. " : "Bem-vinda, Profa. ";
+            document.getElementById('msgBoasVindas').innerText = prefixo + user.nome.split(' ')[0];
         }
     };
 
-    window.salvarDados = () => {
+    window.salvarCadastro = () => {
         const n = document.getElementById('profNome').value;
         const p = document.getElementById('profPront').value;
+        const m = document.getElementById('profMat').value;
         const g = document.getElementById('setGenero').value;
-        if(n && p) {
-            user = { nome: n, pront: p, gen: g };
-            localStorage.setItem('user_v2', JSON.stringify(user));
-            abrirTela('mainMenu');
-        } else { alert("Preencha seu nome e prontuário!"); }
+        if(n && p && m) {
+            user = { nome: n, pront: p, mat: m, gen: g };
+            localStorage.setItem('user_cmcg', JSON.stringify(user));
+            mostrar('mainMenu');
+        } else { alert("Preencha todos os campos!"); }
     };
 
-    window.setGrav = (cor, el) => {
-        gravidadeSel = cor;
+    window.setG = (cor, el) => {
+        gravSel = cor;
         document.querySelectorAll('.grav-btn').forEach(b => b.classList.remove('active'));
         el.classList.add('active');
     };
 
     window.enviarReserva = () => {
-        const h = document.getElementById('hInicio').value;
-        if(!h) return alert("Selecione o horário!");
+        const h1 = document.getElementById('hSaida').value;
+        const h2 = document.getElementById('hRetorno').value;
+        if(!h1 || !h2) return alert("Preencha os horários de saída e retorno!");
+        
         set(push(ref(db, 'reservas')), {
             ...user,
-            item: document.getElementById('equip').value,
-            turma: document.getElementById('turma').value,
-            data: new Date(h).toLocaleString('pt-BR')
-        }).then(() => { alert("Reserva feita!"); abrirTela('mainMenu'); });
+            item: document.getElementById('resItem').value,
+            turma: document.getElementById('resTurma').value,
+            retirada: new Date(h1).toLocaleString('pt-BR'),
+            devolucao: new Date(h2).toLocaleString('pt-BR')
+        }).then(() => { alert("Reserva Confirmada!"); mostrar('mainMenu'); });
     };
 
     window.enviarChamado = () => {
         const sala = document.getElementById('tiSala').value;
-        const desc = document.getElementById('tiDesc').value;
-        if(!gravidadeSel || !sala || !desc) return alert("Preencha todos os campos do chamado!");
+        const prob = document.getElementById('tiProblema').value;
+        if(!gravSel || !sala || !prob) return alert("Selecione a gravidade e descreva o problema.");
 
         set(push(ref(db, 'chamados_ti')), {
             ...user,
             sala: sala,
-            problema: desc,
-            gravidade: gravidadeSel,
-            hora: new Date().toLocaleString('pt-BR'),
-            status: "Pendente"
-        }).then(() => { 
-            alert("Chamado enviado! O Kelvin já foi avisado."); 
-            abrirTela('mainMenu'); 
-        });
+            problema: prob,
+            gravidade: gravSel,
+            data: new Date().toLocaleString('pt-BR')
+        }).then(() => { alert("Chamado enviado! O Kelvin já foi notificado."); mostrar('mainMenu'); });
     };
 </script>
 </body>
