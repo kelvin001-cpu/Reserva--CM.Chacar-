@@ -3,159 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal de Reservas - Chácara das Garças</title>
+    <title>Portal Tech - Chácara das Garças</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <style>
         :root { 
-            --azul-parnaiba: #0056a2; 
-            --azul-claro: #00adef; 
-            --verde-tech: #00ff9d;
-            --danger: #ff4757;
+            --azul-parnaiba: #0056a2; --azul-claro: #00adef; 
+            --verde-neon: #00ff9d; --vermelho-neon: #ff0055;
         }
         
         body { 
             margin: 0; font-family: 'Poppins', sans-serif; 
             background: url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
-            background-size: cover; min-height: 100vh;
-            color: white;
+            background-size: cover; min-height: 100vh; color: white;
         }
 
-        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 40, 80, 0.7); z-index: -1; }
+        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 20, 50, 0.75); z-index: -1; }
 
-        header { background: white; padding: 15px; text-align: center; border-bottom: 5px solid var(--azul-claro); box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+        header { background: white; padding: 15px; text-align: center; border-bottom: 5px solid var(--azul-claro); box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
         .logo-text { font-family: 'Montserrat', sans-serif; color: var(--azul-parnaiba); font-size: 20px; text-transform: uppercase; margin: 0; }
 
         .container { max-width: 480px; margin: 25px auto; padding: 0 20px; }
 
         .glass-card { 
-            background: rgba(255, 255, 255, 0.12); 
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-radius: 25px; padding: 25px; border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-            animation: fadeIn 0.5s ease-out;
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border-radius: 30px; padding: 25px; border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        h2 { text-align: center; font-size: 18px; text-transform: uppercase; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; letter-spacing: 1px; }
-        
-        label { display: block; margin: 15px 0 5px 5px; font-weight: 600; font-size: 13px; color: var(--azul-claro); text-transform: uppercase; }
+        h2 { text-align: center; font-size: 16px; text-transform: uppercase; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; letter-spacing: 2px; color: var(--azul-claro); }
+        label { display: block; margin: 15px 0 5px 5px; font-weight: 600; font-size: 11px; text-transform: uppercase; color: #ddd; }
         
         input, select, textarea { 
-            width: 100%; padding: 14px; border-radius: 12px; border: none; 
-            background: rgba(255, 255, 255, 0.95); font-family: 'Poppins'; 
-            box-sizing: border-box; font-size: 15px; color: #222; outline: none;
+            width: 100%; padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); 
+            background: rgba(255, 255, 255, 0.9); font-family: 'Poppins'; box-sizing: border-box; font-size: 14px; color: #111;
         }
 
-        /* Menu de Itens (Botões Grandes como na Foto) */
-        .grid-items { display: grid; gap: 12px; margin-top: 10px; }
-        .item-btn { 
-            background: white; color: var(--azul-parnaiba); padding: 18px; border-radius: 15px; 
-            text-align: center; cursor: pointer; font-weight: 700; transition: 0.3s;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            border: 2px solid transparent;
+        /* Botões de Seleção de Item */
+        .grid-menu { display: grid; gap: 10px; margin-top: 10px; }
+        .opt-btn { 
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.3);
+            padding: 18px; border-radius: 15px; text-align: center; cursor: pointer; 
+            font-weight: bold; color: white; transition: 0.3s;
         }
-        .item-btn.active { background: var(--azul-parnaiba); color: white; border-color: var(--azul-claro); box-shadow: 0 0 15px var(--azul-claro); }
+        .opt-btn:hover { background: rgba(255, 255, 255, 0.2); }
+        .opt-btn.active { background: var(--azul-claro); border-color: white; box-shadow: 0 0 20px var(--azul-claro); }
 
-        /* Botão de Ação Principal */
-        .btn-main { 
+        /* Botão Finalizar / Enviar */
+        .btn-finish { 
             width: 100%; padding: 18px; margin-top: 30px; border-radius: 15px; border: none; 
-            background: linear-gradient(135deg, var(--azul-parnaiba), var(--azul-claro)); 
-            color: white; font-family: 'Montserrat'; font-size: 16px; cursor: pointer; font-weight: bold; 
-            text-transform: uppercase; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            background: linear-gradient(135deg, #00adef, #0056a2); color: white; 
+            font-family: 'Montserrat'; font-size: 16px; cursor: pointer; font-weight: bold; 
+            text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 0 15px rgba(0, 173, 239, 0.4);
+            transition: 0.4s;
         }
+        .btn-finish:hover { transform: translateY(-3px); box-shadow: 0 0 25px var(--azul-claro); }
 
-        .btn-main:active { transform: scale(0.98); }
-
-        /* Suporte TI Gravidade */
-        .grav-container { display: flex; gap: 10px; margin-top: 10px; }
-        .grav-btn { flex: 1; padding: 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; color: white; opacity: 0.5; }
-        .grav-btn.active { opacity: 1; transform: scale(1.05); box-shadow: 0 0 10px white; }
+        /* Suporte TI - Gravidade */
+        .grav-row { display: flex; gap: 10px; margin-top: 10px; }
+        .g-btn { flex: 1; padding: 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; color: white; opacity: 0.4; }
+        .g-btn.active { opacity: 1; box-shadow: 0 0 15px currentColor; transform: scale(1.05); }
 
         .hidden { display: none; }
-        .back-link { display: block; text-align: center; margin-top: 20px; color: rgba(255,255,255,0.6); cursor: pointer; font-size: 12px; }
+        .back-nav { display: block; text-align: center; margin-top: 20px; color: #999; cursor: pointer; font-size: 12px; }
     </style>
 </head>
 <body>
 
 <header>
     <p class="logo-text">SANTANA DE PARNAÍBA</p>
-    <div style="font-size: 11px; color: #666;">C.M. Chácara das Garças • Sistema Integrado</div>
+    <div style="font-size: 10px; color: #666; font-weight: bold;">C.M. CHÁCARA DAS GARÇAS • TECH PORTAL</div>
 </header>
 
 <div class="container">
-    <div id="scr_login" class="glass-card">
-        <h2>IDENTIFICAÇÃO</h2>
-        <label>Sou:</label>
-        <select id="u_sexo">
-            <option value="Professor">Professor (Masculino)</option>
-            <option value="Professora">Professora (Feminino)</option>
+    <div id="scr_id" class="glass-card">
+        <h2>ACESSAR_SISTEMA</h2>
+        <label>Gênero</label>
+        <select id="u_gen">
+            <option value="Professor">♂ Professor</option>
+            <option value="Professora">♀ Professora</option>
         </select>
-        <label>Nome do Professor:</label>
+        <label>Seu Nome</label>
         <input type="text" id="u_nome" placeholder="Nome completo">
-        <label>Prontuário:</label>
-        <input type="text" id="u_id" placeholder="Digite seu prontuário">
-        <button class="btn-main" onclick="login()">AVANÇAR</button>
+        <label>Prontuário</label>
+        <input type="text" id="u_id" placeholder="Nº Prontuário">
+        <button class="btn-finish" onclick="login()">CONECTAR</button>
     </div>
 
-    <div id="scr_menu" class="glass-card hidden">
-        <h2 id="msg_welcome">OLÁ!</h2>
-        <div class="grid-items">
-            <div class="item-btn" style="background: rgba(0, 173, 239, 0.2); color: white; border: 1px solid var(--azul-claro);" onclick="nav('scr_reserva')">📅 RESERVAR EQUIPAMENTO</div>
-            <div class="item-btn" style="background: rgba(0, 255, 157, 0.1); color: var(--verde-tech); border: 1px solid var(--verde-tech);" onclick="nav('scr_ti')">🛠️ SUPORTE TI (KELVIN)</div>
+    <div id="scr_main" class="glass-card hidden">
+        <h2 id="txt_boasvindas">OLÁ!</h2>
+        <div class="grid-menu">
+            <div class="opt-btn" onclick="nav('scr_reserva')">📅 RESERVAR EQUIPAMENTO</div>
+            <div class="opt-btn" onclick="nav('scr_ti')" style="border-color: var(--verde-neon); color: var(--verde-neon);">🛠️ SUPORTE TI (KELVIN)</div>
         </div>
-        <div class="back-link" onclick="localStorage.clear(); location.reload();">Sair do sistema</div>
+        <div class="back-nav" onclick="localStorage.clear(); location.reload();">Sair / Trocar de Usuário</div>
     </div>
 
     <div id="scr_reserva" class="glass-card hidden">
         <h2>DETALHES DA RESERVA</h2>
-        
-        <label>Turma:</label>
+        <label>Turma Selecionada</label>
         <select id="r_turma">
             <option>1º Ano A</option><option>2º Ano A</option><option>3º Ano A</option>
             <option>4º Ano A</option><option>5º Ano A</option><option>6º Ano A</option>
             <option>7º Ano A</option><option>8º Ano A</option><option>9º Ano A</option>
         </select>
 
-        <label>O que deseja reservar?</label>
-        <div class="grid-items">
-            <div class="item-btn" id="opt_sala" onclick="setEquip('SALA DE INFORMÁTICA', 'opt_sala')">🖥️ SALA DE INFORMÁTICA</div>
-            <div class="item-btn" id="opt_chrome" onclick="setEquip('CHROMEBOOKS', 'opt_chrome')">💻 CHROMEBOOKS</div>
-            <div class="item-btn" id="opt_tv" onclick="setEquip('TV DIGITAL', 'opt_tv')">📺 TV DIGITAL</div>
+        <label>Item para Reserva</label>
+        <div class="grid-menu">
+            <div class="opt-btn" id="it1" onclick="selItem('SALA DE INFORMÁTICA', 'it1')">SALA DE INFORMÁTICA</div>
+            <div class="opt-btn" id="it2" onclick="selItem('CHROMEBOOKS', 'it2')">CHROMEBOOKS</div>
+            <div class="opt-btn" id="it3" onclick="selItem('TV DIGITAL', 'it3')">TV DIGITAL</div>
         </div>
 
-        <div id="box_patrimonio" class="hidden">
-            <label>Nº de Patrimônio:</label>
-            <input type="text" id="r_pat" placeholder="Ex: 230180">
+        <div id="area_tv" class="hidden">
+            <label>Nº Patrimônio TV</label>
+            <input type="text" id="r_pat" placeholder="Ex: 2024XX">
         </div>
 
-        <label>Horário de Retirada:</label>
-        <input type="datetime-local" id="r_start">
-        <label>Horário de Entrega (Previsão):</label>
-        <input type="datetime-local" id="r_end">
+        <label>Horário Saída</label>
+        <input type="datetime-local" id="h_in">
+        <label>Horário Devolução</label>
+        <input type="datetime-local" id="h_out">
 
-        <button class="btn-main" onclick="fazerReserva()">CONFIRMAR AGENDAMENTO</button>
-        <div class="back-link" onclick="nav('scr_menu')">← Voltar ao menu</div>
+        <button class="btn-finish" onclick="finalizarReserva()">FINALIZAR RESERVA</button>
+        <div class="back-nav" onclick="nav('scr_main')">← Voltar ao Menu</div>
     </div>
 
     <div id="scr_ti" class="glass-card hidden">
-        <h2>ABRIR CHAMADO</h2>
-        <p style="text-align:center; font-size:12px; margin-bottom:20px;">"Oi, sou o Kelvin. Qual o problema?"</p>
+        <h2>CHAMADO_TI</h2>
+        <p style="text-align: center; font-size: 11px; color: var(--verde-neon);">"Sistema de suporte direto com Kelvin"</p>
         
-        <label>Gravidade:</label>
-        <div class="grav-container">
-            <button class="grav-btn" id="g1" style="background: #2ecc71;" onclick="setG('Verde', 'g1')">VERDE</button>
-            <button class="grav-btn" id="g2" style="background: #f1c40f; color: black;" onclick="setG('Amarelo', 'g2')">AMARELO</button>
-            <button class="grav-btn" id="g3" style="background: #e74c3c;" onclick="setG('Vermelho', 'g3')">VERMELHO</button>
+        <label>Urgência</label>
+        <div class="grav-row">
+            <button class="g-btn" id="gv" style="background: #2ecc71;" onclick="selG('Verde', 'gv')">BAIXA</button>
+            <button class="g-btn" id="ga" style="background: #f1c40f; color: black;" onclick="selG('Amarelo', 'ga')">MÉDIA</button>
+            <button class="g-btn" id="gr" style="background: #e74c3c;" onclick="selG('Vermelho', 'gr')">ALTA</button>
         </div>
 
-        <label>Sua Sala:</label>
-        <input type="text" id="ti_sala" placeholder="Ex: Sala 05">
-        <label>Descrição:</label>
-        <textarea id="ti_msg" rows="3" placeholder="O que aconteceu?"></textarea>
+        <label>Sua Sala</label>
+        <input type="text" id="ti_sala" placeholder="Ex: Sala 08">
+        <label>Descrição do Problema</label>
+        <textarea id="ti_desc" rows="3" placeholder="Descreva aqui..."></textarea>
 
-        <button class="btn-main" onclick="enviarSuporte()" style="background: var(--verde-tech); color: black;">ENVIAR SINAL</button>
-        <div class="back-link" onclick="nav('scr_menu')">← Voltar ao menu</div>
+        <button class="btn-finish" onclick="enviarTI()" style="background: var(--verde-neon); color: black;">ABRIR CHAMADO</button>
+        <div class="back-nav" onclick="nav('scr_main')">← Voltar ao Menu</div>
     </div>
 </div>
 
@@ -176,18 +166,18 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    let user = JSON.parse(localStorage.getItem('user_data'));
-    let equipSel = "";
+    let user = JSON.parse(localStorage.getItem('cmcg_user'));
+    let itemSel = "";
     let gravSel = "";
 
-    window.onload = () => { if(user) nav('scr_menu'); };
+    window.onload = () => { if(user) nav('scr_main'); };
 
     window.nav = (id) => {
         document.querySelectorAll('.glass-card').forEach(c => c.classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
-        if(id === 'scr_menu' && user) {
-            const prefix = user.sexo === 'Professor' ? "BEM-VINDO, " : "BEM-VINDA, ";
-            document.getElementById('msg_welcome').innerText = prefix + user.nome.split(' ')[0].toUpperCase();
+        if(id === 'scr_main' && user) {
+            const prefix = user.gen === 'Professor' ? "BEM-VINDO, PROF. " : "BEM-VINDA, PROFA. ";
+            document.getElementById('txt_boasvindas').innerText = prefix + user.nome.split(' ')[0].toUpperCase();
         }
     };
 
@@ -195,44 +185,51 @@
         const n = document.getElementById('u_nome').value;
         const p = document.getElementById('u_id').value;
         if(n && p) {
-            user = { nome: n, id: p, sexo: document.getElementById('u_sexo').value };
-            localStorage.setItem('user_data', JSON.stringify(user));
-            nav('scr_menu');
-        } else { alert("Preencha tudo!"); }
+            user = { nome: n, pront: p, gen: document.getElementById('u_gen').value };
+            localStorage.setItem('cmcg_user', JSON.stringify(user));
+            nav('scr_main');
+        } else { alert("Preencha seus dados!"); }
     };
 
-    window.setEquip = (val, id) => {
-        equipSel = val;
-        document.querySelectorAll('.item-btn').forEach(b => b.classList.remove('active'));
+    window.selItem = (val, id) => {
+        itemSel = val;
+        document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        document.getElementById('box_patrimonio').classList.toggle('hidden', val !== 'TV DIGITAL');
+        document.getElementById('area_tv').classList.toggle('hidden', val !== 'TV DIGITAL');
     };
 
-    window.setG = (val, id) => {
+    window.selG = (val, id) => {
         gravSel = val;
-        document.querySelectorAll('.grav-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.g-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.add('active');
     };
 
-    window.fazerReserva = () => {
-        const start = document.getElementById('r_start').value;
-        const end = document.getElementById('r_end').value;
-        if(!equipSel || !start || !end) return alert("Preencha todos os campos!");
+    window.finalizarReserva = () => {
+        const hi = document.getElementById('h_in').value;
+        const ho = document.getElementById('h_out').value;
+        if(!itemSel || !hi || !ho) return alert("ERRO: Selecione o item e os horários.");
 
         set(push(ref(db, 'reservas')), {
-            ...user, equip: equipSel, turma: document.getElementById('r_turma').value,
-            pat: document.getElementById('r_pat').value || "N/A", inicio: start, fim: end
-        }).then(() => { alert("Agendamento Confirmado!"); nav('scr_menu'); });
+            ...user, equipamento: itemSel, turma: document.getElementById('r_turma').value,
+            patrimonio: document.getElementById('r_pat').value || "N/A", inicio: hi, fim: ho,
+            timestamp: new Date().getTime()
+        }).then(() => {
+            alert("AGENDAMENTO CONCLUÍDO COM SUCESSO!");
+            nav('scr_main');
+        });
     };
 
-    window.enviarSuporte = () => {
+    window.enviarTI = () => {
         const sala = document.getElementById('ti_sala').value;
-        const msg = document.getElementById('ti_msg').value;
-        if(!gravSel || !sala || !msg) return alert("Preencha o chamado!");
+        const desc = document.getElementById('ti_desc').value;
+        if(!gravSel || !sala || !desc) return alert("ERRO: Preencha os campos de suporte.");
 
         set(push(ref(db, 'chamados_ti')), {
-            ...user, sala: sala, problema: msg, gravidade: gravSel, data: new Date().toLocaleString()
-        }).then(() => { alert("Chamado enviado ao Kelvin!"); nav('scr_menu'); });
+            ...user, sala, descricao: desc, urgencia: gravSel, status: "Pendente"
+        }).then(() => {
+            alert("KELVIN RECEBEU SEU CHAMADO!");
+            nav('scr_main');
+        });
     };
 </script>
 </body>
