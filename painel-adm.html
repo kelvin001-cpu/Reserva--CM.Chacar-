@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>ADM - Controle Geral</title>
+    <style>
+        body { font-family: sans-serif; background: #0f172a; color: #f8fafc; margin: 0; }
+        .lock { position: fixed; width:100%; height:100%; background: #1e293b; display:flex; justify-content:center; align-items:center; z-index:999; }
+        .content { padding: 40px; display: none; }
+        .card { background: #1e293b; padding: 25px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { background: #334155; padding: 12px; text-align: left; color: #38bdf8; }
+        td { padding: 12px; border-bottom: 1px solid #334155; }
+        .btn-del { background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
+        .btn-block { background: #f59e0b; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div id="lockScreen" class="lock">
+    <div style="text-align:center;">
+        <h2 style="color: #38bdf8;">Painel Administrador Real-Time</h2>
+        <input type="password" id="senhaAdm" placeholder="Sua Senha Mestra" style="padding:12px; border-radius:30px; border:none; width: 250px;"><br><br>
+        <button onclick="entrar()" style="padding:10px 40px; border-radius:30px; border:none; background:#38bdf8; color:#0f172a; font-weight:bold; cursor:pointer;">ACESSAR PAINEL</button>
+    </div>
+</div>
+
+<div class="content" id="admApp">
+    <h1>Controle da Unidade - C.M. Chácara Das Garças</h1>
+    
+    <div class="card">
+        <h3>🔒 Segurança e Acesso</h3>
+        <p>Use os botões abaixo para liberar ou travar as reservas dos professores em tempo real.</p>
+        <button class="btn-block" onclick="mudarStatus(true)" style="background: #22c55e;">LIBERAR SISTEMA</button>
+        <button class="btn-block" onclick="mudarStatus(false)">BLOQUEAR SISTEMA AGORA</button>
+    </div>
+
+    <div class="card">
+        <h3>📅 Monitoramento de Reservas (Tempo Real)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Professor / Prontuário</th>
+                    <th>Equipamento / Patrimônio</th>
+                    <th>Horário Agendado</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody id="listaReservas">
+                </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function entrar() {
+        const s = document.getElementById('senhaAdm').value;
+        if(s === "CHACARA2024") { // DEFINA SUA SENHA AQUI
+            document.getElementById('lockScreen').style.display = 'none';
+            document.getElementById('admApp').style.display = 'block';
+        } else { alert("Senha inválida!"); }
+    }
+</script>
+</body>
+</html>
