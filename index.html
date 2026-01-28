@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -68,18 +67,18 @@
         </div>
 
         <div id="campoPatrimonio" class="hidden">
-            <label>Nº de Patrimônio (Ex: 230180):</label>
-            <input type="text" id="patrimonio" placeholder="Digite o patrimônio do item">
+            <label id="labelPatrimonio">Nº de Patrimônio:</label>
+            <input type="text" id="patrimonio" placeholder="Digite o número de patrimônio">
         </div>
 
         <div id="chromeOpcoes" class="hidden">
             <label>Tipo de Retirada:</label>
             <select id="tipoChrome" onchange="toggleQtd()">
                 <option value="Carrinho Completo">Carrinho Completo</option>
-                <option value="Unidades">Por Unidade (Digitar quantidade)</option>
+                <option value="Unidades">Por Unidade</option>
             </select>
             <div id="campoQtd" class="hidden">
-                <label>Quantas unidades levará?</label>
+                <label>Quantidade:</label>
                 <input type="number" id="qtdUni" placeholder="Ex: 10">
             </div>
         </div>
@@ -121,15 +120,11 @@
     let rID = "";
 
     window.proximo = () => {
-        dadosUser = {
-            n: document.getElementById('profNome').value,
-            p: document.getElementById('profPront').value,
-            m: document.getElementById('materia').value
-        };
+        dadosUser = { n: document.getElementById('profNome').value, p: document.getElementById('profPront').value, m: document.getElementById('materia').value };
         if(dadosUser.n && dadosUser.p && dadosUser.m) {
             document.getElementById('loginArea').classList.add('hidden');
             document.getElementById('reservaArea').classList.remove('hidden');
-        } else { alert("Preencha Nome, Prontuário e Matéria!"); }
+        } else { alert("Preencha todos os campos!"); }
     };
 
     window.setEscoha = (item, el) => {
@@ -137,8 +132,16 @@
         document.querySelectorAll('.opt-item').forEach(i => i.classList.remove('active'));
         el.classList.add('active');
         
-        // Patrimônio aparece ao escolher item
-        document.getElementById('campoPatrimonio').classList.remove('hidden');
+        // Lógica de Patrimônio: Esconde para Sala Info, Mostra para os outros
+        const areaPat = document.getElementById('campoPatrimonio');
+        if(item === 'SALA DE INFORMÁTICA') {
+            areaPat.classList.add('hidden');
+            document.getElementById('patrimonio').value = "SALA FIXA";
+        } else {
+            areaPat.classList.remove('hidden');
+            document.getElementById('patrimonio').value = "";
+        }
+        
         document.getElementById('chromeOpcoes').classList.toggle('hidden', item !== 'CHROMEBOOKS');
     };
 
@@ -153,7 +156,9 @@
         const hi = document.getElementById('hInicio').value;
         const hf = document.getElementById('hFim').value;
         
-        if(!localSel || !pat || !hi || !hf) return alert("Selecione o equipamento, digite o patrimônio e os horários!");
+        if(!localSel || !hi || !hf || (localSel !== 'SALA DE INFORMÁTICA' && !pat)) {
+            return alert("Verifique se selecionou o item, horários e preencheu o patrimônio!");
+        }
 
         let equipFinal = localSel;
         if(localSel === 'CHROMEBOOKS') {
@@ -177,10 +182,10 @@
             document.getElementById('reservaArea').classList.add('hidden');
             document.getElementById('finalArea').classList.remove('hidden');
             document.getElementById('infoReserva').innerHTML = `
-                <strong>Professor:</strong> ${dadosUser.n}<br>
                 <strong>Local:</strong> ${equipFinal}<br>
-                <strong>Patrimônio:</strong> ${pat}<br>
-                <strong>Turma:</strong> ${turma}
+                ${localSel !== 'SALA DE INFORMÁTICA' ? `<strong>Patrimônio:</strong> ${pat}<br>` : ''}
+                <strong>Turma:</strong> ${turma}<br>
+                <strong>Professor:</strong> ${dadosUser.n}
             `;
         });
     };
