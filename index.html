@@ -3,155 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Tech - Chácara das Garças</title>
+    <title>Sistema Chácara - CM CG</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --azul-parnaiba: #0056a2; --azul-claro: #00adef; 
-            --verde-neon: #00ff9d; --vermelho-neon: #ff0055;
-        }
-        
+        :root { --azul-sp: #0056a2; --azul-celeste: #00adef; --neon-green: #00ff9d; }
         body { 
             margin: 0; font-family: 'Poppins', sans-serif; 
             background: url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
             background-size: cover; min-height: 100vh; color: white;
         }
-
-        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 20, 50, 0.75); z-index: -1; }
-
-        header { background: white; padding: 15px; text-align: center; border-bottom: 5px solid var(--azul-claro); box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-        .logo-text { font-family: 'Montserrat', sans-serif; color: var(--azul-parnaiba); font-size: 20px; text-transform: uppercase; margin: 0; }
-
-        .container { max-width: 480px; margin: 25px auto; padding: 0 20px; }
-
-        .glass-card { 
-            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border-radius: 30px; padding: 25px; border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 15, 40, 0.8); z-index: -1; }
+        header { background: white; padding: 15px; text-align: center; border-bottom: 5px solid var(--azul-celeste); box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .logo-text { font-family: 'Montserrat', sans-serif; color: var(--azul-sp); font-size: 18px; text-transform: uppercase; margin: 0; }
+        .container { max-width: 450px; margin: 20px auto; padding: 0 20px; }
+        .glass { 
+            background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-radius: 25px; padding: 25px; border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-
-        h2 { text-align: center; font-size: 16px; text-transform: uppercase; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; letter-spacing: 2px; color: var(--azul-claro); }
-        label { display: block; margin: 15px 0 5px 5px; font-weight: 600; font-size: 11px; text-transform: uppercase; color: #ddd; }
+        h2 { text-align: center; font-size: 16px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; color: var(--azul-celeste); }
+        label { display: block; margin: 15px 0 5px 5px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+        input, select, textarea { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #fff; font-size: 14px; box-sizing: border-box; }
         
-        input, select, textarea { 
-            width: 100%; padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); 
-            background: rgba(255, 255, 255, 0.9); font-family: 'Poppins'; box-sizing: border-box; font-size: 14px; color: #111;
-        }
-
-        /* Botões de Seleção de Item */
-        .grid-menu { display: grid; gap: 10px; margin-top: 10px; }
-        .opt-btn { 
-            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.3);
-            padding: 18px; border-radius: 15px; text-align: center; cursor: pointer; 
-            font-weight: bold; color: white; transition: 0.3s;
-        }
-        .opt-btn:hover { background: rgba(255, 255, 255, 0.2); }
-        .opt-btn.active { background: var(--azul-claro); border-color: white; box-shadow: 0 0 20px var(--azul-claro); }
-
-        /* Botão Finalizar / Enviar */
-        .btn-finish { 
-            width: 100%; padding: 18px; margin-top: 30px; border-radius: 15px; border: none; 
-            background: linear-gradient(135deg, #00adef, #0056a2); color: white; 
-            font-family: 'Montserrat'; font-size: 16px; cursor: pointer; font-weight: bold; 
-            text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 0 15px rgba(0, 173, 239, 0.4);
-            transition: 0.4s;
-        }
-        .btn-finish:hover { transform: translateY(-3px); box-shadow: 0 0 25px var(--azul-claro); }
-
-        /* Suporte TI - Gravidade */
-        .grav-row { display: flex; gap: 10px; margin-top: 10px; }
-        .g-btn { flex: 1; padding: 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; color: white; opacity: 0.4; }
-        .g-btn.active { opacity: 1; box-shadow: 0 0 15px currentColor; transform: scale(1.05); }
-
+        .grid { display: grid; gap: 10px; margin-top: 10px; }
+        .btn-opt { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-opt.active { background: var(--azul-celeste); border-color: #fff; box-shadow: 0 0 15px var(--azul-celeste); }
+        
+        .btn-action { width: 100%; padding: 18px; margin-top: 25px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--azul-sp), var(--azul-celeste)); color: white; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: 0.3s; }
+        .btn-release { background: linear-gradient(135deg, #ff4757, #ff6b81); margin-top: 20px; }
+        
         .hidden { display: none; }
-        .back-nav { display: block; text-align: center; margin-top: 20px; color: #999; cursor: pointer; font-size: 12px; }
+        .info-box { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; margin: 15px 0; border-left: 4px solid var(--neon-green); }
     </style>
 </head>
 <body>
 
 <header>
     <p class="logo-text">SANTANA DE PARNAÍBA</p>
-    <div style="font-size: 10px; color: #666; font-weight: bold;">C.M. CHÁCARA DAS GARÇAS • TECH PORTAL</div>
+    <div style="font-size: 10px; color: #666;">C.M. CHÁCARA DAS GARÇAS • TECH</div>
 </header>
 
 <div class="container">
-    <div id="scr_id" class="glass-card">
-        <h2>ACESSAR_SISTEMA</h2>
+    <div id="scr_login" class="glass">
+        <h2>IDENTIFICAÇÃO</h2>
         <label>Gênero</label>
-        <select id="u_gen">
-            <option value="Professor">♂ Professor</option>
-            <option value="Professora">♀ Professora</option>
-        </select>
-        <label>Seu Nome</label>
-        <input type="text" id="u_nome" placeholder="Nome completo">
+        <select id="u_gen"><option value="Professor">♂ Professor</option><option value="Professora">♀ Professora</option></select>
+        <label>Nome Completo</label>
+        <input type="text" id="u_nome" placeholder="Seu nome">
         <label>Prontuário</label>
         <input type="text" id="u_id" placeholder="Nº Prontuário">
-        <button class="btn-finish" onclick="login()">CONECTAR</button>
+        <button class="btn-action" onclick="login()">ENTRAR NO SISTEMA</button>
     </div>
 
-    <div id="scr_main" class="glass-card hidden">
-        <h2 id="txt_boasvindas">OLÁ!</h2>
-        <div class="grid-menu">
-            <div class="opt-btn" onclick="nav('scr_reserva')">📅 RESERVAR EQUIPAMENTO</div>
-            <div class="opt-btn" onclick="nav('scr_ti')" style="border-color: var(--verde-neon); color: var(--verde-neon);">🛠️ SUPORTE TI (KELVIN)</div>
+    <div id="scr_menu" class="glass hidden">
+        <h2 id="msg_ola">OLÁ</h2>
+        <div class="grid">
+            <div class="btn-opt" onclick="nav('scr_reserva')">📅 NOVA RESERVA</div>
+            <div class="btn-opt" onclick="nav('scr_ti')" style="color: var(--neon-green); border-color: var(--neon-green);">🛠️ SUPORTE KELVIN</div>
         </div>
-        <div class="back-nav" onclick="localStorage.clear(); location.reload();">Sair / Trocar de Usuário</div>
+        <button onclick="localStorage.clear(); location.reload();" style="background:none; border:none; color:#aaa; width:100%; margin-top:20px; cursor:pointer; text-decoration:underline;">Trocar Professor</button>
     </div>
 
-    <div id="scr_reserva" class="glass-card hidden">
-        <h2>DETALHES DA RESERVA</h2>
-        <label>Turma Selecionada</label>
-        <select id="r_turma">
-            <option>1º Ano A</option><option>2º Ano A</option><option>3º Ano A</option>
-            <option>4º Ano A</option><option>5º Ano A</option><option>6º Ano A</option>
-            <option>7º Ano A</option><option>8º Ano A</option><option>9º Ano A</option>
-        </select>
-
-        <label>Item para Reserva</label>
-        <div class="grid-menu">
-            <div class="opt-btn" id="it1" onclick="selItem('SALA DE INFORMÁTICA', 'it1')">SALA DE INFORMÁTICA</div>
-            <div class="opt-btn" id="it2" onclick="selItem('CHROMEBOOKS', 'it2')">CHROMEBOOKS</div>
-            <div class="opt-btn" id="it3" onclick="selItem('TV DIGITAL', 'it3')">TV DIGITAL</div>
+    <div id="scr_reserva" class="glass hidden">
+        <h2>RESERVAR ITEM</h2>
+        <label>Equipamento</label>
+        <div class="grid">
+            <div class="btn-opt" id="i1" onclick="selI('SALA DE INFO', 'i1')">SALA DE INFORMÁTICA</div>
+            <div class="btn-opt" id="i2" onclick="selI('CHROMEBOOKS', 'i2')">CHROMEBOOKS</div>
+            <div class="btn-opt" id="i3" onclick="selI('TV DIGITAL', 'i3')">TV DIGITAL</div>
         </div>
-
-        <div id="area_tv" class="hidden">
-            <label>Nº Patrimônio TV</label>
-            <input type="text" id="r_pat" placeholder="Ex: 2024XX">
-        </div>
-
-        <label>Horário Saída</label>
-        <input type="datetime-local" id="h_in">
-        <label>Horário Devolução</label>
-        <input type="datetime-local" id="h_out">
-
-        <button class="btn-finish" onclick="finalizarReserva()">FINALIZAR RESERVA</button>
-        <div class="back-nav" onclick="nav('scr_main')">← Voltar ao Menu</div>
+        <label>Turma</label>
+        <select id="r_turma"><option>1º Ano A</option><option>2º Ano A</option><option>3º Ano A</option><option>4º Ano A</option><option>5º Ano A</option></select>
+        <label>Início do Uso</label>
+        <input type="datetime-local" id="r_in">
+        <label>Previsão de Entrega</label>
+        <input type="datetime-local" id="r_out">
+        <button class="btn-action" onclick="confirmar()">FINALIZAR AGENDAMENTO</button>
+        <button class="btn-action" style="background:none; border:1px solid #fff;" onclick="nav('scr_menu')">VOLTAR</button>
     </div>
 
-    <div id="scr_ti" class="glass-card hidden">
-        <h2>CHAMADO_TI</h2>
-        <p style="text-align: center; font-size: 11px; color: var(--verde-neon);">"Sistema de suporte direto com Kelvin"</p>
-        
-        <label>Urgência</label>
-        <div class="grav-row">
-            <button class="g-btn" id="gv" style="background: #2ecc71;" onclick="selG('Verde', 'gv')">BAIXA</button>
-            <button class="g-btn" id="ga" style="background: #f1c40f; color: black;" onclick="selG('Amarelo', 'ga')">MÉDIA</button>
-            <button class="g-btn" id="gr" style="background: #e74c3c;" onclick="selG('Vermelho', 'gr')">ALTA</button>
-        </div>
+    <div id="scr_ativo" class="glass hidden">
+        <h2>RESERVA EM ANDAMENTO</h2>
+        <div class="info-box" id="detalhes_uso"></div>
+        <p style="font-size: 11px; text-align: center; color: #ff6b81;">Ao terminar de usar, clique no botão abaixo para liberar o equipamento para outros professores.</p>
+        <button class="btn-action btn-release" onclick="finalizarUso()">CONCLUIR E LIBERAR</button>
+    </div>
 
-        <label>Sua Sala</label>
-        <input type="text" id="ti_sala" placeholder="Ex: Sala 08">
-        <label>Descrição do Problema</label>
-        <textarea id="ti_desc" rows="3" placeholder="Descreva aqui..."></textarea>
-
-        <button class="btn-finish" onclick="enviarTI()" style="background: var(--verde-neon); color: black;">ABRIR CHAMADO</button>
-        <div class="back-nav" onclick="nav('scr_main')">← Voltar ao Menu</div>
+    <div id="scr_ti" class="glass hidden">
+        <h2>SUPORTE TI</h2>
+        <label>O que houve?</label>
+        <textarea id="t_msg" rows="4"></textarea>
+        <button class="btn-action" onclick="alert('Kelvin Notificado!'); nav('scr_menu')">ENVIAR CHAMADO</button>
+        <button class="btn-action" style="background:none; border:1px solid #fff;" onclick="nav('scr_menu')">VOLTAR</button>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getDatabase, ref, push, set, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBoGFDKz-nBwKvczGpxg-fHJYdVykcBUQ",
@@ -166,70 +115,66 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    let user = JSON.parse(localStorage.getItem('cmcg_user'));
-    let itemSel = "";
-    let gravSel = "";
+    let user = JSON.parse(localStorage.getItem('user'));
+    let item = "";
+    let resID = localStorage.getItem('activeRes');
 
-    window.onload = () => { if(user) nav('scr_main'); };
+    window.onload = () => { 
+        if(resID) nav('scr_ativo'); 
+        else if(user) nav('scr_menu');
+    };
 
     window.nav = (id) => {
-        document.querySelectorAll('.glass-card').forEach(c => c.classList.add('hidden'));
+        document.querySelectorAll('.glass').forEach(c => c.classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
-        if(id === 'scr_main' && user) {
-            const prefix = user.gen === 'Professor' ? "BEM-VINDO, PROF. " : "BEM-VINDA, PROFA. ";
-            document.getElementById('txt_boasvindas').innerText = prefix + user.nome.split(' ')[0].toUpperCase();
+        if(id === 'scr_menu' && user) {
+            document.getElementById('msg_ola').innerText = (user.gen === 'Professor' ? "BEM-VINDO PROF. " : "BEM-VINDA PROFA. ") + user.nome.split(' ')[0].toUpperCase();
+        }
+        if(id === 'scr_ativo') {
+            document.getElementById('detalhes_uso').innerHTML = `<strong>STATUS:</strong> EM USO<br><strong>ITEM:</strong> ${localStorage.getItem('activeItem') || 'Equipamento'}`;
         }
     };
 
     window.login = () => {
-        const n = document.getElementById('u_nome').value;
-        const p = document.getElementById('u_id').value;
-        if(n && p) {
-            user = { nome: n, pront: p, gen: document.getElementById('u_gen').value };
-            localStorage.setItem('cmcg_user', JSON.stringify(user));
-            nav('scr_main');
-        } else { alert("Preencha seus dados!"); }
+        const n = document.getElementById('u_nome').value, p = document.getElementById('u_id').value;
+        if(!n || !p) return alert("Preencha tudo!");
+        user = { nome: n, id: p, gen: document.getElementById('u_gen').value };
+        localStorage.setItem('user', JSON.stringify(user));
+        nav('scr_menu');
     };
 
-    window.selItem = (val, id) => {
-        itemSel = val;
-        document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        document.getElementById('area_tv').classList.toggle('hidden', val !== 'TV DIGITAL');
-    };
-
-    window.selG = (val, id) => {
-        gravSel = val;
-        document.querySelectorAll('.g-btn').forEach(b => b.classList.remove('active'));
+    window.selI = (val, id) => {
+        item = val;
+        document.querySelectorAll('.btn-opt').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.add('active');
     };
 
-    window.finalizarReserva = () => {
-        const hi = document.getElementById('h_in').value;
-        const ho = document.getElementById('h_out').value;
-        if(!itemSel || !hi || !ho) return alert("ERRO: Selecione o item e os horários.");
-
-        set(push(ref(db, 'reservas')), {
-            ...user, equipamento: itemSel, turma: document.getElementById('r_turma').value,
-            patrimonio: document.getElementById('r_pat').value || "N/A", inicio: hi, fim: ho,
-            timestamp: new Date().getTime()
-        }).then(() => {
-            alert("AGENDAMENTO CONCLUÍDO COM SUCESSO!");
-            nav('scr_main');
+    window.confirmar = () => {
+        const i = document.getElementById('r_in').value, o = document.getElementById('r_out').value;
+        if(!item || !i || !o) return alert("Faltam dados!");
+        
+        const nova = push(ref(db, 'reservas'));
+        resID = nova.key;
+        
+        set(nova, { ...user, item, inicio: i, fim: o })
+        .then(() => {
+            localStorage.setItem('activeRes', resID);
+            localStorage.setItem('activeItem', item);
+            alert("Reserva Iniciada!");
+            nav('scr_ativo');
         });
     };
 
-    window.enviarTI = () => {
-        const sala = document.getElementById('ti_sala').value;
-        const desc = document.getElementById('ti_desc').value;
-        if(!gravSel || !sala || !desc) return alert("ERRO: Preencha os campos de suporte.");
-
-        set(push(ref(db, 'chamados_ti')), {
-            ...user, sala, descricao: desc, urgencia: gravSel, status: "Pendente"
-        }).then(() => {
-            alert("KELVIN RECEBEU SEU CHAMADO!");
-            nav('scr_main');
-        });
+    window.finalizarUso = () => {
+        if(confirm("Deseja mesmo finalizar o uso e liberar o item?")) {
+            remove(ref(db, 'reservas/' + resID)).then(() => {
+                localStorage.removeItem('activeRes');
+                localStorage.removeItem('activeItem');
+                resID = null;
+                alert("Equipamento Liberado!");
+                nav('scr_menu');
+            });
+        }
     };
 </script>
 </body>
