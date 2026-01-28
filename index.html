@@ -2,38 +2,101 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Portal de Reservas - Chácara das Garças</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SANTANA TECH - RESERVA EDUCAÇÃO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        body { margin: 0; font-family: sans-serif; background: #f4f7f9; }
-        header { background: linear-gradient(90deg, #1b4d6b, #2d88b4); color: white; padding: 20px; text-align: center; }
-        .box { max-width: 400px; margin: 50px auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        input, select, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 25px; border: 1px solid #ddd; }
-        button { background: #2d88b4; color: white; font-weight: bold; border: none; cursor: pointer; }
+        :root { --neon-blue: #00f3ff; --neon-green: #39ff14; --dark-bg: #05060a; }
+        body { 
+            margin: 0; font-family: 'Rajdhani', sans-serif; background: var(--dark-bg); color: white;
+            background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+        }
+        header { border-bottom: 2px solid var(--neon-blue); padding: 20px; text-align: center; background: rgba(0,0,0,0.8); }
+        .container { max-width: 500px; margin: 20px auto; padding: 20px; }
+        .card { 
+            background: rgba(20, 25, 40, 0.9); border: 1px solid var(--neon-blue); 
+            border-radius: 20px; padding: 25px; box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+        }
+        h2 { font-family: 'Orbitron'; color: var(--neon-blue); text-align: center; font-size: 18px; }
+        
+        .menu-setores { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
+        .item-btn { 
+            background: rgba(255,255,255,0.05); border: 1px solid #333; padding: 15px; 
+            border-radius: 12px; cursor: pointer; text-align: center; transition: 0.3s;
+        }
+        .item-btn:hover, .item-btn.active { border-color: var(--neon-blue); background: rgba(0,243,255,0.1); }
+        
+        input, select, button { 
+            width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; 
+            background: #000; border: 1px solid var(--neon-blue); color: white; box-sizing: border-box;
+        }
+        .btn-ready { 
+            background: linear-gradient(90deg, var(--neon-blue), #bc13fe); 
+            font-family: 'Orbitron'; font-weight: bold; cursor: pointer; border: none; margin-top: 15px;
+        }
+        .btn-finish { background: var(--neon-green); color: black; font-weight: bold; margin-top: 20px; cursor: pointer; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
-    <header><h1>RESERVA - CHÁCARA</h1></header>
-    <div class="box" id="login">
-        <h2>Identificação</h2>
-        <input type="text" id="nome" placeholder="Seu Nome">
-        <input type="text" id="pront" placeholder="Seu Prontuário">
-        <button onclick="entrar()">ENTRAR</button>
+
+<header>
+    <h1 style="font-family:'Orbitron'; font-size: 20px; margin:0;">TECH-RESERVA CHÁCARA</h1>
+</header>
+
+<div class="container">
+    <div id="loginCard" class="card">
+        <h2>IDENTIFICAÇÃO DOCENTE</h2>
+        <input type="text" id="nomeProf" placeholder="Nome do Professor">
+        <button class="btn-ready" onclick="entrar()">INICIAR PROTOCOLO</button>
     </div>
-    <div class="box" id="reserva" style="display:none">
-        <h2 id="msgErro" style="color:red; display:none">SISTEMA BLOQUEADO</h2>
-        <div id="conteudo">
-            <select id="item"><option>Tv Digital (230180)</option><option>Carrinho Chromebook (247880)</option></select>
-            <input type="datetime-local" id="data">
-            <button onclick="enviar()">RESERVAR AGORA</button>
+
+    <div id="reservaCard" class="card hidden">
+        <h2>RESERVA DE AMBIENTES</h2>
+        
+        <div class="menu-setores">
+            <div class="item-btn" onclick="selecionar('SALA DE INFORMÁTICA', this)">🖥️ SALA INFO</div>
+            <div class="item-btn" onclick="selecionar('LABORATÓRIO TECH', this)">🔬 LAB TECH</div>
+            <div class="item-btn" onclick="selecionar('SALA MULTIMÍDIA', this)">📽️ MULTIMÍDIA</div>
+            <div class="item-btn" onclick="selecionar('CARRINHO CHROMEBOOK', this)">💻 CHROMEBOOKS</div>
         </div>
+
+        <div id="subChrome" class="hidden">
+            <label>QUANTIDADE DE UNIDADES:</label>
+            <select id="qtdChrome">
+                <option value="Carrinho Completo">Carrinho Completo</option>
+                <option value="10 unidades">10 unidades</option>
+                <option value="20 unidades">20 unidades</option>
+            </select>
+        </div>
+
+        <label>DATA E HORA DE INÍCIO:</label>
+        <input type="datetime-local" id="horaInicio">
+
+        <label>DURAÇÃO ESTIMADA:</label>
+        <select id="tempoUso">
+            <option value="45">45 min (1 Aula)</option>
+            <option value="90">90 min (2 Aulas)</option>
+            <option value="180">Manhã/Tarde Toda</option>
+        </select>
+
+        <button class="btn-ready" onclick="agendar()">CONFIRMAR AGENDAMENTO</button>
     </div>
+
+    <div id="usoCard" class="card hidden">
+        <h2 style="color: var(--neon-green)">EQUIPAMENTO EM USO</h2>
+        <p id="detalheReserva" style="text-align: center; border: 1px dashed var(--neon-green); padding: 10px;"></p>
+        <p style="font-size: 12px; color: #aaa; text-align: center;">Após terminar o uso, clique abaixo para liberar o sistema automaticamente.</p>
+        <button class="btn-finish" onclick="finalizarUso()">FINALIZAR E ENTREGAR AGORA</button>
+    </div>
+</div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getDatabase, ref, push, set, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
     const firebaseConfig = {
-        apiKey: "AIzaSyBoGfDKz-nBwKvczzGpxg-fHJYdVykcBUQ",
+        apiKey: "AIzaSyBoGFDKz-nBwKvczGpxg-fHJYdVykcBUQ",
         authDomain: "escala-chacara.firebaseapp.com",
         databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com",
         projectId: "escala-chacara",
@@ -44,22 +107,56 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-    let n, p;
+    let profGlobal = ""; let salaGlobal = ""; let reservaID = "";
 
     window.entrar = () => {
-        n = document.getElementById('nome').value; p = document.getElementById('pront').value;
-        if(n && p) { document.getElementById('login').style.display='none'; document.getElementById('reserva').style.display='block'; }
+        profGlobal = document.getElementById('nomeProf').value;
+        if(profGlobal) {
+            document.getElementById('loginCard').classList.add('hidden');
+            document.getElementById('reservaCard').classList.remove('hidden');
+        }
     };
 
-    onValue(ref(db, 'ativo'), (s) => {
-        const ok = s.val() !== false;
-        document.getElementById('conteudo').style.display = ok ? 'block' : 'none';
-        document.getElementById('msgErro').style.display = ok ? 'none' : 'block';
-    });
+    window.selecionar = (sala, el) => {
+        salaGlobal = sala;
+        document.querySelectorAll('.item-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+        document.getElementById('subChrome').classList.toggle('hidden', sala !== 'CARRINHO CHROMEBOOK');
+    };
 
-    window.enviar = () => {
-        push(ref(db, 'reservas'), { prof: n, pront: p, item: document.getElementById('item').value, data: document.getElementById('data').value });
-        alert("Sucesso!");
+    window.agendar = () => {
+        const inicio = document.getElementById('horaInicio').value;
+        const duracao = parseInt(document.getElementById('tempoUso').value);
+        if(!salaGlobal || !inicio) return alert("ERRO: Selecione a sala e o horário!");
+
+        const dataInicio = new Date(inicio);
+        const dataFim = new Date(dataInicio.getTime() + duracao * 60000);
+        
+        let equipFinal = salaGlobal;
+        if(salaGlobal === 'CARRINHO CHROMEBOOK') equipFinal += " (" + document.getElementById('qtdChrome').value + ")";
+
+        const novaReserva = push(ref(db, 'reservas'));
+        reservaID = novaReserva.key;
+
+        set(novaReserva, {
+            prof: profGlobal,
+            local: equipFinal,
+            inicio: dataInicio.toLocaleString(),
+            entrega: dataFim.toLocaleString()
+        }).then(() => {
+            document.getElementById('reservaCard').classList.add('hidden');
+            document.getElementById('usoCard').classList.remove('hidden');
+            document.getElementById('detalheReserva').innerText = equipFinal + " reservado por " + profGlobal;
+        });
+    };
+
+    window.finalizarUso = () => {
+        if(confirm("Deseja confirmar a entrega e liberar o equipamento?")) {
+            remove(ref(db, 'reservas/' + reservaID)).then(() => {
+                alert("SISTEMA ATUALIZADO: Equipamento disponível!");
+                location.reload();
+            });
+        }
     };
 </script>
 </body>
