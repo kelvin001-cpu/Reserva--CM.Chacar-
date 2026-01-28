@@ -2,23 +2,34 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>ADM - Chácara</title>
+    <title>ADM - Controle Chácara</title>
     <style>
-        body { background: #1a1a1a; color: white; font-family: sans-serif; padding: 20px; }
-        .card { background: #2a2a2a; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; }
-        td, th { padding: 10px; border-bottom: 1px solid #444; }
+        body { background: #121212; color: white; font-family: sans-serif; padding: 20px; }
+        .bloco { background: #1e1e1e; padding: 20px; border-radius: 10px; margin-bottom: 20px; border-left: 5px solid #2d88b4; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #333; }
+        th { color: #2d88b4; }
+        .btn { padding: 10px 20px; border-radius: 20px; border: none; cursor: pointer; font-weight: bold; margin-right: 10px; }
+        .liberar { background: #28a745; color: white; }
+        .bloquear { background: #dc3545; color: white; }
+        .concluir { background: #555; color: white; padding: 5px 10px; font-size: 12px; }
     </style>
 </head>
 <body>
-    <h1>Painel de Controle</h1>
-    <div class="card">
-        <button onclick="mudar(true)" style="background:green; color:white; padding:10px;">ATIVAR SITE</button>
-        <button onclick="mudar(false)" style="background:red; color:white; padding:10px;">BLOQUEAR SITE</button>
+    <h1>Painel do Administrador</h1>
+    
+    <div class="bloco">
+        <h3>Controle do Site dos Professores</h3>
+        <button class="btn liberar" onclick="status(true)">LIBERAR ACESSO</button>
+        <button class="btn bloquear" onclick="status(false)">BLOQUEAR ACESSO</button>
     </div>
-    <div class="card">
+
+    <div class="bloco">
+        <h3>Lista de Reservas em Tempo Real</h3>
         <table>
-            <thead><tr><th>Professor</th><th>Item</th><th>Data</th><th>Ação</th></tr></thead>
+            <thead>
+                <tr><th>Professor</th><th>Equipamento</th><th>Data/Hora</th><th>Ação</th></tr>
+            </thead>
             <tbody id="lista"></tbody>
         </table>
     </div>
@@ -28,7 +39,7 @@
     import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
     const firebaseConfig = {
-        apiKey: "AIzaSyBoGfDKz-nBwKvczzGpxg-fHJYdVykcBUQ",
+        apiKey: "AIzaSyBoGFDKz-nBwKvczGpxg-fHJYdVykcBUQ",
         authDomain: "escala-chacara.firebaseapp.com",
         databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com",
         projectId: "escala-chacara",
@@ -40,14 +51,20 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    window.mudar = (v) => set(ref(db, 'ativo'), v);
-    window.apagar = (id) => remove(ref(db, 'reservas/' + id));
+    window.status = (v) => set(ref(db, 'ativo'), v).then(() => alert("Comando enviado!"));
+    window.limpar = (id) => remove(ref(db, 'reservas/' + id));
 
-    onValue(ref(db, 'reservas'), (s) => {
-        const lista = document.getElementById('lista'); lista.innerHTML = "";
-        const dados = s.val();
+    onValue(ref(db, 'reservas'), (snap) => {
+        const lista = document.getElementById('lista');
+        lista.innerHTML = "";
+        const dados = snap.val();
         for(let id in dados) {
-            lista.innerHTML += `<tr><td>${dados[id].prof}</td><td>${dados[id].item}</td><td>${dados[id].data}</td><td><button onclick="apagar('${id}')">OK</button></td></tr>`;
+            lista.innerHTML += `<tr>
+                <td>${dados[id].prof}</td>
+                <td>${dados[id].item}</td>
+                <td>${dados[id].data}</td>
+                <td><button class="concluir" onclick="limpar('${id}')">Concluído</button></td>
+            </tr>`;
         }
     });
 </script>
