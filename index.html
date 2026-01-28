@@ -3,129 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal de Reservas - Chácara das Garças</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <title>SISTEMA CORE - CM CHÁCARA DAS GARÇAS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root { 
-            --azul-parnaiba: #0056a2; 
-            --azul-claro: #00adef; 
-            --verde: #2ecc71; --amarelo: #f1c40f; --vermelho: #e74c3c;
+            --sp-blue: #004a99; --neon-cyan: #00f3ff; --neon-green: #00ff9d;
+            --neon-red: #ff0055; --neon-yellow: #ffee00; --glass-bg: rgba(0, 20, 40, 0.85);
         }
-        
+
         body { 
-            margin: 0; font-family: 'Poppins', sans-serif; 
-            background: url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
-            background-size: cover; min-height: 100vh;
+            margin: 0; font-family: 'Rajdhani', sans-serif; background: #000814;
+            color: white; min-height: 100vh; overflow-x: hidden;
+            display: flex; align-items: center; justify-content: center;
         }
 
-        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 40, 80, 0.5); z-index: -1; }
+        /* Fundo Tecnológico Animado */
+        .tech-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #001d3d 0%, #000814 100%);
+            z-index: -1;
+        }
+        .tech-bg::before {
+            content: ""; position: absolute; width: 200%; height: 200%;
+            background-image: linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px; transform: rotate(15deg); top: -50%; left: -50%; animation: move 60s linear infinite;
+        }
+        @keyframes move { from { transform: rotate(15deg) translateY(0); } to { transform: rotate(15deg) translateY(1000px); } }
 
-        header { background: white; padding: 15px; text-align: center; border-bottom: 5px solid var(--azul-claro); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .logo-text { font-family: 'Montserrat', sans-serif; color: var(--azul-parnaiba); font-size: 20px; text-transform: uppercase; margin: 0; }
-        .sub-logo { margin: 0; color: #666; font-size: 11px; }
+        header {
+            position: fixed; top: 0; width: 100%; background: white; padding: 10px 0;
+            text-align: center; border-bottom: 4px solid var(--neon-cyan); box-shadow: 0 0 20px var(--neon-cyan);
+        }
+        .logo-text { font-family: 'Orbitron', sans-serif; color: var(--sp-blue); font-size: 18px; margin: 0; letter-spacing: 2px; }
 
-        .container { max-width: 480px; margin: 25px auto; padding: 0 20px; }
+        .container { width: 90%; max-width: 450px; margin-top: 80px; }
 
-        .glass-card { 
-            background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border-radius: 25px; padding: 30px; border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); color: white;
+        /* Card Holográfico */
+        .cyber-card { 
+            background: var(--glass-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 2px solid var(--neon-cyan); border-radius: 0 30px 0 30px; padding: 30px;
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.2); position: relative; transition: 0.5s;
         }
 
-        h2 { text-align: center; font-size: 18px; text-transform: uppercase; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; }
-        label { display: block; margin: 15px 0 5px 5px; font-weight: 600; font-size: 13px; text-align: left; }
-        
-        input, select, textarea { 
-            width: 100%; padding: 14px; border-radius: 12px; border: none; 
-            background: rgba(255, 255, 255, 0.9); font-family: 'Poppins'; 
-            box-sizing: border-box; font-size: 14px; margin-bottom: 10px;
-        }
+        h2 { font-family: 'Orbitron', sans-serif; font-size: 16px; text-transform: uppercase; color: var(--neon-cyan); margin-bottom: 25px; text-shadow: 0 0 10px var(--neon-cyan); text-align: center; }
 
-        /* Menu Principal */
-        .btn-menu { 
-            background: var(--azul-claro); color: white; padding: 20px; border-radius: 15px; 
-            margin-bottom: 15px; cursor: pointer; border: none; font-weight: bold; width: 100%;
-            display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 16px;
+        /* Menu Interativo Foda */
+        .main-menu { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        .menu-opt {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(0, 243, 255, 0.3);
+            padding: 25px; border-radius: 15px; cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; justify-content: space-between;
+            position: relative; overflow: hidden;
         }
+        .menu-opt::before { content: ""; position: absolute; left: -100%; top: 0; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.2), transparent); transition: 0.5s; }
+        .menu-opt:hover { border-color: var(--neon-cyan); transform: scale(1.02); box-shadow: 0 0 20px rgba(0, 243, 255, 0.3); }
+        .menu-opt:hover::before { left: 100%; }
+        .menu-opt span { font-family: 'Orbitron'; font-size: 14px; font-weight: bold; }
+        .menu-opt i { font-size: 24px; }
 
-        /* Gravidade TI */
-        .grav-container { display: flex; gap: 10px; margin: 15px 0; }
-        .grav-opt { flex: 1; padding: 12px; border-radius: 10px; border: none; cursor: pointer; color: white; font-weight: bold; font-size: 10px; opacity: 0.6; }
-        .grav-opt.active { opacity: 1; transform: scale(1.05); box-shadow: 0 0 15px rgba(255,255,255,0.3); }
-
-        .btn-avancar { 
-            width: 100%; padding: 16px; border-radius: 12px; border: none; 
-            background: linear-gradient(135deg, var(--azul-parnaiba), var(--azul-claro)); 
-            color: white; font-family: 'Montserrat'; font-size: 15px; cursor: pointer; font-weight: bold; 
+        /* Inputs e Formulários */
+        .field { margin-bottom: 15px; text-align: left; }
+        label { display: block; font-size: 10px; color: var(--neon-cyan); margin: 0 0 5px 5px; text-transform: uppercase; letter-spacing: 1px; }
+        input, select, textarea {
+            width: 100%; background: rgba(0, 0, 0, 0.4); border: 1px solid var(--neon-cyan);
+            padding: 12px; color: white; font-family: 'Rajdhani'; font-size: 16px; border-radius: 8px; outline: none;
         }
+        input:focus { box-shadow: 0 0 10px var(--neon-cyan); }
+
+        /* Gravidade Estilo Cockpit */
+        .gravity-panel { display: flex; gap: 10px; margin: 20px 0; }
+        .grav-btn {
+            flex: 1; padding: 15px 5px; border: 2px solid #333; border-radius: 10px;
+            cursor: pointer; font-family: 'Orbitron'; font-size: 9px; font-weight: bold;
+            text-align: center; transition: 0.3s; opacity: 0.5;
+        }
+        .grav-btn.v { border-color: var(--neon-green); color: var(--neon-green); }
+        .grav-btn.a { border-color: var(--neon-yellow); color: var(--neon-yellow); }
+        .grav-btn.r { border-color: var(--neon-red); color: var(--neon-red); }
+        .grav-btn.active { opacity: 1; box-shadow: inset 0 0 15px currentColor, 0 0 15px currentColor; background: rgba(255,255,255,0.05); }
+
+        .btn-confirm {
+            width: 100%; padding: 18px; background: transparent; border: 2px solid var(--neon-cyan);
+            color: var(--neon-cyan); font-family: 'Orbitron'; cursor: pointer; border-radius: 10px;
+            font-weight: bold; text-transform: uppercase; transition: 0.4s; margin-top: 10px;
+        }
+        .btn-confirm:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 30px var(--neon-cyan); }
 
         .hidden { display: none; }
-        .back-link { display: block; margin-top: 20px; color: rgba(255,255,255,0.7); cursor: pointer; font-size: 12px; text-decoration: underline; }
+        .btn-reset { background: none; border: none; color: #555; font-size: 10px; margin-top: 25px; cursor: pointer; width: 100%; text-decoration: underline; }
     </style>
 </head>
 <body>
 
+<div class="tech-bg"></div>
+
 <header>
     <p class="logo-text">SANTANA DE PARNAÍBA</p>
-    <p class="sub-logo">C.M. Chácara das Garças • Sistema Integrado</p>
+    <div style="font-size: 10px; color: #666; font-weight: bold;">C.M. CHÁCARA DAS GARÇAS • TECH PORTAL</div>
 </header>
 
 <div class="container">
-    <div id="step-login" class="glass-card hidden">
-        <h2>IDENTIFICAÇÃO</h2>
-        <label>Gênero:</label>
-        <select id="user-gen">
-            <option value="Professor">Professor (Masculino)</option>
-            <option value="Professora">Professora (Feminino)</option>
-        </select>
-        <label>Nome do Professor:</label>
-        <input type="text" id="user-name" placeholder="Nome completo">
-        <label>Prontuário:</label>
-        <input type="text" id="user-id" placeholder="Digite seu prontuário">
-        <button class="btn-avancar" onclick="saveUser()">AVANÇAR</button>
+    <div id="scr_login" class="cyber-card">
+        <h2>System_Identity</h2>
+        <div class="field">
+            <label>Selecione seu Perfil</label>
+            <select id="user_gen">
+                <option value="Professor">♂ Professor</option>
+                <option value="Professora">♀ Professora</option>
+            </select>
+        </div>
+        <div class="field"><label>Nome_Completo</label><input type="text" id="user_name"></div>
+        <div class="field"><label>Prontuário_ID</label><input type="text" id="user_id"></div>
+        <button class="btn-confirm" onclick="init()">INICIAR PROTOCOLO</button>
     </div>
 
-    <div id="step-menu" class="glass-card hidden">
-        <h2 id="welcome-msg">OLÁ!</h2>
-        <button class="btn-menu" onclick="showTab('step-reserva')">📅 RESERVAR ITEM</button>
-        <button class="btn-menu" onclick="showTab('step-ti')" style="background: var(--azul-parnaiba);">🛠️ SUPORTE TI (KELVIN)</button>
-        <span class="back-link" onclick="localStorage.clear(); location.reload();">Trocar Usuário</span>
+    <div id="scr_menu" class="cyber-card hidden">
+        <h2 id="welc">MENU_LINK</h2>
+        <div class="main-menu">
+            <div class="menu-opt" onclick="go('scr_reserva')">
+                <span>01. RESERVAR ITEM</span>
+                <i>📅</i>
+            </div>
+            <div class="menu-opt" onclick="go('scr_ti')" style="border-color: var(--neon-green);">
+                <span style="color: var(--neon-green);">02. SUPORTE TI (KELVIN)</span>
+                <i>🛠️</i>
+            </div>
+        </div>
+        <button class="btn-reset" onclick="localStorage.clear(); location.reload();">LOGOUT_USER</button>
     </div>
 
-    <div id="step-reserva" class="glass-card hidden">
-        <h2>RESERVA</h2>
-        <label>O que deseja reservar?</label>
-        <select id="res-item">
-            <option>SALA DE INFORMÁTICA</option>
-            <option>CHROMEBOOKS</option>
-            <option>TV DIGITAL</option>
-        </select>
-        <label>Retirada (Início):</label>
-        <input type="datetime-local" id="res-start">
-        <label>Devolução (Entrega):</label>
-        <input type="datetime-local" id="res-end">
-        <button class="btn-avancar" onclick="submitReserva()">CONFIRMAR RESERVA</button>
-        <span class="back-link" onclick="showTab('step-menu')">← Voltar ao Menu</span>
+    <div id="scr_reserva" class="cyber-card hidden">
+        <h2>Reserve_Log</h2>
+        <div class="field">
+            <label>Hardware</label>
+            <select id="res_item"><option>🖥️ SALA DE INFORMÁTICA</option><option>💻 CHROMEBOOKS</option><option>📺 TV DIGITAL</option></select>
+        </div>
+        <div class="field"><label>Data_Retirada</label><input type="datetime-local" id="t1"></div>
+        <div class="field"><label>Data_Devolução</label><input type="datetime-local" id="t2"></div>
+        <button class="btn-confirm" onclick="doRes()">CONFIRMAR RESERVA</button>
+        <button class="btn-reset" onclick="go('scr_menu')">VOLTAR</button>
     </div>
 
-    <div id="step-ti" class="glass-card hidden">
-        <h2>SUPORTE TI</h2>
-        <p style="font-size: 12px; text-align: center; margin-bottom: 20px;">"Prazer, meu nome é Kelvin. Em que posso ajudar?"</p>
+    <div id="scr_ti" class="cyber-card hidden">
+        <h2>Support_Request</h2>
+        <p style="text-align:center; font-size:12px; color: var(--neon-green); margin-bottom: 20px;">"Olá, eu sou o Kelvin. Relate a falha do sistema."</p>
         
-        <label>Gravidade do Problema:</label>
-        <div class="grav-container">
-            <button class="grav-opt" id="g1" style="background: var(--verde);" onclick="setG('Verde', 'g1')">VERDE</button>
-            <button class="grav-opt" id="g2" style="background: var(--amarelo); color: black;" onclick="setG('Amarelo', 'g2')">AMARELO</button>
-            <button class="grav-opt" id="g3" style="background: var(--vermelho);" onclick="setG('Vermelho', 'g3')">VERMELHO</button>
+        <label>Nível de Gravidade</label>
+        <div class="gravity-panel">
+            <div class="grav-btn v" id="gv" onclick="setG('Verde','gv')">TRANQUILO</div>
+            <div class="grav-btn a" id="ga" onclick="setG('Amarelo','ga')">MÉDIO</div>
+            <div class="grav-btn r" id="gr" onclick="setG('Vermelho','gr')">URGENTE</div>
         </div>
 
-        <label>Sua Sala Atual:</label>
-        <input type="text" id="ti-sala" placeholder="Ex: Sala 04">
-        <label>Descrição do Problema:</label>
-        <textarea id="ti-desc" rows="3" style="width:100%; border-radius:12px; padding:10px; font-family:sans-serif;" placeholder="O que aconteceu?"></textarea>
+        <div class="field"><label>Localização_Sala</label><input type="text" id="ti_sala" placeholder="Ex: Sala 05"></div>
+        <div class="field"><label>Descrição_Erro</label><textarea id="ti_msg" rows="3"></textarea></div>
         
-        <button class="btn-avancar" onclick="submitTI()">ENVIAR CHAMADO</button>
-        <span class="back-link" onclick="showTab('step-menu')">← Voltar ao Menu</span>
+        <button class="btn-confirm" onclick="doTI()" style="border-color: var(--neon-green); color: var(--neon-green);">ENVIAR CHAMADO</button>
+        <button class="btn-reset" onclick="go('scr_menu')">VOLTAR</button>
     </div>
 </div>
 
@@ -146,54 +180,47 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    let gravSel = "";
-    let user = JSON.parse(localStorage.getItem('user_data_cm'));
+    let g_sel = "";
+    let user = JSON.parse(localStorage.getItem('user_sp'));
 
-    window.onload = () => {
-        if(user) { showTab('step-menu'); } else { showTab('step-login'); }
-    };
+    window.onload = () => { if(user) go('scr_menu'); };
 
-    window.showTab = (id) => {
-        document.querySelectorAll('.glass-card').forEach(c => c.classList.add('hidden'));
+    window.go = (id) => {
+        document.querySelectorAll('.cyber-card').forEach(c => c.classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
-        if(id === 'step-menu' && user) {
-            const saudacao = user.gen === 'Professor' ? "BEM-VINDO, PROF. " : "BEM-VINDA, PROFA. ";
-            document.getElementById('welcome-msg').innerText = saudacao + user.nome.split(' ')[0].toUpperCase();
+        if(id === 'scr_menu' && user) {
+            document.getElementById('welc').innerText = user.name.split(' ')[0].toUpperCase() + "_PORTAL";
         }
     };
 
-    window.saveUser = () => {
-        const n = document.getElementById('user-name').value;
-        const p = document.getElementById('user-id').value;
+    window.init = () => {
+        const n = document.getElementById('user_name').value;
+        const p = document.getElementById('user_id').value;
         if(n && p) {
-            user = { nome: n, pront: p, gen: document.getElementById('user-gen').value };
-            localStorage.setItem('user_data_cm', JSON.stringify(user));
-            showTab('step-menu');
-        } else { alert("Preencha seus dados!"); }
+            user = { name: n, id: p, gen: document.getElementById('user_gen').value };
+            localStorage.setItem('user_sp', JSON.stringify(user));
+            go('scr_menu');
+        }
     };
 
-    window.setG = (cor, id) => {
-        gravSel = cor;
-        document.querySelectorAll('.grav-opt').forEach(b => b.classList.remove('active'));
+    window.setG = (val, id) => {
+        g_sel = val;
+        document.querySelectorAll('.grav-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.add('active');
     };
 
-    window.submitReserva = () => {
-        const s = document.getElementById('res-start').value;
-        const e = document.getElementById('res-end').value;
-        if(!s || !e) return alert("Defina os horários!");
-        
-        set(push(ref(db, 'reservas')), { ...user, item: document.getElementById('res-item').value, inicio: s, entrega: e })
-        .then(() => { alert("Reservado com sucesso!"); showTab('step-menu'); });
+    window.doRes = () => {
+        const t1 = document.getElementById('t1').value, t2 = document.getElementById('t2').value;
+        if(!t1 || !t2) return alert("Defina os horários!");
+        set(push(ref(db, 'reservas')), { ...user, item: document.getElementById('res_item').value, start: t1, end: t2 })
+        .then(() => { alert("Reserva Confirmada!"); go('scr_menu'); });
     };
 
-    window.submitTI = () => {
-        const sala = document.getElementById('ti-sala').value;
-        const desc = document.getElementById('ti-desc').value;
-        if(!gravSel || !sala || !desc) return alert("Preencha todos os campos do suporte!");
-
-        set(push(ref(db, 'chamados_ti')), { ...user, sala: sala, problema: desc, gravidade: gravSel, data: new Date().toLocaleString() })
-        .then(() => { alert("Kelvin recebeu seu chamado!"); showTab('step-menu'); });
+    window.doTI = () => {
+        const s = document.getElementById('ti_sala').value, m = document.getElementById('ti_msg').value;
+        if(!g_sel || !s || !m) return alert("Preencha o suporte completo!");
+        set(push(ref(db, 'chamados_ti')), { ...user, sala: s, msg: m, urgencia: g_sel, data: new Date().toLocaleString() })
+        .then(() => { alert("Sinal enviado ao Kelvin!"); go('scr_menu'); });
     };
 </script>
 </body>
