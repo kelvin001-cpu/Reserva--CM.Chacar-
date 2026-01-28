@@ -10,70 +10,69 @@
         body { 
             margin: 0; font-family: 'Poppins', sans-serif; 
             background: url('https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop') no-repeat center center fixed;
-            background-size: cover; min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+            background-size: cover; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding-bottom: 50px;
         }
         body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 30, 60, 0.7); z-index: -1; }
 
         .glass-card { 
             background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; padding: 30px;
-            width: 90%; max-width: 400px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.5); margin-top: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; padding: 25px;
+            width: 90%; max-width: 500px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.5); margin-top: 30px;
         }
 
-        .logo-prefeitura { width: 180px; margin-bottom: 20px; filter: drop-shadow(0px 0px 5px white); }
-        
-        h1 { color: white; font-size: 18px; text-transform: uppercase; margin-bottom: 25px; letter-spacing: 1px; }
+        .logo-prefeitura { width: 150px; margin-bottom: 15px; filter: drop-shadow(0px 0px 5px white); }
+        h1, h2 { color: white; font-size: 16px; text-transform: uppercase; margin-bottom: 20px; }
 
-        .btn-google {
-            background: white; color: #444; padding: 12px 20px; border-radius: 8px; border: none;
-            font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 10px;
-            width: 100%; cursor: pointer; transition: 0.3s; margin-bottom: 10px;
-        }
-        .btn-google:hover { background: #f1f1f1; transform: scale(1.02); }
-
-        .hidden { display: none; }
-
-        /* Estilo dos Inputs e Seleção */
-        label { display: block; text-align: left; color: white; font-size: 12px; margin: 10px 0 5px; font-weight: 600; }
+        label { display: block; text-align: left; color: white; font-size: 11px; margin: 10px 0 5px; font-weight: 600; text-transform: uppercase; }
         input, select { 
             width: 100%; padding: 12px; border-radius: 8px; border: none; margin-bottom: 10px;
-            background: rgba(255, 255, 255, 0.9); box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.95); box-sizing: border-box; font-family: 'Poppins';
+        }
+
+        .btn-google {
+            background: white; color: #444; padding: 12px; border-radius: 8px; border: none;
+            font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 10px;
+            width: 100%; cursor: pointer; transition: 0.3s;
         }
 
         .btn-reservar {
             background: linear-gradient(135deg, var(--azul-pmsp), var(--azul-claro));
             color: white; border: none; padding: 15px; width: 100%; border-radius: 8px;
-            font-weight: bold; cursor: pointer; margin-top: 15px;
+            font-weight: bold; cursor: pointer; margin-top: 10px; text-transform: uppercase;
         }
+
+        /* Dashboard Table */
+        .dashboard-container { width: 95%; max-width: 800px; margin-top: 30px; }
+        table { width: 100%; border-collapse: collapse; color: white; font-size: 12px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        th { background: rgba(0,0,0,0.3); padding: 12px; text-align: left; }
+        td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
     <div id="loginSection" class="glass-card">
-        <img src="https://www.santanadeparnaiba.sp.gov.br/logo_parnaiba.png" alt="Logo Santana de Parnaíba" class="logo-prefeitura">
-        <h1>Sistema de Reservas</h1>
-        <p style="color: white; font-size: 13px; margin-bottom: 20px;">Utilize seu e-mail institucional para acessar.</p>
-        
+        <img src="https://www.santanadeparnaiba.sp.gov.br/logo_parnaiba.png" alt="Logo" class="logo-prefeitura">
+        <h1>Acesso ao Sistema</h1>
         <button class="btn-google" onclick="loginGoogle()">
             <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="20">
-            Entrar com Conta Google
+            Entrar com E-mail Institucional
         </button>
     </div>
 
     <div id="formSection" class="glass-card hidden">
-        <h2 id="welcomeMsg" style="color: white; font-size: 14px;">Olá, Professor</h2>
-        <hr style="opacity: 0.2;">
+        <h2 id="welcomeMsg">Olá, Professor</h2>
         
-        <label>Selecione a Turma:</label>
+        <label>Turma:</label>
         <select id="turma">
-            <option value="1º Ano A">1º Ano A</option>
-            <option value="2º Ano A">2º Ano A</option>
-            <option value="3º Ano A">3º Ano A</option>
-            <option value="4º Ano A">4º Ano A</option>
-            <option value="5º Ano A">5º Ano A</option>
+            <option value="1º Ano A">1º Ano A</option><option value="2º Ano A">2º Ano A</option>
+            <option value="3º Ano A">3º Ano A</option><option value="4º Ano A">4º Ano A</option>
+            <option value="5º Ano A">5º Ano A</option><option value="6º Ano A">6º Ano A</option>
+            <option value="7º Ano A">7º Ano A</option><option value="8º Ano A">8º Ano A</option>
+            <option value="9º Ano A">9º Ano A</option>
         </select>
 
-        <label>O que deseja reservar?</label>
+        <label>Equipamento ou Sala:</label>
         <select id="equipamento" onchange="checkEquip()">
             <option value="SALA DE INFORMÁTICA">SALA DE INFORMÁTICA</option>
             <option value="CHROMEBOOKS">CARRINHO DE CHROMEBOOKS</option>
@@ -81,21 +80,38 @@
         </select>
 
         <div id="patArea" class="hidden">
-            <label>Número do Patrimônio (Apenas para TV):</label>
-            <input type="text" id="patrimonio" placeholder="Ex: 230180">
+            <label>Nº Patrimônio:</label>
+            <input type="text" id="patrimonio" placeholder="Digite o patrimônio da TV">
         </div>
 
-        <label>Horário Retirada:</label>
+        <label>Data e Horário:</label>
         <input type="datetime-local" id="hInicio">
 
-        <button class="btn-reservar" onclick="salvarReserva()">CONFIRMAR RESERVA</button>
-        <button onclick="logout()" style="background:none; border:none; color:white; font-size:11px; margin-top:15px; cursor:pointer; text-decoration:underline;">Sair da conta</button>
+        <button class="btn-reservar" onclick="salvarReserva()">Confirmar Reserva</button>
+        <button onclick="logout()" style="color:rgba(255,255,255,0.6); background:none; border:none; margin-top:15px; font-size:10px; cursor:pointer;">Sair da Conta Google</button>
+    </div>
+
+    <div id="dashSection" class="dashboard-container hidden">
+        <h2 style="text-align: center;">Monitoramento em Tempo Real</h2>
+        <div class="glass-card" style="width:100%; max-width:100%; padding:10px;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Professor</th>
+                        <th>Item</th>
+                        <th>Turma</th>
+                        <th>Data/Hora</th>
+                    </tr>
+                </thead>
+                <tbody id="listaReservas"></tbody>
+            </table>
+        </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBoGFDKz-nBwKvczGpxg-fHJYdVykcBUQ",
@@ -112,25 +128,29 @@
         const db = getDatabase(app);
         const provider = new GoogleAuthProvider();
 
-        let usuarioLogado = null;
+        // PERSISTÊNCIA: Faz o login durar para sempre no aparelho
+        setPersistence(auth, browserLocalPersistence);
+
+        let userAtual = null;
 
         window.loginGoogle = () => {
-            signInWithPopup(auth, provider).then((result) => {
-                // Login feito com sucesso
-            }).catch((error) => alert("Erro ao logar: " + error.message));
+            signInWithPopup(auth, provider).catch(e => alert("Erro: " + e.message));
         };
 
-        window.logout = () => signOut(auth);
+        window.logout = () => signOut(auth).then(() => location.reload());
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                usuarioLogado = user;
+                userAtual = user;
                 document.getElementById('loginSection').classList.add('hidden');
                 document.getElementById('formSection').classList.remove('hidden');
-                document.getElementById('welcomeMsg').innerText = "Bem-vindo, " + user.displayName;
+                document.getElementById('dashSection').classList.remove('hidden');
+                document.getElementById('welcomeMsg').innerText = "Olá, " + user.displayName;
+                carregarDashboard();
             } else {
                 document.getElementById('loginSection').classList.remove('hidden');
                 document.getElementById('formSection').classList.add('hidden');
+                document.getElementById('dashSection').classList.add('hidden');
             }
         });
 
@@ -140,26 +160,36 @@
         };
 
         window.salvarReserva = () => {
-            const turma = document.getElementById('turma').value;
-            const equip = document.getElementById('equipamento').value;
-            const pat = document.getElementById('patrimonio').value;
-            const hora = document.getElementById('hInicio').value;
+            const h = document.getElementById('hInicio').value;
+            if(!h) return alert("Escolha o horário!");
 
-            if(!hora) return alert("Selecione o horário!");
-
-            const novaRef = push(ref(db, 'reservas'));
-            set(novaRef, {
-                professor: usuarioLogado.displayName,
-                email: usuarioLogado.email,
-                turma: turma,
-                equipamento: equip,
-                patrimonio: equip === 'TV DIGITAL' ? pat : "N/A",
-                data: new Date(hora).toLocaleString('pt-BR')
-            }).then(() => {
-                alert("Reserva concluída com sucesso!");
-                location.reload();
-            });
+            const nova = push(ref(db, 'reservas'));
+            set(nova, {
+                prof: userAtual.displayName,
+                equip: document.getElementById('equipamento').value,
+                turma: document.getElementById('turma').value,
+                pat: document.getElementById('equipamento').value === 'TV DIGITAL' ? document.getElementById('patrimonio').value : '-',
+                data: new Date(h).toLocaleString('pt-BR')
+            }).then(() => alert("Reserva Feita!"));
         };
+
+        function carregarDashboard() {
+            onValue(ref(db, 'reservas'), (snapshot) => {
+                const tbody = document.getElementById('listaReservas');
+                tbody.innerHTML = "";
+                snapshot.forEach((item) => {
+                    const r = item.val();
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${r.prof.split(' ')[0]}</td>
+                            <td>${r.equip}</td>
+                            <td>${r.turma}</td>
+                            <td>${r.data}</td>
+                        </tr>
+                    `;
+                });
+            });
+        }
     </script>
 </body>
 </html>
