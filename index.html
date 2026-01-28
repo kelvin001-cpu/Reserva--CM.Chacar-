@@ -3,224 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal de Reservas - Chácara das Garças</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <title>Reserva de Equipamentos - Santana de Parnaíba</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --azul-parnaiba: #0056a2; --azul-claro: #00adef; --branco: rgba(255, 255, 255, 0.85); }
-        
+        :root { --azul-pmsp: #0056a2; --azul-claro: #00adef; }
         body { 
             margin: 0; font-family: 'Poppins', sans-serif; 
-            background: url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
-            background-size: cover; min-height: 100vh;
+            background: url('https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover; min-height: 100vh; display: flex; flex-direction: column; align-items: center;
         }
+        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 30, 60, 0.7); z-index: -1; }
 
-        /* Camada de cor sobre o fundo para dar contraste */
-        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 40, 80, 0.6); z-index: -1; }
-
-        header { background: white; padding: 15px; text-align: center; border-bottom: 5px solid var(--azul-claro); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .logo-text { font-family: 'Montserrat', sans-serif; color: var(--azul-parnaiba); font-size: 20px; text-transform: uppercase; margin: 0; }
-
-        .container { max-width: 480px; margin: 25px auto; padding: 0 20px; }
-
-        /* Cartão Transparente (Efeito Vidro) */
         .glass-card { 
-            background: rgba(255, 255, 255, 0.2); 
-            backdrop-filter: blur(15px); /* Desfoque do fundo */
-            -webkit-backdrop-filter: blur(15px);
-            border-radius: 25px; 
-            padding: 25px; 
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; padding: 30px;
+            width: 90%; max-width: 400px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.5); margin-top: 50px;
         }
 
-        h2 { color: white; text-align: center; font-size: 17px; text-transform: uppercase; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; }
-        label { display: block; margin: 12px 0 5px 5px; color: white; font-weight: 600; font-size: 13px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
+        .logo-prefeitura { width: 180px; margin-bottom: 20px; filter: drop-shadow(0px 0px 5px white); }
         
-        input, select { 
-            width: 100%; padding: 12px; border-radius: 10px; border: none; 
-            background: rgba(255, 255, 255, 0.9); font-family: 'Poppins'; 
-            box-sizing: border-box; font-size: 14px; 
-        }
+        h1 { color: white; font-size: 18px; text-transform: uppercase; margin-bottom: 25px; letter-spacing: 1px; }
 
-        .grid-menu { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; }
-
-        /* Itens do Menu Transparentes */
-        .opt-item { 
-            background: rgba(255, 255, 255, 0.15); 
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 15px; border-radius: 12px; text-align: center; 
-            cursor: pointer; font-weight: 600; color: white; transition: 0.3s; 
+        .btn-google {
+            background: white; color: #444; padding: 12px 20px; border-radius: 8px; border: none;
+            font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 10px;
+            width: 100%; cursor: pointer; transition: 0.3s; margin-bottom: 10px;
         }
-        .opt-item.active { background: var(--azul-claro); color: white; border-color: white; box-shadow: 0 0 15px var(--azul-claro); }
+        .btn-google:hover { background: #f1f1f1; transform: scale(1.02); }
 
-        .btn-enviar { 
-            width: 100%; padding: 16px; margin-top: 25px; border-radius: 10px; border: none; 
-            background: linear-gradient(135deg, var(--azul-parnaiba), var(--azul-claro)); 
-            color: white; font-family: 'Montserrat'; font-size: 15px; cursor: pointer; font-weight: bold; 
-        }
         .hidden { display: none; }
-        .btn-finalizar { background: #ff4757; color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; cursor: pointer; font-weight: bold; margin-top: 20px; }
-        
-        #infoReserva { color: white; line-height: 1.8; }
+
+        /* Estilo dos Inputs e Seleção */
+        label { display: block; text-align: left; color: white; font-size: 12px; margin: 10px 0 5px; font-weight: 600; }
+        input, select { 
+            width: 100%; padding: 12px; border-radius: 8px; border: none; margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.9); box-sizing: border-box;
+        }
+
+        .btn-reservar {
+            background: linear-gradient(135deg, var(--azul-pmsp), var(--azul-claro));
+            color: white; border: none; padding: 15px; width: 100%; border-radius: 8px;
+            font-weight: bold; cursor: pointer; margin-top: 15px;
+        }
     </style>
 </head>
 <body>
 
-<header>
-    <p class="logo-text">SANTANA DE PARNAÍBA</p>
-    <p style="margin:0; color:#666; font-size:11px;">C.M. Chácara das Garças • Reservas Manhã</p>
-</header>
-
-<div class="container">
-    <div id="loginArea" class="glass-card">
-        <h2>IDENTIFICAÇÃO</h2>
-        <label>Nome do Professor:</label>
-        <input type="text" id="profNome" placeholder="Nome completo">
-        <label>Prontuário:</label>
-        <input type="text" id="profPront" placeholder="Digite seu prontuário">
-        <label>Matéria:</label>
-        <input type="text" id="materia" placeholder="Ex: Matemática">
-        <button class="btn-enviar" onclick="proximo()">AVANÇAR</button>
+    <div id="loginSection" class="glass-card">
+        <img src="https://www.santanadeparnaiba.sp.gov.br/logo_parnaiba.png" alt="Logo Santana de Parnaíba" class="logo-prefeitura">
+        <h1>Sistema de Reservas</h1>
+        <p style="color: white; font-size: 13px; margin-bottom: 20px;">Utilize seu e-mail institucional para acessar.</p>
+        
+        <button class="btn-google" onclick="loginGoogle()">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="20">
+            Entrar com Conta Google
+        </button>
     </div>
 
-    <div id="reservaArea" class="glass-card hidden">
-        <h2>DETALHES DA RESERVA</h2>
+    <div id="formSection" class="glass-card hidden">
+        <h2 id="welcomeMsg" style="color: white; font-size: 14px;">Olá, Professor</h2>
+        <hr style="opacity: 0.2;">
         
         <label>Selecione a Turma:</label>
         <select id="turma">
-            <option value="1º Ano A">1º Ano A</option><option value="2º Ano A">2º Ano A</option>
-            <option value="3º Ano A">3º Ano A</option><option value="4º Ano A">4º Ano A</option>
-            <option value="5º Ano A">5º Ano A</option><option value="6º Ano A">6º Ano A</option>
-            <option value="7º Ano A">7º Ano A</option><option value="8º Ano A">8º Ano A</option>
-            <option value="9º Ano A">9º Ano A</option>
+            <option value="1º Ano A">1º Ano A</option>
+            <option value="2º Ano A">2º Ano A</option>
+            <option value="3º Ano A">3º Ano A</option>
+            <option value="4º Ano A">4º Ano A</option>
+            <option value="5º Ano A">5º Ano A</option>
         </select>
 
         <label>O que deseja reservar?</label>
-        <div class="grid-menu">
-            <div class="opt-item" onclick="setEscoha('SALA DE INFORMÁTICA', this)">🖥️ SALA DE INFORMÁTICA</div>
-            <div class="opt-item" onclick="setEscoha('CHROMEBOOKS', this)">💻 CHROMEBOOKS</div>
-            <div class="opt-item" onclick="setEscoha('TV DIGITAL', this)">📺 TV DIGITAL</div>
+        <select id="equipamento" onchange="checkEquip()">
+            <option value="SALA DE INFORMÁTICA">SALA DE INFORMÁTICA</option>
+            <option value="CHROMEBOOKS">CARRINHO DE CHROMEBOOKS</option>
+            <option value="TV DIGITAL">TV DIGITAL</option>
+        </select>
+
+        <div id="patArea" class="hidden">
+            <label>Número do Patrimônio (Apenas para TV):</label>
+            <input type="text" id="patrimonio" placeholder="Ex: 230180">
         </div>
 
-        <div id="areaPatrimonio" class="hidden">
-            <label>Nº de Patrimônio da TV:</label>
-            <input type="text" id="patrimonio" placeholder="Digite o patrimônio da TV">
-        </div>
-
-        <div id="chromeOpcoes" class="hidden">
-            <label>Tipo de Retirada:</label>
-            <select id="tipoChrome" onchange="toggleQtd()">
-                <option value="Carrinho Completo">Carrinho Completo</option>
-                <option value="Unidades">Por Unidade</option>
-            </select>
-            <div id="campoQtd" class="hidden">
-                <label>Quantidade:</label>
-                <input type="number" id="qtdUni" placeholder="Ex: 10">
-            </div>
-        </div>
-
-        <label>Horário de Retirada:</label>
+        <label>Horário Retirada:</label>
         <input type="datetime-local" id="hInicio">
-        <label>Horário de Entrega:</label>
-        <input type="datetime-local" id="hFim">
 
-        <button class="btn-enviar" onclick="confirmar()">FINALIZAR AGENDAMENTO</button>
+        <button class="btn-reservar" onclick="salvarReserva()">CONFIRMAR RESERVA</button>
+        <button onclick="logout()" style="background:none; border:none; color:white; font-size:11px; margin-top:15px; cursor:pointer; text-decoration:underline;">Sair da conta</button>
     </div>
 
-    <div id="finalArea" class="glass-card hidden">
-        <h2>RESERVA CONFIRMADA</h2>
-        <div id="infoReserva"></div>
-        <button class="btn-finalizar" onclick="liberar()">CONCLUIR E LIBERAR</button>
-    </div>
-</div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, push, set, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        const firebaseConfig = {
+            apiKey: "AIzaSyBoGFDKz-nBwKvczGpxg-fHJYdVykcBUQ",
+            authDomain: "escala-chacara.firebaseapp.com",
+            databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com",
+            projectId: "escala-chacara",
+            storageBucket: "escala-chacara.firebasestorage.app",
+            messagingSenderId: "741259231706",
+            appId: "1:741259231706:web:27e2b60be100e6a34180e3"
+        };
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyBoGFDKz-nBwKvczGpxg-fHJYdVykcBUQ",
-        authDomain: "escala-chacara.firebaseapp.com",
-        databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com",
-        projectId: "escala-chacara",
-        storageBucket: "escala-chacara.firebasestorage.app",
-        messagingSenderId: "741259231706",
-        appId: "1:741259231706:web:27e2b60be100e6a34180e3"
-    };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+        const provider = new GoogleAuthProvider();
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+        let usuarioLogado = null;
 
-    let dadosUser = {};
-    let localSel = "";
-    let rID = "";
+        window.loginGoogle = () => {
+            signInWithPopup(auth, provider).then((result) => {
+                // Login feito com sucesso
+            }).catch((error) => alert("Erro ao logar: " + error.message));
+        };
 
-    window.proximo = () => {
-        dadosUser = { n: document.getElementById('profNome').value, p: document.getElementById('profPront').value, m: document.getElementById('materia').value };
-        if(dadosUser.n && dadosUser.p && dadosUser.m) {
-            document.getElementById('loginArea').classList.add('hidden');
-            document.getElementById('reservaArea').classList.remove('hidden');
-        } else { alert("Preencha todos os campos!"); }
-    };
+        window.logout = () => signOut(auth);
 
-    window.setEscoha = (item, el) => {
-        localSel = item;
-        document.querySelectorAll('.opt-item').forEach(i => i.classList.remove('active'));
-        el.classList.add('active');
-        
-        const areaPat = document.getElementById('areaPatrimonio');
-        if(item === 'TV DIGITAL') {
-            areaPat.classList.remove('hidden');
-            document.getElementById('patrimonio').value = "";
-        } else {
-            areaPat.classList.add('hidden');
-            document.getElementById('patrimonio').value = "N/A";
-        }
-        
-        document.getElementById('chromeOpcoes').classList.toggle('hidden', item !== 'CHROMEBOOKS');
-    };
-
-    window.toggleQtd = () => {
-        const t = document.getElementById('tipoChrome').value;
-        document.getElementById('campoQtd').classList.toggle('hidden', t !== 'Unidades');
-    };
-
-    window.confirmar = () => {
-        const turma = document.getElementById('turma').value;
-        const pat = document.getElementById('patrimonio').value;
-        const hi = document.getElementById('hInicio').value;
-        const hf = document.getElementById('hFim').value;
-        
-        if(!localSel || !hi || !hf || (localSel === 'TV DIGITAL' && !pat)) return alert("Preencha tudo!");
-
-        let equipFinal = localSel;
-        if(localSel === 'CHROMEBOOKS') {
-            const t = document.getElementById('tipoChrome').value;
-            equipFinal = t === 'Unidades' ? `CHROMEBOOKS (${document.getElementById('qtdUni').value} un)` : "CHROMEBOOKS (Carrinho)";
-        }
-
-        const nova = push(ref(db, 'reservas'));
-        rID = nova.key;
-
-        set(nova, {
-            prof: dadosUser.n, pront: dadosUser.p, mat: dadosUser.m,
-            patrimonio: pat, turma: turma, equipamento: equipFinal,
-            inicio: new Date(hi).toLocaleString('pt-BR'),
-            entrega: new Date(hf).toLocaleString('pt-BR')
-        }).then(() => {
-            document.getElementById('reservaArea').classList.add('hidden');
-            document.getElementById('finalArea').classList.remove('hidden');
-            document.getElementById('infoReserva').innerHTML = `
-                <p><strong>Item:</strong> ${equipFinal}</p>
-                <p><strong>Professor:</strong> ${dadosUser.n}</p>
-                <p><strong>Turma:</strong> ${turma}</p>
-            `;
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                usuarioLogado = user;
+                document.getElementById('loginSection').classList.add('hidden');
+                document.getElementById('formSection').classList.remove('hidden');
+                document.getElementById('welcomeMsg').innerText = "Bem-vindo, " + user.displayName;
+            } else {
+                document.getElementById('loginSection').classList.remove('hidden');
+                document.getElementById('formSection').classList.add('hidden');
+            }
         });
-    };
 
-    window.liberar = () => {
-        if(confirm("Confirmar entrega?")) remove(ref(db, 'reservas/' + rID)).then(() => location.reload());
-    };
-</script>
+        window.checkEquip = () => {
+            const e = document.getElementById('equipamento').value;
+            document.getElementById('patArea').classList.toggle('hidden', e !== 'TV DIGITAL');
+        };
+
+        window.salvarReserva = () => {
+            const turma = document.getElementById('turma').value;
+            const equip = document.getElementById('equipamento').value;
+            const pat = document.getElementById('patrimonio').value;
+            const hora = document.getElementById('hInicio').value;
+
+            if(!hora) return alert("Selecione o horário!");
+
+            const novaRef = push(ref(db, 'reservas'));
+            set(novaRef, {
+                professor: usuarioLogado.displayName,
+                email: usuarioLogado.email,
+                turma: turma,
+                equipamento: equip,
+                patrimonio: equip === 'TV DIGITAL' ? pat : "N/A",
+                data: new Date(hora).toLocaleString('pt-BR')
+            }).then(() => {
+                alert("Reserva concluída com sucesso!");
+                location.reload();
+            });
+        };
+    </script>
 </body>
 </html>
