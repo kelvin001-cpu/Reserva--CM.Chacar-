@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TECH ADM - Controlo de Fluxo</title>
+    <title>TECH ADM - Acesso Restrito</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         :root { --neon-blue: #00f3ff; --neon-red: #ff0055; --dark-card: rgba(20, 22, 30, 0.9); }
@@ -11,6 +11,7 @@
         body { 
             margin: 0; font-family: 'Rajdhani', sans-serif; background: #0a0b10; color: white;
             background-image: linear-gradient(180deg, #0a0b10 0%, #161822 100%); min-height: 100vh;
+            display: flex; flex-direction: column;
         }
 
         header { 
@@ -20,7 +21,25 @@
 
         h1 { font-family: 'Orbitron', sans-serif; color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); margin: 0; }
 
-        .container { max-width: 900px; margin: 30px auto; padding: 0 20px; }
+        .container { max-width: 900px; margin: 30px auto; padding: 0 20px; width: 100%; box-sizing: border-box; }
+
+        /* Estilo da Tela de Login */
+        .login-box {
+            background: var(--dark-card); border: 1px solid var(--neon-blue); border-radius: 15px;
+            padding: 40px; max-width: 400px; margin: 100px auto; text-align: center;
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.1);
+        }
+        .login-box input {
+            width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid var(--neon-blue);
+            color: white; border-radius: 8px; font-family: 'Rajdhani'; font-size: 16px; box-sizing: border-box;
+        }
+        .btn-login {
+            width: 100%; padding: 15px; background: var(--neon-blue); color: black; border: none;
+            border-radius: 8px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; margin-top: 10px;
+        }
+
+        /* Painel escondido inicialmente */
+        #painelConteudo { display: none; }
 
         .status-panel { 
             background: var(--dark-card); border: 1px solid var(--neon-blue); border-radius: 15px;
@@ -33,7 +52,6 @@
         }
         .btn-on { background: #28a745; color: white; box-shadow: 0 0 10px #28a745; }
         .btn-off { background: var(--neon-red); color: white; box-shadow: 0 0 10px var(--neon-red); }
-        .btn:hover { transform: scale(1.1); filter: brightness(1.2); }
 
         .table-container { 
             background: var(--dark-card); border: 1px solid rgba(255,255,255,0.1); 
@@ -58,7 +76,16 @@
         <h1>SANTANA TECH ADM</h1>
     </header>
 
-    <div class="container">
+    <div id="telaLogin" class="login-box">
+        <h2 style="font-family:'Orbitron'; color:var(--neon-blue); font-size:18px;">AUTENTICAÇÃO ADM</h2>
+        <input type="text" id="user" placeholder="Nome de Usuário">
+        <input type="text" id="pront" placeholder="Prontuário">
+        <input type="password" id="pass" placeholder="Senha de Segurança">
+        <button class="btn-login" onclick="validar()">ENTRAR NO SISTEMA</button>
+        <p id="erro" style="color:var(--neon-red); font-size:12px; margin-top:15px; display:none;">CREDENCIAIS INVÁLIDAS!</p>
+    </div>
+
+    <div id="painelConteudo" class="container">
         <div class="status-panel">
             <span style="font-family: 'Orbitron'; font-size: 14px;">ESTADO DO PORTAL:</span>
             <button class="btn btn-on" onclick="setPortal(true)">ATIVAR SISTEMA</button>
@@ -75,10 +102,10 @@
                         <th>Ação</th>
                     </tr>
                 </thead>
-                <tbody id="liveData">
-                    </tbody>
+                <tbody id="liveData"></tbody>
             </table>
         </div>
+        <button onclick="location.reload()" style="margin-top:20px; background:none; border:none; color:#555; cursor:pointer; width:100%;">ENCERRAR SESSÃO</button>
     </div>
 
 <script type="module">
@@ -98,31 +125,55 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    window.setPortal = (v) => set(ref(db, 'ativo'), v).then(() => alert("Comando de Rede Executado!"));
-    window.limpar = (id) => remove(ref(db, 'reservas/' + id));
+    // DADOS DE ACESSO QUE VOCÊ PEDIU
+    const credenciais = {
+        u: "kelvin",
+        p: "46690",
+        s: "2683503205"
+    };
 
-    onValue(ref(db, 'reservas'), (snap) => {
-        const body = document.getElementById('liveData');
-        body.innerHTML = "";
-        const lista = snap.val();
-        
-        for(let id in lista) {
-            const r = lista[id];
-            // r.equipamento agora contém a sala ou o item específico
-            body.innerHTML += `
-                <tr>
-                    <td><span class="highlight">${r.prof}</span></td>
-                    <td>${r.equipamento}</td>
-                    <td>
-                        <span class="time-tag">${r.inicio.split(' ')[1]}</span> 
-                        <span style="color:#555">➔</span> 
-                        <span class="finish-tag">${r.termino.split(' ')[1]}</span>
-                    </td>
-                    <td><button class="btn-action" onclick="limpar('${id}')">LIBERAR</button></td>
-                </tr>
-            `;
+    window.validar = () => {
+        const uInput = document.getElementById('user').value.toLowerCase();
+        const pInput = document.getElementById('pront').value;
+        const sInput = document.getElementById('pass').value;
+
+        if(uInput === credenciais.u && pInput === credenciais.p && sInput === credenciais.s) {
+            document.getElementById('telaLogin').style.display = 'none';
+            document.getElementById('painelConteudo').style.display = 'block';
+            iniciarMonitoramento();
+        } else {
+            document.getElementById('erro').style.display = 'block';
         }
-    });
+    };
+
+    function iniciarMonitoramento() {
+        onValue(ref(db, 'reservas'), (snap) => {
+            const body = document.getElementById('liveData');
+            body.innerHTML = "";
+            const lista = snap.val();
+            for(let id in lista) {
+                const r = lista[id];
+                body.innerHTML += `
+                    <tr>
+                        <td><span class="highlight">${r.prof}</span></td>
+                        <td>${r.local || r.equipamento}</td>
+                        <td>
+                            <span class="time-tag">${r.inicio.split(' ')[1] || r.inicio}</span> 
+                            <span style="color:#555">➔</span> 
+                            <span class="finish-tag">${r.entrega ? r.entrega.split(' ')[1] : r.termino.split(' ')[1]}</span>
+                        </td>
+                        <td><button class="btn-action" onclick="limpar('${id}')">LIBERAR</button></td>
+                    </tr>`;
+            }
+        });
+    }
+
+    window.setPortal = (v) => set(ref(db, 'ativo'), v).then(() => alert("Comando de Rede Executado!"));
+    window.limpar = (id) => {
+        if(confirm("Deseja confirmar a liberação manual?")) {
+            remove(ref(db, 'reservas/' + id));
+        }
+    };
 </script>
 </body>
-</html> 
+</html>
