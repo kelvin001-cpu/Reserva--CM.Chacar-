@@ -3,114 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reserva - Chácara das Garças</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Montserrat:wght@700&family=Orbitron:wght@500&display=swap" rel="stylesheet">
+    <title>Portal Tech - Chácara das Garças</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Montserrat:wght@700&family=Orbitron:wght@500&display=swap" rel="stylesheet">
     <style>
-        :root { --azul-claro: #00adef; --azul-escuro: #0056a2; --cinza-fundo: #f4f7f9; }
+        :root { --azul-sp: #0056a2; --azul-celeste: #00adef; --neon-green: #00ff9d; --neon-red: #ff4757; }
+        body { margin: 0; font-family: 'Poppins', sans-serif; background: #000b1a; color: white; min-height: 100vh; overflow-x: hidden; }
+        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(0,86,162,0.15) 0%, rgba(0,0,0,1) 100%); z-index: -1; }
         
-        body { margin: 0; font-family: 'Poppins', sans-serif; background-color: var(--cinza-fundo); color: #333; }
+        header { background: white; padding: 15px; text-align: center; border-bottom: 5px solid var(--azul-celeste); box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .logo-text { font-family: 'Montserrat', sans-serif; color: var(--azul-sp); font-size: 16px; text-transform: uppercase; margin: 0; }
 
-        header { background: white; padding: 15px; text-align: center; border-bottom: 4px solid var(--azul-claro); box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .logo-text { font-family: 'Montserrat', sans-serif; color: var(--azul-escuro); font-size: 18px; text-transform: uppercase; margin: 0; }
-        .sub-logo { font-size: 11px; color: #777; font-weight: bold; }
-
-        .container { max-width: 450px; margin: 20px auto; padding: 0 15px; }
-
-        /* Estilo Identificação (Glassmorphism) */
-        .glass-card { 
-            background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px);
-            border-radius: 20px; padding: 25px; border: 1px solid rgba(255,255,255,0.3);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
-
-        /* Títulos e Labels estilo imagem */
-        h2 { text-align: center; font-size: 16px; text-transform: uppercase; color: #444; border-bottom: 2px solid #ddd; padding-bottom: 10px; margin-bottom: 20px; }
-        .label-azul { display: block; color: var(--azul-escuro); font-weight: 700; font-size: 13px; margin: 15px 0 8px 0; }
-
-        /* Botões de Seleção (Igual à Foto) */
-        .btn-equip {
-            width: 100%; background: #f8f9fa; border: 2px solid #e0e0e0; border-radius: 12px;
-            padding: 18px; margin-bottom: 12px; font-weight: 700; color: #555;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            cursor: pointer; transition: 0.2s; font-size: 14px;
-        }
-        .btn-equip.active { background: var(--azul-escuro); color: white; border-color: var(--azul-escuro); }
-        .btn-equip.busy { background: #ffebee; color: #c62828; border-color: #ffcdd2; cursor: not-allowed; }
-
-        /* Inputs Estilizados */
-        input, select { 
-            width: 100%; padding: 14px; border-radius: 10px; border: 1px solid #ccc; 
-            background: white; font-family: 'Poppins'; box-sizing: border-box; font-size: 14px;
-        }
-
-        .btn-confirmar {
-            width: 100%; background: var(--azul-claro); color: white; border: none;
-            padding: 18px; border-radius: 12px; font-weight: 700; font-size: 15px;
-            text-transform: uppercase; margin-top: 25px; cursor: pointer; box-shadow: 0 4px 12px rgba(0, 173, 239, 0.3);
-        }
-
-        /* Cronômetro Digital */
-        .timer-box { font-family: 'Orbitron', sans-serif; font-size: 32px; text-align: center; color: #2ecc71; margin: 20px 0; }
+        .container { max-width: 450px; margin: 20px auto; padding: 0 20px; }
+        .glass { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(20px); border-radius: 25px; padding: 25px; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         
+        h2 { text-align: center; font-size: 14px; text-transform: uppercase; color: var(--azul-celeste); letter-spacing: 2px; margin-bottom: 20px; }
+        label { display: block; margin: 15px 0 5px 5px; font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--azul-celeste); }
+        
+        input, select { width: 100%; padding: 14px; border-radius: 12px; border: none; background: #fff; font-size: 14px; color: #333; margin-bottom: 10px; }
+
+        /* Estilo dos Equipamentos no Menu */
+        .equip-card { 
+            background: white; color: var(--azul-sp); padding: 20px; border-radius: 15px; 
+            margin-bottom: 12px; cursor: pointer; transition: 0.3s; position: relative;
+            display: flex; flex-direction: column; align-items: center; font-weight: bold;
+            border: 2px solid transparent;
+        }
+        .equip-card.busy { background: #ffebee; color: var(--neon-red); border-color: var(--neon-red); cursor: not-allowed; opacity: 0.9; }
+        .equip-card.active { border-color: var(--azul-celeste); box-shadow: 0 0 15px var(--azul-celeste); }
+        
+        .status-badge { font-size: 10px; text-transform: uppercase; padding: 4px 8px; border-radius: 20px; margin-top: 5px; }
+        .status-free { background: var(--neon-green); color: #000; }
+        .status-busy { background: var(--neon-red); color: #fff; }
+
+        .btn-main { width: 100%; padding: 18px; margin-top: 20px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--azul-sp), var(--azul-celeste)); color: white; font-weight: bold; text-transform: uppercase; cursor: pointer; }
+        .btn-cancel { background: none; border: 1px solid white; margin-top: 10px; font-size: 12px; }
+
         .hidden { display: none; }
+        
+        /* Cronômetro na tela de uso */
+        .timer-box { font-family: 'Orbitron', sans-serif; font-size: 30px; text-align: center; color: var(--neon-green); margin: 20px 0; text-shadow: 0 0 10px var(--neon-green); }
     </style>
 </head>
 <body>
 
 <header>
     <p class="logo-text">SANTANA DE PARNAÍBA</p>
-    <div class="sub-logo">C.M. Chácara das Garças • Reservas</div>
+    <div style="font-size: 10px; color: #666;">C.M. CHÁCARA DAS GARÇAS • RESERVAS</div>
 </header>
 
 <div class="container">
-    <div id="scr_login" class="glass-card">
+    <div id="scr_login" class="glass">
         <h2>IDENTIFICAÇÃO</h2>
-        <label class="label-azul">Sou:</label>
-        <select id="u_gen"><option>Professor</option><option>Professora</option></select>
-        <label class="label-azul">Nome do Professor:</label>
-        <input type="text" id="u_nome" placeholder="Nome completo">
-        <label class="label-azul">Prontuário:</label>
-        <input type="text" id="u_id" placeholder="Digite seu prontuário">
-        <button class="btn-confirmar" onclick="app.login()">AVANÇAR</button>
+        <select id="u_gen"><option value="Professor">Professor</option><option value="Professora">Professora</option></select>
+        <input type="text" id="u_nome" placeholder="Seu nome completo">
+        <input type="text" id="u_pront" placeholder="Prontuário">
+        <button class="btn-main" onclick="app.login()">ACESSAR</button>
     </div>
 
-    <div id="scr_reserva" class="hidden">
-        <div class="glass-card">
-            <h2 id="welcome_msg">DETALHES DA RESERVA</h2>
-            
-            <label class="label-azul">Turma:</label>
-            <select id="r_turma">
-                <option>1º Ano A</option><option>2º Ano A</option><option>3º Ano A</option>
-                <option>9º Ano A</option>
-            </select>
-
-            <label class="label-azul">O que deseja reservar?</label>
-            <div id="lista_btns">
-                <div class="btn-equip" id="btn_SALA" onclick="app.selectItem('SALA DE INFORMÁTICA', 'btn_SALA')">🖥️ SALA DE INFORMÁTICA</div>
-                <div class="btn-equip" id="btn_CHROME" onclick="app.selectItem('CHROMEBOOKS', 'btn_CHROME')">💻 CHROMEBOOKS</div>
-                <div class="btn-equip" id="btn_TV" onclick="app.selectItem('TV DIGITAL', 'btn_TV')">📺 TV DIGITAL</div>
+    <div id="scr_menu" class="glass hidden">
+        <h2 id="txt_ola">EQUIPAMENTOS</h2>
+        
+        <div id="lista_equipamentos">
+            <div class="equip-card" id="card_SALA" onclick="app.selectEquip('SALA DE INFORMÁTICA')">
+                <span>🖥️ SALA DE INFORMÁTICA</span>
+                <div id="st_SALA" class="status-badge status-free">Disponível</div>
             </div>
 
-            <label class="label-azul">Nº de Patrimônio (Ex: 230180):</label>
-            <input type="text" id="r_pat" placeholder="Digite o patrimônio do item">
+            <div class="equip-card" id="card_CHROME" onclick="app.selectEquip('CHROMEBOOKS')">
+                <span>💻 CHROMEBOOKS</span>
+                <div id="st_CHROME" class="status-badge status-free">Disponível</div>
+            </div>
 
-            <label class="label-azul">Horário de Retirada:</label>
-            <input type="datetime-local" id="r_start">
-
-            <label class="label-azul">Horário de Entrega (Previsão):</label>
-            <input type="datetime-local" id="r_end">
-
-            <button class="btn-confirmar" onclick="app.salvarReserva()">CONFIRMAR AGENDAMENTO</button>
+            <div class="equip-card" id="card_TV" onclick="app.selectEquip('TV DIGITAL')">
+                <span>📺 TV DIGITAL</span>
+                <div id="st_TV" class="status-badge status-free">Disponível</div>
+            </div>
         </div>
+
+        <button class="btn-main btn-cancel" onclick="localStorage.clear(); location.reload();">Sair</button>
     </div>
 
-    <div id="scr_status" class="hidden">
-        <div class="glass-card" style="text-align: center;">
-            <h2>USO EM ANDAMENTO</h2>
-            <div id="display_timer" class="timer-box">00:00:00</div>
-            <p id="detalhes_info" style="font-size: 13px; color: #666;"></p>
-            <button class="btn-confirmar" style="background: #e74c3c;" onclick="app.finalizar()">FINALIZAR E LIBERAR</button>
-        </div>
+    <div id="scr_agendar" class="glass hidden">
+        <h2 id="txt_reserva_title">AGENDAR</h2>
+        <p style="text-align: center; font-size: 12px;">Deseja agendar para qual período?</p>
+        
+        <label>Selecione a Turma:</label>
+        <select id="r_turma">
+            <option>1º Ano A</option><option>2º Ano A</option><option>3º Ano A</option>
+            <option>4º Ano A</option><option>5º Ano A</option><option>6º Ano A</option>
+        </select>
+
+        <label>Horário de Início:</label>
+        <input type="datetime-local" id="r_start">
+        
+        <label>Horário de Término (Previsão):</label>
+        <input type="datetime-local" id="r_end">
+
+        <button class="btn-main" onclick="app.confirmarAgendamento()">CONFIRMAR AGENDAMENTO</button>
+        <button class="btn-main btn-cancel" onclick="app.nav('scr_menu')">VOLTAR</button>
+    </div>
+
+    <div id="scr_ativo" class="glass hidden">
+        <h2>RESERVA ATIVA</h2>
+        <div id="main_timer" class="timer-box">00:00:00</div>
+        <div id="detalhes_uso" style="font-size: 13px; line-height: 2;"></div>
+        <button class="btn-main" style="background: var(--neon-red);" onclick="app.liberarEquip()">FINALIZAR E LIBERAR</button>
     </div>
 </div>
 
@@ -118,114 +115,131 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getDatabase, ref, push, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-    const firebaseConfig = { databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com" };
-    const fb = initializeApp(firebaseConfig);
-    const db = getDatabase(fb);
+    const firebaseConfig = {
+        databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com"
+    };
+
+    const fbApp = initializeApp(firebaseConfig);
+    const db = getDatabase(fbApp);
 
     const app = {
-        user: JSON.parse(localStorage.getItem('docente')),
+        user: JSON.parse(localStorage.getItem('user')),
+        reservasAtuais: {},
         selectedItem: "",
-        intervalo: null,
+        timerIdx: null,
 
         init() {
-            this.ouvirBanco();
-            if(localStorage.getItem('reservaAtiva')) this.nav('scr_status');
-            else if(this.user) this.nav('scr_reserva');
+            this.ouvirReservas();
+            if(localStorage.getItem('minhaReserva')) this.nav('scr_ativo');
+            else if(this.user) this.nav('scr_menu');
         },
 
         nav(id) {
-            document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
+            document.querySelectorAll('.glass').forEach(g => g.classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
         },
 
         login() {
             const n = document.getElementById('u_nome').value;
-            const p = document.getElementById('u_id').value;
-            if(!n || !p) return alert("Preencha tudo!");
-            this.user = { nome: n, id: p, gen: document.getElementById('u_gen').value };
-            localStorage.setItem('docente', JSON.stringify(this.user));
-            this.nav('scr_reserva');
+            const p = document.getElementById('u_pront').value;
+            if(!n || !p) return alert("Preencha os dados!");
+            this.user = { nome: n, pront: p, gen: document.getElementById('u_gen').value };
+            localStorage.setItem('user', JSON.stringify(this.user));
+            this.nav('scr_menu');
         },
 
-        ouvirBanco() {
-            onValue(ref(db, 'reservas'), (snap) => {
-                const dados = snap.val() || {};
-                this.atualizarBotoes(dados);
-                
-                const minha = localStorage.getItem('reservaAtiva');
-                if(minha && dados[minha]) this.rodarCronometro(dados[minha]);
+        ouvirReservas() {
+            onValue(ref(db, 'reservas'), (snapshot) => {
+                this.reservasAtuais = snapshot.val() || {};
+                this.atualizarInterfaceMenu();
             });
         },
 
-        atualizarBotoes(reservas) {
-            const bts = { "SALA DE INFORMÁTICA": "btn_SALA", "CHROMEBOOKS": "btn_CHROME", "TV DIGITAL": "btn_TV" };
-            Object.values(bts).forEach(id => {
-                const el = document.getElementById(id);
-                el.classList.remove('busy');
-                el.innerHTML = el.innerHTML.split(' - ')[0]; // Limpa nome se houver
+        atualizarInterfaceMenu() {
+            const itens = { "SALA DE INFORMÁTICA": "SALA", "CHROMEBOOKS": "CHROME", "TV DIGITAL": "TV" };
+            
+            // Resetar todos
+            Object.values(itens).forEach(id => {
+                const card = document.getElementById('card_'+id);
+                const badge = document.getElementById('st_'+id);
+                card.classList.remove('busy');
+                badge.className = "status-badge status-free";
+                badge.innerText = "Disponível";
             });
 
-            Object.values(reservas).forEach(res => {
-                const id = bts[res.equip];
+            // Marcar ocupados
+            Object.values(this.reservasAtuais).forEach(res => {
+                const id = itens[res.equip];
                 if(id) {
-                    const el = document.getElementById(id);
-                    el.classList.add('busy');
-                    el.innerHTML += ` - OCUPADO (${res.nome.split(' ')[0]})`;
+                    const card = document.getElementById('card_'+id);
+                    const badge = document.getElementById('st_'+id);
+                    card.classList.add('busy');
+                    badge.className = "status-badge status-busy";
+                    badge.innerText = `Ocupado por ${res.nome.split(' ')[0]}`;
                 }
             });
         },
 
-        selectItem(item, id) {
-            if(document.getElementById(id).classList.contains('busy')) {
-                return alert("Este equipamento já está em uso!");
+        selectEquip(item) {
+            // Verificar se está ocupado
+            const ocupado = Object.values(this.reservasAtuais).find(r => r.equip === item);
+            if(ocupado) {
+                return alert(`BLOQUEADO!\n\nProfessor(a): ${ocupado.nome}\nTurma: ${ocupado.turma}\nLibera em: ${new Date(ocupado.fim).toLocaleTimeString()}`);
             }
             this.selectedItem = item;
-            document.querySelectorAll('.btn-equip').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
+            document.getElementById('txt_reserva_title').innerText = item;
+            this.nav('scr_agendar');
         },
 
-        salvarReserva() {
-            const s = document.getElementById('r_start').value;
-            const e = document.getElementById('r_end').value;
-            if(!this.selectedItem || !s || !e) return alert("Preencha os detalhes da reserva!");
+        confirmarAgendamento() {
+            const inicio = document.getElementById('r_start').value;
+            const fim = document.getElementById('r_end').value;
+            const turma = document.getElementById('r_turma').value;
+
+            if(!inicio || !fim) return alert("Defina o horário!");
 
             const novaRef = push(ref(db, 'reservas'));
-            const dados = { ...this.user, equip: this.selectedItem, start: s, end: e, turma: document.getElementById('r_turma').value };
+            const dados = { ...this.user, equip: this.selectedItem, turma, inicio, fim };
             
             set(novaRef, dados).then(() => {
-                localStorage.setItem('reservaAtiva', novaRef.key);
-                this.nav('scr_status');
+                localStorage.setItem('minhaReserva', novaRef.key);
+                this.iniciarCronometro(dados);
+                this.nav('scr_ativo');
             });
         },
 
-        rodarCronometro(res) {
-            clearInterval(this.intervalo);
-            const fim = new Date(res.end).getTime();
-            document.getElementById('detalhes_info').innerHTML = `<b>Item:</b> ${res.equip}<br><b>Turma:</b> ${res.turma}`;
+        iniciarCronometro(dados) {
+            clearInterval(this.timerIdx);
+            const fim = new Date(dados.fim).getTime();
+            
+            document.getElementById('detalhes_uso').innerHTML = `
+                <b>Item:</b> ${dados.equip}<br>
+                <b>Turma:</b> ${dados.turma}<br>
+                <b>Entrega:</b> ${new Date(dados.fim).toLocaleTimeString()}
+            `;
 
-            this.intervalo = setInterval(() => {
+            this.timerIdx = setInterval(() => {
                 const agora = new Date().getTime();
                 const diff = fim - agora;
-                const display = document.getElementById('display_timer');
-
+                
                 if(diff <= 0) {
-                    display.innerText = "TEMPO ESGOTADO";
-                    display.style.color = "#e74c3c";
+                    document.getElementById('main_timer').innerText = "TEMPO ESGOTADO";
+                    document.getElementById('main_timer').style.color = "red";
                 } else {
                     const h = Math.floor(diff / 3600000).toString().padStart(2,'0');
                     const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2,'0');
                     const s = Math.floor((diff % 60000) / 1000).toString().padStart(2,'0');
-                    display.innerText = `${h}:${m}:${s}`;
-                    display.style.color = "#2ecc71";
+                    document.getElementById('main_timer').innerText = `${h}:${m}:${s}`;
                 }
             }, 1000);
         },
 
-        finalizar() {
-            const key = localStorage.getItem('reservaAtiva');
-            if(confirm("Liberar o equipamento agora?")) {
+        liberarEquip() {
+            const key = localStorage.getItem('minhaReserva');
+            if(confirm("Deseja finalizar o uso e liberar para outros professores?")) {
                 remove(ref(db, 'reservas/' + key)).then(() => {
-                    localStorage.removeItem('reservaAtiva');
+                    localStorage.removeItem('minhaReserva');
+                    clearInterval(this.timerIdx);
                     location.reload();
                 });
             }
