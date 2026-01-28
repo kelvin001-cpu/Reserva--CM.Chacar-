@@ -1,59 +1,90 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal de Reservas - Santana de Parnaíba</title>
+    <title>Portal de Reservas - Chácara das Garças</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <style>
         :root { --azul-parnaiba: #0056a2; --azul-claro: #00adef; --branco: rgba(255, 255, 255, 0.85); }
+        
         body { 
             margin: 0; font-family: 'Poppins', sans-serif; 
             background: url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
             background-size: cover; min-height: 100vh;
         }
+
+        /* Camada de cor sobre o fundo para dar contraste */
         body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 40, 80, 0.6); z-index: -1; }
+
         header { background: white; padding: 15px; text-align: center; border-bottom: 5px solid var(--azul-claro); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .logo-text { font-family: 'Montserrat', sans-serif; color: var(--azul-parnaiba); font-size: 18px; text-transform: uppercase; margin: 0; }
+        .logo-text { font-family: 'Montserrat', sans-serif; color: var(--azul-parnaiba); font-size: 20px; text-transform: uppercase; margin: 0; }
+
         .container { max-width: 480px; margin: 25px auto; padding: 0 20px; }
+
+        /* Cartão Transparente (Efeito Vidro) */
         .glass-card { 
-            background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border-radius: 25px; padding: 25px; border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.2); 
+            backdrop-filter: blur(15px); /* Desfoque do fundo */
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 25px; 
+            padding: 25px; 
+            border: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
-        h2 { color: white; text-align: center; font-size: 16px; text-transform: uppercase; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; }
-        label { display: block; margin: 12px 0 5px 5px; color: white; font-weight: 600; font-size: 12px; }
-        input, select { width: 100%; padding: 12px; border-radius: 10px; border: none; background: rgba(255, 255, 255, 0.9); font-family: 'Poppins'; box-sizing: border-box; font-size: 14px; margin-bottom: 10px; }
+
+        h2 { color: white; text-align: center; font-size: 17px; text-transform: uppercase; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; }
+        label { display: block; margin: 12px 0 5px 5px; color: white; font-weight: 600; font-size: 13px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
+        
+        input, select { 
+            width: 100%; padding: 12px; border-radius: 10px; border: none; 
+            background: rgba(255, 255, 255, 0.9); font-family: 'Poppins'; 
+            box-sizing: border-box; font-size: 14px; 
+        }
+
         .grid-menu { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; }
-        .opt-item { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; font-weight: 600; color: white; transition: 0.3s; }
+
+        /* Itens do Menu Transparentes */
+        .opt-item { 
+            background: rgba(255, 255, 255, 0.15); 
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 15px; border-radius: 12px; text-align: center; 
+            cursor: pointer; font-weight: 600; color: white; transition: 0.3s; 
+        }
         .opt-item.active { background: var(--azul-claro); color: white; border-color: white; box-shadow: 0 0 15px var(--azul-claro); }
-        .btn-enviar { width: 100%; padding: 16px; margin-top: 15px; border-radius: 10px; border: none; background: linear-gradient(135deg, var(--azul-parnaiba), var(--azul-claro)); color: white; font-family: 'Montserrat'; font-size: 14px; cursor: pointer; font-weight: bold; }
-        .btn-link { background: none; border: none; color: #ddd; text-decoration: underline; font-size: 11px; cursor: pointer; margin-top: 20px; width: 100%; }
+
+        .btn-enviar { 
+            width: 100%; padding: 16px; margin-top: 25px; border-radius: 10px; border: none; 
+            background: linear-gradient(135deg, var(--azul-parnaiba), var(--azul-claro)); 
+            color: white; font-family: 'Montserrat'; font-size: 15px; cursor: pointer; font-weight: bold; 
+        }
         .hidden { display: none; }
+        .btn-finalizar { background: #ff4757; color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; cursor: pointer; font-weight: bold; margin-top: 20px; }
+        
+        #infoReserva { color: white; line-height: 1.8; }
     </style>
 </head>
 <body>
 
 <header>
     <p class="logo-text">SANTANA DE PARNAÍBA</p>
-    <p style="margin:0; color:#666; font-size:10px;">C.M. Chácara das Garças • Reservas</p>
+    <p style="margin:0; color:#666; font-size:11px;">C.M. Chácara das Garças • Reservas Manhã</p>
 </header>
 
 <div class="container">
-    <div id="loginArea" class="glass-card hidden">
+    <div id="loginArea" class="glass-card">
         <h2>IDENTIFICAÇÃO</h2>
         <label>Nome do Professor:</label>
-        <input type="text" id="profNome" placeholder="Seu nome">
+        <input type="text" id="profNome" placeholder="Nome completo">
         <label>Prontuário:</label>
-        <input type="text" id="profPront" placeholder="Seu prontuário">
+        <input type="text" id="profPront" placeholder="Digite seu prontuário">
         <label>Matéria:</label>
-        <input type="text" id="materia" placeholder="Sua matéria">
-        <button class="btn-enviar" onclick="salvarEDisparar()">SALVAR E CONTINUAR</button>
+        <input type="text" id="materia" placeholder="Ex: Matemática">
+        <button class="btn-enviar" onclick="proximo()">AVANÇAR</button>
     </div>
 
     <div id="reservaArea" class="glass-card hidden">
-        <h2 id="msgBoasVindas">NOVA RESERVA</h2>
+        <h2>DETALHES DA RESERVA</h2>
         
         <label>Selecione a Turma:</label>
         <select id="turma">
@@ -73,7 +104,7 @@
 
         <div id="areaPatrimonio" class="hidden">
             <label>Nº de Patrimônio da TV:</label>
-            <input type="text" id="patrimonio" placeholder="Ex: 001234">
+            <input type="text" id="patrimonio" placeholder="Digite o patrimônio da TV">
         </div>
 
         <div id="chromeOpcoes" class="hidden">
@@ -94,19 +125,18 @@
         <input type="datetime-local" id="hFim">
 
         <button class="btn-enviar" onclick="confirmar()">FINALIZAR AGENDAMENTO</button>
-        <button class="btn-link" onclick="limparDados()">Trocar Professor (Sair)</button>
     </div>
 
     <div id="finalArea" class="glass-card hidden">
-        <h2 style="color: #2ecc71;">CONFIRMADO!</h2>
-        <div id="infoReserva" style="color: white; font-size: 13px; line-height: 1.6;"></div>
-        <button class="btn-enviar" onclick="location.reload()">NOVA RESERVA</button>
+        <h2>RESERVA CONFIRMADA</h2>
+        <div id="infoReserva"></div>
+        <button class="btn-finalizar" onclick="liberar()">CONCLUIR E LIBERAR</button>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getDatabase, ref, push, set, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBoGFDKz-nBwKvczGpxg-fHJYdVykcBUQ",
@@ -121,41 +151,32 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
+    let dadosUser = {};
     let localSel = "";
-    let userCache = JSON.parse(localStorage.getItem('userReserva'));
+    let rID = "";
 
-    // VERIFICAÇÃO INICIAL: JÁ TEM LOGIN?
-    window.onload = () => {
-        if(userCache) {
-            exibirReserva();
-        } else {
-            document.getElementById('loginArea').classList.remove('hidden');
-        }
-    };
-
-    window.salvarEDisparar = () => {
-        const n = document.getElementById('profNome').value;
-        const p = document.getElementById('profPront').value;
-        const m = document.getElementById('materia').value;
-
-        if(n && p && m) {
-            userCache = { n, p, m };
-            localStorage.setItem('userReserva', JSON.stringify(userCache));
-            exibirReserva();
+    window.proximo = () => {
+        dadosUser = { n: document.getElementById('profNome').value, p: document.getElementById('profPront').value, m: document.getElementById('materia').value };
+        if(dadosUser.n && dadosUser.p && dadosUser.m) {
+            document.getElementById('loginArea').classList.add('hidden');
+            document.getElementById('reservaArea').classList.remove('hidden');
         } else { alert("Preencha todos os campos!"); }
     };
-
-    function exibirReserva() {
-        document.getElementById('loginArea').classList.add('hidden');
-        document.getElementById('reservaArea').classList.remove('hidden');
-        document.getElementById('msgBoasVindas').innerText = `OLÁ, PROF. ${userCache.n.split(' ')[0]}`;
-    }
 
     window.setEscoha = (item, el) => {
         localSel = item;
         document.querySelectorAll('.opt-item').forEach(i => i.classList.remove('active'));
         el.classList.add('active');
-        document.getElementById('areaPatrimonio').classList.toggle('hidden', item !== 'TV DIGITAL');
+        
+        const areaPat = document.getElementById('areaPatrimonio');
+        if(item === 'TV DIGITAL') {
+            areaPat.classList.remove('hidden');
+            document.getElementById('patrimonio').value = "";
+        } else {
+            areaPat.classList.add('hidden');
+            document.getElementById('patrimonio').value = "N/A";
+        }
+        
         document.getElementById('chromeOpcoes').classList.toggle('hidden', item !== 'CHROMEBOOKS');
     };
 
@@ -165,27 +186,40 @@
     };
 
     window.confirmar = () => {
-        const h1 = document.getElementById('hInicio').value;
-        const h2 = document.getElementById('hFim').value;
-        if(!localSel || !h1 || !h2) return alert("Preencha todos os campos!");
+        const turma = document.getElementById('turma').value;
+        const pat = document.getElementById('patrimonio').value;
+        const hi = document.getElementById('hInicio').value;
+        const hf = document.getElementById('hFim').value;
+        
+        if(!localSel || !hi || !hf || (localSel === 'TV DIGITAL' && !pat)) return alert("Preencha tudo!");
+
+        let equipFinal = localSel;
+        if(localSel === 'CHROMEBOOKS') {
+            const t = document.getElementById('tipoChrome').value;
+            equipFinal = t === 'Unidades' ? `CHROMEBOOKS (${document.getElementById('qtdUni').value} un)` : "CHROMEBOOKS (Carrinho)";
+        }
 
         const nova = push(ref(db, 'reservas'));
+        rID = nova.key;
+
         set(nova, {
-            ...userCache,
-            equip: localSel,
-            pat: document.getElementById('patrimonio').value || "N/A",
-            inicio: h1, fim: h2,
-            turma: document.getElementById('turma').value
+            prof: dadosUser.n, pront: dadosUser.p, mat: dadosUser.m,
+            patrimonio: pat, turma: turma, equipamento: equipFinal,
+            inicio: new Date(hi).toLocaleString('pt-BR'),
+            entrega: new Date(hf).toLocaleString('pt-BR')
         }).then(() => {
             document.getElementById('reservaArea').classList.add('hidden');
             document.getElementById('finalArea').classList.remove('hidden');
-            document.getElementById('infoReserva').innerHTML = `Item: ${localSel}<br>Horário: ${h1}`;
+            document.getElementById('infoReserva').innerHTML = `
+                <p><strong>Item:</strong> ${equipFinal}</p>
+                <p><strong>Professor:</strong> ${dadosUser.n}</p>
+                <p><strong>Turma:</strong> ${turma}</p>
+            `;
         });
     };
 
-    window.limparDados = () => {
-        localStorage.removeItem('userReserva');
-        location.reload();
+    window.liberar = () => {
+        if(confirm("Confirmar entrega?")) remove(ref(db, 'reservas/' + rID)).then(() => location.reload());
     };
 </script>
 </body>
