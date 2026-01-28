@@ -2,57 +2,62 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Chácara - CM CG</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Montserrat:wght@700&family=Orbitron:wght@500&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Portal Chácara - Reserva</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <style>
-        :root { --azul-sp: #0056a2; --azul-celeste: #00adef; --neon-green: #00ff9d; }
+        :root { --azul-sp: #0056a2; --azul-celeste: #00adef; }
         
+        * { box-sizing: border-box; } /* Isso garante que o padding não aumente a largura */
+
         body { 
-            margin: 0; font-family: 'Poppins', sans-serif; 
-            background: url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
+            margin: 0; padding: 0; font-family: 'Poppins', sans-serif; 
+            background: #000b1a url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
             background-size: cover; min-height: 100vh; color: white;
-            display: flex; flex-direction: column;
+            display: flex; flex-direction: column; align-items: center;
         }
 
-        /* Camada de fundo para dar leitura */
-        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 15, 40, 0.7); z-index: -1; }
+        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 15, 40, 0.75); z-index: -1; }
 
-        header { background: white; padding: 18px; text-align: center; border-bottom: 5px solid var(--azul-celeste); box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        .logo-text { font-family: 'Montserrat', sans-serif; color: var(--azul-sp); font-size: 18px; text-transform: uppercase; margin: 0; }
+        header { width: 100%; background: white; padding: 15px; text-align: center; border-bottom: 5px solid var(--azul-celeste); }
+        .logo-text { font-family: 'Montserrat', sans-serif; color: var(--azul-sp); font-size: clamp(14px, 4vw, 18px); text-transform: uppercase; margin: 0; }
 
-        .container { width: 100%; max-width: 500px; margin: 0 auto; padding: 20px; box-sizing: border-box; }
+        .container { width: 100%; max-width: 450px; padding: 20px; }
 
-        h2 { text-align: center; font-size: 18px; text-transform: uppercase; border-bottom: 2px solid var(--azul-celeste); padding-bottom: 10px; margin-bottom: 25px; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+        h2 { text-align: center; font-size: 16px; text-transform: uppercase; border-bottom: 2px solid var(--azul-celeste); padding-bottom: 10px; margin-bottom: 25px; }
         
-        label { display: block; margin: 15px 0 8px 5px; font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--azul-celeste); }
+        label { display: block; margin: 15px 0 8px 5px; font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--azul-celeste); }
 
-        input, select, textarea { 
-            width: 100%; padding: 15px; border-radius: 10px; border: none; 
-            background: rgba(255,255,255,0.95); font-size: 15px; box-sizing: border-box; color: #333;
-            margin-bottom: 10px;
+        /* AQUI ESTÁ A CORREÇÃO: Todos os inputs com a mesma largura e comportamento */
+        input[type="text"], 
+        input[type="datetime-local"], 
+        select { 
+            display: block;
+            width: 100%; 
+            height: 50px; /* Altura padronizada */
+            padding: 0 15px; 
+            border-radius: 12px; 
+            border: none; 
+            background: rgba(255, 255, 255, 0.95); 
+            font-size: 15px; 
+            color: #333;
+            font-family: 'Poppins', sans-serif;
+            appearance: none; /* Remove estilos padrão do sistema */
+            -webkit-appearance: none;
         }
 
-        /* Botões de Opção Largos e Imponentes */
-        .grid { display: grid; gap: 12px; margin-top: 10px; }
+        .grid { display: grid; gap: 10px; margin-top: 10px; }
         .btn-opt { 
-            background: rgba(0, 0, 0, 0.4); border: 2px solid rgba(255, 255, 255, 0.3); 
-            padding: 20px; border-radius: 15px; text-align: center; cursor: pointer; 
-            font-weight: bold; transition: 0.3s; font-size: 14px;
+            background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); 
+            padding: 18px; border-radius: 15px; text-align: center; cursor: pointer; 
+            font-weight: bold; transition: 0.3s; font-size: 13px;
         }
-        .btn-opt.active { background: var(--azul-celeste); border-color: white; box-shadow: 0 0 20px var(--azul-celeste); }
+        .btn-opt.active { background: var(--azul-celeste); border-color: white; box-shadow: 0 0 15px var(--azul-celeste); }
         
-        /* Botão Principal de Ação */
         .btn-action { 
             width: 100%; padding: 20px; margin-top: 30px; border-radius: 15px; border: none; 
             background: linear-gradient(135deg, var(--azul-sp), var(--azul-celeste)); 
-            color: white; font-weight: bold; text-transform: uppercase; cursor: pointer; 
-            font-size: 16px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-
-        .timer-display { 
-            font-family: 'Orbitron', sans-serif; font-size: 40px; text-align: center; 
-            margin: 25px 0; color: var(--neon-green); text-shadow: 0 0 15px var(--neon-green); 
+            color: white; font-weight: bold; text-transform: uppercase; cursor: pointer; font-size: 16px;
         }
 
         .hidden { display: none; }
@@ -62,7 +67,7 @@
 
 <header>
     <p class="logo-text">SANTANA DE PARNAÍBA</p>
-    <div style="font-size: 11px; color: #666; font-weight: bold;">C.M. CHÁCARA DAS GARÇAS</div>
+    <div style="font-size: 10px; color: #666; font-weight: bold;">C.M. CHÁCARA DAS GARÇAS</div>
 </header>
 
 <div class="container">
@@ -73,7 +78,6 @@
         <select id="r_turma">
             <option>1º Ano A</option>
             <option>2º Ano A</option>
-            <option>3º Ano A</option>
             <option>9º Ano A</option>
         </select>
 
@@ -84,16 +88,16 @@
             <div class="btn-opt" id="i3" onclick="sel('TV DIGITAL', 'i3')">📺 TV DIGITAL</div>
         </div>
 
-        <label>Nº de Patrimônio</label>
-        <input type="text" id="r_pat" placeholder="Ex: 230180">
+        <label>Nº de Patrimônio (Ex: 230180)</label>
+        <input type="text" id="r_pat" placeholder="Digite o patrimônio">
 
         <label>Horário de Retirada</label>
         <input type="datetime-local" id="r_in">
 
-        <label>Previsão de Entrega</label>
+        <label>Horário de Entrega (Previsão)</label>
         <input type="datetime-local" id="r_out">
 
-        <button class="btn-action" onclick="alert('Reserva efetuada!')">CONFIRMAR AGENDAMENTO</button>
+        <button class="btn-action" onclick="alert('Agendado com sucesso!')">CONFIRMAR AGENDAMENTO</button>
     </div>
 </div>
 
