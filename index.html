@@ -52,7 +52,7 @@
     <div id="reservaArea" class="glass-card hidden">
         <h2>DETALHES DO USO</h2>
         
-        <label>Selecione a Turma:</label>
+        <label>Selecione a Turma (Manhã):</label>
         <select id="turma">
             <option value="1º Ano A">1º Ano A</option><option value="2º Ano A">2º Ano A</option>
             <option value="3º Ano A">3º Ano A</option><option value="4º Ano A">4º Ano A</option>
@@ -72,17 +72,17 @@
             <label>Tipo de Retirada:</label>
             <select id="tipoChrome" onchange="toggleQtd()">
                 <option value="Carrinho Completo">Carrinho Completo</option>
-                <option value="Unidades">Por Unidade</option>
+                <option value="Unidades">Por Unidade (Digitar quantidade)</option>
             </select>
             <div id="campoQtd" class="hidden">
-                <label>Quantas unidades?</label>
-                <input type="number" id="qtdUni" placeholder="Ex: 15">
+                <label>Quantas unidades levará?</label>
+                <input type="number" id="qtdUni" placeholder="Ex: 10">
             </div>
         </div>
 
         <label>Horário de Retirada:</label>
         <input type="datetime-local" id="hInicio">
-        <label>Horário de Entrega:</label>
+        <label>Horário de Entrega (Previsão):</label>
         <input type="datetime-local" id="hFim">
 
         <button class="btn-enviar" onclick="confirmar()">CONFIRMAR AGENDAMENTO</button>
@@ -152,7 +152,7 @@
             equipFinal = t === 'Unidades' ? `CHROMEBOOKS (${document.getElementById('qtdUni').value} unidades)` : "CHROMEBOOKS (Carrinho Completo)";
         }
 
-        if(!localSel || !hi || !hf) return alert("Complete os campos!");
+        if(!localSel || !hi || !hf) return alert("Complete os campos de horário e local!");
 
         const nova = push(ref(db, 'reservas'));
         rID = nova.key;
@@ -169,12 +169,20 @@
         }).then(() => {
             document.getElementById('reservaArea').classList.add('hidden');
             document.getElementById('finalArea').classList.remove('hidden');
-            document.getElementById('infoReserva').innerHTML = `<strong>Prof:</strong> ${dadosUser.n}<br><strong>Local:</strong> ${equipFinal}<br><strong>Patrimônio:</strong> ${dadosUser.pat}<br><strong>Turma:</strong> ${turma}`;
+            document.getElementById('infoReserva').innerHTML = `
+                <strong>Professor:</strong> ${dadosUser.n}<br>
+                <strong>Local:</strong> ${equipFinal}<br>
+                <strong>Patrimônio:</strong> ${dadosUser.pat}<br>
+                <strong>Turma:</strong> ${turma}<br>
+                <strong>Previsão de Entrega:</strong> ${new Date(hf).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}
+            `;
         });
     };
 
     window.liberar = () => {
-        if(confirm("Confirmar entrega?")) remove(ref(db, 'reservas/' + rID)).then(() => location.reload());
+        if(confirm("Confirmar a entrega e liberar para outros professores?")) {
+            remove(ref(db, 'reservas/' + rID)).then(() => location.reload());
+        }
     };
 </script>
 </body>
