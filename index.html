@@ -10,117 +10,120 @@
         
         body { 
             margin: 0; font-family: 'Poppins', sans-serif; 
-            background: url('https://img.freepik.com/fotos-gratis/fundo-abstrato-da-tecnologia-da-educacao-com-mochila-e-icones-digitais_53876-124610.jpg') no-repeat center center fixed;
+            /* Fundo com tema de educação e tecnologia */
+            background: url('https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=1932&auto=format&fit=crop') no-repeat center center fixed;
             background-size: cover;
+            min-height: 100vh;
         }
 
-        /* Camada para escurecer um pouco o fundo e dar leitura */
+        /* Camada de sobreposição para melhorar a leitura */
         body::before {
             content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 40, 80, 0.7); z-index: -1;
+            background: rgba(0, 40, 80, 0.65); z-index: -1;
         }
 
         header { 
             background: var(--branco); padding: 15px; text-align: center;
-            border-bottom: 5px solid var(--azul-claro); box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border-bottom: 5px solid var(--azul-claro); box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
-        .logo-text { font-family: 'Montserrat', sans-serif; color: var(--azul-parnaiba); font-size: 20px; text-transform: uppercase; margin: 0; }
-        .sub-text { font-size: 14px; color: #666; margin: 0; }
+        .logo-text { font-family: 'Montserrat', sans-serif; color: var(--azul-parnaiba); font-size: 22px; text-transform: uppercase; margin: 0; letter-spacing: 1px; }
+        .sub-text { font-size: 13px; color: #666; margin: 0; font-weight: 400; }
 
-        .container { max-width: 500px; margin: 40px auto; padding: 0 20px; }
+        .container { max-width: 480px; margin: 30px auto; padding: 0 20px; }
 
         .glass-card { 
-            background: rgba(255, 255, 255, 0.95); border-radius: 25px; padding: 30px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(255, 255, 255, 0.98); border-radius: 20px; padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.5);
         }
 
-        h2 { color: var(--azul-parnaiba); text-align: center; font-weight: 600; margin-bottom: 25px; }
+        h2 { color: var(--azul-parnaiba); text-align: center; font-weight: 600; margin-bottom: 20px; font-size: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
 
         label { display: block; margin: 15px 0 5px 5px; color: var(--azul-parnaiba); font-weight: 600; font-size: 14px; }
 
         input, select { 
-            width: 100%; padding: 12px 15px; border-radius: 12px; border: 2px solid #ddd;
+            width: 100%; padding: 12px 15px; border-radius: 10px; border: 2px solid #ddd;
             font-family: 'Poppins'; font-size: 15px; box-sizing: border-box; transition: 0.3s;
+            background-color: #fcfcfc;
         }
 
-        input:focus { border-color: var(--azul-claro); outline: none; }
+        input:focus { border-color: var(--azul-claro); outline: none; box-shadow: 0 0 8px rgba(0, 173, 239, 0.2); }
 
-        .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
+        .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
         
         .opt-item { 
-            background: #f8f9fa; border: 2px solid #eee; padding: 15px; border-radius: 15px;
-            text-align: center; cursor: pointer; transition: 0.3s; font-weight: 600; color: #444;
+            background: #f1f3f5; border: 2px solid #e9ecef; padding: 15px 10px; border-radius: 12px;
+            text-align: center; cursor: pointer; transition: 0.3s; font-weight: 600; color: #444; font-size: 13px;
         }
 
-        .opt-item:hover { transform: translateY(-3px); border-color: var(--azul-claro); }
-        .opt-item.active { background: var(--azul-parnaiba); color: white; border-color: var(--azul-parnaiba); }
+        .opt-item:hover { transform: translateY(-2px); border-color: var(--azul-claro); background: #fff; }
+        .opt-item.active { background: var(--azul-parnaiba); color: white; border-color: var(--azul-parnaiba); box-shadow: 0 4px 10px rgba(0, 86, 162, 0.3); }
 
         .btn-enviar { 
-            width: 100%; padding: 16px; margin-top: 30px; border-radius: 50px; border: none;
-            background: linear-gradient(to right, var(--azul-parnaiba), var(--azul-claro));
-            color: white; font-family: 'Montserrat'; font-size: 16px; cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0, 86, 162, 0.4); transition: 0.3s;
+            width: 100%; padding: 16px; margin-top: 25px; border-radius: 10px; border: none;
+            background: linear-gradient(135deg, var(--azul-parnaiba), var(--azul-claro));
+            color: white; font-family: 'Montserrat'; font-size: 15px; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 86, 162, 0.3); transition: 0.3s; font-weight: bold;
         }
 
-        .btn-enviar:hover { transform: scale(1.02); filter: brightness(1.1); }
+        .btn-enviar:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 6px 20px rgba(0, 86, 162, 0.4); }
 
         .hidden { display: none; }
 
-        /* Botão Finalizar */
-        .btn-finalizar { background: #e74c3c; color: white; border: none; padding: 15px; border-radius: 50px; width: 100%; cursor: pointer; font-weight: bold; margin-top: 20px; }
+        .btn-finalizar { background: #d63031; color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; cursor: pointer; font-weight: bold; margin-top: 20px; font-family: 'Montserrat'; }
     </style>
 </head>
 <body>
 
 <header>
     <p class="logo-text">SANTANA DE PARNAÍBA</p>
-    <p class="sub-text">C.M. Chácara das Garças - Gestão de Equipamentos</p>
+    <p class="sub-text">C.M. Chácara das Garças • Sistema de Reservas</p>
 </header>
 
 <div class="container">
     <div id="loginArea" class="glass-card">
-        <h2>ACESSO DOCENTE</h2>
-        <label>Nome Completo:</label>
-        <input type="text" id="profNome" placeholder="Ex: Maria Oliveira">
+        <h2>IDENTIFICAÇÃO DOCENTE</h2>
+        <label>Nome do Professor:</label>
+        <input type="text" id="profNome" placeholder="Seu nome completo">
         <label>Nº do Prontuário:</label>
         <input type="text" id="profPront" placeholder="Digite seu prontuário">
-        <button class="btn-enviar" onclick="proximo()">ACESSAR PORTAL</button>
+        <button class="btn-enviar" onclick="proximo()">PRÓXIMO PASSO</button>
     </div>
 
     <div id="reservaArea" class="glass-card hidden">
-        <h2>RESERVAR EQUIPAMENTO</h2>
+        <h2>DETALHES DA RESERVA</h2>
         
-        <label>Selecione o que irá usar:</label>
+        <label>O que deseja reservar?</label>
         <div class="grid-menu">
             <div class="opt-item" onclick="setEscoha('SALA DE INFORMÁTICA', this)">🖥️ SALA INFO</div>
             <div class="opt-item" onclick="setEscoha('CHROMEBOOKS', this)">💻 CHROMEBOOKS</div>
             <div class="opt-item" onclick="setEscoha('TV DIGITAL', this)">📺 TV DIGITAL</div>
-            <div class="opt-item" onclick="setEscoha('LABORATÓRIO', this)">🧪 LAB</div>
+            <div class="opt-item" onclick="setEscoha('LABORATÓRIO', this)">🧪 LABORATÓRIO</div>
         </div>
 
         <div id="extraChrome" class="hidden">
-            <label>Quantidade:</label>
+            <label>Quantidade de Chromebooks:</label>
             <select id="qtd">
-                <option value="Carrinho Todo">Carrinho Inteiro</option>
-                <option value="5 Unidades">5 Unidades</option>
+                <option value="Carrinho Inteiro">Carrinho Inteiro</option>
                 <option value="10 Unidades">10 Unidades</option>
+                <option value="20 Unidades">20 Unidades</option>
             </select>
         </div>
 
         <label>Horário de Retirada:</label>
         <input type="datetime-local" id="hInicio">
 
-        <label>Horário de Entrega:</label>
+        <label>Horário de Entrega (Previsão):</label>
         <input type="datetime-local" id="hFim">
 
-        <button class="btn-enviar" onclick="confirmar()">CONFIRMAR RESERVA</button>
+        <button class="btn-enviar" onclick="confirmar()">CONFIRMAR AGENDAMENTO</button>
     </div>
 
     <div id="finalArea" class="glass-card hidden">
-        <h2 style="color: #27ae60;">RESERVA ATIVA!</h2>
-        <p id="infoReserva" style="text-align: center; color: #555;"></p>
-        <button class="btn-finalizar" onclick="liberar()">CONCLUÍDO / ENTREGAR</button>
+        <h2 style="color: #27ae60;">RESERVA CONFIRMADA</h2>
+        <p id="infoReserva" style="text-align: center; color: #444; font-size: 15px; background: #f9f9f9; padding: 15px; border-radius: 10px; border-left: 5px solid #27ae60;"></p>
+        <p style="font-size: 12px; color: #777; text-align: center; margin-top: 15px;">Ao devolver o equipamento, clique no botão abaixo para liberar o sistema.</p>
+        <button class="btn-finalizar" onclick="liberar()">FINALIZAR E ENTREGAR</button>
     </div>
 </div>
 
@@ -151,7 +154,7 @@
         if(dadosProf.nome && dadosProf.pront) {
             document.getElementById('loginArea').classList.add('hidden');
             document.getElementById('reservaArea').classList.remove('hidden');
-        } else { alert("Preencha seu nome e prontuário!"); }
+        } else { alert("Por favor, preencha Nome e Prontuário!"); }
     };
 
     window.setEscoha = (item, el) => {
@@ -164,7 +167,7 @@
     window.confirmar = () => {
         const h1 = document.getElementById('hInicio').value;
         const h2 = document.getElementById('hFim').value;
-        if(!itemSelecionado || !h1 || !h2) return alert("Preencha todos os campos!");
+        if(!itemSelecionado || !h1 || !h2) return alert("Selecione o equipamento e os horários!");
 
         let finalItem = itemSelecionado;
         if(itemSelecionado === 'CHROMEBOOKS') finalItem += " (" + document.getElementById('qtd').value + ")";
@@ -181,14 +184,14 @@
         }).then(() => {
             document.getElementById('reservaArea').classList.add('hidden');
             document.getElementById('finalArea').classList.remove('hidden');
-            document.getElementById('infoReserva').innerText = finalItem + " em uso até as " + new Date(h2).toLocaleTimeString();
+            document.getElementById('infoReserva').innerHTML = `<strong>Equipamento:</strong> ${finalItem}<br><strong>Professor:</strong> ${dadosProf.nome}<br><strong>Até:</strong> ${new Date(h2).toLocaleString('pt-BR')}`;
         });
     };
 
     window.liberar = () => {
-        if(confirm("Confirmar a entrega do equipamento?")) {
+        if(confirm("Confirmar entrega e liberar equipamento?")) {
             remove(ref(db, 'reservas/' + rID)).then(() => {
-                alert("Equipamento liberado com sucesso!");
+                alert("Sistema atualizado! Equipamento disponível.");
                 location.reload();
             });
         }
@@ -196,4 +199,3 @@
 </script>
 </body>
 </html>
-
