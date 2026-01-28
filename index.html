@@ -3,66 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reserva de Equipamentos - Santana de Parnaíba</title>
+    <title>Reserva - Santana de Parnaíba</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root { --azul-pmsp: #0056a2; --azul-claro: #00adef; }
         body { 
             margin: 0; font-family: 'Poppins', sans-serif; 
             background: url('https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop') no-repeat center center fixed;
-            background-size: cover; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding-bottom: 50px;
+            background-size: cover; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px 0;
         }
-        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 30, 60, 0.7); z-index: -1; }
-
+        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 30, 60, 0.75); z-index: -1; }
+        .logo-prefeitura { width: 160px; margin-bottom: 10px; filter: drop-shadow(0px 0px 8px rgba(255,255,255,0.3)); }
         .glass-card { 
-            background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; padding: 25px;
-            width: 90%; max-width: 500px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.5); margin-top: 30px;
+            width: 90%; max-width: 450px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.5); margin-bottom: 20px;
         }
-
-        .logo-prefeitura { width: 150px; margin-bottom: 15px; filter: drop-shadow(0px 0px 5px white); }
         h1, h2 { color: white; font-size: 16px; text-transform: uppercase; margin-bottom: 20px; }
-
-        label { display: block; text-align: left; color: white; font-size: 11px; margin: 10px 0 5px; font-weight: 600; text-transform: uppercase; }
+        label { display: block; text-align: left; color: white; font-size: 11px; margin: 10px 0 5px 5px; font-weight: 600; text-transform: uppercase; }
         input, select { 
-            width: 100%; padding: 12px; border-radius: 8px; border: none; margin-bottom: 10px;
-            background: rgba(255, 255, 255, 0.95); box-sizing: border-box; font-family: 'Poppins';
+            width: 100%; padding: 12px; border-radius: 10px; border: none; margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.9); box-sizing: border-box; font-family: 'Poppins';
         }
-
-        .btn-google {
-            background: white; color: #444; padding: 12px; border-radius: 8px; border: none;
-            font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 10px;
-            width: 100%; cursor: pointer; transition: 0.3s;
-        }
-
-        .btn-reservar {
+        .btn-principal {
             background: linear-gradient(135deg, var(--azul-pmsp), var(--azul-claro));
-            color: white; border: none; padding: 15px; width: 100%; border-radius: 8px;
-            font-weight: bold; cursor: pointer; margin-top: 10px; text-transform: uppercase;
+            color: white; border: none; padding: 15px; width: 100%; border-radius: 10px;
+            font-weight: bold; cursor: pointer; margin-top: 10px; text-transform: uppercase; transition: 0.3s;
         }
-
-        /* Dashboard Table */
-        .dashboard-container { width: 95%; max-width: 800px; margin-top: 30px; }
-        table { width: 100%; border-collapse: collapse; color: white; font-size: 12px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
-        th { background: rgba(0,0,0,0.3); padding: 12px; text-align: left; }
-        td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .dash-container { width: 95%; max-width: 800px; }
+        .table-scroll { overflow-x: auto; width: 100%; border-radius: 15px; }
+        table { width: 100%; border-collapse: collapse; color: white; font-size: 12px; }
+        th { background: rgba(0,0,0,0.4); padding: 15px; text-align: left; }
+        td { padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); }
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
+    <img src="https://www.santanadeparnaiba.sp.gov.br/logo_parnaiba.png" alt="Logo" class="logo-prefeitura">
+
     <div id="loginSection" class="glass-card">
-        <img src="https://www.santanadeparnaiba.sp.gov.br/logo_parnaiba.png" alt="Logo" class="logo-prefeitura">
-        <h1>Acesso ao Sistema</h1>
-        <button class="btn-google" onclick="loginGoogle()">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="20">
-            Entrar com E-mail Institucional
+        <h1>Acesso Institucional</h1>
+        <button class="btn-principal" onclick="loginGoogle()" style="background: white; color: #333; display: flex; align-items: center; justify-content: center; gap: 10px;">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="18">
+            Entrar com Google
         </button>
     </div>
 
     <div id="formSection" class="glass-card hidden">
         <h2 id="welcomeMsg">Olá, Professor</h2>
         
+        <label>Seu Prontuário:</label>
+        <input type="text" id="prontuario" placeholder="Digite seu prontuário">
+
+        <label>Matéria:</label>
+        <input type="text" id="materia" placeholder="Ex: História, TI, etc.">
+
         <label>Turma:</label>
         <select id="turma">
             <option value="1º Ano A">1º Ano A</option><option value="2º Ano A">2º Ano A</option>
@@ -72,7 +68,7 @@
             <option value="9º Ano A">9º Ano A</option>
         </select>
 
-        <label>Equipamento ou Sala:</label>
+        <label>Equipamento:</label>
         <select id="equipamento" onchange="checkEquip()">
             <option value="SALA DE INFORMÁTICA">SALA DE INFORMÁTICA</option>
             <option value="CHROMEBOOKS">CARRINHO DE CHROMEBOOKS</option>
@@ -80,31 +76,33 @@
         </select>
 
         <div id="patArea" class="hidden">
-            <label>Nº Patrimônio:</label>
-            <input type="text" id="patrimonio" placeholder="Digite o patrimônio da TV">
+            <label>Nº de Patrimônio:</label>
+            <input type="text" id="patrimonio" placeholder="Ex: 230180">
         </div>
 
-        <label>Data e Horário:</label>
+        <label>Data e Hora:</label>
         <input type="datetime-local" id="hInicio">
 
-        <button class="btn-reservar" onclick="salvarReserva()">Confirmar Reserva</button>
-        <button onclick="logout()" style="color:rgba(255,255,255,0.6); background:none; border:none; margin-top:15px; font-size:10px; cursor:pointer;">Sair da Conta Google</button>
+        <button class="btn-principal" onclick="salvarReserva()">Finalizar Reserva</button>
+        <button onclick="logout()" style="background:none; border:none; color:rgba(255,255,255,0.5); font-size:10px; margin-top:15px; cursor:pointer;">Sair da conta Google</button>
     </div>
 
-    <div id="dashSection" class="dashboard-container hidden">
-        <h2 style="text-align: center;">Monitoramento em Tempo Real</h2>
-        <div class="glass-card" style="width:100%; max-width:100%; padding:10px;">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Professor</th>
-                        <th>Item</th>
-                        <th>Turma</th>
-                        <th>Data/Hora</th>
-                    </tr>
-                </thead>
-                <tbody id="listaReservas"></tbody>
-            </table>
+    <div id="dashSection" class="dash-container hidden">
+        <div class="glass-card" style="max-width: 100%; padding: 15px;">
+            <h2 style="font-size: 14px;">📊 Dashboard de Reservas</h2>
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Professor</th>
+                            <th>Matéria</th>
+                            <th>Item</th>
+                            <th>Horário</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaReservas"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -128,10 +126,9 @@
         const db = getDatabase(app);
         const provider = new GoogleAuthProvider();
 
-        // PERSISTÊNCIA: Faz o login durar para sempre no aparelho
         setPersistence(auth, browserLocalPersistence);
 
-        let userAtual = null;
+        let userLogado = null;
 
         window.loginGoogle = () => {
             signInWithPopup(auth, provider).catch(e => alert("Erro: " + e.message));
@@ -141,12 +138,12 @@
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                userAtual = user;
+                userLogado = user;
                 document.getElementById('loginSection').classList.add('hidden');
                 document.getElementById('formSection').classList.remove('hidden');
                 document.getElementById('dashSection').classList.remove('hidden');
-                document.getElementById('welcomeMsg').innerText = "Olá, " + user.displayName;
-                carregarDashboard();
+                document.getElementById('welcomeMsg').innerText = "Bem-vindo, " + user.displayName;
+                carregarDados();
             } else {
                 document.getElementById('loginSection').classList.remove('hidden');
                 document.getElementById('formSection').classList.add('hidden');
@@ -160,31 +157,36 @@
         };
 
         window.salvarReserva = () => {
+            const p = document.getElementById('prontuario').value;
+            const m = document.getElementById('materia').value;
             const h = document.getElementById('hInicio').value;
-            if(!h) return alert("Escolha o horário!");
+
+            if(!p || !m || !h) return alert("Preencha o Prontuário, Matéria e Horário!");
 
             const nova = push(ref(db, 'reservas'));
             set(nova, {
-                prof: userAtual.displayName,
-                equip: document.getElementById('equipamento').value,
+                prof: userLogado.displayName,
+                pront: p,
+                materia: m,
+                item: document.getElementById('equipamento').value,
                 turma: document.getElementById('turma').value,
                 pat: document.getElementById('equipamento').value === 'TV DIGITAL' ? document.getElementById('patrimonio').value : '-',
                 data: new Date(h).toLocaleString('pt-BR')
-            }).then(() => alert("Reserva Feita!"));
+            }).then(() => alert("Reserva salva!"));
         };
 
-        function carregarDashboard() {
-            onValue(ref(db, 'reservas'), (snapshot) => {
+        function carregarDados() {
+            onValue(ref(db, 'reservas'), (snap) => {
                 const tbody = document.getElementById('listaReservas');
                 tbody.innerHTML = "";
-                snapshot.forEach((item) => {
-                    const r = item.val();
+                snap.forEach(child => {
+                    const d = child.val();
                     tbody.innerHTML += `
                         <tr>
-                            <td>${r.prof.split(' ')[0]}</td>
-                            <td>${r.equip}</td>
-                            <td>${r.turma}</td>
-                            <td>${r.data}</td>
+                            <td>${d.prof.split(' ')[0]}</td>
+                            <td>${d.materia}</td>
+                            <td>${d.item}</td>
+                            <td>${d.data}</td>
                         </tr>
                     `;
                 });
