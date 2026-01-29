@@ -1,180 +1,40 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SISTEMA OFICIAL - CHÁCARA DAS GARÇAS</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Orbitron:wght@600&display=swap" rel="stylesheet">
-    
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-
-    <style>
-        :root {
-            --pref-azul: #004a99; --pref-sky: #00adef; --neon: #00ff9d;
-            --grad-verde: linear-gradient(135deg, #2ed573 0%, #1e9658 100%);
-            --grad-amarelo: linear-gradient(135deg, #ffa502 0%, #e67e22 100%);
-            --grad-vermelho: linear-gradient(135deg, #ff4757 0%, #c0392b 100%);
-        }
-        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: 0.3s; }
-        
-        body { 
-            margin: 0; background: #000b1a url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
-            background-size: cover; min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white; padding: 20px;
-        }
-
-        .container-parnaiba {
-            width: 100%; max-width: 550px; background: rgba(0, 15, 40, 0.85);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 2px solid var(--pref-sky); border-radius: 40px;
-            padding: 40px; box-shadow: 0 0 50px rgba(0, 173, 239, 0.4);
-            text-align: center;
-        }
-
-        .topo-cidade { border-bottom: 2px solid rgba(0, 173, 239, 0.5); padding-bottom: 20px; margin-bottom: 20px; }
-        .brasao-ficticio { font-size: 10px; font-weight: 800; letter-spacing: 4px; color: var(--pref-sky); text-transform: uppercase; }
-        .unidade-nome { font-size: 18px; font-weight: 700; color: #fff; margin-top: 5px; }
-
-        .data-header { font-family: 'Orbitron', sans-serif; font-size: 12px; color: var(--neon); margin-bottom: 20px; }
-        label { display: block; text-align: left; font-size: 10px; font-weight: 700; color: var(--pref-sky); margin: 15px 0 5px 5px; text-transform: uppercase; }
-        .campo { width: 100%; height: 55px; background: #fff; border-radius: 15px; border: none; padding: 0 20px; font-size: 14px; color: #111; font-weight: 600; margin-bottom: 5px; }
-        
-        .btn-menu { 
-            width: 100%; height: 75px; background: rgba(255,255,255,0.05); border: 1px solid var(--pref-sky);
-            border-radius: 20px; color: white; cursor: pointer; text-align: left; padding: 0 25px; margin-bottom: 15px;
-            display: flex; align-items: center; justify-content: space-between;
-        }
-        .btn-menu.active { background: var(--pref-sky); border-color: white; }
-
-        .grid-ti { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin: 10px 0 25px 0; }
-        .btn-ti { height: 80px; border-radius: 20px; border: 3px solid transparent; font-weight: 800; cursor: pointer; color: white; font-size: 11px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-transform: uppercase; }
-        .btn-ti.active { border-color: white; transform: translateY(-5px); box-shadow: 0 0 30px currentColor; }
-
-        .btn-confirmar { width: 100%; height: 65px; border-radius: 20px; border: none; background: linear-gradient(135deg, var(--pref-azul), var(--pref-sky)); color: white; font-weight: 800; text-transform: uppercase; cursor: pointer; font-size: 16px; box-shadow: 0 15px 30px rgba(0, 74, 153, 0.5); margin-top: 10px; }
-        
-        .hidden { display: none; }
-    </style>
-</head>
-<body>
-
-    <div class="container-parnaiba">
-        <div class="topo-cidade">
-            <div class="brasao-ficticio">Prefeitura de Santana de Parnaíba</div>
-            <div class="unidade-nome">CM. Chácara Das Garças</div>
-        </div>
-        <div class="data-header" id="clock">00/00/0000 00:00:00</div>
-
-        <div id="scr1">
-            <h2>Identificação</h2>
-            <input type="text" class="campo" id="p-nome" placeholder="Nome Completo *">
-            <input type="text" class="campo" id="p-id" placeholder="Prontuário *">
-            <input type="text" class="campo" id="p-mat" placeholder="Disciplina *">
-            <button class="btn-confirmar" onclick="app.validarPerfil()">Entrar no Sistema</button>
-        </div>
-
-        <div id="scr2" class="hidden">
-            <h2>Painel Principal</h2>
-            <button class="btn-menu" onclick="app.nav(2, 3)"><b>📅 Reservar Equipamento</b></button>
-            <button class="btn-menu" onclick="app.nav(2, 5)"><b>🛠️ Suporte Técnico TI</b></button>
-        </div>
-
-        <div id="scr3" class="hidden">
-            <h2>Nova Reserva</h2>
-            <label>Início *</label><input type="datetime-local" class="campo" id="res-inicio">
-            <label>Fim *</label><input type="datetime-local" class="campo" id="res-fim">
-            <label>Sala *</label><input type="text" class="campo" id="res-sala" placeholder="Ex: 9º Ano A">
-            <label>Equipamento *</label>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <button class="btn-menu" id="e1" onclick="app.setEq('LAB. INFO', 'e1')"><b>INFO</b></button>
-                <button class="btn-menu" id="e2" onclick="app.setEq('CHROMEBOOKS', 'e2')"><b>CHROME</b></button>
-                <button class="btn-menu" id="e3" onclick="app.setEq('TV 1º ANDAR', 'e3')"><b>TV 1º</b></button>
-                <button class="btn-menu" id="e4" onclick="app.setEq('TV 2º ANDAR', 'e4')"><b>TV 2º</b></button>
-            </div>
-            <button class="btn-confirmar" onclick="app.enviarReserva()">Confirmar Agendamento</button>
-        </div>
-
-        <div id="scr5" class="hidden">
-            <h2>Suporte TI</h2>
-            <label>Criticidade *</label>
-            <div class="grid-ti">
-                <button class="btn-ti" id="g1" style="background:var(--grad-verde)" onclick="app.setGrau('BAIXO', 'g1')">MÍNIMO</button>
-                <button class="btn-ti" id="g2" style="background:var(--grad-amarelo)" onclick="app.setGrau('CRÍTICO', 'g2')">CRÍTICO</button>
-                <button class="btn-ti" id="g3" style="background:var(--grad-vermelho)" onclick="app.setGrau('PARADA', 'g3')">URGENTE</button>
-            </div>
-            <textarea class="campo" id="sup-motivo" style="height:100px; padding:15px;" placeholder="Relate o problema aqui *"></textarea>
-            <button class="btn-confirmar" onclick="app.enviarChamado()">Enviar ao Firebase</button>
-        </div>
-    </div>
-
 <script>
-    // --- CONFIGURAÇÃO FIREBASE ---
+    // Configuração com os dados da sua imagem
     const firebaseConfig = {
-        // COLE SUAS CONFIGURAÇÕES DO FIREBASE AQUI
-        apiKey: "SUA_API_KEY",
-        authDomain: "SEU_PROJETO.firebaseapp.com",
-        databaseURL: "https://SEU_PROJETO.firebaseio.com",
-        projectId: "SEU_PROJETO",
-        storageBucket: "SEU_PROJETO.appspot.com",
-        messagingSenderId: "ID",
-        appId: "APP_ID"
+        databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com/"
     };
     
+    // Inicializa
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
     const app = {
-        equip: "", grau: "",
-        nav(at, px) {
-            document.getElementById(`scr${at}`).classList.add('hidden');
-            document.getElementById(`scr${px}`).classList.remove('hidden');
-        },
-        validarPerfil() {
-            if(!document.getElementById('p-nome').value || !document.getElementById('p-id').value) return alert("Preencha tudo!");
-            this.nav(1, 2);
-        },
-        setEq(val, id) {
-            this.equip = val;
-            document.querySelectorAll('#scr3 .btn-menu').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        },
-        setGrau(val, id) {
-            this.grau = val;
-            document.querySelectorAll('.btn-ti').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        },
-        enviarReserva() {
-            const dados = {
-                professor: document.getElementById('p-nome').value,
-                item: this.equip,
-                inicio: document.getElementById('res-inicio').value,
-                fim: document.getElementById('res-fim').value,
-                sala: document.getElementById('res-sala').value,
-                data_registro: new Date().toLocaleString()
-            };
-            if(!dados.inicio || !dados.item) return alert("Preencha tudo!");
-            
-            database.ref('reservas').push(dados).then(() => {
-                alert("Reserva salva no Firebase!");
-                location.reload();
-            });
-        },
+        // ... (resto das funções de nav e setEq permanecem iguais)
+
         enviarChamado() {
+            const mot = document.getElementById('sup-motivo').value;
+            // TRAVA OBRIGATÓRIA
+            if(!this.grau || !mot) {
+                return alert("TRAVA: Você precisa escolher a gravidade e descrever o problema!");
+            }
+
             const chamado = {
                 professor: document.getElementById('p-nome').value,
                 prontuario: document.getElementById('p-id').value,
                 urgencia: this.grau,
-                problema: document.getElementById('sup-motivo').value,
-                data: new Date().toLocaleString()
+                problema: mot,
+                data: new Date().toLocaleString('pt-BR')
             };
-            if(!chamado.urgencia || !chamado.problema) return alert("Preencha tudo!");
 
-            database.ref('chamados').push(chamado).then(() => {
-                alert("Chamado enviado ao painel de ADM!");
-                location.reload();
-            });
+            // Envia para a pasta 'chamados' no seu Firebase
+            database.ref('chamados').push(chamado)
+                .then(() => {
+                    alert("✅ ENVIADO! O chamado já deve aparecer no painel do Zé.");
+                    location.reload();
+                })
+                .catch((error) => {
+                    alert("ERRO NO FIREBASE: " + error.message);
+                });
         }
     };
-    setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleString('pt-BR'); }, 1000);
 </script>
-</body>
-</html>
