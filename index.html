@@ -12,114 +12,114 @@
     <style>
         :root {
             --pref-azul: #004a99; --pref-sky: #00adef; --neon: #00ff9d;
-            --v-verde: linear-gradient(135deg, #2ed573, #1e9658);
-            --v-amarelo: linear-gradient(135deg, #ffa502, #e67e22);
-            --v-vermelho: linear-gradient(135deg, #ff4757, #c0392b);
+            --glass: rgba(0, 25, 51, 0.85);
         }
         * { box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: 0.3s; }
         
         body { 
             margin: 0; background: #000b1a url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed;
-            background-size: cover; min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white; padding: 20px;
+            background-size: cover; min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white; padding: 15px;
         }
 
         .container-premium {
-            width: 100%; max-width: 520px; background: rgba(0, 25, 51, 0.75);
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(0, 173, 239, 0.4); border-radius: 40px;
-            padding: 35px; box-shadow: 0 40px 80px rgba(0,0,0,0.8);
-            text-align: center; border-bottom: 6px solid var(--pref-sky);
+            width: 100%; max-width: 550px; background: var(--glass);
+            backdrop-filter: blur(20px); border: 1px solid rgba(0, 173, 239, 0.4); border-radius: 35px;
+            padding: 30px; box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            text-align: center; border-bottom: 8px solid var(--pref-sky);
         }
 
-        .header-cidade { margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
-        .cidade-txt { font-size: 10px; letter-spacing: 3px; color: var(--pref-sky); font-weight: 700; text-transform: uppercase; margin: 0; }
-        .unidade-txt { font-size: 24px; font-weight: 700; color: white; margin-top: 5px; font-family: 'Orbitron'; letter-spacing: 1px; }
-        .sub-txt { font-size: 9px; color: var(--pref-sky); font-weight: 600; text-transform: uppercase; margin-top: -2px; letter-spacing: 1px; }
+        .header-nti { margin-bottom: 25px; }
+        .unidade-txt { font-size: 28px; font-weight: 700; color: white; font-family: 'Orbitron'; letter-spacing: 2px; margin: 0; }
+        .sub-txt { font-size: 11px; color: var(--pref-sky); font-weight: 600; text-transform: uppercase; letter-spacing: 2px; }
 
-        .data-viva { font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--neon); letter-spacing: 1px; margin: 15px 0; }
+        .data-viva { font-family: 'Orbitron', sans-serif; font-size: 12px; color: var(--neon); margin-bottom: 20px; opacity: 0.9; }
         
-        h1 { font-size: 18px; font-weight: 800; text-transform: uppercase; color: white; margin: 10px 0; }
-        label { display: block; text-align: left; font-size: 9px; font-weight: 700; color: var(--pref-sky); margin: 15px 0 5px 8px; text-transform: uppercase; }
-        .campo { width: 100%; height: 50px; background: #fff; border-radius: 12px; border: none; padding: 0 18px; font-size: 14px; color: #111; margin-bottom: 10px; font-weight: 600; }
+        h2 { font-size: 16px; font-weight: 700; text-transform: uppercase; color: #fff; margin: 10px 0; letter-spacing: 1px; }
         
-        .btn-grid { display: grid; gap: 10px; margin-bottom: 20px; }
+        label { display: block; text-align: left; font-size: 10px; font-weight: 700; color: var(--pref-sky); margin: 12px 0 5px 5px; text-transform: uppercase; }
+        
+        .campo { width: 100%; height: 50px; background: #fff; border-radius: 12px; border: 2px solid transparent; padding: 0 15px; font-size: 14px; color: #111; margin-bottom: 10px; font-weight: 600; }
+        .campo:focus { border-color: var(--pref-sky); outline: none; }
+
+        /* GRID DE BOTÕES */
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
         .btn-item { 
-            height: 60px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 15px; color: white; cursor: pointer; text-align: left; padding: 0 20px;
-            display: flex; flex-direction: column; justify-content: center;
+            height: 75px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 18px; color: white; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
         }
-        .btn-item b { font-size: 12px; color: var(--pref-sky); }
-        .btn-item.active { background: var(--pref-sky); border-color: white; transform: scale(1.02); }
+        .btn-item b { font-size: 11px; text-transform: uppercase; }
+        .btn-item.active { background: var(--pref-sky); border-color: #fff; box-shadow: 0 0 15px var(--pref-sky); }
 
-        .btn-ti { height: 65px; border-radius: 15px; border: none; font-weight: 800; cursor: pointer; color: white; font-size: 10px; text-transform: uppercase; }
-        .btn-ti.active { border: 3px solid white; transform: scale(1.05); box-shadow: 0 0 25px currentColor; }
-
-        .relogio-uso { font-family: 'Orbitron', sans-serif; font-size: 45px; color: var(--neon); margin: 20px 0; text-shadow: 0 0 15px var(--neon); }
-        .btn-acao { width: 100%; height: 60px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--pref-azul), var(--pref-sky)); color: white; font-weight: 700; text-transform: uppercase; cursor: pointer; }
+        .btn-acao { width: 100%; height: 60px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--pref-azul), var(--pref-sky)); color: white; font-weight: 700; text-transform: uppercase; cursor: pointer; font-size: 14px; letter-spacing: 1px; }
         
+        .box-chrome { background: rgba(0, 173, 239, 0.1); padding: 15px; border-radius: 15px; border: 1px dashed var(--pref-sky); margin-bottom: 15px; }
+
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
     <div class="container-premium">
-        <div class="header-cidade">
-            <p class="cidade-txt">Santana de Parnaíba</p>
+        <div class="header-nti">
             <div class="unidade-txt">SISTEMA NTi</div>
             <div class="sub-txt">Núcleo de Tecnologia e Inovação</div>
         </div>
-        <div class="data-viva" id="clock">00/00/0000 00:00:00</div>
+        <div class="data-viva" id="clock">CARREGANDO...</div>
 
         <div id="scr1">
-            <h1>ACESSO RESTRITO</h1>
+            <h2>Portal do Docente</h2>
             <input type="text" class="campo" id="p-nome" placeholder="Nome Completo">
-            <input type="text" class="campo" id="p-id" placeholder="Prontuário">
+            <input type="text" class="campo" id="p-id" placeholder="Nº Prontuário">
             <input type="text" class="campo" id="p-mat" placeholder="Matéria / Disciplina">
-            <button class="btn-acao" onclick="app.login()">Entrar no Sistema</button>
+            <button class="btn-acao" onclick="app.login()">Acessar Sistema</button>
         </div>
 
         <div id="scr2" class="hidden">
-            <h1>MENU NTi</h1>
+            <h2>Selecione o Serviço</h2>
             <div class="btn-grid">
-                <button class="btn-item" onclick="app.nav(2, 3)"><b>📅 AGENDAR RESERVA</b>Clique para reservar</button>
-                <button class="btn-item" onclick="app.nav(2, 5)"><b>🛠️ SUPORTE TÉCNICO</b>Relatar erro ao TI</button>
+                <button class="btn-item" onclick="app.nav(2, 3)"><b>📅 Agendamento</b></button>
+                <button class="btn-item" onclick="app.nav(2, 5)"><b>🛠️ Suporte TI</b></button>
             </div>
+            <button onclick="location.reload()" style="background:none; border:none; color:#aaa; font-size:11px; cursor:pointer;">Sair do Sistema</button>
         </div>
 
         <div id="scr3" class="hidden">
-            <h1>AGENDAMENTO</h1>
+            <h2>Nova Reserva</h2>
             <div style="display:flex; gap:10px">
-                <div style="flex:1"><label>Início</label><input type="datetime-local" class="campo" id="res-inicio"></div>
-                <div style="flex:1"><label>Entrega</label><input type="datetime-local" class="campo" id="res-fim"></div>
+                <div style="flex:1"><label>Início</label><input type="time" class="campo" id="res-inicio"></div>
+                <div style="flex:1"><label>Fim</label><input type="time" class="campo" id="res-fim"></div>
             </div>
-            <label>Série / Sala</label>
-            <input type="text" class="campo" id="res-sala-manual" placeholder="Ex: 8º Ano B">
+            <input type="text" class="campo" id="res-sala" placeholder="Sala/Série (Ex: 7º Ano C)">
+
             <label>Equipamento</label>
             <div class="btn-grid">
-                <button class="btn-item" id="e1" onclick="app.setEq('SALA INFO', 'e1')"><b>LABORATÓRIO INFORMÁTICA</b></button>
-                <button class="btn-item" id="e2" onclick="app.setEq('CHROMEBOOKS', 'e2')"><b>CHROMEBOOKS</b></button>
-                <button class="btn-item" id="e3" onclick="app.setEq('TV 1º ANDAR', 'e3')"><b>TV - 1º ANDAR</b></button>
-                <button class="btn-item" id="e4" onclick="app.setEq('TV 2º ANDAR', 'e4')"><b>TV - 2º ANDAR</b></button>
+                <button class="btn-item" id="e1" onclick="app.setEq('SALA INFO', 'e1')"><b>Lab. Info</b></button>
+                <button class="btn-item" id="e2" onclick="app.setEq('CHROMEBOOKS', 'e2')"><b>Chromebooks</b></button>
+                <button class="btn-item" id="e3" onclick="app.setEq('TV 1', 'e3')"><b>TV 1º Andar</b></button>
+                <button class="btn-item" id="e4" onclick="app.setEq('TV 2', 'e4')"><b>TV 2º Andar</b></button>
             </div>
-            <button class="btn-acao" onclick="app.enviarReserva()">Confirmar Agendamento</button>
-        </div>
 
-        <div id="scr4" class="hidden">
-            <h1>SESSÃO EM CURSO</h1>
-            <div class="relogio-uso" id="timer">50:00</div>
-            <div id="resumo" style="font-size:11px; text-align:left; background:rgba(255,255,255,0.05); padding:15px; border-radius:12px; line-height:1.5;"></div>
-            <button class="btn-acao" style="background:var(--v-vermelho); margin-top:20px" onclick="location.reload()">Finalizar e Sair</button>
+            <div id="extra-chrome" class="box-chrome hidden">
+                <label style="color:#fff">Qtd. de Chromebooks</label>
+                <input type="number" class="campo" id="res-qtd" placeholder="Quantidade (ex: 30)">
+                <label style="color:#fff">Desenvolvimento da Aula</label>
+                <textarea class="campo" id="res-obs" style="height:70px; padding-top:10px;" placeholder="Qual conteúdo será trabalhado?"></textarea>
+            </div>
+
+            <button class="btn-acao" onclick="app.enviarReserva()">Confirmar Agendamento</button>
+            <button onclick="app.nav(3, 2)" style="background:none; border:none; color:#aaa; font-size:11px; cursor:pointer; margin-top:10px;">Voltar</button>
         </div>
 
         <div id="scr5" class="hidden">
-            <h1>SUPORTE NTi</h1>
-            <div class="btn-grid" style="grid-template-columns: 1fr 1fr 1fr; gap:10px;">
-                <button class="btn-ti" id="g1" style="background:var(--v-verde)" onclick="app.setGrau('BAIXO', 'g1')">BAIXO</button>
-                <button class="btn-ti" id="g2" style="background:var(--v-amarelo)" onclick="app.setGrau('CRÍTICO', 'g2')">CRÍTICO</button>
-                <button class="btn-ti" id="g3" style="background:var(--v-vermelho)" onclick="app.setGrau('URGENTE', 'g3')">URGENTE</button>
+            <h2>Suporte Técnico</h2>
+            <label>Nível de Urgência</label>
+            <div class="btn-grid">
+                <button class="btn-item" id="g1" onclick="app.setGrau('BAIXO', 'g1')"><b>BAIXO</b></button>
+                <button class="btn-item" id="g2" onclick="app.setGrau('CRÍTICO', 'g2')"><b>CRÍTICO</b></button>
             </div>
-            <textarea class="campo" id="sup-motivo" style="height:100px; padding:15px;" placeholder="Qual o problema técnico?"></textarea>
-            <button class="btn-acao" onclick="app.enviarChamado()">Enviar ao Monitoramento</button>
+            <textarea class="campo" id="sup-problema" style="height:120px; padding-top:15px;" placeholder="Descreva o problema detalhadamente..."></textarea>
+            <button class="btn-acao" onclick="app.enviarChamado()">Enviar para o NTi</button>
+            <button onclick="app.nav(5, 2)" style="background:none; border:none; color:#aaa; font-size:11px; cursor:pointer; margin-top:10px;">Cancelar</button>
         </div>
     </div>
 
@@ -134,70 +134,75 @@
 
     const app = {
         equip: "", grau: "",
-        nav(at, px) {
-            document.querySelectorAll('.container-premium > div').forEach(d => { if(d.id.startsWith('scr')) d.classList.add('hidden') });
-            document.getElementById(`scr${px}`).classList.remove('hidden');
+        nav(a, p) {
+            document.querySelectorAll('.container-premium > div[id]').forEach(d => d.classList.add('hidden'));
+            document.getElementById(`scr${p}`).classList.remove('hidden');
         },
         login() {
-            if(!document.getElementById('p-nome').value || !document.getElementById('p-id').value || !document.getElementById('p-mat').value) {
-                return alert("Preencha Nome, Prontuário e Matéria!");
-            }
+            const n = document.getElementById('p-nome').value;
+            const i = document.getElementById('p-id').value;
+            const m = document.getElementById('p-mat').value;
+            if(!n || !i || !m) return alert("NTi INFORMA: Preencha todos os campos de identificação!");
             this.nav(1, 2);
         },
         setEq(val, id) {
             this.equip = val;
             document.querySelectorAll('#scr3 .btn-item').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
+            
+            // MOSTRAR CAMPOS EXTRAS SE FOR CHROMEBOOK
+            const extra = document.getElementById('extra-chrome');
+            val === 'CHROMEBOOKS' ? extra.classList.remove('hidden') : extra.classList.add('hidden');
         },
         setGrau(val, id) {
             this.grau = val;
-            document.querySelectorAll('.btn-ti').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('#scr5 .btn-item').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         },
         enviarReserva() {
             const dados = {
-                nome: document.getElementById('p-nome').value,
+                docente: document.getElementById('p-nome').value,
                 prontuario: document.getElementById('p-id').value,
                 materia: document.getElementById('p-mat').value,
-                sala: document.getElementById('res-sala-manual').value,
+                sala: document.getElementById('res-sala').value,
                 item: this.equip,
-                inicio: document.getElementById('res-inicio').value,
-                data_registro: new Date().toLocaleString()
+                horario: `${document.getElementById('res-inicio').value} às ${document.getElementById('res-fim').value}`,
+                qtd: document.getElementById('res-qtd').value || "N/A",
+                desenvolvimento: document.getElementById('res-obs').value || "Não informado",
+                timestamp: new Date().toLocaleString()
             };
-            if(!dados.item || !dados.sala) return alert("Selecione o item e a sala!");
-            db.ref('reservas').push(dados).then(() => {
-                this.nav(3, 4);
-                document.getElementById('resumo').innerHTML = `<b>PROF:</b> ${dados.nome}<br><b>PRONTUÁRIO:</b> ${dados.prontuario}<br><b>ITEM:</b> ${dados.item}`;
-                this.startTimer(50);
+
+            if(!dados.item || !dados.sala || !document.getElementById('res-inicio').value) {
+                return alert("NTi INFORMA: Faltam detalhes do agendamento!");
+            }
+
+            db.ref('Agendamentos_NTi').push(dados).then(() => {
+                alert("SUCESSO! Agendamento registrado no Núcleo de Tecnologia.");
+                location.reload();
             });
         },
         enviarChamado() {
-            const msg = document.getElementById('sup-motivo').value;
-            if(!this.grau || !msg) return alert("Selecione a urgência e relate o erro!");
             const dados = {
-                nome: document.getElementById('p-nome').value,
+                docente: document.getElementById('p-nome').value,
                 prontuario: document.getElementById('p-id').value,
                 materia: document.getElementById('p-mat').value,
-                prioridade: this.grau,
-                problema: msg,
-                data: new Date().toLocaleString()
+                urgencia: this.grau,
+                relato: document.getElementById('sup-problema').value,
+                timestamp: new Date().toLocaleString()
             };
-            db.ref('chamados').push(dados).then(() => {
-                alert("Chamado NTi enviado!");
-                this.nav(5, 2);
+            if(!dados.urgencia || !dados.relato) return alert("NTi INFORMA: Descreva o problema!");
+
+            db.ref('Chamados_Tecnicos').push(dados).then(() => {
+                alert("CHAMADO ENVIADO! O NTi analisará sua solicitação.");
+                location.reload();
             });
-        },
-        startTimer(m) {
-            let s = m * 60;
-            setInterval(() => {
-                if(s <= 0) return;
-                let min = Math.floor(s/60), seg = s%60;
-                document.getElementById('timer').innerText = `${min.toString().padStart(2,'0')}:${seg.toString().padStart(2,'0')}`;
-                s--;
-            }, 1000);
         }
     };
-    setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleString('pt-BR'); }, 1000);
+
+    setInterval(() => {
+        const d = new Date();
+        document.getElementById('clock').innerText = d.toLocaleDateString() + " | " + d.toLocaleTimeString();
+    }, 1000);
 </script>
 </body>
 </html>
