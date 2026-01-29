@@ -3,310 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema NTi - C.M. Chácara Das Garças</title>
+    <title>NTi - Sistema de Gestão</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS - Identidade Visual Santana de Parnaíba */
         :root {
-            --azul-gov: #002d5e;
-            --azul-claro: #0056b3;
-            --dourado: #c5a059;
-            --fundo: #f4f7f6;
-            --branco: #ffffff;
-            --danger: #d9534f;
-            --warning: #f0ad4e;
-            --success: #5cb85c;
+            --primary: #003366; /* Azul Parnaíba */
+            --accent: #007bff;
+            --bg: #f0f2f5;
+            --sidebar: #ffffff;
+            --text: #1c1e21;
         }
 
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: var(--fundo); color: #333; }
-        .hidden { display: none !important; }
-
-        header {
-            background: var(--azul-gov);
-            color: white;
-            padding: 15px 5%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 5px solid var(--dourado);
+        * { box-sizing: border-box; transition: all 0.2s ease; }
+        body { 
+            margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); 
+            display: flex; height: 100vh; overflow: hidden;
         }
 
-        .brasao-img { height: 60px; filter: brightness(0) invert(1); }
-
-        .container { max-width: 900px; margin: 30px auto; padding: 20px; }
-
-        .panel {
-            background: var(--branco);
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            border-top: 5px solid var(--azul-claro);
+        /* BARRA LATERAL */
+        .sidebar {
+            width: 280px; background: var(--sidebar); border-right: 1px solid #ddd;
+            display: flex; flex-direction: column; padding: 30px 20px;
         }
 
-        h2 { color: var(--azul-gov); margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .logo-area { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; }
+        .logo-area img { height: 45px; }
+        .logo-area span { font-weight: 700; font-size: 18px; color: var(--primary); }
 
-        /* Formulários */
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
-        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-
-        .btn {
-            background: var(--azul-claro);
-            color: white;
-            border: none;
-            padding: 15px;
-            width: 100%;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-            border-radius: 4px;
-            transition: 0.3s;
+        .nav-item {
+            padding: 14px 18px; border-radius: 10px; cursor: pointer; display: flex;
+            align-items: center; gap: 12px; color: #606770; font-weight: 600; margin-bottom: 5px;
         }
-        .btn:hover { background: var(--azul-gov); }
+        .nav-item:hover { background: #f2f2f2; color: var(--primary); }
+        .nav-item.active { background: #e7f3ff; color: var(--accent); }
 
-        /* Grid de Salas */
-        .sala-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin: 15px 0; }
-        .sala-btn {
-            background: #eee; border: 1px solid #ddd; padding: 10px; text-align: center;
-            cursor: pointer; font-size: 12px; font-weight: bold;
+        /* ÁREA DE CONTEÚDO */
+        .content { flex: 1; padding: 40px; overflow-y: auto; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .user-chip { background: white; padding: 10px 20px; border-radius: 50px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); font-weight: 600; font-size: 14px; }
+
+        .card { 
+            background: white; border-radius: 16px; padding: 30px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #eee;
         }
-        .sala-btn.active { background: var(--azul-gov); color: white; border-color: var(--azul-gov); }
 
-        /* Menu Principal */
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .menu-card {
-            background: white; border: 1px solid #ddd; padding: 30px; text-align: center;
-            cursor: pointer; transition: 0.3s; border-radius: 8px;
+        h2 { margin: 0 0 20px 0; color: var(--primary); font-size: 22px; }
+
+        /* ELEMENTOS DE FORMULÁRIO */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .input-group { margin-bottom: 20px; }
+        label { display: block; font-size: 12px; font-weight: 700; color: #65676b; margin-bottom: 8px; text-transform: uppercase; }
+        input, select, textarea {
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; font-size: 15px;
         }
-        .menu-card:hover { transform: translateY(-5px); border-color: var(--azul-claro); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .menu-card i { font-size: 40px; display: block; margin-bottom: 10px; }
+        input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(0,123,255,0.1); }
 
-        /* Timer */
-        #timer-display { font-size: 60px; font-weight: bold; color: var(--azul-gov); margin: 20px 0; }
-        
-        /* Suporte TI - Cores */
-        .opt-verde { color: green; font-weight: bold; }
-        .opt-amarelo { color: orange; font-weight: bold; }
-        .opt-vermelho { color: red; font-weight: bold; }
+        /* GRADE DE SALAS MODERNA */
+        .rooms-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px; margin-top: 10px; }
+        .room-opt { 
+            background: #fff; border: 1px solid #ddd; padding: 12px; border-radius: 8px;
+            cursor: pointer; text-align: center; font-size: 11px; font-weight: 700;
+        }
+        .room-opt.active { background: var(--primary); color: white; border-color: var(--primary); transform: scale(1.05); }
 
+        .btn-main {
+            background: var(--primary); color: white; border: none; padding: 16px; border-radius: 10px;
+            width: 100%; font-weight: 700; cursor: pointer; font-size: 15px; margin-top: 10px;
+        }
+        .btn-main:hover { background: var(--accent); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+
+        /* TI GRAVIDADE */
+        .priority-row { display: flex; gap: 10px; margin-top: 10px; }
+        .prio-btn { flex: 1; padding: 15px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; color: white; opacity: 0.3; }
+        .prio-btn.active { opacity: 1; transform: translateY(-3px); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-<header>
-    <div style="display: flex; align-items: center; gap: 20px;">
-        <img src="https://www.santanadeparnaiba.sp.gov.br/portal/img/brasao.png" class="brasao-img" alt="Brasão">
-        <div>
-            <h1 style="margin:0; font-size: 20px;">NTi - GESTÃO DE ATIVOS</h1>
-            <small>C.M. Chácara Das Garças</small>
+    <aside class="sidebar" id="sidebar-nav" class="hidden">
+        <div class="logo-area">
+            <img src="https://www.santanadeparnaiba.sp.gov.br/portal/img/brasao.png" alt="Brasão">
+            <span>NTi Portal</span>
         </div>
-    </div>
-    <div id="user-display" style="font-weight: bold; font-size: 14px;">Acesso Restrito</div>
-</header>
+        <div class="nav-item active" onclick="show('reserva', this)">📅 Reservas</div>
+        <div class="nav-item" onclick="show('suporte', this)">🛠️ Suporte TI</div>
+        <div class="nav-item" style="margin-top: auto; color: #d93025;" onclick="location.reload()">🚪 Sair</div>
+    </aside>
 
-<div class="container">
-
-    <div id="tela-login" class="panel">
-        <h2>Autenticação</h2>
-        <div class="form-group">
-            <label>E-mail Institucional</label>
-            <input type="email" id="login-email" placeholder="professor@educacao.sp.gov.br">
-        </div>
-        <div class="form-group">
-            <label>Senha</label>
-            <input type="password" id="login-pass" placeholder="******">
-        </div>
-        <button class="btn" onclick="proximaTela('tela-cadastro')">Acessar</button>
-    </div>
-
-    <div id="tela-cadastro" class="panel hidden">
-        <h2>Identificação do Docente</h2>
-        <div class="form-group">
-            <label>Nome Completo</label>
-            <input type="text" id="doc-nome">
-        </div>
-        <div style="display:flex; gap:10px;">
-            <div class="form-group" style="flex:1;">
-                <label>Prontuário (RP)</label>
-                <input type="text" id="doc-rp">
-            </div>
-            <div class="form-group" style="flex:1;">
-                <label>Matéria</label>
-                <input type="text" id="doc-materia">
+    <main class="content">
+        <div id="scr-login">
+            <div style="max-width: 400px; margin: 100px auto;" class="card">
+                <div style="text-align:center; margin-bottom:30px;">
+                    <img src="https://www.santanadeparnaiba.sp.gov.br/portal/img/brasao.png" height="80">
+                    <h2 style="margin-top:15px">Acesso ao Sistema</h2>
+                </div>
+                <div class="input-group"><label>E-mail</label><input type="email" id="l-email"></div>
+                <div class="input-group"><label>Senha</label><input type="password" id="l-pass"></div>
+                <button class="btn-main" onclick="doLogin()">Entrar</button>
             </div>
         </div>
-        <button class="btn" onclick="salvarPerfil()">Confirmar Dados</button>
-    </div>
 
-    <div id="tela-menu" class="hidden">
-        <div class="menu-grid">
-            <div class="menu-card" onclick="proximaTela('tela-reserva')">
-                <i>📅</i>
-                <b>RESERVA DE EQUIPAMENTOS</b>
+        <div id="scr-app" class="hidden">
+            <div class="top-bar">
+                <h2 id="view-title">Gestão de Reservas</h2>
+                <div class="user-chip" id="user-display">Prof. João Silva</div>
             </div>
-            <div class="menu-card" onclick="proximaTela('tela-suporte')">
-                <i>🛠️</i>
-                <b>SUPORTE TÉCNICO (NTi)</b>
+
+            <div id="view-reserva" class="card">
+                <label>Selecione o Local / Sala</label>
+                <div class="rooms-grid" id="grid-salas"></div>
+
+                <div class="form-grid" style="margin-top: 30px;">
+                    <div class="input-group">
+                        <label>Equipamento</label>
+                        <select id="eq-type">
+                            <option>Laboratório de Informática</option>
+                            <option>Carrinho Chromebooks</option>
+                            <option>TV Digital</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Hora da Entrega</label>
+                        <input type="time" id="end-time">
+                    </div>
+                </div>
+                <button class="btn-main" onclick="confirmReserva()">Confirmar Agendamento</button>
             </div>
-        </div>
-        <button class="btn" style="background:#666; margin-top:20px;" onclick="location.reload()">Sair</button>
-    </div>
 
-    <div id="tela-reserva" class="panel hidden">
-        <h2>Nova Reserva</h2>
-        <label>Selecione a Sala:</label>
-        <div id="grade-salas-reserva" class="sala-grid"></div>
-
-        <div class="form-group">
-            <label>Equipamento:</label>
-            <select id="res-equip" onchange="toggleChromebook()">
-                <option value="TV Digital (Pat: 230180)">TV Digital (Pat: 230180)</option>
-                <option value="Carrinho Chromebook (Pat: 247880)">Carrinho Chromebook (Pat: 247880)</option>
-                <option value="Laboratório de Informática">Laboratório de Informática</option>
-            </select>
-        </div>
-
-        <div id="campo-chrome" class="form-group hidden">
-            <label>Quantidade de Chromebooks:</label>
-            <input type="number" id="res-qtd" min="1" max="40" value="1">
-        </div>
-
-        <div class="form-group">
-            <label>Hora da Devolução:</label>
-            <input type="time" id="res-hora-fim">
-        </div>
-
-        <button class="btn" onclick="iniciarReserva()">Protocolar Reserva</button>
-        <button class="btn" style="background:#999; margin-top:10px;" onclick="proximaTela('tela-menu')">Voltar</button>
-    </div>
-
-    <div id="tela-timer" class="panel hidden" style="text-align: center;">
-        <h2>Equipamento em Uso</h2>
-        <div id="timer-display">00:00</div>
-        <p id="timer-info" style="font-weight: bold; color: #555;"></p>
-        <button class="btn" style="background: var(--success);" onclick="finalizarUso()">Uso Finalizado / Devolvido</button>
-    </div>
-
-    <div id="tela-suporte" class="panel hidden">
-        <h2>Abertura de Chamado</h2>
-        <label>Local do Problema:</label>
-        <div id="grade-salas-suporte" class="sala-grid"></div>
-
-        <div class="form-group">
-            <label>Gravidade:</label>
-            <select id="sup-grau">
-                <option value="Verde" class="opt-verde">🟢 VERDE: Normal / Para depois</option>
-                <option value="Amarelo" class="opt-amarelo">🟡 AMARELO: Imediato / Sem urgência</option>
-                <option value="Vermelho" class="opt-vermelho">🔴 VERMELHO: URGENTE / Aula parada</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label>Descrição do Problema:</label>
-            <textarea id="sup-motivo" rows="4"></textarea>
-        </div>
-
-        <button class="btn" style="background: var(--danger);" onclick="enviarSuporte()">Registrar Chamado</button>
-        <button class="btn" style="background:#999; margin-top:10px;" onclick="proximaTela('tela-menu')">Voltar</button>
-    </div>
-
-</div>
-
-<script>
-    let professor = {};
-    let salaSelecionada = "";
-    let contagemRegressiva;
-
-    function proximaTela(id) {
-        document.querySelectorAll('.panel, #tela-menu').forEach(t => t.classList.add('hidden'));
-        document.getElementById(id).classList.remove('hidden');
-    }
-
-    function salvarPerfil() {
-        professor.nome = document.getElementById('doc-nome').value;
-        professor.rp = document.getElementById('doc-rp').value;
-        if(!professor.nome || !professor.rp) return alert("Preencha Nome e RP!");
-        
-        document.getElementById('user-display').innerText = "Prof: " + professor.nome;
-        proximaTela('tela-menu');
-    }
-
-    function montarSalas(idContainer) {
-        const container = document.getElementById(idContainer);
-        container.innerHTML = "";
-        for(let i=1; i<=9; i++) {
-            let btn = document.createElement('div');
-            btn.className = 'sala-btn';
-            btn.innerText = i + "º ANO A";
-            btn.onclick = () => {
-                container.querySelectorAll('.sala-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                salaSelecionada = btn.innerText;
-            };
-            container.appendChild(btn);
-        }
-    }
-
-    function toggleChromebook() {
-        const equip = document.getElementById('res-equip').value;
-        document.getElementById('campo-chrome').classList.toggle('hidden', !equip.includes("Chromebook"));
-    }
-
-    function iniciarReserva() {
-        const horaFim = document.getElementById('res-hora-fim').value;
-        if(!salaSelecionada || !horaFim) return alert("Selecione a sala e o horário de devolução!");
-
-        const equip = document.getElementById('res-equip').value;
-        proximaTela('tela-timer');
-        document.getElementById('timer-info').innerText = `Equipamento: ${equip} | Local: ${salaSelecionada}`;
-        
-        // Lógica do Timer
-        runTimer(horaFim);
-    }
-
-    function runTimer(horaFim) {
-        if(contagemRegressiva) clearInterval(contagemRegressiva);
-        
-        contagemRegressiva = setInterval(() => {
-            const agora = new Date();
-            const [h, m] = horaFim.split(':');
-            const target = new Date();
-            target.setHours(h, m, 0);
-
-            const diff = target - agora;
-
-            if(diff <= 0) {
-                document.getElementById('timer-display').innerText = "00:00";
-                document.getElementById('timer-display').style.color = "red";
-                alert("TEMPO ESGOTADO! Por favor, entregue o equipamento.");
-                clearInterval(contagemRegressiva);
-            } else {
-                let minutos = Math.floor(diff / 60000);
-                let segundos = Math.floor((diff % 60000) / 1000);
-                document.getElementById('timer-display').innerText = 
-                    `${minutos.toString().padStart(2,'0')}:${segundos.toString().padStart(2,'0')}`;
+            <div id="view-suporte" class="card hidden">
+                <label>Onde está o problema?</label>
+                <div class="rooms-grid" id="grid-salas-ti"></div>
                 
-                if(minutos === 5 && segundos === 0) alert("Faltam 5 minutos para a entrega!");
+                <div style="margin-top:25px">
+                    <label>Nível de Urgência</label>
+                    <div class="priority-row">
+                        <button class="prio-btn" id="p1" style="background:#28a745" onclick="setPrio(1)">BAIXA</button>
+                        <button class="prio-btn" id="p2" style="background:#ffc107; color:#000" onclick="setPrio(2)">MÉDIA</button>
+                        <button class="prio-btn" id="p3" style="background:#dc3545" onclick="setPrio(3)">ALTA</button>
+                    </div>
+                </div>
+
+                <div class="input-group" style="margin-top:25px">
+                    <label>Relatório do Problema</label>
+                    <textarea rows="4" placeholder="Descreva o que houve..."></textarea>
+                </div>
+                <button class="btn-main" style="background:#dc3545" onclick="alert('Chamado aberto!')">Abrir Ticket TI</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let selectedSala = "";
+
+        function doLogin() {
+            document.getElementById('scr-login').classList.add('hidden');
+            document.getElementById('scr-app').classList.remove('hidden');
+            document.getElementById('sidebar-nav').classList.remove('hidden');
+            document.body.style.display = "flex";
+        }
+
+        function show(view, el) {
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('view-reserva').classList.toggle('hidden', view !== 'reserva');
+            document.getElementById('view-suporte').classList.toggle('hidden', view !== 'suporte');
+            document.getElementById('view-title').innerText = view === 'reserva' ? 'Gestão de Reservas' : 'Suporte Técnico NTi';
+        }
+
+        function initSalas(id) {
+            const container = document.getElementById(id);
+            for(let i=1; i<=9; i++) {
+                let d = document.createElement('div');
+                d.className = 'room-opt'; d.innerText = i + 'º ANO A';
+                d.onclick = () => {
+                    document.querySelectorAll('.room-opt').forEach(r => r.classList.remove('active'));
+                    d.classList.add('active'); selectedSala = d.innerText;
+                };
+                container.appendChild(d);
             }
-        }, 1000);
-    }
+        }
 
-    function finalizarUso() {
-        clearInterval(contagemRegressiva);
-        alert("Sistema Liberado. Obrigado por colaborar!");
-        proximaTela('tela-menu');
-    }
+        function setPrio(n) {
+            document.querySelectorAll('.prio-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('p'+n).classList.add('active');
+        }
 
-    function enviarSuporte() {
-        const prioridade = document.getElementById('sup-prioridade').value;
-        if(!salaSelecionada) return alert("Selecione a sala do problema!");
-        alert("Chamado " + prioridade + " registrado com sucesso no NTi!");
-        proximaTela('tela-menu');
-    }
+        function confirmReserva() {
+            if(!selectedSala) return alert("Escolha uma sala!");
+            alert("Reserva confirmada para " + selectedSala);
+        }
 
-    // Iniciar
-    montarSalas('grade-salas-reserva');
-    montarSalas('grade-salas-suporte');
-</script>
-
+        initSalas('grid-salas');
+        initSalas('grid-salas-ti');
+    </script>
 </body>
 </html>
