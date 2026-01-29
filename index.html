@@ -3,130 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NTi - SISTEMA DE GESTÃO ESTRATÉGICA</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>SISTEMA NTi - SANTANA DE PARNAÍBA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
     <style>
         :root {
-            --pref-navy: #001a33; --pref-blue: #003366; --pref-light: #00adef;
-            --glass: rgba(255, 255, 255, 0.03);
+            --nti-blue: #00adef; --nti-dark: #001a33; --nti-glass: rgba(0, 15, 30, 0.85);
         }
         
-        * { box-sizing: border-box; font-family: 'Outfit', sans-serif; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        * { box-sizing: border-box; font-family: 'Outfit', sans-serif; transition: 0.3s; }
         
         body { 
-            margin: 0; background: var(--pref-navy); color: #fff;
-            min-height: 100vh; display: flex; align-items: center; justify-content: center;
-            overflow: hidden; padding: 15px;
+            margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            /* FUNDO: FOTO DA PREFEITURA + OVERLAY ESCURO */
+            background: linear-gradient(rgba(0, 10, 20, 0.7), rgba(0, 10, 20, 0.7)), 
+                        url('https://www.santanadeparnaiba.sp.gov.br/noticias/imgs23/270423_parnaiba_mais_segura_destaque.jpg') no-repeat center center fixed;
+            background-size: cover; padding: 15px; overflow-x: hidden;
         }
 
-        /* FUNDO TECNOLÓGICO ANIMADO */
-        .tech-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background: radial-gradient(circle at 50% 50%, #002d5e 0%, #000b1a 100%);
-        }
-        .grid {
-            position: absolute; width: 200%; height: 200%; top: -50%; left: -50%;
-            background-image: linear-gradient(rgba(0, 173, 239, 0.05) 1px, transparent 1px), 
-                              linear-gradient(90deg, rgba(0, 173, 239, 0.05) 1px, transparent 1px);
-            background-size: 50px 50px; transform: perspective(500px) rotateX(60deg);
-            animation: move 20s linear infinite;
-        }
-        @keyframes move { from { transform: perspective(500px) rotateX(60deg) translateY(0); } to { transform: perspective(500px) rotateX(60deg) translateY(50px); } }
-
-        /* CONTAINER PRINCIPAL */
+        /* CARD CENTRAL EM VIDRO (GLASSMORPHISM) */
         .main-card {
-            width: 100%; max-width: 500px; background: rgba(0, 20, 40, 0.8);
-            backdrop-filter: blur(25px); border: 1px solid rgba(0, 173, 239, 0.2);
-            border-radius: 32px; padding: 40px; box-shadow: 0 40px 80px rgba(0,0,0,0.6);
-            text-align: center;
+            width: 100%; max-width: 500px; background: var(--nti-glass);
+            backdrop-filter: blur(15px); border: 1px solid rgba(0, 173, 239, 0.3);
+            border-radius: 35px; padding: 40px 30px; box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+            text-align: center; position: relative;
         }
 
-        .header-brand h1 { font-family: 'Montserrat'; font-weight: 900; font-size: 42px; margin: 0; letter-spacing: -2px; color: #fff; }
-        .header-brand p { font-size: 10px; text-transform: uppercase; letter-spacing: 4px; color: var(--pref-light); margin-bottom: 30px; }
+        /* HEADER */
+        .brand { margin-bottom: 30px; }
+        .brand h1 { font-weight: 900; font-size: 45px; margin: 0; letter-spacing: -2px; color: #fff; }
+        .brand span { font-size: 10px; text-transform: uppercase; letter-spacing: 5px; color: var(--nti-blue); font-weight: 700; }
 
-        /* MENU EM GRID CORPORATIVO */
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .menu-item { 
-            background: var(--glass); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px; padding: 25px 15px; cursor: pointer;
-        }
-        .menu-item:hover { background: rgba(0, 173, 239, 0.1); border-color: var(--pref-light); transform: translateY(-5px); }
-        .menu-item b { display: block; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: #fff; }
-
-        /* ESTILO DOS INPUTS */
-        .input-group { text-align: left; margin-bottom: 20px; }
-        .input-group label { font-size: 10px; font-weight: 600; color: var(--pref-light); margin-left: 10px; }
+        /* INPUTS */
+        .input-group { text-align: left; margin-bottom: 15px; }
+        .input-group label { font-size: 10px; font-weight: 700; color: var(--nti-blue); margin-left: 10px; text-transform: uppercase; }
         .pref-input { 
-            width: 100%; height: 55px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 15px; padding: 0 20px; color: #fff; font-size: 15px; margin-top: 5px;
+            width: 100%; height: 55px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 18px; padding: 0 20px; color: #fff; font-size: 16px; margin-top: 5px;
         }
-        .pref-input:focus { outline: none; border-color: var(--pref-light); background: rgba(0, 173, 239, 0.05); }
+        .pref-input:focus { border-color: var(--nti-blue); outline: none; background: rgba(0, 173, 239, 0.1); }
 
-        /* SELETOR DE CHROMEBOOK (FOCO NA FACILIDADE) */
-        .chrome-selector { display: flex; gap: 10px; margin: 15px 0; }
-        .btn-toggle { 
+        /* MENU PRINCIPAL */
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .menu-btn { 
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px; padding: 25px 10px; cursor: pointer; color: #fff; text-decoration: none;
+        }
+        .menu-btn:hover { border-color: var(--nti-blue); background: rgba(0, 173, 239, 0.15); transform: translateY(-5px); }
+        .menu-btn b { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* SELETOR CHROMEBOOK (MODO RÁPIDO) */
+        .mode-selector { display: flex; gap: 8px; margin: 15px 0; }
+        .mode-btn { 
             flex: 1; padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2);
-            background: transparent; color: #fff; cursor: pointer; font-size: 11px; font-weight: 700;
+            background: transparent; color: #fff; font-size: 10px; font-weight: 800; cursor: pointer;
         }
-        .btn-toggle.active { background: var(--pref-light); border-color: var(--pref-light); color: var(--pref-navy); }
+        .mode-btn.active { background: var(--nti-blue); border-color: var(--nti-blue); color: #000; }
 
-        /* BOTÃO DE CONFIRMAÇÃO */
-        .btn-exec { 
-            width: 100%; height: 60px; background: var(--pref-light); color: var(--pref-navy);
-            border: none; border-radius: 18px; font-weight: 800; text-transform: uppercase;
-            font-size: 15px; cursor: pointer; margin-top: 25px;
+        .btn-confirm { 
+            width: 100%; height: 60px; background: var(--nti-blue); color: #000;
+            border: none; border-radius: 20px; font-weight: 900; font-size: 16px;
+            cursor: pointer; margin-top: 20px; text-transform: uppercase;
         }
-        .btn-exec:hover { filter: brightness(1.1); box-shadow: 0 0 30px rgba(0, 173, 239, 0.4); }
+        .btn-confirm:hover { box-shadow: 0 0 30px rgba(0, 173, 239, 0.4); transform: scale(1.02); }
 
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <div class="tech-bg"><div class="grid"></div></div>
-
     <div class="main-card">
-        <div class="header-brand">
+        <div class="brand">
             <h1>NTi</h1>
-            <p>Santana de Parnaíba</p>
+            <span>Santana de Parnaíba</span>
         </div>
 
         <div id="scr1">
             <div class="input-group">
-                <label>IDENTIFICAÇÃO DO DOCENTE</label>
+                <label>Docente Responsável</label>
                 <input type="text" id="p-nome" class="pref-input" placeholder="Nome Completo">
             </div>
             <div style="display:flex; gap:10px">
-                <div class="input-group" style="flex:1">
-                    <label>PRONTUÁRIO</label>
-                    <input type="text" id="p-id" class="pref-input" placeholder="000.000">
-                </div>
-                <div class="input-group" style="flex:1">
-                    <label>MATÉRIA</label>
-                    <input type="text" id="p-mat" class="pref-input" placeholder="Disciplina">
-                </div>
+                <div class="input-group" style="flex:1"><label>Prontuário</label><input type="text" id="p-id" class="pref-input" placeholder="000.000"></div>
+                <div class="input-group" style="flex:1"><label>Matéria</label><input type="text" id="p-mat" class="pref-input" placeholder="Disciplina"></div>
             </div>
-            <button class="btn-exec" onclick="app.login()">ACESSAR SISTEMA</button>
+            <button class="btn-confirm" onclick="app.login()">Entrar no Sistema</button>
         </div>
 
         <div id="scr2" class="hidden">
             <div class="menu-grid">
-                <div class="menu-item" onclick="app.nav(2, 3)"><b>📅 Reservas</b></div>
-                <div class="menu-item" onclick="app.nav(2, 5)"><b>🛠️ Suporte</b></div>
-                <div class="menu-item" style="opacity:0.3"><b>📊 Dashboard</b></div>
-                <div class="menu-item" onclick="location.reload()"><b>🚪 Sair</b></div>
+                <div class="menu-btn" onclick="app.nav(2, 3)"><b>📅 Reservas</b></div>
+                <div class="menu-btn" onclick="app.nav(2, 5)"><b>🛠️ Suporte</b></div>
+                <div class="menu-btn" onclick="location.reload()" style="grid-column: span 2; padding: 15px;"><b>🚪 Sair do Portal</b></div>
             </div>
         </div>
 
         <div id="scr3" class="hidden">
             <div class="input-group">
-                <label>RECURSO DESEJADO</label>
+                <label>Recurso</label>
                 <select id="item-sel" class="pref-input" onchange="app.checkChrome(this.value)" style="appearance: none;">
-                    <option value="">Selecione...</option>
+                    <option value="">Selecione o Item...</option>
                     <option value="LAB. INFO">Laboratório de Informática</option>
                     <option value="CHROMEBOOKS">Chromebooks</option>
                     <option value="TV">TV Interativa</option>
@@ -134,34 +113,34 @@
             </div>
 
             <div id="chrome-ui" class="hidden">
-                <div class="chrome-selector">
-                    <button class="btn-toggle active" id="c1" onclick="app.setModo('CARRINHO COMPLETO', 'c1')">CARRINHO CHEIO</button>
-                    <button class="btn-toggle" id="c2" onclick="app.setModo('INDIVIDUAL', 'c2')">INDIVIDUAL</button>
+                <div class="mode-selector">
+                    <button class="mode-btn active" id="m1" onclick="app.setModo('CARRINHO', 'm1')">CARRINHO COMPLETO</button>
+                    <button class="mode-btn" id="m2" onclick="app.setModo('INDIVIDUAL', 'm2')">INDIVIDUAL</button>
                 </div>
                 <div id="qtd-box" class="hidden">
                     <input type="number" id="res-qtd" class="pref-input" placeholder="Quantidade de Unidades">
                 </div>
-                <textarea id="res-dev" class="pref-input" style="height:80px; padding-top:15px; margin-top:10px" placeholder="Plano de desenvolvimento da aula..."></textarea>
+                <textarea id="res-dev" class="pref-input" style="height:80px; padding-top:15px; margin-top:10px" placeholder="Plano de Aula / Desenvolvimento"></textarea>
             </div>
 
             <div style="display:flex; gap:10px; margin-top:10px">
                 <input type="time" id="res-ini" class="pref-input" style="flex:1">
-                <input type="text" id="res-sala" class="pref-input" style="flex:1" placeholder="Sala/Turma">
+                <input type="text" id="res-sala" class="pref-input" style="flex:1" placeholder="Sala">
             </div>
 
-            <button class="btn-exec" onclick="app.enviarReserva()">Confirmar Agendamento</button>
-            <button onclick="app.nav(3, 2)" style="background:none; border:none; color:rgba(255,255,255,0.4); font-size:11px; margin-top:20px; cursor:pointer;">VOLTAR AO MENU</button>
+            <button class="btn-confirm" onclick="app.enviarReserva()">Confirmar Reserva</button>
+            <button onclick="app.nav(3, 2)" style="background:none; border:none; color:#888; font-size:11px; margin-top:20px; cursor:pointer;">VOLTAR AO MENU</button>
         </div>
 
         <div id="scr5" class="hidden">
-            <label style="font-size:10px; color:var(--pref-light)">CLASSIFICAÇÃO DE EMERGÊNCIA</label>
-            <div class="chrome-selector">
-                <button class="btn-toggle" id="g1" onclick="app.setGr('NORMAL', 'g1')">NORMAL</button>
-                <button class="btn-toggle" id="g2" onclick="app.setGr('TÁTICO', 'g2')">TÁTICO</button>
-                <button class="btn-toggle" id="g3" onclick="app.setGr('URGENTE', 'g3')">CRÍTICO</button>
+            <div class="mode-selector">
+                <button class="mode-btn" id="g1" onclick="app.setGr('NORMAL', 'g1')">PADRÃO</button>
+                <button class="mode-btn" id="g2" onclick="app.setGr('TÁTICO', 'g2')">TÁTICO</button>
+                <button class="mode-btn" id="g3" onclick="app.setGr('URGENTE', 'g3')" style="border-color: #ff3b3b;">CRÍTICO</button>
             </div>
-            <textarea id="sup-msg" class="pref-input" style="height:120px; padding-top:15px" placeholder="Relate o problema técnico..."></textarea>
-            <button class="btn-exec" style="background:#ff3b3b; color:#fff" onclick="app.enviarChamado()">Enviar para o TI</button>
+            <textarea id="sup-msg" class="pref-input" style="height:120px; padding-top:15px" placeholder="Descreva o problema..."></textarea>
+            <button class="btn-confirm" onclick="app.enviarChamado()">Enviar Chamado</button>
+            <button onclick="app.nav(5, 2)" style="background:none; border:none; color:#888; font-size:11px; margin-top:20px; cursor:pointer;">VOLTAR</button>
         </div>
     </div>
 
@@ -175,13 +154,13 @@
     const db = firebase.database();
 
     const app = {
-        modo: "CARRINHO COMPLETO", gr: "",
+        modo: "CARRINHO", gr: "",
         nav(a, p) {
             document.querySelectorAll('.main-card > div[id]').forEach(d => d.classList.add('hidden'));
             document.getElementById(`scr${p}`).classList.remove('hidden');
         },
         login() {
-            if(!document.getElementById('p-nome').value || !document.getElementById('p-id').value) return alert("Identificação necessária.");
+            if(!document.getElementById('p-nome').value || !document.getElementById('p-id').value) return alert("Identificação Obrigatória.");
             this.nav(1, 2);
         },
         checkChrome(v) {
@@ -189,13 +168,13 @@
         },
         setModo(m, id) {
             this.modo = m;
-            document.querySelectorAll('.chrome-selector .btn-toggle').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.mode-selector .mode-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             m === 'INDIVIDUAL' ? document.getElementById('qtd-box').classList.remove('hidden') : document.getElementById('qtd-box').classList.add('hidden');
         },
         setGr(v, id) {
             this.gr = v;
-            document.querySelectorAll('#scr5 .btn-toggle').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('#scr5 .mode-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         },
         enviarReserva() {
@@ -205,14 +184,16 @@
                 sala: document.getElementById('res-sala').value, qtd: document.getElementById('res-qtd').value || 'Cheio',
                 aula: document.getElementById('res-dev').value || '', data: new Date().toLocaleString()
             };
-            db.ref('Agendamentos_Pref').push(d).then(() => { alert("Reserva Concluída!"); location.reload(); });
+            if(!d.item || !d.sala) return alert("Preencha todos os campos.");
+            db.ref('Agendamentos_Oficiais').push(d).then(() => { alert("Agendado!"); location.reload(); });
         },
         enviarChamado() {
             const d = {
                 prof: document.getElementById('p-nome').value, rp: document.getElementById('p-id').value,
-                gravidade: this.gr, msg: document.getElementById('sup-msg').value, data: new Date().toLocaleString()
+                nivel: this.gr, msg: document.getElementById('sup-msg').value, data: new Date().toLocaleString()
             };
-            db.ref('Suporte_Pref').push(d).then(() => { alert("Chamado Enviado!"); location.reload(); });
+            if(!this.gr || !d.msg) return alert("Preencha o chamado.");
+            db.ref('Suporte_Oficial').push(d).then(() => { alert("Enviado ao NTi!"); location.reload(); });
         }
     };
 </script>
