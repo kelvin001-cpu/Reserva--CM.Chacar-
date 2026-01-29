@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -7,8 +6,7 @@
     <title>Portal Chácara - CM CG</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <style>
-        :root { --azul-sp: #0056a2; --azul-celeste: #00adef; }
-        
+        :root { --azul-sp: #0056a2; --azul-celeste: #00adef; --vermelho: #ff4757; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body { 
@@ -17,42 +15,36 @@
             background-size: cover; min-height: 100vh; color: white;
             display: flex; flex-direction: column; align-items: center;
         }
-
-        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 15, 40, 0.8); z-index: -1; }
+        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 15, 40, 0.85); z-index: -1; }
 
         header { width: 100%; background: white; padding: 15px; text-align: center; border-bottom: 5px solid var(--azul-celeste); box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
         .logo-text { font-family: 'Montserrat', sans-serif; color: var(--azul-sp); font-size: 17px; text-transform: uppercase; margin: 0; }
 
         .container { width: 100%; max-width: 420px; padding: 20px; }
-
-        h2 { text-align: center; font-size: 16px; text-transform: uppercase; border-bottom: 2px solid var(--azul-celeste); padding-bottom: 8px; margin-bottom: 20px; letter-spacing: 1px; }
+        h2 { text-align: center; font-size: 15px; text-transform: uppercase; border-bottom: 2px solid var(--azul-celeste); padding-bottom: 8px; margin-bottom: 20px; }
         
         label { display: block; margin: 15px 0 6px 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--azul-celeste); }
 
-        /* A SOLUÇÃO DEFINITIVA PARA OS BALÕES */
+        /* BALÕES DE TEXTO 100% ALINHADOS */
         .input-padrao {
             display: block;
             width: 100%; 
-            height: 55px; /* Altura fixa para todos */
-            padding: 12px 15px; 
+            height: 55px;
+            padding: 0 15px; 
             border-radius: 12px; 
             border: 2px solid transparent; 
             background: rgba(255, 255, 255, 0.98); 
             font-size: 15px; 
             color: #222;
             font-family: 'Poppins', sans-serif;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
             outline: none;
-            /* Remove estilos diferentes entre iOS e Android */
-            -webkit-appearance: none;
-            appearance: none;
         }
 
-        /* Ajuste específico para garantir que o texto da data não suba ou desça */
+        /* Estilo para garantir que o campo de data ocupe o mesmo espaço visual */
         input[type="datetime-local"] {
-            line-height: 1.5;
-            display: flex;
-            align-items: center;
+            padding-top: 12px;
+            line-height: 1;
         }
 
         .grid-equip { display: grid; gap: 10px; margin-bottom: 10px; }
@@ -61,13 +53,13 @@
             padding: 18px; border-radius: 15px; text-align: center; cursor: pointer; 
             font-weight: bold; font-size: 13px; transition: 0.2s;
         }
-        .btn-opt.active { background: var(--azul-celeste); border-color: white; box-shadow: 0 0 15px var(--azul-celeste); color: white; }
-        
+        .btn-opt.active { background: var(--azul-celeste); border-color: white; box-shadow: 0 0 15px var(--azul-celeste); }
+        .btn-opt.busy { border-color: var(--vermelho); color: var(--vermelho); opacity: 0.8; cursor: not-allowed; }
+
         .btn-confirm { 
             width: 100%; padding: 20px; margin-top: 25px; border-radius: 15px; border: none; 
             background: linear-gradient(135deg, var(--azul-sp), var(--azul-celeste)); 
             color: white; font-weight: bold; text-transform: uppercase; cursor: pointer; font-size: 16px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
     </style>
 </head>
@@ -79,12 +71,18 @@
 </header>
 
 <div class="container">
-    <h2>SOLICITAR RESERVA</h2>
+    <h2>RESERVAR EQUIPAMENTO</h2>
     
     <label>Selecione sua Turma</label>
     <select class="input-padrao" id="r_turma">
         <option>1º Ano A</option>
         <option>2º Ano A</option>
+        <option>3º Ano A</option>
+        <option>4º Ano A</option>
+        <option>5º Ano A</option>
+        <option>6º Ano A</option>
+        <option>7º Ano A</option>
+        <option>8º Ano A</option>
         <option>9º Ano A</option>
     </select>
 
@@ -96,7 +94,7 @@
     </div>
 
     <label>Número de Patrimônio</label>
-    <input type="text" class="input-padrao" id="r_pat" placeholder="Ex: 230180">
+    <input type="text" class="input-padrao" id="r_pat" placeholder="Digite o patrimônio">
 
     <label>Horário de Retirada</label>
     <input type="datetime-local" class="input-padrao" id="r_in">
@@ -104,14 +102,33 @@
     <label>Previsão de Entrega</label>
     <input type="datetime-local" class="input-padrao" id="r_out">
 
-    <button class="btn-confirm" onclick="alert('Reserva enviada com sucesso!')">CONFIRMAR AGENDAMENTO</button>
+    <button class="btn-confirm" onclick="app.confirmar()">CONFIRMAR AGENDAMENTO</button>
 </div>
 
 <script>
     const app = {
+        item: "",
+        
         sel(val, id) {
+            // Se já estiver ocupado (simulação), avisa
+            if(document.getElementById(id).classList.contains('busy')) {
+                return alert("BLOQUEADO!\nProfessor: João Silva\nSala: Informática\nAté: 16:30");
+            }
+            this.item = val;
             document.querySelectorAll('.btn-opt').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
+        },
+
+        confirmar() {
+            const pat = document.getElementById('r_pat').value;
+            const hIn = document.getElementById('r_in').value;
+            const hOut = document.getElementById('r_out').value;
+            
+            if(!this.item || !pat || !hIn || !hOut) {
+                return alert("Por favor, preencha todos os campos e selecione o equipamento.");
+            }
+            
+            alert(`Reserva Confirmada!\nItem: ${this.item}\nPatrimônio: ${pat}\nTurma: ${document.getElementById('r_turma').value}`);
         }
     }
 </script>
