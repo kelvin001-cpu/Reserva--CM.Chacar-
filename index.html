@@ -1,188 +1,182 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal de Reservas - Chácara das Garças</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Portal Tech - Chácara das Garças</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Orbitron:wght@700&display=swap" rel="stylesheet">
     <style>
-        :root { --azul-parnaiba: #0056a2; --azul-claro: #00adef; --branco: #ffffff; }
-        body { 
-            margin: 0; font-family: 'Poppins', sans-serif; 
-            background: url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
-            background-size: cover; min-height: 100vh;
+        :root {
+            --azul: #00adef; --azul-dark: #0056a2; --neon: #00ff9d;
+            --verde: #2ed573; --amarelo: #ffa502; --vermelho: #ff4757;
+            --glass: rgba(255, 255, 255, 0.12);
         }
-        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 40, 80, 0.75); z-index: -1; }
-        header { background: var(--branco); padding: 15px; text-align: center; border-bottom: 5px solid var(--azul-claro); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .logo-text { font-family: 'Montserrat', sans-serif; color: var(--azul-parnaiba); font-size: 20px; text-transform: uppercase; margin: 0; }
-        .container { max-width: 480px; margin: 25px auto; padding: 0 20px; }
-        .glass-card { background: rgba(255, 255, 255, 0.98); border-radius: 20px; padding: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
-        h2 { color: var(--azul-parnaiba); text-align: center; font-size: 17px; text-transform: uppercase; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        label { display: block; margin: 12px 0 5px 5px; color: var(--azul-parnaiba); font-weight: 600; font-size: 13px; }
-        input, select { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #ddd; font-family: 'Poppins'; box-sizing: border-box; font-size: 14px; }
-        .grid-menu { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; }
-        .opt-item { background: #f1f3f5; border: 2px solid #e9ecef; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; font-weight: 600; color: #444; transition: 0.3s; }
-        .opt-item.active { background: var(--azul-parnaiba); color: white; border-color: var(--azul-parnaiba); }
-        .btn-enviar { width: 100%; padding: 16px; margin-top: 25px; border-radius: 10px; border: none; background: linear-gradient(135deg, var(--azul-parnaiba), var(--azul-claro)); color: white; font-family: 'Montserrat'; font-size: 15px; cursor: pointer; font-weight: bold; }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { 
+            margin: 0; background: #000b1a radial-gradient(circle, #001f3f, #000);
+            min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white;
+        }
+
+        /* MOLDE ÚNICO */
+        .app-card {
+            width: 95%; max-width: 450px; background: var(--glass);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.2); border-radius: 25px;
+            padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        h2 { text-align: center; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 20px; color: var(--azul); }
+        label { display: block; font-size: 10px; font-weight: 600; color: var(--azul); margin: 15px 0 5px 5px; text-transform: uppercase; }
+        
+        .campo { width: 100%; height: 50px; background: white; border-radius: 12px; border: none; padding: 0 15px; font-size: 14px; color: #333; margin-bottom: 10px; }
+        
+        /* BOTÕES DE EQUIPAMENTO */
+        .grid-buttons { display: grid; gap: 10px; margin-bottom: 15px; }
+        .btn-opt { 
+            height: 55px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px; color: white; cursor: pointer; font-size: 12px; font-weight: 600; transition: 0.3s;
+        }
+        .btn-opt.active { background: var(--azul); border-color: white; box-shadow: 0 0 15px var(--azul); }
+
+        /* NÍVEIS DE SUPORTE */
+        .grid-suporte { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+        .btn-grau { height: 45px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; opacity: 0.4; font-size: 10px; }
+        .btn-grau.active { opacity: 1; transform: scale(1.05); }
+        .g-verde { background: var(--verde); color: #003d1c; }
+        .g-amarelo { background: var(--amarelo); color: #4d3300; }
+        .g-vermelho { background: var(--vermelho); color: #fff; }
+
+        .timer-display { font-family: 'Orbitron', sans-serif; font-size: 40px; color: var(--neon); text-align: center; margin: 20px 0; }
+        
+        .btn-principal { width: 100%; height: 55px; border-radius: 12px; border: none; background: linear-gradient(to right, var(--azul-dark), var(--azul)); color: white; font-weight: bold; text-transform: uppercase; cursor: pointer; margin-top: 10px; }
+        .btn-secundario { background: none; border: 1px solid var(--azul); color: var(--azul); margin-top: 15px; width: 100%; height: 40px; border-radius: 10px; cursor: pointer; font-size: 11px; }
+
         .hidden { display: none; }
-        .btn-finalizar { background: #d63031; color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; cursor: pointer; font-weight: bold; margin-top: 20px; }
     </style>
 </head>
 <body>
 
-<header>
-    <p class="logo-text">SANTANA DE PARNAÍBA</p>
-    <p style="margin:0; color:#666; font-size:11px;">C.M. Chácara das Garças • Sistema de Reservas</p>
-</header>
-
-<div class="container">
-    <div id="loginArea" class="glass-card">
-        <h2>IDENTIFICAÇÃO</h2>
-        <label>Nome do Professor:</label>
-        <input type="text" id="profNome" placeholder="Nome completo">
-        <label>Prontuário:</label>
-        <input type="text" id="profPront" placeholder="Digite seu prontuário">
-        <label>Matéria:</label>
-        <input type="text" id="materia" placeholder="Ex: Matemática">
-        <button class="btn-enviar" onclick="proximo()">AVANÇAR</button>
-    </div>
-
-    <div id="reservaArea" class="glass-card hidden">
-        <h2>DETALHES DA RESERVA</h2>
-        
-        <label>Selecione a Turma:</label>
-        <select id="turma">
-            <option value="1º Ano A">1º Ano A</option><option value="2º Ano A">2º Ano A</option>
-            <option value="3º Ano A">3º Ano A</option><option value="4º Ano A">4º Ano A</option>
-            <option value="5º Ano A">5º Ano A</option><option value="6º Ano A">6º Ano A</option>
-            <option value="7º Ano A">7º Ano A</option><option value="8º Ano A">8º Ano A</option>
-            <option value="9º Ano A">9º Ano A</option>
-        </select>
-
-        <label>O que deseja reservar?</label>
-        <div class="grid-menu">
-            <div class="opt-item" onclick="setEscoha('SALA DE INFORMÁTICA', this)">🖥️ SALA DE INFORMÁTICA</div>
-            <div class="opt-item" onclick="setEscoha('CHROMEBOOKS', this)">💻 CHROMEBOOKS</div>
-            <div class="opt-item" onclick="setEscoha('TV DIGITAL', this)">📺 TV DIGITAL</div>
+    <div class="app-card">
+        <div id="scr-login">
+            <h2>Acesso ao Portal</h2>
+            <input type="text" class="campo" id="l-prontuario" placeholder="Prontuário / ID">
+            <input type="password" class="campo" id="l-senha" placeholder="Senha de Acesso">
+            <button class="btn-principal" onclick="app.nav('scr-perfil')">Entrar</button>
         </div>
 
-        <div id="campoPatrimonio" class="hidden">
-            <label>Nº de Patrimônio (Ex: 230180):</label>
-            <input type="text" id="patrimonio" placeholder="Digite o patrimônio do item">
+        <div id="scr-perfil" class="hidden">
+            <h2>Completar Perfil</h2>
+            <input type="text" class="campo" id="p-nome" placeholder="Nome Completo">
+            <input type="text" class="campo" id="p-materia" placeholder="Matéria / Disciplina">
+            <button class="btn-principal" onclick="app.nav('scr-menu')">Salvar e Continuar</button>
         </div>
 
-        <div id="chromeOpcoes" class="hidden">
-            <label>Tipo de Retirada:</label>
-            <select id="tipoChrome" onchange="toggleQtd()">
-                <option value="Carrinho Completo">Carrinho Completo</option>
-                <option value="Unidades">Por Unidade</option>
+        <div id="scr-menu" class="hidden">
+            <h2>O que deseja fazer?</h2>
+            <button class="btn-principal" onclick="app.nav('scr-reserva')">Nova Reserva</button>
+            <button class="btn-secundario" onclick="app.nav('scr-suporte')">Abrir Chamado TI</button>
+        </div>
+
+        <div id="scr-reserva" class="hidden">
+            <h2>Reserva de Equipamento</h2>
+            <label>Selecione a Sala</label>
+            <select class="campo" id="r-sala">
+                <script>for(let i=1; i<=9; i++) document.write(`<option>${i}º Ano A</option>`);</script>
             </select>
-            <div id="campoQtd" class="hidden">
-                <label>Quantas unidades?</label>
-                <input type="number" id="qtdUni" placeholder="Ex: 15">
+
+            <label>Equipamento</label>
+            <div class="grid-buttons">
+                <button class="btn-opt" id="e1" onclick="app.setEq('SALA DE INFO', 'e1')">🖥️ SALA DE INFORMÁTICA</button>
+                <button class="btn-opt" id="e2" onclick="app.setEq('CHROMEBOOKS', 'e2')">💻 CHROMEBOOKS</button>
+                <button class="btn-opt" id="e3" onclick="app.setEq('TV DIGITAL', 'e3')">📺 TV DIGITAL</button>
             </div>
+
+            <div id="box-qtd" class="hidden">
+                <label>Quantidade de Chromebooks</label>
+                <input type="number" class="campo" id="r-qtd" placeholder="Quantas unidades?">
+            </div>
+
+            <label>Horário de Entrega Previsto</label>
+            <input type="time" class="campo" id="r-entrega">
+
+            <button class="btn-principal" onclick="app.confirmarReserva()">Confirmar Agendamento</button>
+            <button class="btn-secundario" onclick="app.nav('scr-menu')">Voltar</button>
         </div>
 
-        <label>Horário de Retirada:</label>
-        <input type="datetime-local" id="hInicio">
-        <label>Horário de Entrega:</label>
-        <input type="datetime-local" id="hFim">
+        <div id="scr-uso" class="hidden">
+            <h2>Equipamento em Uso</h2>
+            <div class="timer-display" id="relogio">00:00</div>
+            <div id="aviso-uso" style="text-align:center; font-size:12px; color:rgba(255,255,255,0.7)"></div>
+            <button class="btn-principal" style="background:var(--vermelho)" onclick="app.finalizar()">Uso Finalizado</button>
+        </div>
 
-        <button class="btn-enviar" onclick="confirmar()">CONFIRMAR AGENDAMENTO</button>
+        <div id="scr-suporte" class="hidden">
+            <h2>Chamado Suporte TI</h2>
+            <label>Gravidade da Situação</label>
+            <div class="grid-suporte">
+                <button class="btn-grau g-verde" id="g1" onclick="app.setGrau('VERDE', 'g1')">VERDE (Normal)</button>
+                <button class="btn-grau g-amarelo" id="g2" onclick="app.setGrau('AMARELO', 'g2')">AMARELO (Urgente)</button>
+                <button class="btn-grau g-vermelho" id="g3" onclick="app.setGrau('VERMELHO', 'g3')">CRÍTICO (Imediato)</button>
+            </div>
+
+            <label>Sua Sala</label>
+            <select class="campo" id="s-sala">
+                <script>for(let i=1; i<=9; i++) document.write(`<option>${i}º Ano A</option>`);</script>
+            </select>
+
+            <label>Motivo do Chamado</label>
+            <textarea class="campo" id="s-motivo" style="height:80px; padding:10px" placeholder="Descreva o problema..."></textarea>
+
+            <button class="btn-principal" onclick="app.enviarSuporte()">Enviar Chamado</button>
+            <button class="btn-secundario" onclick="app.nav('scr-menu')">Cancelar</button>
+        </div>
     </div>
 
-    <div id="finalArea" class="glass-card hidden">
-        <h2 style="color: #27ae60;">RESERVA ATIVA</h2>
-        <div id="infoReserva" style="text-align: left; color: #444; font-size: 13px; background: #f9f9f9; padding: 15px; border-radius: 10px; line-height: 1.8;"></div>
-        <button class="btn-finalizar" onclick="liberar()">FINALIZAR E ENTREGAR</button>
-    </div>
-</div>
-
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, push, set, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyBoGFDKz-nBwKvczGpxg-fHJYdVykcBUQ",
-        authDomain: "escala-chacara.firebaseapp.com",
-        databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com",
-        projectId: "escala-chacara",
-        storageBucket: "escala-chacara.firebasestorage.app",
-        messagingSenderId: "741259231706",
-        appId: "1:741259231706:web:27e2b60be100e6a34180e3"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-
-    let dadosUser = {};
-    let localSel = "";
-    let rID = "";
-
-    window.proximo = () => {
-        dadosUser = {
-            n: document.getElementById('profNome').value,
-            p: document.getElementById('profPront').value,
-            m: document.getElementById('materia').value
-        };
-        if(Object.values(dadosUser).every(v => v)) {
-            document.getElementById('loginArea').classList.add('hidden');
-            document.getElementById('reservaArea').classList.remove('hidden');
-        } else { alert("Preencha Nome, Prontuário e Matéria!"); }
-    };
-
-    window.setEscoha = (item, el) => {
-        localSel = item;
-        document.querySelectorAll('.opt-item').forEach(i => i.classList.remove('active'));
-        el.classList.add('active');
-        
-        // Mostra patrimônio para todos e opções extras só para Chromebooks
-        document.getElementById('campoPatrimonio').classList.remove('hidden');
-        document.getElementById('chromeOpcoes').classList.toggle('hidden', item !== 'CHROMEBOOKS');
-    };
-
-    window.toggleQtd = () => {
-        const t = document.getElementById('tipoChrome').value;
-        document.getElementById('campoQtd').classList.toggle('hidden', t !== 'Unidades');
-    };
-
-    window.confirmar = () => {
-        const turma = document.getElementById('turma').value;
-        const pat = document.getElementById('patrimonio').value;
-        const hi = document.getElementById('hInicio').value;
-        const hf = document.getElementById('hFim').value;
-        
-        if(!localSel || !pat || !hi || !hf) return alert("Selecione o equipamento, digite o patrimônio e os horários!");
-
-        let equipFinal = localSel;
-        if(localSel === 'CHROMEBOOKS') {
-            const t = document.getElementById('tipoChrome').value;
-            equipFinal = t === 'Unidades' ? `CHROMEBOOKS (${document.getElementById('qtdUni').value} un)` : "CHROMEBOOKS (Carrinho)";
+<script>
+    const app = {
+        eq: "", grau: "", timer: null,
+        nav(id) {
+            document.querySelectorAll('.app-card > div').forEach(d => d.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+        },
+        setEq(val, id) {
+            this.eq = val;
+            document.querySelectorAll('.btn-opt').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.getElementById('box-qtd').className = (val === 'CHROMEBOOKS') ? '' : 'hidden';
+        },
+        setGrau(val, id) {
+            this.grau = val;
+            document.querySelectorAll('.btn-grau').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        },
+        confirmarReserva() {
+            if(!this.eq) return alert("Selecione um equipamento.");
+            this.nav('scr-uso');
+            document.getElementById('aviso-uso').innerText = `O item deve ser entregue às ${document.getElementById('r-entrega').value}`;
+            this.startTimer(50);
+        },
+        startTimer(m) {
+            let s = m * 60;
+            this.timer = setInterval(() => {
+                let min = Math.floor(s/60), seg = s%60;
+                document.getElementById('relogio').innerText = `${min.toString().padStart(2,'0')}:${seg.toString().padStart(2,'0')}`;
+                if(s === 300) alert("ATENÇÃO: Faltam 5 minutos para o término do seu tempo!");
+                if(s <= 0) { clearInterval(this.timer); alert("TEMPO ESGOTADO! Por favor, finalize o uso."); }
+                s--;
+            }, 1000);
+        },
+        enviarSuporte() {
+            if(!this.grau || !document.getElementById('s-motivo').value) return alert("Preencha todos os campos do chamado.");
+            alert(`Chamado ${this.grau} enviado com sucesso! O TI entrará em contato.`);
+            this.nav('scr-menu');
+        },
+        finalizar() {
+            clearInterval(this.timer);
+            alert("Reserva finalizada. Obrigado por colaborar!");
+            location.reload();
         }
-
-        const nova = push(ref(db, 'reservas'));
-        rID = nova.key;
-
-        set(nova, {
-            prof: dadosUser.n,
-            prontuario: dadosUser.p,
-            materia: dadosUser.m,
-            patrimonio: pat,
-            turma: turma,
-            equipamento: equipFinal,
-            inicio: new Date(hi).toLocaleString('pt-BR'),
-            entrega: new Date(hf).toLocaleString('pt-BR')
-        }).then(() => {
-            document.getElementById('reservaArea').classList.add('hidden');
-            document.getElementById('finalArea').classList.remove('hidden');
-            document.getElementById('infoReserva').innerHTML = `<strong>Item:</strong> ${equipFinal}<br><strong>Patrimônio:</strong> ${pat}<br><strong>Turma:</strong> ${turma}<br><strong>Prof:</strong> ${dadosUser.n}`;
-        });
-    };
-
-    window.liberar = () => {
-        if(confirm("Confirmar entrega?")) remove(ref(db, 'reservas/' + rID)).then(() => location.reload());
-    };
+    }
 </script>
 </body>
 </html>
