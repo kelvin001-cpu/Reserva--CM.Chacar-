@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CENTRAL TECH - CM CHÁCARA</title>
+    <title>SISTEMA GESTÃO TECH - CM CHÁCARA</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Orbitron:wght@600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -26,35 +26,32 @@
         }
 
         .clock-header { font-size: 11px; font-weight: 600; color: var(--azul-sky); margin-bottom: 25px; letter-spacing: 2px; }
-        h1 { font-size: 22px; font-weight: 700; text-transform: uppercase; margin: 0; letter-spacing: 1px; }
-        .welcome-msg { font-size: 13px; color: var(--neon); margin-bottom: 30px; font-weight: 600; }
+        h1 { font-size: 20px; font-weight: 700; text-transform: uppercase; margin: 0; letter-spacing: 1px; }
+        .welcome-msg { font-size: 12px; color: var(--neon); margin-bottom: 25px; font-weight: 600; text-transform: uppercase; }
 
         label { display: block; text-align: left; font-size: 10px; font-weight: 700; color: var(--azul-sky); margin: 15px 0 5px 10px; text-transform: uppercase; }
-        .campo { width: 100%; height: 52px; background: white; border-radius: 14px; border: none; padding: 0 18px; font-size: 14px; color: #111; margin-bottom: 12px; font-weight: 600; }
+        .campo { width: 100%; height: 50px; background: white; border-radius: 12px; border: 2px solid transparent; padding: 0 15px; font-size: 14px; color: #111; margin-bottom: 10px; font-weight: 600; }
+        .campo:invalid { border-color: var(--n3); }
 
-        /* GRID EQUIPAMENTOS COM DETALHES */
-        .grid-equip { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 20px; }
+        .grid-equip { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 15px; }
         .btn-equip { 
             background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 16px; padding: 15px; color: white; cursor: pointer; text-align: left;
+            border-radius: 14px; padding: 12px; color: white; cursor: pointer; text-align: left;
         }
-        .btn-equip b { display: block; font-size: 13px; color: var(--azul-sky); }
-        .btn-equip span { font-size: 10px; opacity: 0.7; }
-        .btn-equip.active { background: var(--azul-sky); border-color: white; }
+        .btn-equip b { display: block; font-size: 12px; color: var(--azul-sky); }
+        .btn-equip span { font-size: 9px; opacity: 0.7; }
+        .btn-equip.active { background: var(--azul-sky); border-color: white; box-shadow: 0 0 15px var(--azul-sky); }
         .btn-equip.active b, .btn-equip.active span { color: white; }
 
-        /* IA GUARDIÃ - O FILTRO DO TI */
         .ia-container { 
-            background: rgba(0, 0, 0, 0.3); border-radius: 20px; padding: 20px; 
-            margin-top: 20px; border: 1px solid var(--neon); display: flex; gap: 15px; align-items: flex-start;
+            background: rgba(0, 0, 0, 0.4); border-radius: 15px; padding: 15px; 
+            margin-bottom: 15px; border: 1px solid var(--neon); display: flex; gap: 12px; align-items: center;
         }
-        .ia-icon { font-size: 30px; }
-        .ia-content { text-align: left; font-size: 12px; }
-        .ia-content b { color: var(--neon); display: block; margin-bottom: 5px; }
+        .ia-content { text-align: left; font-size: 11px; }
+        .ia-content b { color: var(--neon); display: block; }
 
-        .row { display: flex; gap: 10px; }
-        .timer-val { font-family: 'Orbitron', sans-serif; font-size: 55px; color: var(--neon); margin: 25px 0; }
-        .btn-main { width: 100%; height: 60px; border-radius: 18px; border: none; background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); color: white; font-weight: 700; text-transform: uppercase; cursor: pointer; font-size: 15px; }
+        .btn-main { width: 100%; height: 55px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); color: white; font-weight: 700; text-transform: uppercase; cursor: pointer; font-size: 14px; margin-top: 10px; }
+        .btn-main:hover { transform: scale(1.02); brightness: 1.1; }
         
         .hidden { display: none; }
     </style>
@@ -65,161 +62,162 @@
         <div class="clock-header" id="relogio-top">00/00/0000 00:00:00</div>
 
         <div id="scr0">
-            <h1>SISTEMA TECH</h1>
-            <p class="welcome-msg">Olá, Docente! Seja bem-vindo ao seu novo painel de controle.</p>
-            <p style="font-size: 12px; opacity: 0.8; margin-bottom: 30px;">Identifique-se para gerenciar seus recursos e solicitar suporte inteligente.</p>
-            <button class="btn-main" onclick="app.nav(0, 1)">INICIAR ACESSO</button>
+            <h1>CENTRAL DE RECURSOS</h1>
+            <p class="welcome-msg">Bem-vindo ao Sistema Chácara das Garças</p>
+            <button class="btn-main" onclick="app.nav(0, 1)">ACESSAR TERMINAL</button>
         </div>
 
         <div id="scr1" class="hidden">
-            <h1>IDENTIFICAÇÃO</h1>
-            <input type="text" class="campo" id="p-nome" placeholder="Seu Nome Completo">
-            <input type="text" class="campo" id="p-id" placeholder="Seu Prontuário">
-            <input type="text" class="campo" id="p-mat" placeholder="Sua Matéria/Disciplina">
-            <button class="btn-main" onclick="app.validarPerfil()">CONFIRMAR DADOS</button>
+            <h1>IDENTIFICAÇÃO DOCENTE</h1>
+            <label>Nome Completo *</label>
+            <input type="text" class="campo" id="p-nome" placeholder="Obrigatório">
+            <label>Prontuário *</label>
+            <input type="text" class="campo" id="p-id" placeholder="Obrigatório">
+            <label>Matéria *</label>
+            <input type="text" class="campo" id="p-mat" placeholder="Obrigatório">
+            <button class="btn-main" onclick="app.validarPerfil()">SALVAR IDENTIDADE</button>
         </div>
 
         <div id="scr2" class="hidden">
-            <h1>O QUE DESEJA HOJE?</h1>
+            <h1>PAINEL PRINCIPAL</h1>
             <div class="grid-equip">
                 <button class="btn-equip" onclick="app.nav(2, 3)">
-                    <b>📅 RESERVAR AGORA</b>
-                    <span>Agende salas, chromebooks ou TVs digitais</span>
+                    <b>📅 AGENDAR RESERVA</b>
+                    <span>Equipamentos e Salas</span>
                 </button>
                 <button class="btn-equip" onclick="app.nav(2, 5)">
-                    <b>🤖 SUPORTE INTELIGENTE</b>
-                    <span>Fale com a IA antes de abrir um chamado</span>
+                    <b>🤖 IA GUARDIÃ & TI</b>
+                    <span>Suporte e Chamados Técnicos</span>
                 </button>
             </div>
         </div>
 
         <div id="scr3" class="hidden">
-            <h1>CONFIGURAR RESERVA</h1>
-            
-            <div class="row">
+            <h1>NOVO AGENDAMENTO</h1>
+            <div style="display:flex; gap:10px">
                 <div style="flex:1">
-                    <label>Início (Data/Hora)</label>
+                    <label>Início *</label>
                     <input type="datetime-local" class="campo" id="res-inicio">
                 </div>
                 <div style="flex:1">
-                    <label>Entrega (Data/Hora)</label>
+                    <label>Fim *</label>
                     <input type="datetime-local" class="campo" id="res-fim">
                 </div>
             </div>
-
-            <label>Série / Sala</label>
-            <select class="campo" id="res-sala">
-                <script>for(let i=1; i<=9; i++) document.write(`<option>${i}º Ano A</option>`);</script>
-            </select>
+            <label>Série / Sala de Destino *</label>
+            <input type="text" class="campo" id="res-sala-manual" placeholder="Ex: 9º Ano B">
             
-            <label>Selecione o Equipamento</label>
+            <label>Selecione o Equipamento *</label>
             <div class="grid-equip">
                 <button class="btn-equip" id="e1" onclick="app.setEq('SALA INFO', 'e1')">
-                    <b>🖥️ Sala de Informática</b><span>Ambiente completo com 30 desktops</span>
+                    <b>🖥️ Sala de Informática</b><span>30 Desktops Disponíveis</span>
                 </button>
                 <button class="btn-equip" id="e2" onclick="app.setEq('CHROMEBOOKS', 'e2')">
-                    <b>💻 Chromebooks</b><span>Dispositivos móveis para sala de aula</span>
+                    <b>💻 Chromebooks</b><span>Carrinho ou Individual</span>
                 </button>
                 <button class="btn-equip" id="e3" onclick="app.setEq('TV 1º ANDAR', 'e3')">
-                    <b>📺 TV Digital - 1º Andar</b><span>Localizada no bloco de entrada</span>
+                    <b>📺 TV Digital - 1º Andar</b><span>Pátio / Bloco A</span>
                 </button>
                 <button class="btn-equip" id="e4" onclick="app.setEq('TV 2º ANDAR', 'e4')">
-                    <b>📺 TV Digital - 2º Andar</b><span>Localizada no bloco superior</span>
+                    <b>📺 TV Digital - 2º Andar</b><span>Laboratórios / Bloco B</span>
                 </button>
             </div>
 
-            <div id="chrome-box" class="hidden">
-                <label>Forma de Retirada</label>
-                <select class="campo" id="c-modo" onchange="app.toggleChrome()">
-                    <option value="Carrinho">Carrinho Completo (32 Unids)</option>
-                    <option value="Individual">Unidades Específicas</option>
-                </select>
-                <input type="number" class="campo hidden" id="c-qtd" placeholder="Quantos aparelhos vai levar?">
-            </div>
-
-            <button class="btn-main" onclick="app.iniciarUso()">VALIDAR RESERVA</button>
-            <button onclick="app.nav(3, 2)" style="background:none; border:none; color:white; cursor:pointer; margin-top:10px; font-size:12px;">← Voltar ao Menu</button>
+            <button class="btn-main" onclick="app.validarReserva()">FINALIZAR AGENDAMENTO</button>
+            <button onclick="app.nav(3, 2)" style="background:none; border:none; color:white; cursor:pointer; margin-top:10px; font-size:11px;">CANCELAR</button>
         </div>
 
         <div id="scr4" class="hidden">
-            <h1>SESSÃO ATIVA</h1>
-            <div class="timer-val" id="timer">50:00</div>
-            <p id="status-final" style="font-size:12px; line-height:1.6"></p>
-            <button class="btn-main" style="background:var(--n3)" onclick="location.reload()">FINALIZAR AGORA</button>
+            <h1>RESERVA ATIVA</h1>
+            <div style="font-family:'Orbitron'; font-size:50px; color:var(--neon); margin:20px 0;" id="timer">50:00</div>
+            <div id="resumo-uso" style="font-size:12px; text-align:left; background:rgba(0,0,0,0.3); padding:15px; border-radius:10px; line-height:1.6"></div>
+            <button class="btn-main" style="background:var(--n3)" onclick="location.reload()">ENCERRAR SESSÃO</button>
         </div>
 
         <div id="scr5" class="hidden">
             <h1>SUPORTE INTELIGENTE</h1>
-            
             <div class="ia-container">
-                <div class="ia-icon">🤖</div>
+                <div style="font-size:25px">🤖</div>
                 <div class="ia-content">
-                    <b>IA GUARDIÃ:</b>
-                    <span id="ia-txt">Estou pronta para te ajudar. Digite o que está acontecendo ao lado...</span>
+                    <b>FILTRO IA:</b> <span id="ia-txt">Descreva o problema para análise técnica...</span>
                 </div>
             </div>
-
-            <label>Relate o problema (IA analisando...)</label>
-            <textarea class="campo" id="sup-motivo" style="height:100px; padding:15px;" oninput="app.iaDica()" placeholder="Ex: O Chromebook não liga..."></textarea>
-
-            <label>Se a IA não resolveu, selecione a prioridade:</label>
-            <div class="row" style="margin-bottom:20px">
-                <button class="btn-main" style="background:var(--n1); font-size:10px" onclick="app.enviarSuporte('Baixo Impacto')">BAIXO</button>
-                <button class="btn-main" style="background:var(--n2); font-size:10px" onclick="app.enviarSuporte('Crítico')">CRÍTICO</button>
-                <button class="btn-main" style="background:var(--n3); font-size:10px" onclick="app.enviarSuporte('Interrupção')">PARADA</button>
+            <label>Relate o Problema em detalhes *</label>
+            <textarea class="campo" id="sup-motivo" style="height:90px; padding:12px;" oninput="app.iaDica()" placeholder="Descreva aqui o que houve..."></textarea>
+            
+            <label>Selecione o Nível de Impacto *</label>
+            <div style="display:flex; gap:10px; margin-bottom:15px">
+                <button class="btn-equip" id="g1" style="flex:1" onclick="app.setGrau('BAIXO', 'g1')"><b>BAIXO</b></button>
+                <button class="btn-equip" id="g2" style="flex:1" onclick="app.setGrau('CRÍTICO', 'g2')"><b>CRÍTICO</b></button>
+                <button class="btn-equip" id="g3" style="flex:1" onclick="app.setGrau('PARADA', 'g3')"><b>PARADA</b></button>
             </div>
-            <button onclick="app.nav(5, 2)" style="background:none; border:none; color:white; cursor:pointer; font-size:12px;">← Voltar</button>
+
+            <button class="btn-main" onclick="app.validarChamado()">ABRIR CHAMADO OFICIAL</button>
+            <button onclick="app.nav(5, 2)" style="background:none; border:none; color:white; cursor:pointer; font-size:11px;">VOLTAR</button>
         </div>
     </div>
 
 <script>
     const app = {
-        equip: "", timer: null,
+        equip: "", grau: "", timer: null,
         nav(at, px) {
             document.querySelectorAll('.balao-elite > div').forEach(d => { if(d.id.startsWith('scr')) d.classList.add('hidden') });
             document.getElementById(`scr${px}`).classList.remove('hidden');
         },
         validarPerfil() {
-            if(!document.getElementById('p-nome').value || !document.getElementById('p-id').value) return alert("Preencha seus dados!");
+            const n = document.getElementById('p-nome').value;
+            const i = document.getElementById('p-id').value;
+            const m = document.getElementById('p-mat').value;
+            if(!n || !i || !m) return alert("ERRO: Todos os campos de identificação são obrigatórios!");
             this.nav(1, 2);
         },
         setEq(val, id) {
             this.equip = val;
             document.querySelectorAll('.btn-equip').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            document.getElementById('chrome-box').className = (val === 'CHROMEBOOKS') ? '' : 'hidden';
         },
-        toggleChrome() {
-            document.getElementById('c-qtd').className = (document.getElementById('c-modo').value === 'Individual') ? 'campo' : 'campo hidden';
+        validarReserva() {
+            const ini = document.getElementById('res-inicio').value;
+            const fim = document.getElementById('res-fim').value;
+            const sal = document.getElementById('res-sala-manual').value;
+            if(!ini || !fim || !sal || !this.equip) return alert("ERRO: Preencha Datas, Sala e selecione o Equipamento!");
+            
+            this.nav(3, 4);
+            document.getElementById('resumo-uso').innerHTML = `
+                <b>PROFESSOR:</b> ${document.getElementById('p-nome').value}<br>
+                <b>EQUIPAMENTO:</b> ${this.equip}<br>
+                <b>SALA:</b> ${sal}<br>
+                <b>PERÍODO:</b> ${ini.replace('T',' ')} até ${fim.replace('T',' ')}
+            `;
+            this.startTimer(50);
+        },
+        setGrau(val, id) {
+            this.grau = val;
+            document.querySelectorAll('#scr5 .btn-equip').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
         },
         iaDica() {
             const m = document.getElementById('sup-motivo').value.toLowerCase();
             const r = document.getElementById('ia-txt');
-            if(m.includes("wi-fi") || m.includes("internet")) r.innerText = "IA Sugere: Verifique se o ícone de rede no canto inferior direito está ativado.";
-            else if(m.includes("liga") || m.includes("preta")) r.innerText = "IA Sugere: Conecte o carregador e segure 'Refresh + Power' por 5 segundos.";
-            else if(m.includes("lento")) r.innerText = "IA Sugere: Feche as abas desnecessárias ou reinicie o aparelho.";
-            else r.innerText = "Continue descrevendo... estou buscando uma solução técnica para você.";
+            if(m.length < 5) r.innerText = "Aguardando descrição...";
+            else if(m.includes("net") || m.includes("wi")) r.innerText = "DICA: Verifique se o Wi-Fi não foi desativado no teclado (ícone de rede).";
+            else if(m.includes("liga") || m.includes("tela")) r.innerText = "DICA: Tente o 'Hard Reset': Segure Refresh + Power por 10 segundos.";
+            else r.innerText = "Analisando... Se não resolver, prossiga com o chamado.";
         },
-        iniciarUso() {
-            if(!this.equip || !document.getElementById('res-inicio').value || !document.getElementById('res-fim').value) return alert("Complete todos os campos da reserva!");
-            this.nav(3, 4);
-            const prof = document.getElementById('p-nome').value;
-            document.getElementById('status-final').innerHTML = `<b>PROFESSOR:</b> ${prof}<br><b>EQUIPAMENTO:</b> ${this.equip}<br><b>PERÍODO:</b> ${document.getElementById('res-inicio').value.replace('T',' ')} <br> ATÉ ${document.getElementById('res-fim').value.replace('T',' ')}`;
-            this.startTimer(50);
+        validarChamado() {
+            const mot = document.getElementById('sup-motivo').value;
+            if(!mot || !this.grau) return alert("ERRO: Descreva o problema e selecione o nível de impacto!");
+            alert("SUCESSO: Chamado registrado no sistema do TI!");
+            this.nav(5, 2);
         },
         startTimer(m) {
             let s = m * 60;
             this.timer = setInterval(() => {
                 let min = Math.floor(s/60), seg = s%60;
                 document.getElementById('timer').innerText = `${min.toString().padStart(2,'0')}:${seg.toString().padStart(2,'0')}`;
-                if(s === 300) alert("SISTEMA: Sua aula termina em 5 minutos! Organize a entrega.");
-                if(s <= 0) { clearInterval(this.timer); alert("TEMPO ESGOTADO!"); }
+                if(s <= 0) clearInterval(this.timer);
                 s--;
             }, 1000);
-        },
-        enviarSuporte(nivel) {
-            alert(`CHAMADO REGISTRADO!\nNível: ${nivel}\nO TI recebeu seu relato e a análise da IA Guardiã.`);
-            this.nav(5, 2);
         }
     };
 
