@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SISTEMA TECH - CHÁCARA DAS GARÇAS</title>
+    <title>SISTEMA TECH - PARNAÍBA</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Orbitron:wght@600&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
     <style>
         :root {
-            --azul-pref: #004a99; --azul-sky: #00adef; --neon: #00ff9d;
+            --pref-azul: #004a99; --pref-sky: #00adef; --neon: #00ff9d;
             --v-verde: linear-gradient(135deg, #2ed573, #1e9658);
             --v-amarelo: linear-gradient(135deg, #ffa502, #e67e22);
             --v-vermelho: linear-gradient(135deg, #ff4757, #c0392b);
@@ -15,217 +19,41 @@
         * { box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: 0.3s; }
         
         body { 
-            margin: 0; background: #000b1a url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed;
+            margin: 0; background: #000b1a url('https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
             background-size: cover; min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white; padding: 20px;
         }
 
         .container-premium {
-            width: 95%; max-width: 500px; background: rgba(255, 255, 255, 0.1);
+            width: 100%; max-width: 520px; background: rgba(0, 25, 51, 0.7);
             backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255,255,255,0.25); border-radius: 40px;
-            padding: 35px; box-shadow: 0 30px 60px rgba(0,0,0,0.7);
-            text-align: center; border-top: 5px solid var(--azul-sky);
+            border: 1px solid rgba(0, 173, 239, 0.3); border-radius: 40px;
+            padding: 35px; box-shadow: 0 40px 80px rgba(0,0,0,0.8);
+            text-align: center; border-bottom: 6px solid var(--pref-sky);
         }
 
-        .data-viva { font-size: 11px; font-weight: 600; color: var(--azul-sky); letter-spacing: 2px; margin-bottom: 15px; text-shadow: 0 0 10px rgba(0,173,239,0.5); }
-        h1 { font-size: 20px; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; color: white; }
-        .sub { font-size: 12px; color: var(--neon); margin-bottom: 25px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .header-cidade { margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
+        .cidade-txt { font-size: 10px; letter-spacing: 3px; color: var(--pref-sky); font-weight: 700; text-transform: uppercase; margin: 0; }
+        .unidade-txt { font-size: 16px; font-weight: 700; color: white; margin-top: 5px; }
 
-        label { display: block; text-align: left; font-size: 10px; font-weight: 700; color: var(--azul-sky); margin: 15px 0 5px 8px; text-transform: uppercase; }
-        .campo { width: 100%; height: 52px; background: white; border-radius: 15px; border: 2px solid transparent; padding: 0 20px; font-size: 14px; color: #111; margin-bottom: 12px; font-weight: 600; }
-        .campo:focus { border-color: var(--azul-sky); outline: none; box-shadow: 0 0 10px var(--azul-sky); }
-
-        .btn-grid { display: grid; gap: 12px; margin-bottom: 20px; }
+        .data-viva { font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--neon); letter-spacing: 1px; margin: 15px 0; }
+        
+        h1 { font-size: 18px; font-weight: 800; text-transform: uppercase; color: white; margin: 10px 0; }
+        label { display: block; text-align: left; font-size: 9px; font-weight: 700; color: var(--pref-sky); margin: 15px 0 5px 8px; text-transform: uppercase; }
+        .campo { width: 100%; height: 52px; background: #fdfdfd; border-radius: 12px; border: none; padding: 0 18px; font-size: 14px; color: #111; margin-bottom: 10px; font-weight: 600; }
+        
+        /* MENUS QUE VOCÊ CURTIU */
+        .btn-grid { display: grid; gap: 10px; margin-bottom: 20px; }
         .btn-item { 
-            height: 60px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 18px; color: white; cursor: pointer; font-size: 13px; font-weight: 600; text-align: left; padding: 0 20px;
+            height: 60px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 15px; color: white; cursor: pointer; text-align: left; padding: 0 20px;
             display: flex; flex-direction: column; justify-content: center;
         }
-        .btn-item b { color: var(--azul-sky); }
-        .btn-item.active { background: var(--azul-sky); border-color: white; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 173, 239, 0.4); }
-        .btn-item.active b { color: white; }
+        .btn-item b { font-size: 12px; color: var(--pref-sky); }
+        .btn-item span { font-size: 9px; opacity: 0.6; }
+        .btn-item.active { background: var(--pref-sky); border-color: white; transform: scale(1.02); }
 
-        /* BOTÕES DO TI COM "VIDA" E DECORAÇÃO */
         .btn-ti { 
-            height: 70px; border-radius: 18px; border: 2px solid rgba(255,255,255,0.2); 
-            font-weight: 800; cursor: pointer; color: white; font-size: 11px; 
-            text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
-        .btn-ti:hover { transform: scale(1.05); filter: brightness(1.2); }
-        .btn-ti.active { border-color: white; box-shadow: 0 0 20px inherit; transform: scale(1.08); }
-
-        .relogio-uso { font-family: 'Orbitron', sans-serif; font-size: 45px; color: var(--neon); margin: 25px 0; text-shadow: 0 0 20px var(--neon); }
-        .btn-acao { width: 100%; height: 65px; border-radius: 18px; border: none; background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); color: white; font-weight: 700; text-transform: uppercase; cursor: pointer; font-size: 15px; box-shadow: 0 10px 25px rgba(0, 74, 153, 0.4); }
-        
-        .hidden { display: none; }
-    </style>
-</head>
-<body>
-
-    <div class="container-premium">
-        <div class="data-viva" id="clock">00/00/0000 00:00:00</div>
-
-        <div id="scr0">
-            <h1>CENTRAL DE COMANDO</h1>
-            <p class="sub">Seja bem-vindo, Professor!</p>
-            <p style="font-size:12px; opacity:0.8; margin-bottom:30px;">Gerencie suas aulas e equipamentos com um toque.</p>
-            <button class="btn-acao" onclick="app.nav(0, 1)">Iniciar Sistema</button>
-        </div>
-
-        <div id="scr1" class="hidden">
-            <h1>Identificação</h1>
-            <p style="font-size:11px; color:var(--v-vermelho)">* Todos os campos são de preenchimento obrigatório</p>
-            <input type="text" class="campo" id="p-nome" placeholder="Nome Completo">
-            <input type="text" class="campo" id="p-id" placeholder="Número do Prontuário">
-            <input type="text" class="campo" id="p-mat" placeholder="Disciplina / Matéria">
-            <button class="btn-acao" onclick="app.validarPerfil()">Validar Identidade</button>
-        </div>
-
-        <div id="scr2" class="hidden">
-            <h1>Painel de Controle</h1>
-            <div class="btn-grid">
-                <button class="btn-item active" onclick="app.nav(2, 3)"><b>RESERVAR RECURSOS</b>Clique para agendar equipamentos</button>
-                <button class="btn-item" onclick="app.nav(2, 5)"><b>ABRIR CHAMADO TI</b>Solicitar suporte técnico</button>
-            </div>
-        </div>
-
-        <div id="scr3" class="hidden">
-            <h1>Agendamento</h1>
-            <div style="display:flex; gap:10px">
-                <div style="flex:1">
-                    <label>De (Início) *</label>
-                    <input type="datetime-local" class="campo" id="res-inicio">
-                </div>
-                <div style="flex:1">
-                    <label>Até (Entrega) *</label>
-                    <input type="datetime-local" class="campo" id="res-fim">
-                </div>
-            </div>
-            
-            <label>Série e Sala de Aula *</label>
-            <input type="text" class="campo" id="res-sala-manual" placeholder="Ex: 8º Ano C - Sala 12">
-
-            <label>Selecione o Item *</label>
-            <div class="btn-grid">
-                <button class="btn-item" id="e1" onclick="app.setEq('SALA INFO', 'e1')"><b>SALA DE INFORMÁTICA</b>Laboratório de computação</button>
-                <button class="btn-item" id="e2" onclick="app.setEq('CHROMEBOOKS', 'e2')"><b>CHROMEBOOKS</b>Unidades móveis</button>
-                <button class="btn-item" id="e3" onclick="app.setEq('TV 1º ANDAR', 'e3')"><b>TV DIGITAL (PISO 1)</b>Suporte no primeiro andar</button>
-                <button class="btn-item" id="e4" onclick="app.setEq('TV 2º ANDAR', 'e4')"><b>TV DIGITAL (PISO 2)</b>Suporte no segundo andar</button>
-            </div>
-
-            <div id="chrome-box" class="hidden">
-                <label>Modo de Retirada *</label>
-                <select class="campo" id="c-modo" onchange="app.toggleChrome()">
-                    <option value="Carrinho">Carrinho Completo</option>
-                    <option value="Individual">Unidades Avulsas</option>
-                </select>
-                <input type="number" class="campo hidden" id="c-qtd" placeholder="Quantidade exata?">
-            </div>
-
-            <button class="btn-acao" onclick="app.validarReserva()">Confirmar Reserva Agora</button>
-            <button onclick="app.nav(3, 2)" style="background:none; border:none; color:white; cursor:pointer; margin-top:15px; font-size:12px;">← Voltar ao Menu</button>
-        </div>
-
-        <div id="scr4" class="hidden">
-            <h1>Sessão Ativa</h1>
-            <div class="relogio-uso" id="timer">50:00</div>
-            <div id="resumo" style="font-size:12px; text-align:left; background:rgba(255,255,255,0.05); padding:20px; border-radius:20px; border:1px solid rgba(255,255,255,0.1)"></div>
-            <button class="btn-acao" style="background:var(--v-vermelho); margin-top:25px" onclick="location.reload()">Encerrar e Devolver</button>
-        </div>
-
-        <div id="scr5" class="hidden">
-            <h1>Suporte Técnico</h1>
-            <p class="sub" style="color:white">Relate sua urgência</p>
-
-            <label>Nível de Criticidade *</label>
-            <div class="btn-grid" style="grid-template-columns: 1fr 1fr 1fr; gap:15px;">
-                <button class="btn-ti" id="g1" style="background:var(--v-verde)" onclick="app.setGrau('BAIXO IMPACTO', 'g1')">
-                    <span>🟢</span><span>Baixo</span>
-                </button>
-                <button class="btn-ti" id="g2" style="background:var(--v-amarelo)" onclick="app.setGrau('CRÍTICO', 'g2')">
-                    <span>🟡</span><span>Crítico</span>
-                </button>
-                <button class="btn-ti" id="g3" style="background:var(--v-vermelho)" onclick="app.setGrau('PARADA TOTAL', 'g3')">
-                    <span>🔴</span><span>Parada</span>
-                </button>
-            </div>
-
-            <label>Descrição do Problema *</label>
-            <textarea class="campo" id="sup-motivo" style="height:120px; padding:15px;" placeholder="O que está acontecendo com o equipamento?"></textarea>
-
-            <button class="btn-acao" onclick="app.validarChamado()">Enviar Ticket ao TI</button>
-            <button onclick="app.nav(5, 2)" style="background:none; border:none; color:white; cursor:pointer; font-size:12px; margin-top:15px;">← Cancelar</button>
-        </div>
-    </div>
-
-<script>
-    const app = {
-        equip: "", grau: "", timer: null,
-        nav(at, px) {
-            document.querySelectorAll('.container-premium > div').forEach(d => { if(d.id.startsWith('scr')) d.classList.add('hidden') });
-            document.getElementById(`scr${px}`).classList.remove('hidden');
-        },
-        validarPerfil() {
-            if(!document.getElementById('p-nome').value || !document.getElementById('p-id').value || !document.getElementById('p-mat').value) 
-                return alert("TRAVA DE SEGURANÇA: Todos os campos do docente devem ser preenchidos!");
-            this.nav(1, 2);
-        },
-        setEq(val, id) {
-            this.equip = val;
-            document.querySelectorAll('#scr3 .btn-item').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.getElementById('chrome-box').className = (val === 'CHROMEBOOKS') ? '' : 'hidden';
-        },
-        toggleChrome() {
-            document.getElementById('c-qtd').className = (document.getElementById('c-modo').value === 'Individual') ? 'campo' : 'campo hidden';
-        },
-        validarReserva() {
-            const ini = document.getElementById('res-inicio').value;
-            const fim = document.getElementById('res-fim').value;
-            const sala = document.getElementById('res-sala-manual').value;
-            const qtd = document.getElementById('c-qtd').value;
-
-            if(!ini || !fim || !sala || !this.equip) return alert("TRAVA: Defina o período (De/Até), a Sala e o Equipamento!");
-            if(this.equip === 'CHROMEBOOKS' && document.getElementById('c-modo').value === 'Individual' && !qtd) return alert("TRAVA: Informe a quantidade de Chromebooks!");
-            
-            this.nav(3, 4);
-            document.getElementById('resumo').innerHTML = `
-                <b>PROFESSOR:</b> ${document.getElementById('p-nome').value}<br>
-                <b>RECURSO:</b> ${this.equip}<br>
-                <b>LOCAL:</b> ${sala}<br>
-                <b>INÍCIO:</b> ${ini.replace('T',' ')}<br>
-                <b>ENTREGA:</b> ${fim.replace('T',' ')}
-            `;
-            this.startTimer(50);
-        },
-        setGrau(val, id) {
-            this.grau = val;
-            document.querySelectorAll('.btn-ti').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.getElementById(id).style.boxShadow = "0 0 25px currentColor";
-        },
-        validarChamado() {
-            const mot = document.getElementById('sup-motivo').value;
-            if(!this.grau || !mot) return alert("TRAVA: Selecione a Criticidade e descreva o problema para o TI!");
-            alert("SUCESSO: Seu chamado foi registrado e o TI foi notificado!");
-            this.nav(5, 2);
-        },
-        startTimer(m) {
-            let s = m * 60;
-            this.timer = setInterval(() => {
-                let min = Math.floor(s/60), seg = s%60;
-                document.getElementById('timer').innerText = `${min.toString().padStart(2,'0')}:${seg.toString().padStart(2,'0')}`;
-                if(s === 300) alert("SISTEMA: Faltam 5 minutos para o término da reserva!");
-                if(s <= 0) clearInterval(this.timer);
-                s--;
-            }, 1000);
-        }
-    };
-
-    setInterval(() => {
-        document.getElementById('clock').innerText = new Date().toLocaleString('pt-BR');
-    }, 1000);
-</script>
-</body>
-</html>
+            height: 65px; border-radius: 15px; border: none; 
+            font-weight: 800; cursor: pointer; color: white; font-size: 10px; 
+            text-transform: uppercase; box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            display: flex; flex-direction: column; align-items: center; justify-content
