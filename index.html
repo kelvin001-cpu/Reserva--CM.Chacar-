@@ -1,13 +1,12 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Portal Chácara - CM CG</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <title>Sistema Reserva - Chácara das Garças</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Montserrat:wght@700&family=Orbitron:wght@500&display=swap" rel="stylesheet">
     <style>
-        :root { --azul-sp: #0056a2; --azul-celeste: #00adef; }
+        :root { --azul-sp: #0056a2; --azul-celeste: #00adef; --neon-green: #00ff9d; --danger: #ff4757; }
         * { box-sizing: border-box; }
 
         body { 
@@ -17,27 +16,26 @@
             display: flex; flex-direction: column; align-items: center;
         }
 
-        header { width: 100%; background: white; padding: 15px; text-align: center; border-bottom: 5px solid var(--azul-celeste); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        header { width: 100%; background: white; padding: 12px; text-align: center; border-bottom: 5px solid var(--azul-celeste); }
         .logo-text { font-family: 'Montserrat', sans-serif; color: var(--azul-sp); font-size: 16px; text-transform: uppercase; margin: 0; }
 
-        .container { width: 95%; max-width: 420px; padding: 20px 0; }
+        .container { width: 95%; max-width: 450px; padding: 15px 0; }
 
-        /* BALÃO ÚNICO (MOLDE) */
+        /* O BALÃO ÚNICO QUE ENVOLVE TUDO */
         .glass-card { 
             background: rgba(255, 255, 255, 0.1); 
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border-radius: 25px; padding: 25px; 
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-radius: 25px; padding: 20px; 
             border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            margin-bottom: 20px;
         }
 
-        h2 { text-align: center; font-size: 14px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; margin-bottom: 20px; color: var(--azul-celeste); }
-        
-        label { display: block; margin: 15px 0 6px 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--azul-celeste); }
+        h2 { text-align: center; font-size: 13px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 8px; margin-bottom: 15px; color: var(--azul-celeste); }
+        label { display: block; margin: 12px 0 5px 4px; font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--azul-celeste); }
 
-        /* CAMPOS PADRONIZADOS */
         .campo-form {
-            width: 100%; height: 50px; padding: 0 15px; border-radius: 12px; border: none; 
+            width: 100%; height: 48px; padding: 0 15px; border-radius: 12px; border: none; 
             background: rgba(255, 255, 255, 0.95); font-size: 14px; color: #222; margin-bottom: 5px;
             font-family: 'Poppins'; outline: none;
         }
@@ -45,16 +43,27 @@
         .grid-botoes { display: grid; gap: 8px; margin-bottom: 10px; }
         .btn-item { 
             background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); 
-            padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; font-size: 13px; font-weight: 600; color: white;
+            padding: 12px; border-radius: 12px; text-align: center; cursor: pointer; font-size: 12px; font-weight: 600; color: white;
         }
-        .btn-item.active { background: var(--azul-celeste); border-color: white; box-shadow: 0 0 10px var(--azul-celeste); }
+        .btn-item.active { background: var(--azul-celeste); border-color: white; }
 
-        .btn-finalizar { 
-            width: 100%; padding: 18px; margin-top: 25px; border-radius: 12px; border: none; 
+        /* TEMPORIZADOR */
+        .timer-box { text-align: center; margin: 15px 0; padding: 10px; border-radius: 15px; background: rgba(0,0,0,0.3); }
+        .timer-display { font-family: 'Orbitron', sans-serif; font-size: 32px; color: var(--neon-green); text-shadow: 0 0 10px var(--neon-green); }
+
+        /* PAINEL EM TEMPO REAL */
+        .status-box { background: rgba(0,0,0,0.4); border-radius: 15px; padding: 15px; margin-top: 15px; font-size: 12px; border-left: 4px solid var(--neon-green); }
+        .status-item { margin-bottom: 5px; padding-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .status-name { color: var(--neon-green); font-weight: bold; }
+
+        .btn-main { 
+            width: 100%; padding: 16px; margin-top: 15px; border-radius: 12px; border: none; 
             background: linear-gradient(135deg, var(--azul-sp), var(--azul-celeste)); 
             color: white; font-weight: bold; text-transform: uppercase; cursor: pointer;
         }
+        .btn-finish { background: var(--danger); margin-top: 10px; }
 
+        .footer-ti { text-align: center; margin-top: 15px; font-size: 11px; color: rgba(255,255,255,0.6); }
         .hidden { display: none; }
     </style>
 </head>
@@ -66,80 +75,112 @@
 </header>
 
 <div class="container">
-    <div id="tela_login" class="glass-card">
-        <h2>IDENTIFICAÇÃO DOCENTE</h2>
-        <label>Cargo</label>
-        <select class="campo-form" id="login_gen"><option>Professor</option><option>Professora</option></select>
-        <label>Nome</label>
-        <input type="text" class="campo-form" id="login_nome" placeholder="Seu nome">
-        <label>Prontuário</label>
-        <input type="text" class="campo-form" id="login_id" placeholder="Nº ID">
-        <button class="btn-finalizar" onclick="app.entrar()">ACESSAR</button>
-    </div>
-
-    <div id="tela_reserva" class="glass-card hidden">
-        <h2>RESERVA DE EQUIPAMENTOS</h2>
-        
-        <label>Turma</label>
-        <select class="campo-form" id="res_turma">
-            <option>1º Ano A</option><option>2º Ano A</option><option>3º Ano A</option>
-            <option>4º Ano A</option><option>5º Ano A</option><option>6º Ano A</option>
-            <option>7º Ano A</option><option>8º Ano A</option><option>9º Ano A</option>
-        </select>
-
-        <label>Selecione o Item</label>
-        <div class="grid-botoes">
-            <div class="btn-item" id="opt_info" onclick="app.selecionar('SALA DE INFO', 'opt_info')">🖥️ SALA DE INFORMÁTICA</div>
-            <div class="btn-item" id="opt_chrome" onclick="app.selecionar('CHROMEBOOKS', 'opt_chrome')">💻 CHROMEBOOKS</div>
-            <div class="btn-item" id="opt_tv" onclick="app.selecionar('TV DIGITAL', 'opt_tv')">📺 TV DIGITAL</div>
+    <div class="glass-card">
+        <div id="sec_login">
+            <h2>IDENTIFICAÇÃO</h2>
+            <input type="text" class="campo-form" id="u_nome" placeholder="Nome do Professor(a)">
+            <input type="text" class="campo-form" id="u_id" placeholder="ID / Prontuário">
+            <button class="btn-main" onclick="app.login()">ACESSAR SISTEMA</button>
         </div>
 
-        <div id="menu_chrome" class="hidden">
-            <label>Uso dos Chromebooks</label>
-            <select class="campo-form" id="res_chrome_tipo">
-                <option>Carrinho Todo</option>
-                <option>Unidade Individual</option>
+        <div id="sec_reserva" class="hidden">
+            <h2>RESERVA EM TEMPO REAL</h2>
+            
+            <label>Turma</label>
+            <select class="campo-form" id="r_turma">
+                <option>1º Ano A</option><option>2º Ano A</option><option>3º Ano A</option>
+                <option>4º Ano A</option><option>5º Ano A</option><option>6º Ano A</option>
+                <option>7º Ano A</option><option>8º Ano A</option><option>9º Ano A</option>
             </select>
+
+            <label>Selecione o Equipamento / Sala</label>
+            <div class="grid-botoes">
+                <div class="btn-item" id="i1" onclick="app.selecionar('SALA DE INFO', 'i1')">🖥️ INFORMÁTICA</div>
+                <div class="btn-item" id="i2" onclick="app.selecionar('CHROMEBOOKS', 'i2')">💻 CHROMEBOOKS</div>
+                <div class="btn-item" id="i3" onclick="app.selecionar('TV DIGITAL', 'i3')">📺 TV DIGITAL</div>
+            </div>
+
+            <div id="chrome_opts" class="hidden">
+                <label>Tipo de Uso</label>
+                <select class="campo-form" id="r_chrome_tipo">
+                    <option>Carrinho Todo</option><option>Unidade Individual</option>
+                </select>
+            </div>
+
+            <label>Início</label>
+            <input type="datetime-local" class="campo-form" id="t_in">
+            <label>Término</label>
+            <input type="datetime-local" class="campo-form" id="t_out">
+
+            <button class="btn-main" onclick="app.reservar()">CONFIRMAR AGENDAMENTO</button>
         </div>
 
-        <label>Retirada (Início)</label>
-        <input type="datetime-local" class="campo-form" id="res_inicio">
+        <div id="sec_uso" class="hidden">
+            <h2>EQUIPAMENTO EM USO</h2>
+            <div class="timer-box">
+                <div style="font-size: 10px; color: var(--azul-celeste)">TEMPO RESTANTE</div>
+                <div class="timer-display" id="timer">00:00:00</div>
+            </div>
+            <button class="btn-main btn-finish" onclick="app.finalizar()">FINALIZAR E LIBERAR AGORA</button>
+        </div>
 
-        <label>Entrega (Previsão)</label>
-        <input type="datetime-local" class="campo-form" id="res_fim">
+        <div id="painel_status">
+            <label>Ocupação em Tempo Real</label>
+            <div class="status-box" id="status_lista">
+                <div class="status-item">✅ Todos os equipamentos liberados.</div>
+            </div>
+        </div>
 
-        <button class="btn-finalizar" onclick="app.confirmar()">CONFIRMAR RESERVA</button>
+        <div class="footer-ti">
+            Suporte Técnico: <strong>TI do Suporte - Ramal 202</strong>
+        </div>
     </div>
 </div>
 
 <script>
     const app = {
-        itemEscolhido: "",
-
-        entrar() {
-            const nome = document.getElementById('login_nome').value;
-            if(!nome) return alert("Por favor, digite seu nome!");
-            document.getElementById('tela_login').classList.add('hidden');
-            document.getElementById('tela_reserva').classList.remove('hidden');
+        user: "", item: "",
+        login() {
+            this.user = document.getElementById('u_nome').value;
+            if(!this.user) return alert("Identifique-se!");
+            document.getElementById('sec_login').classList.add('hidden');
+            document.getElementById('sec_reserva').classList.remove('hidden');
         },
-
-        selecionar(item, id) {
-            this.itemEscolhido = item;
+        selecionar(val, id) {
+            this.item = val;
             document.querySelectorAll('.btn-item').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-
-            // Lógica Chromebook: Carrinho/Unidade
-            const menuChrome = document.getElementById('menu_chrome');
-            if(item === 'CHROMEBOOKS') menuChrome.classList.remove('hidden');
-            else menuChrome.classList.add('hidden');
+            document.getElementById('chrome_opts').className = (val === 'CHROMEBOOKS') ? '' : 'hidden';
         },
-
-        confirmar() {
-            const h1 = document.getElementById('res_inicio').value;
-            const h2 = document.getElementById('res_fim').value;
-            if(!this.itemEscolhido || !h1 || !h2) return alert("Preencha todos os campos!");
+        reservar() {
+            if(!this.item) return alert("Escolha o item!");
+            document.getElementById('sec_reserva').classList.add('hidden');
+            document.getElementById('sec_uso').classList.remove('hidden');
             
-            alert(`RESERVA CONCLUÍDA!\nEquipamento: ${this.itemEscolhido}\nTurma: ${document.getElementById('res_turma').value}`);
+            // Atualiza Painel em Tempo Real
+            const sala = document.getElementById('r_turma').value;
+            document.getElementById('status_lista').innerHTML = `
+                <div class="status-item">
+                    📍 <span class="status-name">${this.user}</span> reservou 
+                    <strong>${this.item}</strong> para a sala <strong>${sala}</strong>.
+                </div>`;
+            
+            this.startTimer(50); // Simulação de 50 minutos
+        },
+        startTimer(mins) {
+            let sec = mins * 60;
+            const interval = setInterval(() => {
+                let h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+                document.getElementById('timer').innerText = 
+                    `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+                if (--sec < 0) { clearInterval(interval); this.finalizar(); }
+            }, 1000);
+            this.timerInterval = interval;
+        },
+        finalizar() {
+            clearInterval(this.timerInterval);
+            alert("Reserva finalizada. Equipamento liberado!");
+            location.reload();
         }
     }
 </script>
