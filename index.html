@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Reserva Chácara - Tech</title>
+    <title>Portal Chácara - CM CG</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <style>
         :root { --azul-sp: #0056a2; --azul-celeste: #00adef; }
@@ -16,12 +17,12 @@
             display: flex; flex-direction: column; align-items: center;
         }
 
-        header { width: 100%; background: white; padding: 15px; text-align: center; border-bottom: 5px solid var(--azul-celeste); }
-        .logo-text { font-family: 'Montserrat', sans-serif; color: var(--azul-sp); font-size: clamp(14px, 4vw, 17px); text-transform: uppercase; margin: 0; }
+        header { width: 100%; background: white; padding: 15px; text-align: center; border-bottom: 5px solid var(--azul-celeste); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .logo-text { font-family: 'Montserrat', sans-serif; color: var(--azul-sp); font-size: 16px; text-transform: uppercase; margin: 0; }
 
         .container { width: 95%; max-width: 420px; padding: 20px 0; }
 
-        /* BALÃO ÚNICO PARA O MENU */
+        /* BALÃO ÚNICO (MOLDE) */
         .glass-card { 
             background: rgba(255, 255, 255, 0.1); 
             backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
@@ -34,26 +35,25 @@
         
         label { display: block; margin: 15px 0 6px 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--azul-celeste); }
 
-        /* INPUTS PADRONIZADOS */
-        .input-geral {
+        /* CAMPOS PADRONIZADOS */
+        .campo-form {
             width: 100%; height: 50px; padding: 0 15px; border-radius: 12px; border: none; 
-            background: rgba(255, 255, 255, 0.95); font-size: 14px; color: #222; margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.95); font-size: 14px; color: #222; margin-bottom: 5px;
             font-family: 'Poppins'; outline: none;
         }
 
-        .grid-equip { display: grid; gap: 8px; margin-bottom: 10px; }
-        .btn-opt { 
+        .grid-botoes { display: grid; gap: 8px; margin-bottom: 10px; }
+        .btn-item { 
             background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); 
             padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; font-size: 13px; font-weight: 600; color: white;
         }
-        .btn-opt.active { background: var(--azul-celeste); border-color: white; box-shadow: 0 0 10px var(--azul-celeste); }
+        .btn-item.active { background: var(--azul-celeste); border-color: white; box-shadow: 0 0 10px var(--azul-celeste); }
 
-        .btn-confirm { 
-            width: 100%; padding: 18px; margin-top: 20px; border-radius: 12px; border: none; 
+        .btn-finalizar { 
+            width: 100%; padding: 18px; margin-top: 25px; border-radius: 12px; border: none; 
             background: linear-gradient(135deg, var(--azul-sp), var(--azul-celeste)); 
-            color: white; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: 0.3s;
+            color: white; font-weight: bold; text-transform: uppercase; cursor: pointer;
         }
-        .btn-confirm:active { transform: scale(0.98); }
 
         .hidden { display: none; }
     </style>
@@ -66,84 +66,80 @@
 </header>
 
 <div class="container">
-    <div id="scr_login" class="glass-card">
-        <h2>IDENTIFICAÇÃO</h2>
-        <label>Cargo/Gênero</label>
-        <select class="input-geral" id="u_gen">
-            <option>Professor</option>
-            <option>Professora</option>
-        </select>
-        <label>Nome Completo</label>
-        <input type="text" class="input-geral" id="u_nome" placeholder="Digite seu nome">
+    <div id="tela_login" class="glass-card">
+        <h2>IDENTIFICAÇÃO DOCENTE</h2>
+        <label>Cargo</label>
+        <select class="campo-form" id="login_gen"><option>Professor</option><option>Professora</option></select>
+        <label>Nome</label>
+        <input type="text" class="campo-form" id="login_nome" placeholder="Seu nome">
         <label>Prontuário</label>
-        <input type="text" class="input-geral" id="u_id" placeholder="Digite seu ID">
-        <button class="btn-confirm" onclick="app.login()">ENTRAR NO SISTEMA</button>
+        <input type="text" class="campo-form" id="login_id" placeholder="Nº ID">
+        <button class="btn-finalizar" onclick="app.entrar()">ACESSAR</button>
     </div>
 
-    <div id="scr_reserva" class="glass-card hidden">
-        <h2>SOLICITAR RESERVA</h2>
+    <div id="tela_reserva" class="glass-card hidden">
+        <h2>RESERVA DE EQUIPAMENTOS</h2>
         
-        <label>Selecione a Turma</label>
-        <select class="input-geral" id="r_turma">
+        <label>Turma</label>
+        <select class="campo-form" id="res_turma">
             <option>1º Ano A</option><option>2º Ano A</option><option>3º Ano A</option>
             <option>4º Ano A</option><option>5º Ano A</option><option>6º Ano A</option>
             <option>7º Ano A</option><option>8º Ano A</option><option>9º Ano A</option>
         </select>
 
-        <label>Equipamento</label>
-        <div class="grid-equip">
-            <div class="btn-opt" id="i1" onclick="app.sel('SALA DE INFO', 'i1')">🖥️ SALA DE INFO</div>
-            <div class="btn-opt" id="i2" onclick="app.sel('CHROMEBOOKS', 'i2')">💻 CHROMEBOOKS</div>
-            <div class="btn-opt" id="i3" onclick="app.sel('TV DIGITAL', 'i3')">📺 TV DIGITAL</div>
+        <label>Selecione o Item</label>
+        <div class="grid-botoes">
+            <div class="btn-item" id="opt_info" onclick="app.selecionar('SALA DE INFO', 'opt_info')">🖥️ SALA DE INFORMÁTICA</div>
+            <div class="btn-item" id="opt_chrome" onclick="app.selecionar('CHROMEBOOKS', 'opt_chrome')">💻 CHROMEBOOKS</div>
+            <div class="btn-item" id="opt_tv" onclick="app.selecionar('TV DIGITAL', 'opt_tv')">📺 TV DIGITAL</div>
         </div>
 
-        <div id="box_chrome" class="hidden">
-            <label>Tipo de Uso (Chromebook)</label>
-            <select class="input-geral" id="r_chrome_tipo">
-                <option value="carrinho">Carrinho Todo</option>
-                <option value="unidade">Unidade Individual</option>
+        <div id="menu_chrome" class="hidden">
+            <label>Uso dos Chromebooks</label>
+            <select class="campo-form" id="res_chrome_tipo">
+                <option>Carrinho Todo</option>
+                <option>Unidade Individual</option>
             </select>
         </div>
 
-        <label>Horário de Retirada</label>
-        <input type="datetime-local" class="input-geral" id="r_in">
+        <label>Retirada (Início)</label>
+        <input type="datetime-local" class="campo-form" id="res_inicio">
 
-        <label>Previsão de Entrega</label>
-        <input type="datetime-local" class="input-geral" id="r_out">
+        <label>Entrega (Previsão)</label>
+        <input type="datetime-local" class="campo-form" id="res_fim">
 
-        <button class="btn-confirm" onclick="app.enviar()">CONFIRMAR AGENDAMENTO</button>
+        <button class="btn-finalizar" onclick="app.confirmar()">CONFIRMAR RESERVA</button>
     </div>
 </div>
 
 <script>
     const app = {
-        item: "",
-        
-        login() {
-            const nome = document.getElementById('u_nome').value;
-            const id = document.getElementById('u_id').value;
-            if(!nome || !id) return alert("Preencha seus dados!");
-            
-            document.getElementById('scr_login').classList.add('hidden');
-            document.getElementById('scr_reserva').classList.remove('hidden');
+        itemEscolhido: "",
+
+        entrar() {
+            const nome = document.getElementById('login_nome').value;
+            if(!nome) return alert("Por favor, digite seu nome!");
+            document.getElementById('tela_login').classList.add('hidden');
+            document.getElementById('tela_reserva').classList.remove('hidden');
         },
 
-        sel(val, id) {
-            this.item = val;
-            document.querySelectorAll('.btn-opt').forEach(b => b.classList.remove('active'));
+        selecionar(item, id) {
+            this.itemEscolhido = item;
+            document.querySelectorAll('.btn-item').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
 
-            const boxChrome = document.getElementById('box_chrome');
-            if(val === 'CHROMEBOOKS') {
-                boxChrome.classList.remove('hidden');
-            } else {
-                boxChrome.classList.add('hidden');
-            }
+            // Lógica Chromebook: Carrinho/Unidade
+            const menuChrome = document.getElementById('menu_chrome');
+            if(item === 'CHROMEBOOKS') menuChrome.classList.remove('hidden');
+            else menuChrome.classList.add('hidden');
         },
 
-        enviar() {
-            if(!this.item) return alert("Selecione o equipamento!");
-            alert("Sucesso! Reserva realizada.");
+        confirmar() {
+            const h1 = document.getElementById('res_inicio').value;
+            const h2 = document.getElementById('res_fim').value;
+            if(!this.itemEscolhido || !h1 || !h2) return alert("Preencha todos os campos!");
+            
+            alert(`RESERVA CONCLUÍDA!\nEquipamento: ${this.itemEscolhido}\nTurma: ${document.getElementById('res_turma').value}`);
         }
     }
 </script>
