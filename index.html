@@ -3,145 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SISTEMA NTi - SANTANA DE PARNAÍBA</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <title>SISTEMA NTi - DASHBOARD OFICIAL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Orbitron:wght@500;900&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
     <style>
         :root {
-            --nti-blue: #00adef; --nti-green: #00ff9d; --nti-orange: #ffa502; --nti-red: #ff4757;
-            --bg-overlay: rgba(0, 10, 25, 0.85);
+            --gov-blue: #004a99; --gov-sky: #00adef; --gov-neon: #00ff9d;
+            --gov-gold: #ffc107; --gov-red: #ff3e3e;
+            --glass: rgba(0, 20, 40, 0.9);
         }
-        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: 0.3s; }
+        
+        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         
         body { 
-            margin: 0; background: #000 url('https://i.postimg.cc/85zK2F0j/prefeitura-parnaiba-tech.jpg') no-repeat center center fixed;
-            background-size: cover; min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white; padding: 20px;
+            margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            background: #000b1a; color: white; padding: 15px; overflow-x: hidden;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(0, 74, 153, 0.3) 0, transparent 50%), 
+                radial-gradient(at 100% 100%, rgba(0, 173, 239, 0.2) 0, transparent 50%);
         }
 
-        /* PAINEL CENTRAL (ESTILO HUD DA IMAGEM) */
-        .hud-container {
-            width: 100%; max-width: 600px; background: var(--bg-overlay);
-            backdrop-filter: blur(20px); border: 1px solid rgba(0, 173, 239, 0.5); border-radius: 20px;
-            padding: 40px; box-shadow: 0 0 40px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(0, 173, 239, 0.2);
-            text-align: center; position: relative;
+        /* PAINEL DE COMANDO */
+        .dashboard-container {
+            width: 100%; max-width: 580px; background: var(--glass);
+            border: 1px solid rgba(0, 173, 239, 0.3); border-radius: 40px;
+            padding: 40px; box-shadow: 0 50px 100px rgba(0,0,0,0.8);
+            position: relative; backdrop-filter: blur(30px);
         }
 
-        .top-line { position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--nti-blue); box-shadow: 0 0 10px var(--nti-blue); }
+        /* HEADER GOVERNAMENTAL */
+        .gov-header { text-align: center; margin-bottom: 35px; border-bottom: 2px solid rgba(0, 173, 239, 0.2); padding-bottom: 20px; }
+        .gov-title { font-family: 'Orbitron'; font-size: 40px; font-weight: 900; letter-spacing: 4px; margin: 0; background: linear-gradient(to bottom, #fff, var(--gov-sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .gov-subtitle { font-size: 10px; text-transform: uppercase; letter-spacing: 4px; color: var(--gov-sky); font-weight: 700; margin-top: 5px; }
 
-        .header-box { margin-bottom: 30px; }
-        .city-name { font-size: 10px; letter-spacing: 4px; color: #fff; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; }
-        .nti-logo { font-family: 'Orbitron'; font-size: 42px; font-weight: 700; color: #fff; margin: 0; letter-spacing: 2px; }
-        .nti-sub { font-size: 11px; color: var(--nti-blue); font-weight: 600; text-transform: uppercase; margin-top: -5px; }
+        .live-clock { font-family: 'Orbitron'; font-size: 11px; color: var(--gov-neon); background: rgba(0,0,0,0.5); padding: 6px 15px; border-radius: 50px; border: 1px solid var(--gov-neon); display: inline-block; margin-top: 15px; }
 
-        .clock-display { font-family: 'Orbitron'; font-size: 12px; color: var(--nti-green); background: rgba(0,0,0,0.4); padding: 8px 20px; border-radius: 50px; display: inline-block; margin: 20px 0; border: 1px solid rgba(0, 255, 157, 0.3); }
+        /* INPUTS PREVENTIVOS */
+        .field-group { margin-bottom: 15px; text-align: left; }
+        .field-group label { font-size: 9px; font-weight: 800; color: var(--gov-sky); margin-left: 15px; text-transform: uppercase; }
+        .gov-input { width: 100%; height: 55px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 18px; padding: 0 20px; color: #fff; font-size: 15px; margin-top: 5px; }
+        .gov-input:focus { border-color: var(--gov-sky); outline: none; background: rgba(0, 173, 239, 0.1); box-shadow: 0 0 20px rgba(0, 173, 239, 0.2); }
 
-        /* INPUTS ESTILIZADOS */
-        .login-grid { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
-        .input-nti { width: 100%; height: 55px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 0 20px; color: #fff; font-size: 15px; }
-        .input-nti:focus { outline: none; border-color: var(--nti-blue); background: rgba(0, 173, 239, 0.1); }
-
-        /* MENU DE CARDS PROFISSIONAL */
+        /* O NOVO MENU (VISUAL PREMIUM) */
         .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 10px; }
         .menu-card { 
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px;
-            padding: 30px 10px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px;
+            background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 25px; padding: 30px 15px;
+            cursor: pointer; text-align: center; transition: 0.4s;
         }
-        .menu-card:hover { border-color: var(--nti-blue); background: rgba(0, 173, 239, 0.1); transform: translateY(-5px); }
-        .menu-card img { width: 40px; filter: invert(1); }
-        .menu-card span { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .menu-card:hover { transform: translateY(-8px); border-color: var(--gov-sky); background: rgba(0, 173, 239, 0.15); }
+        .menu-card i { font-size: 32px; display: block; margin-bottom: 10px; }
+        .menu-card b { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; }
 
-        /* PATENTES DE SUPORTE E RESERVAS */
-        .patente-btn { 
-            width: 100%; height: 55px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 12px;
-            display: flex; align-items: center; padding: 0 20px; color: white; font-weight: 700; cursor: pointer; text-transform: uppercase;
+        /* SELEÇÃO DE PATENTES */
+        .patente-box { 
+            width: 100%; padding: 18px; border-radius: 15px; margin-bottom: 12px;
+            display: flex; align-items: center; justify-content: space-between;
+            font-weight: 700; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); font-size: 12px;
         }
-        .patente-btn.active { border: 2px solid #fff; transform: scale(1.02); box-shadow: 0 0 15px rgba(255,255,255,0.2); }
-        .p-padrao { background: rgba(0, 173, 239, 0.3); }
-        .p-tatico { background: rgba(255, 165, 2, 0.3); }
-        .p-estrategico { background: rgba(0, 255, 157, 0.3); }
-        .p-critico { background: rgba(255, 71, 87, 0.3); }
+        .patente-box.active { border: 2px solid white; box-shadow: 0 0 25px rgba(255,255,255,0.2); transform: scale(1.02); }
+        
+        .p-info { background: linear-gradient(90deg, rgba(0, 173, 239, 0.3), transparent); border-left: 6px solid var(--gov-sky); }
+        .p-tatico { background: linear-gradient(90deg, rgba(255, 193, 7, 0.2), transparent); border-left: 6px solid var(--gov-gold); }
+        .p-alerta { background: linear-gradient(90deg, rgba(255, 62, 62, 0.2), transparent); border-left: 6px solid var(--gov-red); }
 
-        .chrome-extra { background: rgba(255, 165, 2, 0.05); padding: 20px; border-radius: 15px; border: 1px dashed var(--nti-orange); margin: 15px 0; }
+        /* ÁREA CHROMEBOOK INDIVIDUAL */
+        .chrome-spec { background: rgba(255, 193, 7, 0.05); border: 1px dashed var(--gov-gold); border-radius: 20px; padding: 20px; margin: 20px 0; }
 
-        .btn-confirm { width: 100%; height: 60px; background: var(--nti-blue); color: #fff; border: none; border-radius: 15px; font-weight: 800; text-transform: uppercase; font-family: 'Orbitron'; font-size: 15px; cursor: pointer; margin-top: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
-        .btn-confirm:hover { filter: brightness(1.2); }
+        .btn-gov { width: 100%; height: 65px; background: linear-gradient(to right, var(--gov-blue), var(--gov-sky)); border: none; border-radius: 20px; color: white; font-family: 'Orbitron'; font-weight: 800; font-size: 16px; cursor: pointer; box-shadow: 0 15px 35px rgba(0, 74, 153, 0.4); margin-top: 20px; }
+        .btn-gov:active { transform: scale(0.96); }
 
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <div class="hud-container">
-        <div class="top-line"></div>
-        <div class="header-box">
-            <div class="city-name">Santana de Parnaíba</div>
-            <h1 class="nti-logo">NTi</h1>
-            <div class="nti-sub">Núcleo de Tecnologia e Inovação</div>
+    <div class="dashboard-container">
+        <div class="gov-header">
+            <div class="gov-subtitle">Prefeitura de Santana de Parnaíba</div>
+            <h1 class="gov-title">NTi</h1>
+            <div class="gov-subtitle" style="color:#fff; opacity:0.6">NÚCLEO DE TECNOLOGIA E INOVAÇÃO</div>
+            <div class="live-clock" id="clock">CARREGANDO...</div>
         </div>
 
-        <div class="clock-display" id="clock">00:00:00</div>
-
         <div id="scr1">
-            <div class="login-grid">
-                <input type="text" id="p-nome" class="input-nti" placeholder="NOME DO DOCENTE">
-                <input type="text" id="p-id" class="input-nti" placeholder="PRONTUÁRIO">
-                <input type="text" id="p-mat" class="input-nti" placeholder="MATÉRIA / DISCIPLINA">
-                <button class="btn-confirm" onclick="app.login()">ACESSAR SISTEMA</button>
+            <div class="field-group">
+                <label>Identificação do Docente</label>
+                <input type="text" id="p-nome" class="gov-input" placeholder="NOME COMPLETO">
             </div>
+            <div style="display:flex; gap:10px">
+                <div class="field-group" style="flex:1">
+                    <label>Nº Prontuário</label>
+                    <input type="text" id="p-id" class="gov-input" placeholder="000.000">
+                </div>
+                <div class="field-group" style="flex:1">
+                    <label>Disciplina</label>
+                    <input type="text" id="p-mat" class="gov-input" placeholder="EX: HISTÓRIA">
+                </div>
+            </div>
+            <button class="btn-gov" onclick="app.login()">ACESSAR PORTAL</button>
         </div>
 
         <div id="scr2" class="hidden">
-            <h2 style="font-size: 12px; letter-spacing: 2px; opacity: 0.7;">MENU PRINCIPAL</h2>
             <div class="menu-grid">
                 <div class="menu-card" onclick="app.nav(2, 3)">
-                    <span>📅 RESERVAS</span>
+                    <i>📅</i><b>Agendar<br>Reserva</b>
                 </div>
                 <div class="menu-card" onclick="app.nav(2, 5)">
-                    <span>🛠️ SUPORTE NTi</span>
+                    <i>🛠️</i><b>Suporte<br>Técnico</b>
                 </div>
                 <div class="menu-card" style="opacity:0.4">
-                    <span>📊 DADOS</span>
+                    <i>📊</i><b>Dados &<br>KPIs</b>
                 </div>
                 <div class="menu-card" onclick="location.reload()">
-                    <span>🚪 SAIR</span>
+                    <i>🚪</i><b>Finalizar<br>Sessão</b>
                 </div>
             </div>
         </div>
 
         <div id="scr3" class="hidden">
-            <h2 style="font-size: 14px; margin-bottom: 20px;">CLASSIFICAÇÃO DE RESERVA</h2>
-            
-            <div class="patente-btn p-padrao" id="e1" onclick="app.setEq('LAB. INFO', 'e1')">LABORATÓRIO INFORMÁTICA</div>
-            <div class="patente-btn p-tatico" id="e2" onclick="app.setEq('CHROMEBOOKS', 'e2')">CHROMEBOOKS (MODO TÁTICO)</div>
-            <div class="patente-btn p-padrao" id="e3" onclick="app.setEq('TV 1', 'e3')">TV DIGITAL - 1º ANDAR</div>
+            <h2 style="font-size:12px; color:var(--gov-sky); margin-bottom:15px">SELECIONE O ATIVO:</h2>
+            <div class="patente-box p-info" id="e1" onclick="app.setEq('LAB. INFO', 'e1')">LABORATÓRIO DE INFORMÁTICA <span>💻</span></div>
+            <div class="patente-box p-tatico" id="e2" onclick="app.setEq('CHROMEBOOKS', 'e2')">CHROMEBOOKS (INDIVIDUAL) <span>📱</span></div>
+            <div class="patente-box p-info" id="e3" onclick="app.setEq('TV 1º ANDAR', 'e3')">TV DIGITAL - 1º ANDAR <span>📺</span></div>
 
-            <div id="chrome-box" class="chrome-extra hidden">
-                <input type="number" id="res-qtd" class="input-nti" placeholder="QTD DE CHROMEBOOKS">
-                <textarea id="res-dev" class="input-nti" style="height:80px; margin-top:10px; padding-top:15px" placeholder="DESENVOLVIMENTO DA AULA..."></textarea>
+            <div id="chrome-box" class="chrome-spec hidden">
+                <label style="color:var(--gov-gold); font-size:10px; font-weight:800">PLANEJAMENTO TÁTICO</label>
+                <input type="number" id="res-qtd" class="gov-input" placeholder="QUANTIDADE DE UNIDADES">
+                <textarea id="res-dev" class="gov-input" style="height:80px; padding-top:15px; margin-top:10px" placeholder="DESENVOLVIMENTO PEDAGÓGICO DA AULA..."></textarea>
             </div>
 
-            <div style="display:flex; gap:10px; margin-top:15px;">
-                <input type="time" id="res-ini" class="input-nti" style="flex:1">
-                <input type="text" id="res-sala" class="input-nti" style="flex:1" placeholder="SALA / SÉRIE">
+            <div style="display:flex; gap:10px; margin-top:10px">
+                <input type="time" id="res-ini" class="gov-input" style="flex:1">
+                <input type="text" id="res-sala" class="gov-input" style="flex:1" placeholder="SALA / TURMA">
             </div>
 
-            <button class="btn-confirm" onclick="app.enviarReserva()">CONFIRMAR RESERVA</button>
-            <button onclick="app.nav(3, 2)" style="background:none; border:none; color:#777; font-size:11px; margin-top:15px; cursor:pointer;">VOLTAR AO MENU</button>
+            <button class="btn-gov" onclick="app.enviarReserva()">CONFIRMAR AGENDAMENTO</button>
+            <button onclick="app.nav(3, 2)" style="background:none; border:none; color:#777; font-size:11px; margin-top:15px; cursor:pointer; width:100%">CANCELAR E VOLTAR</button>
         </div>
 
         <div id="scr5" class="hidden">
-            <h2 style="font-size: 14px; margin-bottom: 20px;">CLASSIFICAÇÃO DO SUPORTE</h2>
-            
-            <div class="patente-btn p-estrategico" id="g1" onclick="app.setGrau('PADRÃO', 'g1')">🟢 PADRÃO</div>
-            <div class="patente-btn p-tatico" id="g2" onclick="app.setGrau('TÁTICO', 'g2')">🟡 TÁTICO (IMPEDE AULA)</div>
-            <div class="patente-btn p-critico" id="g3" onclick="app.setGrau('CÓDIGO VERMELHO', 'g3')">🔴 CÓDIGO VERMELHO</div>
+            <h2 style="font-size:12px; color:var(--gov-red); margin-bottom:15px">GRAU DE PRIORIDADE:</h2>
+            <div class="patente-box p-info" id="g1" onclick="app.setGrau('NORMAL', 'g1')">PADRÃO (SOLICITAÇÃO) <span>🟢</span></div>
+            <div class="patente-box p-tatico" id="g2" onclick="app.setGrau('TÁTICO', 'g2')">TÁTICO (IMPEDE AULA) <span>🟡</span></div>
+            <div class="patente-box p-alerta" id="g3" onclick="app.setGrau('URGENTE', 'g3')">CRÍTICO (CÓDIGO VERMELHO) <span>🔴</span></div>
 
-            <textarea id="sup-msg" class="input-nti" style="height:120px; margin-top:15px; padding-top:15px" placeholder="DESCREVA O PROBLEMA TÉCNICO..."></textarea>
-            <button class="btn-confirm" style="background:var(--nti-red)" onclick="app.enviarChamado()">ENVIAR CHAMADO AO NTi</button>
-            <button onclick="app.nav(5, 2)" style="background:none; border:none; color:#777; font-size:11px; margin-top:15px; cursor:pointer;">CANCELAR</button>
+            <textarea id="sup-msg" class="gov-input" style="height:120px; margin-top:15px; padding-top:15px" placeholder="DESCREVA O INCIDENTE TÉCNICO..."></textarea>
+            <button class="btn-gov" style="background:var(--gov-red)" onclick="app.enviarChamado()">ENVIAR AO MONITORAMENTO</button>
+            <button onclick="app.nav(5, 2)" style="background:none; border:none; color:#777; font-size:11px; margin-top:15px; cursor:pointer; width:100%">CANCELAR</button>
         </div>
     </div>
 
@@ -157,56 +169,49 @@
     const app = {
         eq: "", gr: "",
         nav(a, p) {
-            document.querySelectorAll('.hud-container > div[id]').forEach(d => d.classList.add('hidden'));
+            document.querySelectorAll('.dashboard-container > div[id]').forEach(d => d.classList.add('hidden'));
             document.getElementById(`scr${p}`).classList.remove('hidden');
         },
         login() {
-            if(!document.getElementById('p-nome').value || !document.getElementById('p-id').value || !document.getElementById('p-mat').value) {
-                return alert("IDENTIFICAÇÃO COMPLETA OBRIGATÓRIA!");
-            }
+            if(!document.getElementById('p-nome').value || !document.getElementById('p-id').value) return alert("NTi INFORMA: Identificação obrigatória.");
             this.nav(1, 2);
         },
         setEq(v, id) {
             this.eq = v;
-            document.querySelectorAll('#scr3 .patente-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('#scr3 .patente-box').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             v === 'CHROMEBOOKS' ? document.getElementById('chrome-box').classList.remove('hidden') : document.getElementById('chrome-box').classList.add('hidden');
         },
         setGrau(v, id) {
             this.gr = v;
-            document.querySelectorAll('#scr5 .patente-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('#scr5 .patente-box').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         },
         enviarReserva() {
-            const dados = {
-                nome: document.getElementById('p-nome').value,
-                rp: document.getElementById('p-id').value,
-                materia: document.getElementById('p-mat').value,
-                item: this.eq,
-                sala: document.getElementById('res-sala').value,
-                qtd: document.getElementById('res-qtd').value || "1",
-                desenvolvimento: document.getElementById('res-dev').value || "Uso padrão",
-                data: new Date().toLocaleString()
+            const d = {
+                prof: document.getElementById('p-nome').value, rp: document.getElementById('p-id').value,
+                mat: document.getElementById('p-mat').value, item: this.eq,
+                sala: document.getElementById('res-sala').value, qtd: document.getElementById('res-qtd').value || 1,
+                aula: document.getElementById('res-dev').value || "Uso padrão",
+                timestamp: new Date().toLocaleString()
             };
-            if(!this.eq || !dados.sala) return alert("PREENCHA OS DADOS DA RESERVA!");
-            db.ref('Agendamentos_NTi').push(dados).then(() => { alert("RESERVA REGISTRADA!"); location.reload(); });
+            if(!this.eq || !d.sala) return alert("NTi INFORMA: Selecione o item e a sala.");
+            db.ref('Agendamentos_Oficiais').push(d).then(() => { alert("AGENDADO COM SUCESSO!"); location.reload(); });
         },
         enviarChamado() {
-            const dados = {
-                nome: document.getElementById('p-nome').value,
-                rp: document.getElementById('p-id').value,
-                materia: document.getElementById('p-mat').value,
-                patente: this.gr,
-                problema: document.getElementById('sup-msg').value,
-                data: new Date().toLocaleString()
+            const d = {
+                prof: document.getElementById('p-nome').value, rp: document.getElementById('p-id').value,
+                prioridade: this.gr, relato: document.getElementById('sup-msg').value,
+                timestamp: new Date().toLocaleString()
             };
-            if(!this.gr || !dados.problema) return alert("DESCREVA O PROBLEMA!");
-            db.ref('Chamados_Tecnicos').push(dados).then(() => { alert("CHAMADO ENVIADO AO NTi!"); location.reload(); });
+            if(!this.gr || !d.relato) return alert("NTi INFORMA: Descreva o problema.");
+            db.ref('Chamados_Oficiais').push(d).then(() => { alert("CHAMADO REGISTRADO NO SISTEMA!"); location.reload(); });
         }
     };
 
     setInterval(() => {
-        document.getElementById('clock').innerText = new Date().toLocaleTimeString();
+        const now = new Date();
+        document.getElementById('clock').innerText = now.toLocaleDateString() + " | " + now.toLocaleTimeString();
     }, 1000);
 </script>
 </body>
