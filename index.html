@@ -2,195 +2,181 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NTi - CONTROLE DE ATIVOS</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NTi - Portal de Serviços Digitais</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-
     <style>
         :root {
-            --pref-navy: #001a33; --pref-blue: #00adef; --glass: rgba(0, 15, 30, 0.95);
+            --azul-gov: #003366; /* Azul oficial do portal */
+            --azul-claro: #00adef; /* Destaques de ação */
+            --cinza-fundo: #f4f7f9;
+            --texto: #333;
         }
-        
-        * { box-sizing: border-box; font-family: 'Outfit', sans-serif; transition: 0.2s; }
-        
+
         body { 
-            margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
-            background: linear-gradient(rgba(0, 10, 30, 0.85), rgba(0, 10, 30, 0.85)), 
-                        url('https://img.freepik.com/free-vector/abstract-technology-particle-background_52683-25766.jpg') no-repeat center center fixed;
-            background-size: cover; padding: 10px;
+            margin: 0; font-family: 'Open Sans', sans-serif; background: var(--cinza-fundo); color: var(--texto);
         }
 
-        .main-card {
-            width: 100%; max-width: 550px; background: var(--glass);
-            backdrop-filter: blur(20px); border: 1px solid rgba(0, 173, 239, 0.3);
-            border-radius: 30px; padding: 30px 20px; box-shadow: 0 50px 100px rgba(0,0,0,0.9);
-            text-align: center; color: white;
+        /* Topo Institucional */
+        .header-gov {
+            background: white; border-bottom: 3px solid var(--azul-gov); padding: 15px 5%;
+            display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        .header h1 { font-family: 'Montserrat'; font-size: 45px; margin: 0; color: #fff; letter-spacing: -2px; }
-        .header p { font-size: 10px; text-transform: uppercase; letter-spacing: 4px; color: var(--pref-blue); margin-bottom: 25px; }
+        .logo-box { display: flex; align-items: center; gap: 15px; }
+        .logo-box h1 { font-family: 'Montserrat'; font-size: 22px; color: var(--azul-gov); margin: 0; text-transform: uppercase; }
 
-        /* GRID DE SALAS INTERATIVAS */
-        .sala-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 15px 0; max-height: 200px; overflow-y: auto; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 15px; }
-        .btn-sala { 
-            padding: 12px 5px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 10px; color: #fff; font-size: 11px; font-weight: 700; cursor: pointer;
-        }
-        .btn-sala.active { background: var(--pref-blue); color: #001a33; border-color: var(--pref-blue); box-shadow: 0 0 15px rgba(0, 173, 239, 0.4); }
-
-        /* INPUTS */
-        .pref-field { 
-            width: 100%; height: 50px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 15px; padding: 0 15px; color: #fff; font-size: 14px; margin-top: 5px;
+        /* Container Principal */
+        .main-portal { max-width: 1000px; margin: 40px auto; padding: 20px; }
+        
+        .welcome-card {
+            background: white; border-radius: 8px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            text-align: center; margin-bottom: 30px;
         }
 
-        /* FLOW DE HORÁRIOS */
-        .time-box { display: flex; gap: 10px; margin: 15px 0; text-align: left; }
-        .time-box div { flex: 1; }
-        .time-box label { font-size: 9px; color: var(--pref-blue); font-weight: 800; margin-left: 5px; }
-
-        /* MODO CHROMEBOOK */
-        .selector-row { display: flex; gap: 8px; margin-bottom: 15px; }
-        .sel-btn { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff; font-size: 10px; font-weight: 800; cursor: pointer; }
-        .sel-btn.active { background: #fff; color: #000; }
-
-        .btn-confirm { 
-            width: 100%; height: 60px; background: var(--pref-blue); color: #001a33;
-            border: none; border-radius: 20px; font-family: 'Montserrat'; font-weight: 900;
-            font-size: 16px; cursor: pointer; margin-top: 20px; text-transform: uppercase;
+        /* Mapa de Salas - Estilo Grade Administrativa */
+        .section-title { color: var(--azul-gov); font-weight: 700; border-left: 5px solid var(--azul-claro); padding-left: 10px; margin: 25px 0; }
+        
+        .sala-grid { 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; 
+            background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #ddd;
         }
+        
+        .btn-sala {
+            border: 1px solid #ddd; background: #fff; padding: 15px 5px; border-radius: 5px;
+            font-weight: 600; cursor: pointer; color: var(--azul-gov); font-size: 13px;
+        }
+        .btn-sala:hover { background: #f0f7ff; border-color: var(--azul-claro); }
+        .btn-sala.active { background: var(--azul-gov); color: white; border-color: var(--azul-gov); }
+
+        /* Campos de Formulário Limpos */
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+        .input-group { display: flex; flex-direction: column; }
+        .input-group label { font-size: 12px; font-weight: 700; margin-bottom: 5px; color: #666; }
+        
+        .field { 
+            height: 45px; border: 1px solid #ccc; border-radius: 5px; padding: 0 15px; 
+            font-size: 14px; outline: none; background: #fafafa;
+        }
+        .field:focus { border-color: var(--azul-claro); background: white; }
+
+        /* Botões de Ação Profissionais */
+        .btn-primary {
+            background: var(--azul-claro); color: white; border: none; padding: 18px 40px;
+            border-radius: 5px; font-weight: 700; text-transform: uppercase; cursor: pointer;
+            width: 100%; margin-top: 30px; font-size: 16px; transition: 0.3s;
+        }
+        .btn-primary:hover { background: var(--azul-gov); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
 
         .hidden { display: none; }
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: var(--pref-blue); border-radius: 10px; }
+
+        @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
-    <div class="main-card">
-        <div class="header">
-            <h1>NTi</h1>
-            <p>Santana de Parnaíba</p>
+    <div class="header-gov">
+        <div class="logo-box">
+            <img src="https://www.santanadeparnaiba.sp.gov.br/portal/img/brasao.png" alt="Brasão" height="50">
+            <h1>NTi - Gestão de Ativos</h1>
+        </div>
+        <div style="font-size: 12px; font-weight: 600; color: #888;" id="data-topo"></div>
+    </div>
+
+    <div class="main-portal">
+        <div id="login-screen" class="welcome-card">
+            <h2 style="color: var(--azul-gov)">Identificação do Docente</h2>
+            <p style="color: #888; font-size: 14px;">Acesse com seu prontuário para gerenciar recursos.</p>
+            <div style="max-width: 400px; margin: 0 auto; text-align: left;">
+                <label style="font-size: 11px; font-weight: 700;">NOME COMPLETO</label>
+                <input type="text" id="p-nome" class="field" style="width: 100%; margin-bottom: 15px;">
+                <label style="font-size: 11px; font-weight: 700;">PRONTUÁRIO / MATÉRIA</label>
+                <div style="display:flex; gap:10px">
+                    <input type="text" id="p-id" class="field" style="flex:1" placeholder="Ex: 12345">
+                    <input type="text" id="p-mat" class="field" style="flex:1" placeholder="Ex: Matemática">
+                </div>
+                <button class="btn-primary" onclick="app.nav('agendamento')">Entrar no Sistema</button>
+            </div>
         </div>
 
-        <div id="scr1">
-            <input type="text" id="p-nome" class="pref-field" placeholder="Nome do Docente" style="margin-bottom:10px">
-            <div style="display:flex; gap:10px">
-                <input type="text" id="p-id" class="pref-field" placeholder="Prontuário">
-                <input type="text" id="p-mat" class="pref-field" placeholder="Matéria">
+        <div id="agendamento-screen" class="hidden">
+            <div class="section-title">SOLICITAÇÃO DE RECURSOS PEDAGÓGICOS</div>
+            
+            <div class="welcome-card" style="text-align: left;">
+                <label style="font-weight: 700; color: var(--azul-gov);">1. Localização (Sala/Ano):</label>
+                <div class="sala-grid" id="grid-salas"></div>
+
+                <div class="form-row">
+                    <div class="input-group">
+                        <label>2. Equipamento Requisitado</label>
+                        <select id="item-sel" class="field" onchange="app.checkChrome(this.value)">
+                            <option value="SALA INFO">LABORATÓRIO DE INFORMÁTICA</option>
+                            <option value="CHROMEBOOKS">CARRINHO DE CHROMEBOOKS</option>
+                            <option value="TV DIGITAL">TV DIGITAL INTERATIVA</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>3. Modo de Uso</label>
+                        <select id="modo-sel" class="field">
+                            <option value="NORMAL">USO PADRÃO</option>
+                            <option value="INDIVIDUAL">UNIDADES INDIVIDUAIS (CHROMEBOOK)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="input-group">
+                        <label>4. Horário de Retirada</label>
+                        <input type="time" id="t-ini" class="field">
+                    </div>
+                    <div class="input-group">
+                        <label>5. Horário de Devolução</label>
+                        <input type="time" id="t-fim" class="field">
+                    </div>
+                </div>
+
+                <div class="input-group" style="margin-top: 20px;">
+                    <label>6. Objetivo da Aula / Justificativa</label>
+                    <textarea id="res-obs" class="field" style="height: 80px; padding-top:10px;" placeholder="Descreva brevemente a atividade..."></textarea>
+                </div>
+
+                <button class="btn-primary" onclick="app.finalizar()">Confirmar Protocolo de Reserva</button>
             </div>
-            <button class="btn-confirm" onclick="app.login()">Iniciar Gestão</button>
-        </div>
-
-        <div id="scr3" class="hidden">
-            <label style="font-size: 10px; color: var(--pref-blue); font-weight: 800;">1. SELECIONE A SALA / ANO:</label>
-            <div class="sala-grid" id="sala-container">
-                </div>
-
-            <label style="font-size: 10px; color: var(--pref-blue); font-weight: 800; margin-top:10px; display:block;">2. RECURSO & MODO:</label>
-            <select id="item-sel" class="pref-field" onchange="app.checkChrome(this.value)" style="margin-bottom:10px">
-                <option value="LAB. INFO">LAB. INFORMÁTICA</option>
-                <option value="CHROMEBOOKS">CHROMEBOOKS</option>
-                <option value="TV INTERATIVA">TV INTERATIVA</option>
-            </select>
-
-            <div id="chrome-ui" class="hidden">
-                <div class="selector-row">
-                    <button class="sel-btn active" id="m1" onclick="app.setModo('CARRINHO', 'm1')">CARRINHO CHEIO</button>
-                    <button class="sel-btn" id="m2" onclick="app.setModo('INDIVIDUAL', 'm2')">INDIVIDUAL</button>
-                </div>
-                <input type="number" id="res-qtd" class="pref-field hidden" placeholder="Qtd Unidades">
-            </div>
-
-            <div class="time-box">
-                <div>
-                    <label>RETIRADA (INÍCIO)</label>
-                    <input type="time" id="res-ini" class="pref-field">
-                </div>
-                <div>
-                    <label>ENTREGA (DEVOLUÇÃO)</label>
-                    <input type="time" id="res-fim" class="pref-field">
-                </div>
-            </div>
-
-            <textarea id="res-dev" class="pref-field" style="height:60px; padding-top:12px" placeholder="Objetivo Pedagógico..."></textarea>
-
-            <button class="btn-confirm" onclick="app.enviarReserva()">Finalizar Agendamento</button>
-            <button onclick="location.reload()" style="background:none; border:none; color:#555; font-size:11px; margin-top:15px; cursor:pointer;">CANCELAR</button>
         </div>
     </div>
 
-<script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyBoGfDKz-nBwKvczzGpxg-fHJYdVykcBUQ",
-        databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com",
-        projectId: "escala-chacara",
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    const app = {
-        sala: "", modo: "CARRINHO",
-        init() {
-            const container = document.getElementById('sala-container');
-            const anos = ['1º ANO', '2º ANO', '3º ANO', '4º ANO', '5º ANO', '6º ANO', '7º ANO', '8º ANO', '9º ANO'];
-            const letras = ['A', 'B', 'C'];
-            
-            anos.forEach(ano => {
-                letras.forEach(letra => {
-                    const btn = document.createElement('button');
-                    btn.className = 'btn-sala';
-                    btn.innerText = `${ano} ${letra}`;
-                    btn.onclick = () => {
-                        document.querySelectorAll('.btn-sala').forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-                        this.sala = btn.innerText;
-                    };
-                    container.appendChild(btn);
-                });
-            });
-        },
-        nav(p) {
-            document.querySelectorAll('.main-card > div[id]').forEach(d => d.classList.add('hidden'));
-            document.getElementById(`scr${p}`).classList.remove('hidden');
-        },
-        login() {
-            if(!document.getElementById('p-nome').value) return alert("Insira seu nome.");
-            this.nav(3);
-        },
-        checkChrome(v) {
-            v === 'CHROMEBOOKS' ? document.getElementById('chrome-ui').classList.remove('hidden') : document.getElementById('chrome-ui').classList.add('hidden');
-        },
-        setModo(m, id) {
-            this.modo = m;
-            document.querySelectorAll('.sel-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            m === 'INDIVIDUAL' ? document.getElementById('res-qtd').classList.remove('hidden') : document.getElementById('res-qtd').classList.add('hidden');
-        },
-        enviarReserva() {
-            const d = {
-                prof: document.getElementById('p-nome').value,
-                rp: document.getElementById('p-id').value,
-                sala: this.sala,
-                item: document.getElementById('item-sel').value,
-                modo: this.modo,
-                inicio: document.getElementById('res-ini').value,
-                entrega: document.getElementById('res-fim').value,
-                qtd: document.getElementById('res-qtd').value || 'Carrinho Cheio',
-                objetivo: document.getElementById('res-dev').value,
-                data: new Date().toLocaleDateString()
-            };
-            if(!this.sala || !d.inicio || !d.entrega) return alert("Selecione a Sala e os Horários.");
-            db.ref('Gestao_Salas_NTi').push(d).then(() => { 
-                alert("RESERVA CONFIRMADA!\nSala: " + d.sala + "\nRetirada: " + d.inicio + "\nEntrega: " + d.entrega);
-                location.reload(); 
-            });
-        }
-    };
-    app.init();
-</script>
+    <script>
+        const app = {
+            sala: "",
+            init() {
+                const grid = document.getElementById('grid-salas');
+                for(let i=1; i<=9; i++) {
+                    ['A','B','C'].forEach(l => {
+                        let b = document.createElement('button');
+                        b.className = 'btn-sala';
+                        b.innerText = `${i}º ANO ${l}`;
+                        b.onclick = () => {
+                            document.querySelectorAll('.btn-sala').forEach(x => x.classList.remove('active'));
+                            b.classList.add('active');
+                            this.sala = b.innerText;
+                        };
+                        grid.appendChild(b);
+                    });
+                }
+                document.getElementById('data-topo').innerText = new Date().toLocaleDateString('pt-BR');
+            },
+            nav(screen) {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('agendamento-screen').classList.remove('hidden');
+            },
+            finalizar() {
+                if(!this.sala || !document.getElementById('t-ini').value) return alert("Por favor, selecione a sala e o horário.");
+                alert("Protocolo gerado com sucesso para " + this.sala);
+                location.reload();
+            }
+        };
+        app.init();
+    </script>
 </body>
 </html>
