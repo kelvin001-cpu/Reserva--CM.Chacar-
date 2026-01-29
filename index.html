@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SISTEMA TECH - PARNAÍBA</title>
+    <title>SISTEMA NTi - PARNAÍBA</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Orbitron:wght@600&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -19,41 +19,164 @@
         * { box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: 0.3s; }
         
         body { 
-            margin: 0; background: #000b1a url('https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
+            margin: 0; 
+            background: #000b1a url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed;
             background-size: cover; min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white; padding: 20px;
         }
 
         .container-premium {
-            width: 100%; max-width: 520px; background: rgba(0, 25, 51, 0.7);
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(0, 173, 239, 0.3); border-radius: 40px;
-            padding: 35px; box-shadow: 0 40px 80px rgba(0,0,0,0.8);
-            text-align: center; border-bottom: 6px solid var(--pref-sky);
+            width: 100%; max-width: 520px; background: rgba(0, 40, 80, 0.75);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 2px solid var(--pref-sky); border-radius: 40px;
+            padding: 35px; box-shadow: 0 0 50px rgba(0, 173, 239, 0.4);
+            text-align: center; border-bottom: 8px solid var(--pref-sky);
         }
 
-        .header-cidade { margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
-        .cidade-txt { font-size: 10px; letter-spacing: 3px; color: var(--pref-sky); font-weight: 700; text-transform: uppercase; margin: 0; }
-        .unidade-txt { font-size: 16px; font-weight: 700; color: white; margin-top: 5px; }
+        .header-cidade { margin-bottom: 20px; border-bottom: 2px solid var(--pref-sky); padding-bottom: 15px; }
+        .cidade-txt { font-size: 11px; letter-spacing: 4px; color: #fff; font-weight: 800; text-transform: uppercase; margin: 0; }
+        .unidade-txt { font-size: 26px; font-weight: 700; color: #fff; margin-top: 5px; font-family: 'Orbitron', sans-serif; letter-spacing: 2px; }
+        .sub-nti { font-size: 10px; color: var(--pref-sky); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-top: -5px; }
 
-        .data-viva { font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--neon); letter-spacing: 1px; margin: 15px 0; }
+        .data-viva { font-family: 'Orbitron', sans-serif; font-size: 12px; color: var(--neon); letter-spacing: 1px; margin: 15px 0; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 10px; }
         
-        h1 { font-size: 18px; font-weight: 800; text-transform: uppercase; color: white; margin: 10px 0; }
-        label { display: block; text-align: left; font-size: 9px; font-weight: 700; color: var(--pref-sky); margin: 15px 0 5px 8px; text-transform: uppercase; }
-        .campo { width: 100%; height: 52px; background: #fdfdfd; border-radius: 12px; border: none; padding: 0 18px; font-size: 14px; color: #111; margin-bottom: 10px; font-weight: 600; }
+        h1 { font-size: 20px; font-weight: 800; text-transform: uppercase; color: white; margin: 10px 0; letter-spacing: 1px; }
+        label { display: block; text-align: left; font-size: 10px; font-weight: 700; color: var(--pref-sky); margin: 15px 0 5px 8px; text-transform: uppercase; }
         
-        /* MENUS QUE VOCÊ CURTIU */
-        .btn-grid { display: grid; gap: 10px; margin-bottom: 20px; }
+        .campo { width: 100%; height: 52px; background: #fff; border-radius: 15px; border: none; padding: 0 18px; font-size: 14px; color: #111; margin-bottom: 10px; font-weight: 600; }
+        
+        .btn-grid { display: grid; gap: 12px; margin-bottom: 20px; }
         .btn-item { 
-            height: 60px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 15px; color: white; cursor: pointer; text-align: left; padding: 0 20px;
+            height: 65px; background: rgba(255, 255, 255, 0.1); border: 1px solid var(--pref-sky);
+            border-radius: 20px; color: white; cursor: pointer; text-align: left; padding: 0 20px;
             display: flex; flex-direction: column; justify-content: center;
         }
-        .btn-item b { font-size: 12px; color: var(--pref-sky); }
-        .btn-item span { font-size: 9px; opacity: 0.6; }
-        .btn-item.active { background: var(--pref-sky); border-color: white; transform: scale(1.02); }
+        .btn-item b { font-size: 13px; color: #fff; }
+        .btn-item span { font-size: 10px; color: var(--pref-sky); font-weight: 600; }
+        .btn-item.active { background: var(--pref-sky); border-color: white; transform: scale(1.03); box-shadow: 0 0 20px var(--pref-sky); }
 
         .btn-ti { 
-            height: 65px; border-radius: 15px; border: none; 
-            font-weight: 800; cursor: pointer; color: white; font-size: 10px; 
-            text-transform: uppercase; box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            display: flex; flex-direction: column; align-items: center; justify-content
+            height: 70px; border-radius: 20px; border: none; 
+            font-weight: 800; cursor: pointer; color: white; font-size: 11px; 
+            text-transform: uppercase; box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+        }
+        .btn-ti.active { border: 4px solid white; transform: scale(1.08); }
+
+        .btn-acao { 
+            width: 100%; height: 65px; border-radius: 20px; border: none; 
+            background: linear-gradient(135deg, var(--pref-azul), var(--pref-sky)); 
+            color: white; font-weight: 800; text-transform: uppercase; cursor: pointer; 
+            font-size: 16px; font-family: 'Orbitron', sans-serif;
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="container-premium">
+        <div class="header-cidade">
+            <p class="cidade-txt">SANTANA DE PARNAÍBA</p>
+            <div class="unidade-txt">SISTEMA NTi</div>
+            <div class="sub-nti">Núcleo de Tecnologia e Inovação</div>
+        </div>
+        <div class="data-viva" id="clock">00/00/0000 00:00:00</div>
+
+        <div id="scr1">
+            <h1>ACESSO RESTRITO</h1>
+            <input type="text" class="campo" id="p-nome" placeholder="NOME DO DOCENTE">
+            <input type="text" class="campo" id="p-id" placeholder="PRONTUÁRIO">
+            <button class="btn-acao" onclick="app.login()">Entrar</button>
+        </div>
+
+        <div id="scr2" class="hidden">
+            <h1>GESTÃO CENTRAL</h1>
+            <div class="btn-grid">
+                <button class="btn-item" onclick="app.nav(2, 3)"><b>📅 AGENDAR RESERVA</b><span>Equipamentos e Salas</span></button>
+                <button class="btn-item" onclick="app.nav(2, 5)"><b>🛠️ SUPORTE NTi</b><span>Relatar Erro ao Monitoramento</span></button>
+            </div>
+        </div>
+
+        <div id="scr3" class="hidden">
+            <h1>NOVA RESERVA</h1>
+            <div style="display:flex; gap:10px">
+                <div style="flex:1"><label>Início</label><input type="datetime-local" class="campo" id="res-ini"></div>
+                <div style="flex:1"><label>Fim</label><input type="datetime-local" class="campo" id="res-fim"></div>
+            </div>
+            <label>Série / Sala de Aula</label>
+            <input type="text" class="campo" id="res-sala" placeholder="Ex: 9º Ano A">
+
+            <label>Equipamento NTi</label>
+            <div class="btn-grid">
+                <button class="btn-item" id="e1" onclick="app.setEq('LAB. INFO', 'e1')"><b>LABORATÓRIO INFORMÁTICA</b></button>
+                <button class="btn-item" id="e2" onclick="app.setEq('CHROMEBOOKS', 'e2')"><b>CHROMEBOOKS</b></button>
+                <button class="btn-item" id="e3" onclick="app.setEq('TV 1º ANDAR', 'e3')"><b>TV - 1º ANDAR</b></button>
+                <button class="btn-item" id="e4" onclick="app.setEq('TV 2º ANDAR', 'e4')"><b>TV - 2º ANDAR</b></button>
+            </div>
+            <button class="btn-acao" onclick="app.confirmarReserva()">Confirmar Reserva</button>
+            <button onclick="app.nav(3, 2)" style="background:none; border:none; color:white; cursor:pointer; margin-top:15px; font-size:11px; text-decoration: underline;">Voltar</button>
+        </div>
+
+        <div id="scr5" class="hidden">
+            <h1>CHAMADO NTi</h1>
+            <label>Prioridade da Ocorrência</label>
+            <div class="btn-grid" style="grid-template-columns: 1fr 1fr 1fr; gap:10px;">
+                <button class="btn-ti" id="g1" style="background:var(--v-verde)" onclick="app.setGrau('BAIXA', 'g1')">BAIXA</button>
+                <button class="btn-ti" id="g2" style="background:var(--v-amarelo)" onclick="app.setGrau('CRÍTICA', 'g2')">CRÍTICA</button>
+                <button class="btn-ti" id="g3" style="background:var(--v-vermelho)" onclick="app.setGrau('URGENTE', 'g3')">URGENTE</button>
+            </div>
+            <textarea class="campo" id="ti-msg" style="height:100px; padding:15px" placeholder="Descreva o problema aqui..."></textarea>
+            <button class="btn-acao" onclick="app.confirmarTI()">Enviar ao Zé</button>
+            <button onclick="app.nav(5, 2)" style="background:none; border:none; color:white; cursor:pointer; margin-top:15px; font-size:11px; text-decoration: underline;">Cancelar</button>
+        </div>
+    </div>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyBoGfDKz-nBwKvczzGpxg-fHJYdVykcBUQ",
+        databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com",
+        projectId: "escala-chacara",
+    };
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    const app = {
+        eq: "", gr: "",
+        nav(a, p) { 
+            document.querySelectorAll('.container-premium > div').forEach(d => { if(d.id.startsWith('scr')) d.classList.add('hidden') });
+            document.getElementById(`scr${p}`).classList.remove('hidden');
+        },
+        login() {
+            if(!document.getElementById('p-nome').value) return alert("Identifique-se no NTi!");
+            this.nav(1, 2);
+        },
+        setEq(v, i) { this.eq = v; document.querySelectorAll('#scr3 .btn-item').forEach(b => b.classList.remove('active')); document.getElementById(i).classList.add('active'); },
+        setGrau(v, i) { this.gr = v; document.querySelectorAll('.btn-ti').forEach(b => b.classList.remove('active')); document.getElementById(i).classList.add('active'); },
+        
+        confirmarReserva() {
+            const dados = {
+                prof: document.getElementById('p-nome').value,
+                sala: document.getElementById('res-sala').value,
+                item: this.eq,
+                inicio: document.getElementById('res-ini').value,
+                fim: document.getElementById('res-fim').value,
+                registro: new Date().toLocaleString()
+            };
+            if(!dados.item || !dados.sala) return alert("Dados incompletos!");
+            database.ref('reservas').push(dados).then(() => { alert("✅ RESERVA REGISTRADA NO NTi!"); location.reload(); });
+        },
+
+        confirmarTI() {
+            const msg = document.getElementById('ti-msg').value;
+            if(!this.gr || !msg) return alert("Informe a prioridade!");
+            const dados = {
+                prof: document.getElementById('p-nome').value,
+                prioridade: this.gr,
+                problema: msg,
+                data: new Date().toLocaleString()
+            };
+            database.ref('chamados').push(dados).then(() => { alert("✅ CHAMADO ENVIADO AO NTi!"); location.reload(); });
+        }
+    };
+    setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleString('pt-BR'); }, 1000);
+</script>
+</body>
+</html>
