@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Portal Chácara - CM CG</title>
+    <title>Portal Chácara - Reserva</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <style>
         :root { --azul-sp: #0056a2; --azul-celeste: #00adef; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; }
 
         body { 
             margin: 0; padding: 0; font-family: 'Poppins', sans-serif; 
@@ -15,51 +15,46 @@
             background-size: cover; min-height: 100vh; color: white;
             display: flex; flex-direction: column; align-items: center;
         }
-        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 15, 40, 0.85); z-index: -1; }
 
-        header { width: 100%; background: white; padding: 15px; text-align: center; border-bottom: 5px solid var(--azul-celeste); box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+        header { width: 100%; background: white; padding: 15px; text-align: center; border-bottom: 5px solid var(--azul-celeste); }
         .logo-text { font-family: 'Montserrat', sans-serif; color: var(--azul-sp); font-size: 17px; text-transform: uppercase; margin: 0; }
 
-        .container { width: 100%; max-width: 420px; padding: 20px; }
-        h2 { text-align: center; font-size: 15px; text-transform: uppercase; border-bottom: 2px solid var(--azul-celeste); padding-bottom: 8px; margin-bottom: 20px; }
+        .container { width: 95%; max-width: 420px; padding: 20px 0; }
+
+        /* O BALÃO ÚNICO QUE ENVOLVE TODO O MENU */
+        .glass-card { 
+            background: rgba(255, 255, 255, 0.1); 
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border-radius: 25px; padding: 20px; 
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        }
+
+        h2 { text-align: center; font-size: 15px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; margin-bottom: 20px; color: var(--azul-celeste); }
         
         label { display: block; margin: 15px 0 6px 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--azul-celeste); }
 
-        /* AQUI ESTÁ A SIMETRIA DOS BALÕES */
-        .campo-input {
-            display: block;
-            width: 100%; 
-            height: 55px; /* Altura idêntica para todos */
-            padding: 0 15px; 
-            border-radius: 12px; 
-            border: none; 
-            background: rgba(255, 255, 255, 0.98); 
-            font-size: 15px; 
-            color: #222;
-            font-family: 'Poppins', sans-serif;
-            margin-bottom: 5px;
-            outline: none;
-            -webkit-appearance: none; /* Remove sombras do iPhone */
+        /* INPUTS IGUAIS NA RÉGUA */
+        .input-geral {
+            width: 100%; height: 50px; padding: 0 15px; border-radius: 12px; border: none; 
+            background: rgba(255, 255, 255, 0.95); font-size: 14px; color: #222; margin-bottom: 5px;
+            font-family: 'Poppins';
         }
 
-        /* Ajuste fino para campos de data ficarem na mesma linha do texto */
-        input[type="datetime-local"] {
-            padding-top: 2px;
-        }
-
-        .grid-equip { display: grid; gap: 10px; margin-bottom: 10px; }
+        .grid-equip { display: grid; gap: 8px; margin-bottom: 10px; }
         .btn-opt { 
-            background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); 
-            padding: 18px; border-radius: 15px; text-align: center; cursor: pointer; 
-            font-weight: bold; font-size: 13px; transition: 0.2s;
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); 
+            padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; font-size: 13px; font-weight: 600;
         }
-        .btn-opt.active { background: var(--azul-celeste); border-color: white; box-shadow: 0 0 15px var(--azul-celeste); }
+        .btn-opt.active { background: var(--azul-celeste); border-color: white; box-shadow: 0 0 10px var(--azul-celeste); }
 
         .btn-confirm { 
-            width: 100%; padding: 20px; margin-top: 25px; border-radius: 15px; border: none; 
+            width: 100%; padding: 18px; margin-top: 20px; border-radius: 12px; border: none; 
             background: linear-gradient(135deg, var(--azul-sp), var(--azul-celeste)); 
-            color: white; font-weight: bold; text-transform: uppercase; cursor: pointer; font-size: 16px;
+            color: white; font-weight: bold; text-transform: uppercase; cursor: pointer;
         }
+
+        .hidden { display: none; }
     </style>
 </head>
 <body>
@@ -70,38 +65,44 @@
 </header>
 
 <div class="container">
-    <h2>RESERVAR EQUIPAMENTO</h2>
-    
-    <label>Selecione sua Turma</label>
-    <select class="campo-input" id="r_turma">
-        <option>1º Ano A</option>
-        <option>2º Ano A</option>
-        <option>3º Ano A</option>
-        <option>4º Ano A</option>
-        <option>5º Ano A</option>
-        <option>6º Ano A</option>
-        <option>7º Ano A</option>
-        <option>8º Ano A</option>
-        <option>9º Ano A</option>
-    </select>
+    <div class="glass-card">
+        <h2>SOLICITAR RESERVA</h2>
+        
+        <label>Turma</label>
+        <select class="input-geral" id="r_turma">
+            <option>1º Ano A</option><option>2º Ano A</option><option>3º Ano A</option>
+            <option>4º Ano A</option><option>5º Ano A</option><option>6º Ano A</option>
+            <option>7º Ano A</option><option>8º Ano A</option><option>9º Ano A</option>
+        </select>
 
-    <label>Equipamento</label>
-    <div class="grid-equip">
-        <div class="btn-opt" id="i1" onclick="app.sel('SALA DE INFO', 'i1')">🖥️ SALA DE INFO</div>
-        <div class="btn-opt" id="i2" onclick="app.sel('CHROMEBOOKS', 'i2')">💻 CHROMEBOOKS</div>
-        <div class="btn-opt" id="i3" onclick="app.sel('TV DIGITAL', 'i3')">📺 TV DIGITAL</div>
+        <label>O que deseja reservar?</label>
+        <div class="grid-equip">
+            <div class="btn-opt" id="i1" onclick="app.sel('SALA DE INFO', 'i1')">🖥️ SALA DE INFORMÁTICA</div>
+            <div class="btn-opt" id="i2" onclick="app.sel('CHROMEBOOKS', 'i2')">💻 CHROMEBOOKS</div>
+            <div class="btn-opt" id="i3" onclick="app.sel('TV DIGITAL', 'i3')">📺 TV DIGITAL</div>
+        </div>
+
+        <div id="box_chrome" class="hidden">
+            <label>Configuração Chromebook</label>
+            <select class="input-geral" id="r_chrome_tipo">
+                <option value="carrinho">Carrinho Todo</option>
+                <option value="unidade">Unidade Individual</option>
+            </select>
+        </div>
+
+        <div id="box_pat" class="hidden">
+            <label>Nº de Patrimônio</label>
+            <input type="text" class="input-geral" id="r_pat" placeholder="Ex: 230180">
+        </div>
+
+        <label>Horário de Retirada</label>
+        <input type="datetime-local" class="input-geral" id="r_in">
+
+        <label>Previsão de Entrega</label>
+        <input type="datetime-local" class="input-geral" id="r_out">
+
+        <button class="btn-confirm" onclick="app.enviar()">CONFIRMAR AGENDAMENTO</button>
     </div>
-
-    <label>Número de Patrimônio</label>
-    <input type="text" class="campo-input" id="r_pat" placeholder="Digite o patrimônio">
-
-    <label>Data e Horário de Retirada</label>
-    <input type="datetime-local" class="campo-input" id="r_in">
-
-    <label>Previsão de Entrega</label>
-    <input type="datetime-local" class="campo-input" id="r_out">
-
-    <button class="btn-confirm" onclick="app.enviar()">CONFIRMAR AGENDAMENTO</button>
 </div>
 
 <script>
@@ -111,10 +112,22 @@
             this.item = val;
             document.querySelectorAll('.btn-opt').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
+
+            // Lógica de exibição dinâmica
+            const boxChrome = document.getElementById('box_chrome');
+            const boxPat = document.getElementById('box_pat');
+
+            if(val === 'CHROMEBOOKS') {
+                boxChrome.classList.remove('hidden');
+                boxPat.classList.add('hidden'); // Chromebook usa carrinho/unidade, não pat.
+            } else {
+                boxChrome.classList.add('hidden');
+                boxPat.classList.add('hidden'); // Sala de Info e TV não tem pat.
+            }
         },
         enviar() {
-            if(!this.item) return alert("Selecione um equipamento!");
-            alert("Reserva enviada para a Turma: " + document.getElementById('r_turma').value);
+            if(!this.item) return alert("Selecione um item!");
+            alert("Reserva enviada com sucesso!");
         }
     }
 </script>
