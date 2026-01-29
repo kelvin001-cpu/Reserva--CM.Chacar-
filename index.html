@@ -3,223 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NTi - TECNOLOGIA EDUCACIONAL</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <title>NTi - Central Santana de Parnaíba</title>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --neon-blue: #00d2ff; --neon-green: #39ff14; --neon-yellow: #fff01f; --neon-red: #ff3131;
-            --glass: rgba(0, 15, 30, 0.85); --border: rgba(0, 210, 255, 0.25);
+            --azul-escuro: #003366; --azul-claro: #4dabf7; --cinza-bg: #e9ecef; --branco: #ffffff;
         }
 
-        /* FUNDO TECNOLÓGICO DINÂMICO */
         body {
-            margin: 0; min-height: 100vh; font-family: 'Rajdhani', sans-serif; color: white;
-            background: #00050a url('https://w0.peakpx.com/wallpaper/559/541/HD-wallpaper-digital-art-circuit-board-blue.jpg') no-repeat center center fixed;
-            background-size: cover; display: flex; align-items: center; justify-content: center; overflow-x: hidden;
+            margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5 url('https://www.toptal.com/designers/subtlepatterns/patterns/circuit-board.png');
+            color: #333;
         }
 
-        body::before {
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, transparent 20%, #000 90%); pointer-events: none;
+        /* HEADER SUPERIOR */
+        .header-top {
+            background: var(--branco); border-bottom: 4px solid var(--azul-escuro);
+            padding: 10px 5%; display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header-top .logo-container { display: flex; align-items: center; gap: 15px; }
+        .header-top h1 { font-size: 22px; margin: 0; color: var(--azul-escuro); }
+        .user-info { font-size: 14px; color: #666; font-weight: 600; }
+
+        /* ÁREA PRINCIPAL */
+        .main-content {
+            max-width: 1100px; margin: 40px auto; padding: 0 20px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 30px;
         }
 
-        /* PAINEL DE VIDRO (CONTAINER) */
-        .glass-panel {
-            width: 90%; max-width: 450px; background: var(--glass); backdrop-filter: blur(25px);
-            border: 1px solid var(--border); border-radius: 30px; padding: 35px;
-            box-shadow: 0 0 60px rgba(0, 210, 255, 0.15); position: relative;
-            animation: fadeIn 0.8s ease-out;
+        .section-label {
+            grid-column: 1 / -1; border-left: 5px solid var(--azul-claro);
+            padding-left: 15px; font-weight: 700; color: var(--azul-escuro);
+            text-transform: uppercase; margin-bottom: 10px;
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        h1, h2 { font-family: 'Orbitron'; text-align: center; color: var(--neon-blue); text-shadow: 0 0 15px var(--neon-blue); margin-bottom: 25px; }
-
-        /* ESTILO DOS INPUTS */
-        .input-group { position: relative; margin-bottom: 20px; }
-        .input-box { 
-            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); 
-            border-radius: 12px; padding: 15px; color: white; font-size: 16px; outline: none;
-            transition: 0.3s;
+        /* CARDS DE SERVIÇO (LADO ESQUERDO) */
+        .service-list { display: flex; flex-direction: column; gap: 15px; }
+        .service-card {
+            background: var(--branco); border-radius: 12px; padding: 20px;
+            display: flex; align-items: center; gap: 20px; cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.3s;
+            border: 1px solid transparent;
         }
-        .input-box:focus { border-color: var(--neon-blue); background: rgba(0, 210, 255, 0.05); box-shadow: 0 0 15px rgba(0, 210, 255, 0.3); }
+        .service-card:hover { transform: translateX(10px); border-color: var(--azul-claro); }
+        .service-card.active { border-left: 8px solid var(--azul-claro); background: #f8faff; }
 
-        /* DESIGN DOS MENUS (CARDS) */
-        .menu-grid { display: grid; gap: 15px; }
-        .menu-card {
-            background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 18px;
-            padding: 18px; display: flex; align-items: center; gap: 15px; cursor: pointer;
-            transition: 0.3s; position: relative; overflow: hidden;
+        .icon-box {
+            width: 50px; height: 50px; border-radius: 50%; background: var(--azul-claro);
+            color: white; display: flex; align-items: center; justify-content: center; font-size: 24px;
         }
-        .menu-card:hover { background: rgba(0, 210, 255, 0.1); transform: scale(1.03); border-color: var(--neon-blue); }
-        .icon-box { font-size: 24px; min-width: 45px; height: 45px; background: rgba(0, 210, 255, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--neon-blue); }
 
-        /* GRADE DE SALAS - 1 AO 9 ANO */
-        .sala-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 15px 0; }
-        .btn-sala { 
-            background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: white; 
-            padding: 10px; border-radius: 8px; cursor: pointer; font-family: 'Orbitron'; font-size: 10px;
-        }
-        .btn-sala.active { background: var(--neon-blue); color: black; box-shadow: 0 0 15px var(--neon-blue); border-color: white; }
+        .card-txt b { display: block; font-size: 16px; color: var(--azul-escuro); }
+        .card-txt span { font-size: 13px; color: #888; }
 
-        /* BOTÃO DE AÇÃO PRINCIPAL */
-        .btn-glow {
-            width: 100%; padding: 16px; border-radius: 12px; border: none; font-family: 'Orbitron';
-            font-weight: 700; cursor: pointer; text-transform: uppercase; background: var(--neon-blue);
-            color: #000; box-shadow: 0 0 20px rgba(0, 210, 255, 0.4); transition: 0.3s;
+        /* FORMULÁRIO (LADO DIREITO) */
+        .form-panel {
+            background: var(--branco); border-radius: 20px; padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid #dee2e6;
         }
-        .btn-glow:hover { box-shadow: 0 0 30px var(--neon-blue); transform: translateY(-2px); }
+        .form-panel h3 { text-align: center; margin-top: 0; color: var(--azul-escuro); }
 
-        /* GRAVIDADE TI */
-        .grav-row { display: flex; gap: 10px; margin: 15px 0; }
-        .grav-btn { 
-            flex: 1; padding: 12px; border-radius: 10px; border: none; font-weight: 800; cursor: pointer;
-            font-size: 11px; opacity: 0.3; transition: 0.3s;
+        .input-group { margin-bottom: 15px; }
+        .input-item {
+            width: 100%; padding: 12px; border: 1px solid #ced4da;
+            border-radius: 8px; font-size: 14px; outline: none;
         }
-        .grav-btn.active { opacity: 1; transform: translateY(-3px); box-shadow: 0 5px 15px currentColor; }
+        .input-item:focus { border-color: var(--azul-claro); box-shadow: 0 0 0 3px rgba(77, 171, 247, 0.2); }
 
-        /* TIMER NEON */
-        .timer-circle {
-            width: 180px; height: 180px; border-radius: 50%; border: 4px solid var(--neon-red);
-            margin: 20px auto; display: flex; align-items: center; justify-content: center;
-            font-family: 'Orbitron'; font-size: 32px; color: var(--neon-red);
-            text-shadow: 0 0 15px var(--neon-red); box-shadow: inset 0 0 20px rgba(255, 49, 49, 0.2), 0 0 20px rgba(255, 49, 49, 0.2);
+        .btn-confirm {
+            width: 100%; padding: 15px; background: var(--azul-claro);
+            color: white; border: none; border-radius: 10px; font-weight: 700;
+            cursor: pointer; text-transform: uppercase; margin-top: 10px;
         }
+        .btn-confirm:hover { background: var(--azul-escuro); }
 
         .hidden { display: none; }
+        @media (max-width: 800px) { .main-content { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
-    <div class="glass-panel">
-        <div id="scr-login">
-            <h1>NTi LOGIN</h1>
-            <div class="input-group">
-                <input type="email" id="l-email" class="input-box" placeholder="E-mail Institucional">
-            </div>
-            <div class="input-group">
-                <input type="password" id="l-pass" class="input-box" placeholder="Senha">
-            </div>
-            <button class="btn-glow" onclick="app.nav('perfil')">AUTENTICAR</button>
+    <div class="header-top">
+        <div class="logo-container">
+            <img src="https://www.santanadeparnaiba.sp.gov.br/portal/img/brasao.png" height="50">
+            <h1>NTi - Central de Parnaíba</h1>
         </div>
+        <div class="user-info" id="nome-docente">Prof. João Silva</div>
+    </div>
 
-        <div id="scr-perfil" class="hidden">
-            <h2>MEU PERFIL</h2>
-            <input type="text" id="p-nome" class="input-box" placeholder="Nome Completo">
-            <input type="text" id="p-id" class="input-box" placeholder="Prontuário (RP)">
-            <input type="text" id="p-mat" class="input-box" placeholder="Matéria">
-            <button class="btn-glow" onclick="app.nav('menu')">GRAVAR DADOS</button>
-        </div>
+    <div class="main-content">
+        <div class="section-label">Selecione o Serviço Desejado</div>
 
-        <div id="scr-menu" class="hidden">
-            <h1>CENTRAL</h1>
-            <div class="menu-grid">
-                <div class="menu-card" onclick="app.nav('reserva')">
-                    <div class="icon-box">📅</div>
-                    <div><b>RESERVA</b><br><small>Equipamentos e Salas</small></div>
+        <div class="service-list">
+            <div class="service-card active" onclick="app.setMode('reserva')">
+                <div class="icon-box">📅</div>
+                <div class="card-txt">
+                    <b>Nova Reserva</b>
+                    <span>Agende equipamentos e laboratórios</span>
                 </div>
-                <div class="menu-card" onclick="app.nav('suporte')" style="border-color: var(--neon-yellow);">
-                    <div class="icon-box" style="border-color: var(--neon-yellow); color: var(--neon-yellow);">🛠️</div>
-                    <div><b style="color: var(--neon-yellow);">SUPORTE TI</b><br><small>Chamados de Urgência</small></div>
+            </div>
+
+            <div class="service-card" onclick="app.setMode('suporte')">
+                <div class="icon-box" style="background: #ffc107;">🛠️</div>
+                <div class="card-txt">
+                    <b>Suporte TI</b>
+                    <span>Abra um chamado técnico urgente</span>
                 </div>
-                <button class="btn-glow" style="background:none; border: 1px solid #444; color:#666; margin-top:10px" onclick="location.reload()">SAIR DO SISTEMA</button>
+            </div>
+
+            <div class="service-card" onclick="app.setMode('consultar')">
+                <div class="icon-box" style="background: #6c757d;">🔍</div>
+                <div class="card-txt">
+                    <b>Minhas Reservas</b>
+                    <span>Consulte agendamentos futuros</span>
+                </div>
+            </div>
+
+            <div class="service-card" onclick="location.reload()">
+                <div class="icon-box" style="background: #dc3545;">⬅️</div>
+                <div class="card-txt">
+                    <b>Sair</b>
+                    <span>Encerrar sessão de forma segura</span>
+                </div>
             </div>
         </div>
 
-        <div id="scr-reserva" class="hidden">
-            <h2>RESERVA</h2>
-            <div class="sala-grid" id="grid-salas"></div>
-            <select id="res-item" class="input-box" onchange="app.toggleChrome(this.value)">
-                <option value="Laboratório">LAB. INFORMÁTICA</option>
-                <option value="Chromebooks">CHROMEBOOKS</option>
-                <option value="TV">TV INTERATIVA</option>
-            </select>
-            <input type="number" id="res-qtd" class="input-box hidden" placeholder="Qtd Chromebooks">
-            <div style="display:flex; gap:10px">
-                <input type="time" id="t-ini" class="input-box">
-                <input type="time" id="t-fim" class="input-box">
+        <div class="form-panel" id="painel-acao">
+            <h3 id="form-title">FORMULÁRIO DE RESERVA</h3>
+            
+            <div id="campos-reserva">
+                <div class="input-group">
+                    <select class="input-item" id="item">
+                        <option value="">Selecione o Item...</option>
+                        <option>Carrinho de Chromebooks</option>
+                        <option>Laboratório de Informática</option>
+                        <option>TV Digital Interativa</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 10px;" class="input-group">
+                    <input type="time" class="input-item" title="Início">
+                    <input type="text" class="input-item" placeholder="Sala (Ex: 1º Ano A)">
+                </div>
+                <div class="input-group">
+                    <textarea class="input-item" style="height: 80px;" placeholder="Finalidade da Reserva..."></textarea>
+                </div>
             </div>
-            <button class="btn-glow" onclick="app.iniciarUso()">CONFIRMAR E INICIAR</button>
-            <button class="btn-glow" style="background:none; color:#555" onclick="app.nav('menu')">VOLTAR</button>
-        </div>
 
-        <div id="scr-timer" class="hidden">
-            <h2>EM USO</h2>
-            <div class="timer-circle" id="timer-val">00:00</div>
-            <p id="timer-alert" style="text-align: center; color: var(--neon-red); font-weight: bold;"></p>
-            <button class="btn-glow" style="background: var(--neon-green)" onclick="app.finalizar()">FINALIZAR E DEVOLVER</button>
-        </div>
-
-        <div id="scr-suporte" class="hidden">
-            <h2>TICKET TI</h2>
-            <div class="sala-grid" id="grid-salas-ti"></div>
-            <div class="grav-row">
-                <button class="grav-btn active" id="g-v" style="background: var(--neon-green); color:#000" onclick="app.setG('BAIXA','g-v')">BAIXA</button>
-                <button class="grav-btn" id="g-a" style="background: var(--neon-yellow); color:#000" onclick="app.setG('MÉDIA','g-a')">MÉDIA</button>
-                <button class="grav-btn" id="g-r" style="background: var(--neon-red); color:#fff" onclick="app.setG('ALTA','g-r')">ALTA</button>
+            <div id="campos-suporte" class="hidden">
+                <div class="input-group">
+                    <select class="input-item">
+                        <option>Gravidade: Verde (Normal)</option>
+                        <option>Gravidade: Amarelo (Urgente)</option>
+                        <option>Gravidade: Vermelho (Crítico)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <textarea class="input-item" style="height: 100px;" placeholder="Descreva o problema técnico..."></textarea>
+                </div>
             </div>
-            <textarea id="ti-msg" class="input-box" style="height: 100px;" placeholder="Relate o problema técnico..."></textarea>
-            <button class="btn-glow" onclick="app.enviarTI()">ENVIAR CHAMADO</button>
-            <button class="btn-glow" style="background:none; color:#555" onclick="app.nav('menu')">VOLTAR</button>
+
+            <button class="btn-confirm">Confirmar Ação</button>
+            <p style="text-align: center; font-size: 11px; color: #999; margin-top: 15px;">VOLTAR</p>
         </div>
     </div>
 
     <script>
         const app = {
-            sala: "", grav: "BAIXA", timer: null,
-            init() {
-                this.buildSalas('grid-salas');
-                this.buildSalas('grid-salas-ti');
-            },
-            buildSalas(id) {
-                const g = document.getElementById(id);
-                for(let i=1; i<=9; i++) {
-                    const b = document.createElement('button');
-                    b.className = 'btn-sala'; b.innerText = `${i}º ANO A`;
-                    b.onclick = () => {
-                        document.querySelectorAll(`#${id} .btn-sala`).forEach(x => x.classList.remove('active'));
-                        b.classList.add('active'); this.sala = b.innerText;
-                    };
-                    g.appendChild(b);
+            setMode(modo) {
+                // Estiliza os cards
+                document.querySelectorAll('.service-card').forEach(c => c.classList.remove('active'));
+                event.currentTarget.classList.add('active');
+
+                // Muda o formulário
+                const title = document.getElementById('form-title');
+                const res = document.getElementById('campos-reserva');
+                const sup = document.getElementById('campos-suporte');
+
+                if(modo === 'reserva') {
+                    title.innerText = "FORMULÁRIO DE RESERVA";
+                    res.classList.remove('hidden');
+                    sup.classList.add('hidden');
+                } else if(modo === 'suporte') {
+                    title.innerText = "ABRIR CHAMADO TI";
+                    res.classList.add('hidden');
+                    sup.classList.remove('hidden');
                 }
-            },
-            nav(s) {
-                document.querySelectorAll('.glass-panel > div').forEach(d => d.classList.add('hidden'));
-                document.getElementById(`scr-${s}`).classList.remove('hidden');
-            },
-            toggleChrome(v) { document.getElementById('res-qtd').classList.toggle('hidden', v !== 'Chromebooks'); },
-            setG(v, id) {
-                this.grav = v;
-                document.querySelectorAll('.grav-btn').forEach(b => b.classList.remove('active'));
-                document.getElementById(id).classList.add('active');
-            },
-            iniciarUso() {
-                const tFim = document.getElementById('t-fim').value;
-                if(!this.sala || !tFim) return alert("Selecione Sala e Horário!");
-                this.nav('timer');
-                this.startClock(tFim);
-            },
-            startClock(entrega) {
-                this.timer = setInterval(() => {
-                    const [h, m] = entrega.split(':');
-                    const target = new Date(); target.setHours(h, m, 0);
-                    const diff = target - new Date();
-                    if(diff <= 0) {
-                        clearInterval(this.timer);
-                        document.getElementById('timer-val').innerText = "00:00";
-                        document.getElementById('timer-alert').innerText = "ENTREGA ATRASADA!";
-                        return;
-                    }
-                    const min = Math.floor(diff/60000); const seg = Math.floor((diff%60000)/1000);
-                    document.getElementById('timer-val').innerText = `${min.toString().padStart(2,'0')}:${seg.toString().padStart(2,'0')}`;
-                }, 1000);
-            },
-            finalizar() { clearInterval(this.timer); alert("Uso Concluído!"); this.nav('menu'); },
-            enviarTI() { alert("Chamado Enviado ao TI!"); this.nav('menu'); }
-        };
-        app.init();
+            }
+        }
     </script>
 </body>
 </html>
