@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Portal Chácara - Reserva</title>
+    <title>Reserva Chácara - Tech</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <style>
         :root { --azul-sp: #0056a2; --azul-celeste: #00adef; }
@@ -17,42 +17,43 @@
         }
 
         header { width: 100%; background: white; padding: 15px; text-align: center; border-bottom: 5px solid var(--azul-celeste); }
-        .logo-text { font-family: 'Montserrat', sans-serif; color: var(--azul-sp); font-size: 17px; text-transform: uppercase; margin: 0; }
+        .logo-text { font-family: 'Montserrat', sans-serif; color: var(--azul-sp); font-size: clamp(14px, 4vw, 17px); text-transform: uppercase; margin: 0; }
 
         .container { width: 95%; max-width: 420px; padding: 20px 0; }
 
-        /* O BALÃO ÚNICO QUE ENVOLVE TODO O MENU */
+        /* BALÃO ÚNICO PARA O MENU */
         .glass-card { 
             background: rgba(255, 255, 255, 0.1); 
             backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border-radius: 25px; padding: 20px; 
+            border-radius: 25px; padding: 25px; 
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
         }
 
-        h2 { text-align: center; font-size: 15px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; margin-bottom: 20px; color: var(--azul-celeste); }
+        h2 { text-align: center; font-size: 14px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; margin-bottom: 20px; color: var(--azul-celeste); }
         
         label { display: block; margin: 15px 0 6px 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--azul-celeste); }
 
-        /* INPUTS IGUAIS NA RÉGUA */
+        /* INPUTS PADRONIZADOS */
         .input-geral {
             width: 100%; height: 50px; padding: 0 15px; border-radius: 12px; border: none; 
-            background: rgba(255, 255, 255, 0.95); font-size: 14px; color: #222; margin-bottom: 5px;
-            font-family: 'Poppins';
+            background: rgba(255, 255, 255, 0.95); font-size: 14px; color: #222; margin-bottom: 10px;
+            font-family: 'Poppins'; outline: none;
         }
 
         .grid-equip { display: grid; gap: 8px; margin-bottom: 10px; }
         .btn-opt { 
             background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); 
-            padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; font-size: 13px; font-weight: 600;
+            padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; font-size: 13px; font-weight: 600; color: white;
         }
         .btn-opt.active { background: var(--azul-celeste); border-color: white; box-shadow: 0 0 10px var(--azul-celeste); }
 
         .btn-confirm { 
             width: 100%; padding: 18px; margin-top: 20px; border-radius: 12px; border: none; 
             background: linear-gradient(135deg, var(--azul-sp), var(--azul-celeste)); 
-            color: white; font-weight: bold; text-transform: uppercase; cursor: pointer;
+            color: white; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: 0.3s;
         }
+        .btn-confirm:active { transform: scale(0.98); }
 
         .hidden { display: none; }
     </style>
@@ -65,34 +66,43 @@
 </header>
 
 <div class="container">
-    <div class="glass-card">
+    <div id="scr_login" class="glass-card">
+        <h2>IDENTIFICAÇÃO</h2>
+        <label>Cargo/Gênero</label>
+        <select class="input-geral" id="u_gen">
+            <option>Professor</option>
+            <option>Professora</option>
+        </select>
+        <label>Nome Completo</label>
+        <input type="text" class="input-geral" id="u_nome" placeholder="Digite seu nome">
+        <label>Prontuário</label>
+        <input type="text" class="input-geral" id="u_id" placeholder="Digite seu ID">
+        <button class="btn-confirm" onclick="app.login()">ENTRAR NO SISTEMA</button>
+    </div>
+
+    <div id="scr_reserva" class="glass-card hidden">
         <h2>SOLICITAR RESERVA</h2>
         
-        <label>Turma</label>
+        <label>Selecione a Turma</label>
         <select class="input-geral" id="r_turma">
             <option>1º Ano A</option><option>2º Ano A</option><option>3º Ano A</option>
             <option>4º Ano A</option><option>5º Ano A</option><option>6º Ano A</option>
             <option>7º Ano A</option><option>8º Ano A</option><option>9º Ano A</option>
         </select>
 
-        <label>O que deseja reservar?</label>
+        <label>Equipamento</label>
         <div class="grid-equip">
-            <div class="btn-opt" id="i1" onclick="app.sel('SALA DE INFO', 'i1')">🖥️ SALA DE INFORMÁTICA</div>
+            <div class="btn-opt" id="i1" onclick="app.sel('SALA DE INFO', 'i1')">🖥️ SALA DE INFO</div>
             <div class="btn-opt" id="i2" onclick="app.sel('CHROMEBOOKS', 'i2')">💻 CHROMEBOOKS</div>
             <div class="btn-opt" id="i3" onclick="app.sel('TV DIGITAL', 'i3')">📺 TV DIGITAL</div>
         </div>
 
         <div id="box_chrome" class="hidden">
-            <label>Configuração Chromebook</label>
+            <label>Tipo de Uso (Chromebook)</label>
             <select class="input-geral" id="r_chrome_tipo">
                 <option value="carrinho">Carrinho Todo</option>
                 <option value="unidade">Unidade Individual</option>
             </select>
-        </div>
-
-        <div id="box_pat" class="hidden">
-            <label>Nº de Patrimônio</label>
-            <input type="text" class="input-geral" id="r_pat" placeholder="Ex: 230180">
         </div>
 
         <label>Horário de Retirada</label>
@@ -108,26 +118,32 @@
 <script>
     const app = {
         item: "",
+        
+        login() {
+            const nome = document.getElementById('u_nome').value;
+            const id = document.getElementById('u_id').value;
+            if(!nome || !id) return alert("Preencha seus dados!");
+            
+            document.getElementById('scr_login').classList.add('hidden');
+            document.getElementById('scr_reserva').classList.remove('hidden');
+        },
+
         sel(val, id) {
             this.item = val;
             document.querySelectorAll('.btn-opt').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
 
-            // Lógica de exibição dinâmica
             const boxChrome = document.getElementById('box_chrome');
-            const boxPat = document.getElementById('box_pat');
-
             if(val === 'CHROMEBOOKS') {
                 boxChrome.classList.remove('hidden');
-                boxPat.classList.add('hidden'); // Chromebook usa carrinho/unidade, não pat.
             } else {
                 boxChrome.classList.add('hidden');
-                boxPat.classList.add('hidden'); // Sala de Info e TV não tem pat.
             }
         },
+
         enviar() {
-            if(!this.item) return alert("Selecione um item!");
-            alert("Reserva enviada com sucesso!");
+            if(!this.item) return alert("Selecione o equipamento!");
+            alert("Sucesso! Reserva realizada.");
         }
     }
 </script>
