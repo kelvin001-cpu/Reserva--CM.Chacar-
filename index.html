@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Orbitron:wght@600&display=swap" rel="stylesheet">
     <style>
         :root { --azul-claro: #00adef; --azul-forte: #0056a2; --neon: #00ff9d; --alerta: #ff4757; }
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; outline: none; }
 
         body { 
             margin: 0; padding: 0; font-family: 'Poppins', sans-serif; 
@@ -21,91 +21,94 @@
 
         .container { width: 95%; max-width: 420px; padding: 20px 0; }
 
-        /* BALÃO ÚNICO */
+        /* BALÃO ÚNICO - TUDO ACONTECE AQUI DENTRO */
         .molde-geral { 
             background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border-radius: 25px; padding: 25px; border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+            width: 100%;
         }
 
-        .data-hora-atual { text-align: center; font-size: 12px; color: var(--azul-claro); margin-bottom: 10px; font-weight: bold; }
-
-        h2 { text-align: center; font-size: 13px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; margin-bottom: 20px; color: var(--azul-claro); }
-        
+        .data-hora { text-align: center; font-size: 11px; color: var(--azul-claro); margin-bottom: 15px; font-weight: bold; }
+        h2 { text-align: center; font-size: 13px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; margin-bottom: 20px; }
         label { display: block; margin: 15px 0 5px 5px; font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--azul-claro); }
 
-        .campo-input { width: 100%; height: 50px; padding: 0 15px; border-radius: 12px; border: none; background: rgba(255, 255, 255, 0.98); font-size: 14px; color: #111; margin-bottom: 10px; outline: none; }
+        .campo { width: 100%; height: 50px; padding: 0 15px; border-radius: 12px; border: none; background: #fff; font-size: 14px; color: #111; margin-bottom: 10px; }
 
-        /* BOTÕES NA MÉDIA */
-        .grid-equip { display: grid; gap: 8px; margin-bottom: 15px; }
+        /* EQUIPAMENTOS NA MÉDIA (RIGOROSAMENTE IGUAIS) */
+        .grid-equip { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 15px; }
         .btn-equip { 
-            height: 55px; display: flex; align-items: center; justify-content: center;
+            width: 100%; height: 55px;
+            display: flex; align-items: center; justify-content: center;
             background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); 
             border-radius: 12px; cursor: pointer; font-size: 12px; font-weight: 600; color: white;
         }
-        .btn-equip.active { background: var(--azul-claro); border-color: white; box-shadow: 0 0 15px var(--azul-claro); }
+        .btn-equip.active { background: var(--azul-claro); border-color: white; }
 
         /* CRONÔMETRO */
-        .timer-display { font-family: 'Orbitron', sans-serif; font-size: 42px; color: var(--neon); text-align: center; margin: 20px 0; }
+        .timer-box { font-family: 'Orbitron', sans-serif; font-size: 45px; color: var(--neon); text-align: center; margin: 20px 0; text-shadow: 0 0 15px var(--neon); }
 
         .btn-confirmar { width: 100%; padding: 18px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--azul-forte), var(--azul-claro)); color: white; font-weight: bold; text-transform: uppercase; cursor: pointer; }
         .btn-finalizar { background: var(--alerta); margin-top: 10px; }
 
-        .suporte-box { margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center; font-size: 11px; }
-
+        /* SUPORTE TI */
+        .suporte-ti { margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center; font-size: 11px; }
+        .suporte-ti b { color: var(--neon); }
+        
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
-<header><div class="header-info">C.M. CHÁCARA DAS GARÇAS - SUPORTE TECH</div></header>
+<header><div class="header-info">SANTANA DE PARNAÍBA - CM CHÁCARA DAS GARÇAS</div></header>
 
 <div class="container">
     <div class="molde-geral">
-        <div class="data-hora-atual" id="data-hora"></div>
+        <div class="data-hora" id="relogio-agora"></div>
 
-        <div id="login-area">
-            <h2>IDENTIFICAÇÃO</h2>
-            <input type="text" class="campo-input" id="nome-prof" placeholder="Nome do Professor(a)">
-            <button class="btn-confirmar" onclick="app.login()">ACESSAR</button>
+        <div id="tela-login">
+            <h2>LOGIN DOCENTE</h2>
+            <input type="text" class="campo" id="prof-nome" placeholder="Nome do Professor">
+            <button class="btn-confirmar" onclick="app.login()">ENTRAR</button>
         </div>
 
-        <div id="reserva-area" class="hidden">
-            <h2>NOVA RESERVA</h2>
+        <div id="tela-reserva" class="hidden">
+            <h2>RESERVAR AGORA</h2>
             <label>Turma</label>
-            <select class="campo-input" id="turma-sel">
+            <select class="campo" id="turma-sel">
                 <script>for(let i=1; i<=9; i++) document.write(`<option>${i}º Ano A</option>`);</script>
             </select>
 
-            <label>Equipamento</label>
+            <label>Equipamento (Selecione um)</label>
             <div class="grid-equip">
                 <div class="btn-equip" id="i1" onclick="app.set('SALA DE INFO', 'i1')">SALA DE INFORMÁTICA</div>
                 <div class="btn-equip" id="i2" onclick="app.set('CHROMEBOOKS', 'i2')">CHROMEBOOKS</div>
                 <div class="btn-equip" id="i3" onclick="app.set('TV DIGITAL', 'i3')">TV DIGITAL</div>
             </div>
 
-            <div id="opcoes-chrome" class="hidden">
-                <label>Tipo Chromebook</label>
-                <select class="campo-input" id="chrome-tipo" onchange="app.toggleQtd()">
+            <div id="chrome-box" class="hidden">
+                <label>Opção Chromebook</label>
+                <select class="campo" id="chrome-tipo" onchange="app.checkIndividual()">
                     <option value="Carrinho">Carrinho Todo</option>
                     <option value="Unidade">Unidade Individual</option>
                 </select>
-                <input type="number" class="campo-input hidden" id="chrome-qtd" placeholder="Quantidade">
+                <input type="number" class="campo hidden" id="chrome-qtd" placeholder="Quantidade (Obrigatório)">
             </div>
 
-            <label>Tempo (Minutos)</label>
-            <input type="number" class="campo-input" id="tempo" value="50">
-            <button class="btn-confirmar" onclick="app.reservar()">CONFIRMAR</button>
+            <label>Tempo de Aula (Minutos)</label>
+            <input type="number" class="campo" id="tempo-aula" value="50">
+            <button class="btn-confirmar" onclick="app.reservar()">CONFIRMAR RESERVA</button>
         </div>
 
-        <div id="uso-area" class="hidden">
-            <h2 id="msg-ocupado">EM USO</h2>
-            <div class="timer-display" id="relogio">00:00</div>
+        <div id="tela-uso" class="hidden">
+            <h2 id="status-txt">EQUIPAMENTO EM USO</h2>
+            <div class="timer-box" id="timer-display">00:00</div>
             <button class="btn-confirmar btn-finalizar" onclick="app.finalizar()">FINALIZAR E LIBERAR</button>
         </div>
 
-        <div class="suporte-box">
-            <b>TI DO SUPORTE</b> - Ramal 202<br>Atendimento Local
+        <div class="suporte-ti">
+            <p>🔧 <b>SUPORTE TI</b> - Ramal 202</p>
+            <p>Atendimento: Segunda a Sexta</p>
         </div>
     </div>
 </div>
@@ -113,43 +116,70 @@
 <script>
     const app = {
         prof: "", item: "", timer: null,
+        // Banco de dados simulado para teste do aviso de ocupação
+        ocupados: { "SALA DE INFO": { prof: "Marcos", sala: "8º Ano A" } },
+
         login() {
-            this.prof = document.getElementById('nome-prof').value;
+            this.prof = document.getElementById('prof-nome').value;
             if(!this.prof) return alert("Digite seu nome!");
-            document.getElementById('login-area').classList.add('hidden');
-            document.getElementById('reserva-area').classList.remove('hidden');
+            document.getElementById('tela-login').classList.add('hidden');
+            document.getElementById('tela-reserva').classList.remove('hidden');
         },
+
         set(item, id) {
+            // AVISO DE QUEM RESERVOU (Bloqueio)
+            if(this.ocupados[item]) {
+                return alert(`BLOQUEADO!\nEste equipamento está com: Prof. ${this.ocupados[item].prof}\nSala: ${this.ocupados[item].sala}`);
+            }
             this.item = item;
             document.querySelectorAll('.btn-equip').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            document.getElementById('opcoes-chrome').className = (item === 'CHROMEBOOKS') ? '' : 'hidden';
+            document.getElementById('chrome-box').className = (item === 'CHROMEBOOKS') ? '' : 'hidden';
         },
-        toggleQtd() {
-            const t = document.getElementById('chrome-tipo').value;
-            document.getElementById('chrome-qtd').className = (t === 'Unidade') ? 'campo-input' : 'campo-input hidden';
-        },
-        reservar() {
-            if(!this.item) return alert("Selecione o item!");
-            if(this.item === 'CHROMEBOOKS' && document.getElementById('chrome-tipo').value === 'Unidade' && !document.getElementById('chrome-qtd').value) return alert("Preencha a quantidade!");
 
-            document.getElementById('reserva-area').classList.add('hidden');
-            document.getElementById('uso-area').classList.remove('hidden');
-            document.getElementById('msg-ocupado').innerText = `O(A) Prof. ${this.prof} está usando ${this.item}`;
-            
-            this.startTimer(document.getElementById('tempo').value);
+        checkIndividual() {
+            const t = document.getElementById('chrome-tipo').value;
+            document.getElementById('chrome-qtd').className = (t === 'Unidade') ? 'campo' : 'campo hidden';
         },
+
+        reservar() {
+            if(!this.item) return alert("Selecione um equipamento!");
+            const tipo = document.getElementById('chrome-tipo').value;
+            const qtd = document.getElementById('chrome-qtd').value;
+            
+            // TRAVA DE QUANTIDADE NO CHROMEBOOK INDIVIDUAL
+            if(this.item === 'CHROMEBOOKS' && tipo === 'Unidade' && !qtd) {
+                return alert("ERRO: Informe a quantidade de Chromebooks!");
+            }
+
+            document.getElementById('tela-reserva').classList.add('hidden');
+            document.getElementById('tela-uso').classList.remove('hidden');
+            document.getElementById('status-txt').innerText = `${this.prof} - ${this.item}`;
+            
+            this.startTimer(document.getElementById('tempo-aula').value);
+        },
+
         startTimer(m) {
-            let s = m * 60;
+            let seg = m * 60;
             this.timer = setInterval(() => {
-                let min = Math.floor(s/60), seg = s%60;
-                document.getElementById('relogio').innerText = `${min.toString().padStart(2,'0')}:${seg.toString().padStart(2,'0')}`;
-                if(--s < 0) { clearInterval(this.timer); alert("TEMPO ACABOU!"); }
+                let min = Math.floor(seg / 60), s = seg % 60;
+                document.getElementById('timer-display').innerText = `${min.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+                if(--seg < 0) { 
+                    clearInterval(this.timer); 
+                    alert("O TEMPO ESGOTOU! Favor finalizar no botão para liberar o item."); 
+                }
             }, 1000);
         },
-        finalizar() { location.reload(); }
+
+        finalizar() {
+            if(confirm("Deseja encerrar a reserva e avisar que o equipamento está livre?")) {
+                location.reload();
+            }
+        }
     };
-    setInterval(() => { document.getElementById('data-hora').innerText = new Date().toLocaleString(); }, 1000);
+
+    // Relógio Dia/Hora
+    setInterval(() => { document.getElementById('relogio-agora').innerText = new Date().toLocaleString(); }, 1000);
 </script>
 </body>
 </html>
