@@ -6,7 +6,7 @@
     <title>Portal Chácara - CM CG</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <style>
-        :root { --azul-sp: #0056a2; --azul-celeste: #00adef; --vermelho: #ff4757; }
+        :root { --azul-sp: #0056a2; --azul-celeste: #00adef; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body { 
@@ -25,26 +25,26 @@
         
         label { display: block; margin: 15px 0 6px 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--azul-celeste); }
 
-        /* BALÕES DE TEXTO 100% ALINHADOS */
-        .input-padrao {
+        /* AQUI ESTÁ A SIMETRIA DOS BALÕES */
+        .campo-input {
             display: block;
             width: 100%; 
-            height: 55px;
+            height: 55px; /* Altura idêntica para todos */
             padding: 0 15px; 
             border-radius: 12px; 
-            border: 2px solid transparent; 
+            border: none; 
             background: rgba(255, 255, 255, 0.98); 
             font-size: 15px; 
             color: #222;
             font-family: 'Poppins', sans-serif;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             outline: none;
+            -webkit-appearance: none; /* Remove sombras do iPhone */
         }
 
-        /* Estilo para garantir que o campo de data ocupe o mesmo espaço visual */
+        /* Ajuste fino para campos de data ficarem na mesma linha do texto */
         input[type="datetime-local"] {
-            padding-top: 12px;
-            line-height: 1;
+            padding-top: 2px;
         }
 
         .grid-equip { display: grid; gap: 10px; margin-bottom: 10px; }
@@ -54,7 +54,6 @@
             font-weight: bold; font-size: 13px; transition: 0.2s;
         }
         .btn-opt.active { background: var(--azul-celeste); border-color: white; box-shadow: 0 0 15px var(--azul-celeste); }
-        .btn-opt.busy { border-color: var(--vermelho); color: var(--vermelho); opacity: 0.8; cursor: not-allowed; }
 
         .btn-confirm { 
             width: 100%; padding: 20px; margin-top: 25px; border-radius: 15px; border: none; 
@@ -74,7 +73,7 @@
     <h2>RESERVAR EQUIPAMENTO</h2>
     
     <label>Selecione sua Turma</label>
-    <select class="input-padrao" id="r_turma">
+    <select class="campo-input" id="r_turma">
         <option>1º Ano A</option>
         <option>2º Ano A</option>
         <option>3º Ano A</option>
@@ -94,41 +93,28 @@
     </div>
 
     <label>Número de Patrimônio</label>
-    <input type="text" class="input-padrao" id="r_pat" placeholder="Digite o patrimônio">
+    <input type="text" class="campo-input" id="r_pat" placeholder="Digite o patrimônio">
 
-    <label>Horário de Retirada</label>
-    <input type="datetime-local" class="input-padrao" id="r_in">
+    <label>Data e Horário de Retirada</label>
+    <input type="datetime-local" class="campo-input" id="r_in">
 
     <label>Previsão de Entrega</label>
-    <input type="datetime-local" class="input-padrao" id="r_out">
+    <input type="datetime-local" class="campo-input" id="r_out">
 
-    <button class="btn-confirm" onclick="app.confirmar()">CONFIRMAR AGENDAMENTO</button>
+    <button class="btn-confirm" onclick="app.enviar()">CONFIRMAR AGENDAMENTO</button>
 </div>
 
 <script>
     const app = {
         item: "",
-        
         sel(val, id) {
-            // Se já estiver ocupado (simulação), avisa
-            if(document.getElementById(id).classList.contains('busy')) {
-                return alert("BLOQUEADO!\nProfessor: João Silva\nSala: Informática\nAté: 16:30");
-            }
             this.item = val;
             document.querySelectorAll('.btn-opt').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         },
-
-        confirmar() {
-            const pat = document.getElementById('r_pat').value;
-            const hIn = document.getElementById('r_in').value;
-            const hOut = document.getElementById('r_out').value;
-            
-            if(!this.item || !pat || !hIn || !hOut) {
-                return alert("Por favor, preencha todos os campos e selecione o equipamento.");
-            }
-            
-            alert(`Reserva Confirmada!\nItem: ${this.item}\nPatrimônio: ${pat}\nTurma: ${document.getElementById('r_turma').value}`);
+        enviar() {
+            if(!this.item) return alert("Selecione um equipamento!");
+            alert("Reserva enviada para a Turma: " + document.getElementById('r_turma').value);
         }
     }
 </script>
