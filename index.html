@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Portal Tech - Chácara das Garças</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Orbitron:wght@500&display=swap" rel="stylesheet">
+    <title>SISTEMA CHÁCARA - CM CG</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Orbitron:wght@600&display=swap" rel="stylesheet">
     <style>
-        :root { --azul-vibrante: #00adef; --azul-escuro: #0056a2; --neon: #00ff9d; --alerta: #ff4757; }
+        :root { --azul-claro: #00adef; --azul-forte: #0056a2; --neon: #00ff9d; --alerta: #ff4757; }
         * { box-sizing: border-box; }
 
         body { 
@@ -16,151 +16,181 @@
             display: flex; flex-direction: column; align-items: center;
         }
 
-        header { width: 100%; background: white; padding: 12px; text-align: center; border-bottom: 5px solid var(--azul-vibrante); }
-        .logo { color: var(--azul-escuro); font-weight: 800; text-transform: uppercase; margin: 0; font-size: 13px; }
+        header { width: 100%; background: white; padding: 12px; text-align: center; border-bottom: 5px solid var(--azul-claro); }
+        .header-info { color: var(--azul-forte); font-weight: 800; font-size: 13px; text-transform: uppercase; }
 
         .container { width: 95%; max-width: 420px; padding: 20px 0; }
 
-        .molde-unico { 
+        /* O MOLDE ÚNICO - O BALÃO RAIZ */
+        .molde-geral { 
             background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border-radius: 25px; padding: 25px; border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
         }
 
-        h2 { text-align: center; font-size: 13px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; margin-bottom: 20px; color: var(--azul-vibrante); }
-        label { display: block; margin: 15px 0 5px 5px; font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--azul-vibrante); }
+        .data-hora-atual { text-align: center; font-size: 12px; color: var(--azul-claro); margin-bottom: 10px; font-weight: bold; }
 
-        .campo { width: 100%; height: 50px; padding: 0 15px; border-radius: 12px; border: none; background: rgba(255, 255, 255, 0.98); font-size: 14px; color: #111; margin-bottom: 10px; outline: none; }
+        h2 { text-align: center; font-size: 13px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; margin-bottom: 20px; color: var(--azul-claro); letter-spacing: 1px; }
+        
+        label { display: block; margin: 15px 0 5px 5px; font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--azul-claro); }
 
-        /* BOTÕES NA MÉDIA - TUDO IGUAL */
-        .grid-equip { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 15px; }
-        .btn-item { 
+        .campo-input { width: 100%; height: 50px; padding: 0 15px; border-radius: 12px; border: none; background: rgba(255, 255, 255, 0.98); font-size: 14px; color: #111; margin-bottom: 10px; outline: none; }
+
+        /* BOTÕES NA MÉDIA - TUDO ALINHADO */
+        .grid-equip { display: grid; gap: 8px; margin-bottom: 15px; }
+        .btn-equip { 
             height: 55px; display: flex; align-items: center; justify-content: center;
             background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); 
-            border-radius: 12px; cursor: pointer; font-size: 12px; font-weight: 600; color: white;
+            border-radius: 12px; cursor: pointer; font-size: 12px; font-weight: 600; color: white; transition: 0.3s;
         }
-        .btn-item.active { background: var(--azul-vibrante); border-color: white; box-shadow: 0 0 15px var(--azul-vibrante); }
-        .btn-item.ocupado { border-color: var(--alerta); color: var(--alerta); }
+        .btn-equip.active { background: var(--azul-claro); border-color: white; box-shadow: 0 0 15px var(--azul-claro); }
 
-        .painel-realtime { background: rgba(0,0,0,0.5); border-radius: 15px; padding: 15px; margin: 15px 0; border-left: 4px solid var(--neon); }
-        .relogio { font-family: 'Orbitron', sans-serif; font-size: 40px; color: var(--neon); text-align: center; margin: 20px 0; text-shadow: 0 0 15px var(--neon); }
+        /* PAINEL OCUPADO */
+        .status-painel { background: rgba(0,0,0,0.5); border-radius: 15px; padding: 15px; margin: 15px 0; border-left: 4px solid var(--neon); font-size: 12px; }
+        
+        /* CRONÔMETRO */
+        .timer-display { font-family: 'Orbitron', sans-serif; font-size: 42px; color: var(--neon); text-align: center; margin: 20px 0; text-shadow: 0 0 20px var(--neon); }
 
-        .btn-confirmar { width: 100%; padding: 18px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--azul-escuro), var(--azul-vibrante)); color: white; font-weight: bold; text-transform: uppercase; cursor: pointer; }
+        .btn-confirmar { width: 100%; padding: 18px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--azul-forte), var(--azul-claro)); color: white; font-weight: bold; text-transform: uppercase; cursor: pointer; }
         .btn-finalizar { background: var(--alerta); margin-top: 10px; }
 
-        .suporte { text-align: center; margin-top: 20px; font-size: 11px; color: rgba(255,255,255,0.5); border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; }
+        /* MENU SUPORTE TI */
+        .suporte-box { margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center; }
+        .suporte-box p { font-size: 11px; margin: 5px 0; color: rgba(255,255,255,0.7); }
+        .suporte-box b { color: var(--neon); }
+
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
-<header><p class="logo">SANTANA DE PARNAÍBA - C.M. CHÁCARA DAS GARÇAS</p></header>
+<header><div class="header-info">SANTANA DE PARNAÍBA - C.M. CHÁCARA DAS GARÇAS</div></header>
 
 <div class="container">
-    <div class="molde-unico">
-        
-        <div id="tela-login">
-            <h2>IDENTIFICAÇÃO</h2>
-            <input type="text" class="campo" id="nome-prof" placeholder="Nome do Professor">
-            <button class="btn-confirmar" onclick="app.login()">ENTRAR</button>
+    <div class="molde-geral">
+        <div class="data-hora-atual" id="current-info"></div>
+
+        <div id="scr_login">
+            <h2>IDENTIFICAÇÃO DOCENTE</h2>
+            <input type="text" class="campo-input" id="prof_nome" placeholder="Nome Completo">
+            <button class="btn-confirmar" onclick="app.login()">ENTRAR NO SISTEMA</button>
         </div>
 
-        <div id="tela-reserva" class="hidden">
-            <h2>RESERVA</h2>
+        <div id="scr_reserva" class="hidden">
+            <h2>RESERVA DE EQUIPAMENTO</h2>
             <label>Turma</label>
-            <select class="campo" id="turma-select">
+            <select class="campo-input" id="turma_val">
                 <script>for(let i=1; i<=9; i++) document.write(`<option>${i}º Ano A</option>`);</script>
             </select>
 
-            <label>Equipamento</label>
+            <label>Selecione o Item</label>
             <div class="grid-equip">
-                <div class="btn-item" id="opt1" onclick="app.set('SALA DE INFO', 'opt1')">SALA DE INFORMÁTICA</div>
-                <div class="btn-item" id="opt2" onclick="app.set('CHROMEBOOKS', 'opt2')">CHROMEBOOKS</div>
-                <div class="btn-item" id="opt3" onclick="app.set('TV DIGITAL', 'opt3')">TV DIGITAL</div>
+                <div class="btn-equip" id="i1" onclick="app.selecionar('SALA DE INFO', 'i1')">🖥️ SALA DE INFORMÁTICA</div>
+                <div class="btn-equip" id="i2" onclick="app.selecionar('CHROMEBOOKS', 'i2')">💻 CHROMEBOOKS</div>
+                <div class="btn-equip" id="i3" onclick="app.selecionar('TV DIGITAL', 'i3')">📺 TV DIGITAL</div>
             </div>
 
-            <div id="chrome-sub" class="hidden">
-                <label>Opção Chromebook</label>
-                <select class="campo" id="chrome-tipo" onchange="app.checkIndividual()">
+            <div id="chrome_extra" class="hidden">
+                <label>Tipo de Uso</label>
+                <select class="campo-input" id="chrome_tipo" onchange="app.toggleQtd()">
                     <option value="Carrinho">Carrinho Todo</option>
                     <option value="Unidade">Unidade Individual</option>
                 </select>
-                <div id="unidade-input" class="hidden">
+                <div id="qtd_box" class="hidden">
                     <label>Quantidade de Unidades</label>
-                    <input type="number" class="campo" id="chrome-qtd" placeholder="Quantos Chromebooks?">
+                    <input type="number" class="campo-input" id="chrome_qtd" placeholder="Quantos aparelhos?">
                 </div>
             </div>
 
             <label>Tempo de Uso (Minutos)</label>
-            <input type="number" class="campo" id="tempo-uso" value="50">
-            <button class="btn-confirmar" onclick="app.confirmar()">CONFIRMAR</button>
+            <input type="number" class="campo-input" id="uso_tempo" value="50">
+            <button class="btn-confirmar" onclick="app.reservar()">CONFIRMAR RESERVA</button>
         </div>
 
-        <div id="tela-uso" class="hidden">
-            <h2>EM USO</h2>
-            <div class="painel-realtime" id="status-real"></div>
-            <div class="relogio" id="timer-display">00:00</div>
-            <button class="btn-confirmar btn-finalizar" onclick="app.finalizar()">FINALIZAR AGENDAMENTO</button>
+        <div id="scr_uso" class="hidden">
+            <h2>EQUIPAMENTO EM USO</h2>
+            <div class="status-painel" id="status_txt"></div>
+            <div class="timer-display" id="relogio">00:00</div>
+            <button class="btn-confirmar btn-finalizar" onclick="app.finalizar()">FINALIZAR E LIBERAR AGORA</button>
         </div>
 
-        <div class="suporte">SUPORTE TÉCNICO: <strong>TI DO SUPORTE</strong></div>
+        <div class="suporte-box">
+            <p>🔧 <b>SUPORTE TI</b></p>
+            <p>Ramal: <b>202</b> | Atendimento: <b>07h às 17h</b></p>
+            <p>E-mail: support.ti@chacara.edu.br</p>
+        </div>
     </div>
 </div>
 
 <script>
     const app = {
-        prof: "", item: "", timer: null, ocupado: false,
-        login() {
-            this.prof = document.getElementById('nome-prof').value;
-            if(!this.prof) return alert("Digite seu nome!");
-            document.getElementById('tela-login').classList.add('hidden');
-            document.getElementById('tela-reserva').classList.remove('hidden');
+        prof: "", item: "", timer: null,
+        
+        updateTime() {
+            const now = new Date();
+            document.getElementById('current-info').innerText = now.toLocaleDateString() + ' - ' + now.toLocaleTimeString();
         },
-        set(item, id) {
-            if(this.ocupado && item === 'SALA DE INFO') { // Exemplo de bloqueio
-                return alert("INDISPONÍVEL!\nProfessor(a) Ana está usando a Sala de Info agora.");
+
+        login() {
+            this.prof = document.getElementById('prof_nome').value;
+            if(!this.prof) return alert("Por favor, digite seu nome!");
+            document.getElementById('scr_login').classList.add('hidden');
+            document.getElementById('scr_reserva').classList.remove('hidden');
+        },
+
+        selecionar(item, id) {
+            // Simulação de aviso se estiver ocupado
+            if(item === 'SALA DE INFO' && Math.random() > 0.8) { 
+                return alert("OCUPADO!\nProfessor(a) Ricardo está na Sala de Info até as 10:30.");
             }
             this.item = item;
-            document.querySelectorAll('.btn-item').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.btn-equip').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            document.getElementById('chrome-sub').className = (item === 'CHROMEBOOKS') ? '' : 'hidden';
+            document.getElementById('chrome_extra').className = (item === 'CHROMEBOOKS') ? '' : 'hidden';
         },
-        checkIndividual() {
-            const tipo = document.getElementById('chrome-tipo').value;
-            document.getElementById('unidade-input').className = (tipo === 'Unidade') ? '' : 'hidden';
-        },
-        confirmar() {
-            if(!this.item) return alert("Selecione um item!");
-            const tipo = document.getElementById('chrome-tipo').value;
-            const qtd = document.getElementById('chrome-qtd').value;
-            if(this.item === 'CHROMEBOOKS' && tipo === 'Unidade' && !qtd) return alert("Preencha a quantidade!");
 
-            document.getElementById('tela-reserva').classList.add('hidden');
-            document.getElementById('tela-uso').classList.remove('hidden');
-            
-            const info = this.item === 'CHROMEBOOKS' ? `${this.item} (${tipo}${qtd ? ': '+qtd : ''})` : this.item;
-            document.getElementById('status-real').innerHTML = `<b>${this.prof}</b> está com <b>${info}</b> no <b>${document.getElementById('turma-select').value}</b>.`;
-            
-            this.startTimer(document.getElementById('tempo-uso').value);
+        toggleQtd() {
+            const t = document.getElementById('chrome_tipo').value;
+            document.getElementById('qtd_box').className = (t === 'Unidade') ? '' : 'hidden';
         },
-        startTimer(m) {
-            let tempo = m * 60;
+
+        reservar() {
+            if(!this.item) return alert("Escolha um equipamento!");
+            const tipo = document.getElementById('chrome_tipo').value;
+            const qtd = document.getElementById('chrome_qtd').value;
+            if(this.item === 'CHROMEBOOKS' && tipo === 'Unidade' && !qtd) return alert("Informe a quantidade!");
+
+            document.getElementById('scr_reserva').classList.add('hidden');
+            document.getElementById('scr_uso').classList.remove('hidden');
+            
+            const detalhe = this.item === 'CHROMEBOOKS' ? `${this.item} (${tipo}${qtd ? ': '+qtd : ''})` : this.item;
+            document.getElementById('status_txt').innerHTML = `Professor(a) <b>${this.prof}</b> ocupando <b>${detalhe}</b> com o <b>${document.getElementById('turma_val').value}</b>.`;
+            
+            this.startTimer(document.getElementById('uso_tempo').value);
+        },
+
+        startTimer(minutos) {
+            let seg = minutos * 60;
             this.timer = setInterval(() => {
-                let min = Math.floor(tempo / 60), sec = tempo % 60;
-                document.getElementById('timer-display').innerText = `${min.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
-                if(--tempo < 0) {
+                let m = Math.floor(seg / 60), s = seg % 60;
+                document.getElementById('relogio').innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+                if(--seg < 0) {
                     clearInterval(this.timer);
-                    alert("O TEMPO ACABOU! Favor liberar o equipamento para o próximo.");
+                    alert("O TEMPO ESGOTOU! Por favor, finalize a reserva no botão vermelho.");
                 }
             }, 1000);
         },
+
         finalizar() {
-            if(confirm("Deseja finalizar e avisar que o equipamento está livre?")) {
+            if(confirm("Confirmar a devolução do equipamento?")) {
                 clearInterval(this.timer);
                 location.reload();
             }
         }
-    }
+    };
+
+    setInterval(app.updateTime, 1000);
+    app.updateTime();
 </script>
 </body>
 </html>
