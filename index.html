@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal NTi - Santana de Parnaíba</title>
+    <title>C.M Chácara Das Garças - Gestão NTi</title>
     <style>
         :root {
             --azul-gov: #002d5e;
@@ -11,17 +11,15 @@
             --dourado: #c5a059;
             --cinza-fundo: #f4f7f6;
             --branco: #ffffff;
+            --danger: #d9534f;
+            --warning: #f0ad4e;
+            --success: #5cb85c;
         }
 
         * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
         
-        body { 
-            margin: 0; 
-            background-color: var(--cinza-fundo); 
-            color: #333;
-        }
+        body { margin: 0; background-color: var(--cinza-fundo); color: #333; }
 
-        /* HEADER OFICIAL */
         header {
             background-color: var(--azul-gov);
             color: var(--branco);
@@ -38,14 +36,8 @@
         .header-titulos h1 { margin: 0; font-size: 18px; text-transform: uppercase; letter-spacing: 1px; }
         .header-titulos p { margin: 0; font-size: 12px; opacity: 0.8; }
 
-        /* CONTAINER PRINCIPAL */
-        .container {
-            max-width: 1000px;
-            margin: 30px auto;
-            padding: 20px;
-        }
+        .container { max-width: 1000px; margin: 30px auto; padding: 20px; }
 
-        /* CARD DE LOGIN/DADOS */
         .panel {
             background: var(--branco);
             border-radius: 4px;
@@ -57,12 +49,7 @@
 
         h2 { color: var(--azul-gov); border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 0; }
 
-        /* GRID DE SERVIÇOS ESTILO GOVERNO */
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-        }
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
 
         .menu-item {
             background: var(--branco);
@@ -79,60 +66,44 @@
             border-color: var(--azul-claro);
             background-color: #f9f9f9;
             transform: translateY(-3px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
 
         .icon-circle {
             background-color: var(--azul-gov);
             color: white;
-            width: 50px;
-            height: 50px;
+            width: 50px; height: 50px;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; flex-shrink: 0;
         }
 
-        .menu-text b { display: block; font-size: 16px; color: var(--azul-gov); margin-bottom: 5px; }
-        .menu-text span { font-size: 13px; color: #666; line-height: 1.4; }
-
-        /* FORMULÁRIOS */
         .form-group { margin-bottom: 15px; }
         label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 5px; color: #555; }
-        input, select, textarea {
-            width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 3px; font-size: 14px;
-        }
-        input:focus { border-color: var(--azul-claro); outline: none; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 3px; font-size: 14px; }
 
         .btn-gov {
             background-color: var(--azul-claro);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            font-weight: bold;
-            text-transform: uppercase;
-            cursor: pointer;
-            border-radius: 3px;
-            transition: background 0.2s;
+            color: white; border: none; padding: 12px 25px;
+            font-weight: bold; text-transform: uppercase;
+            cursor: pointer; border-radius: 3px; width: 100%;
         }
-        .btn-gov:hover { background-color: var(--azul-gov); }
 
-        /* GRADE DE SALAS ORGANIZADA */
         .sala-selector {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 10px;
-            margin: 15px 0;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 8px; margin: 15px 0;
         }
         .sala-btn {
-            background: #eee; border: 1px solid #ddd; padding: 10px; cursor: pointer; font-size: 12px; font-weight: 600;
+            background: #eee; border: 1px solid #ddd; padding: 10px; 
+            cursor: pointer; font-size: 11px; font-weight: 600; text-align: center;
         }
-        .sala-btn.active { background: var(--azul-gov); color: white; border-color: var(--azul-gov); }
+        .sala-btn.active { background: var(--azul-gov); color: white; }
+
+        .prioridade-select option[value="Verde"] { background: #dff0d8; color: #3c763d; }
+        .prioridade-select option[value="Amarelo"] { background: #fcf8e3; color: #8a6d3b; }
+        .prioridade-select option[value="Vermelho"] { background: #f2dede; color: #a94442; }
 
         .hidden { display: none; }
-        
         footer { text-align: center; padding: 40px; color: #888; font-size: 12px; }
     </style>
 </head>
@@ -142,8 +113,8 @@
         <div class="brasao-container">
             <img src="https://www.santanadeparnaiba.sp.gov.br/portal/img/brasao.png" class="brasao-img" alt="Brasão Parnaíba">
             <div class="header-titulos">
-                <h1>NTi - Gestão de Ativos</h1>
-                <p>Secretaria Municipal de Educação</p>
+                <h1>C.M Chácara Das Garças</h1>
+                <p>Gestão de Ativos e Suporte TI</p>
             </div>
         </div>
         <div id="status-user" style="font-size: 13px; font-weight: 600;">Acesso Restrito</div>
@@ -152,184 +123,116 @@
     <div class="container">
         
         <div id="scr-login" class="panel">
-            <h2>Autenticação de Usuário</h2>
+            <h2>Login do Professor</h2>
             <div class="form-group">
-                <label>E-MAIL INSTITUCIONAL</label>
-                <input type="email" id="email" placeholder="nome.sobrenome@educacao.santanadeparnaiba.sp.gov.br">
+                <label>USUÁRIO / E-MAIL</label>
+                <input type="text" id="login-user" placeholder="nome.sobrenome">
             </div>
             <div class="form-group">
-                <label>SENHA DE ACESSO</label>
-                <input type="password" id="pass" placeholder="******">
+                <label>SENHA</label>
+                <input type="password" id="login-pass" placeholder="******">
             </div>
-            <button class="btn-gov" onclick="irPara('perfil')">Acessar Sistema</button>
+            <button class="btn-gov" onclick="irPara('perfil')">Entrar</button>
         </div>
 
         <div id="scr-perfil" class="panel hidden">
-            <h2>Dados do Docente</h2>
+            <h2>Dados para Registro</h2>
             <div class="form-group">
                 <label>NOME COMPLETO</label>
-                <input type="text" id="p-nome">
+                <input type="text" id="p-nome" placeholder="Nome do docente">
             </div>
             <div style="display: flex; gap: 15px;">
                 <div class="form-group" style="flex: 1;">
-                    <label>PRONTUÁRIO (RP)</label>
-                    <input type="text" id="p-rp">
+                    <label>PRONTUÁRIO</label>
+                    <input type="text" id="p-rp" placeholder="000000">
                 </div>
                 <div class="form-group" style="flex: 1;">
-                    <label>DISCIPLINA</label>
-                    <input type="text" id="p-mat">
+                    <label>MATÉRIA / DISCIPLINA</label>
+                    <input type="text" id="p-mat" placeholder="Ex: Matemática">
                 </div>
             </div>
-            <button class="btn-gov" onclick="irPara('menu')">Confirmar e Entrar</button>
+            <button class="btn-gov" onclick="salvarPerfil()">Confirmar Dados</button>
         </div>
 
         <div id="scr-menu" class="hidden">
-            <h2 style="margin-bottom: 25px;">Serviços Disponíveis</h2>
+            <h2 style="margin-bottom: 25px;">Painel de Controle</h2>
             <div class="menu-grid">
                 <div class="menu-item" onclick="irPara('reserva')">
                     <div class="icon-circle">📅</div>
                     <div class="menu-text">
                         <b>Reserva de Equipamentos</b>
-                        <span>Agende Chromebooks, Laboratórios e TVs Interativas para suas aulas.</span>
+                        <span>Agende Chromebooks, TVs e Laboratório.</span>
                     </div>
                 </div>
                 <div class="menu-item" onclick="irPara('suporte')">
-                    <div class="icon-circle" style="background-color: #d9534f;">🛠️</div>
+                    <div class="icon-circle" style="background-color: var(--danger);">🛠️</div>
                     <div class="menu-text">
-                        <b>Suporte Técnico (NTi)</b>
-                        <span>Relate problemas técnicos em sala de aula para manutenção imediata.</span>
+                        <b>Chamado de Suporte TI</b>
+                        <span>Relate problemas técnicos e urgências.</span>
                     </div>
                 </div>
             </div>
             <p style="text-align: center; margin-top: 30px;">
-                <button class="btn-gov" style="background:#666" onclick="location.reload()">Sair do Sistema</button>
+                <button class="btn-gov" style="background:#666; width: auto;" onclick="location.reload()">Sair</button>
             </p>
         </div>
 
         <div id="scr-reserva" class="panel hidden">
-            <h2>Agendamento de Recurso</h2>
-            <label>1. Escolha a Unidade Escolar / Sala:</label>
-            <div class="sala-selector" id="grid-salas-res"></div>
+            <h2>Nova Reserva</h2>
             
+            <label>Selecione a Sala de Uso:</label>
+            <div class="sala-selector" id="grid-salas-res"></div>
+
             <div class="form-group">
-                <label>2. Recurso Desejado:</label>
-                <select id="item-res">
-                    <option>Carrinho de Chromebooks (30 unidades)</option>
-                    <option>Laboratório de Informática</option>
-                    <option>TV Digital Interativa</option>
+                <label>Equipamento:</label>
+                <select id="item-res" onchange="toggleChromebookQty()">
+                    <option value="TV Digital (Pat: 230180)">TV Digital (Pat: 230180)</option>
+                    <option value="Carrinho Chromebook (Pat: 247880)">Carrinho Chromebook (Pat: 247880)</option>
+                    <option value="Laboratório de Informática">Laboratório de Informática</option>
                 </select>
+            </div>
+
+            <div id="chrome-qty-div" class="form-group hidden">
+                <label>Quantidade de Chromebooks a retirar:</label>
+                <input type="number" id="qtd-chrome" min="1" max="40" value="1">
             </div>
 
             <div style="display: flex; gap: 15px;">
                 <div class="form-group" style="flex: 1;">
-                    <label>Horário de Retirada:</label>
-                    <input type="time" id="h-ini">
+                    <label>Data e Hora de Início:</label>
+                    <input type="datetime-local" id="h-ini">
                 </div>
                 <div class="form-group" style="flex: 1;">
-                    <label>Horário de Entrega:</label>
+                    <label>Previsão de Entrega:</label>
                     <input type="time" id="h-fim">
                 </div>
             </div>
-            <button class="btn-gov" onclick="iniciarReserva()">Protocolar Reserva</button>
-            <button class="btn-gov" style="background:#999" onclick="irPara('menu')">Voltar</button>
+            <button class="btn-gov" onclick="confirmarReserva()">Confirmar Reserva</button>
+            <button class="btn-gov" style="background:#999; margin-top:10px;" onclick="irPara('menu')">Voltar</button>
         </div>
 
         <div id="scr-timer" class="panel hidden" style="text-align: center;">
-            <h2>Reserva em Andamento</h2>
+            <h2>Uso em Andamento</h2>
             <div id="timer-label" style="font-size: 60px; font-weight: bold; color: var(--azul-gov); margin: 20px 0;">00:00</div>
-            <p id="timer-info" style="color: #666;"></p>
-            <button class="btn-gov" style="background: #5cb85c;" onclick="irPara('menu')">Finalizar Uso Corretamente</button>
+            <p id="timer-info" style="color: #666; font-weight: bold;"></p>
+            <button class="btn-gov" style="background: var(--success);" onclick="finalizarUso()">Finalizar Uso / Entregar</button>
         </div>
 
         <div id="scr-suporte" class="panel hidden">
-            <h2>Abertura de Chamado Técnico</h2>
-            <label>Localização da Ocorrência:</label>
-            <div class="sala-selector" id="grid-salas-ti"></div>
+            <h2>Abertura de Chamado</h2>
             
+            <label>Sala da Ocorrência:</label>
+            <div class="sala-selector" id="grid-salas-ti"></div>
+
             <div class="form-group">
-                <label>Prioridade do Atendimento:</label>
-                <select id="sup-prioridade" style="font-weight: bold;">
-                    <option value="Verde" style="color: green;">BAIXA - Funcionamento Parcial</option>
-                    <option value="Amarelo" style="color: orange;">MÉDIA - Necessita Reparo Breve</option>
-                    <option value="Vermelho" style="color: red;">ALTA - Interrupção Total da Aula</option>
+                <label>Gravidade da Situação:</label>
+                <select id="sup-prioridade" class="prioridade-select">
+                    <option value="Verde">🟢 VERDE: Bom (Resolver depois)</option>
+                    <option value="Amarelo">🟡 AMARELO: Imediato (Sem urgência extrema)</option>
+                    <option value="Vermelho">🔴 VERMELHO: URGÊNCIA (Interrupção total)</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label>Descrição Detalhada do Problema:</label>
-                <textarea id="sup-msg" rows="4" placeholder="Ex: Chromebook ligando com tela preta ou sem conexão Wi-Fi..."></textarea>
-            </div>
-            <button class="btn-gov" style="background: #d9534f;" onclick="enviarSuporte()">Registrar Ocorrência</button>
-            <button class="btn-gov" style="background:#999" onclick="irPara('menu')">Voltar</button>
-        </div>
-
-    </div>
-
-    <footer>
-        © 2026 Departamento de Tecnologia da Informação - NTi<br>
-        Prefeitura de Santana de Parnaíba - SP
-    </footer>
-
-    <script>
-        let salaSelecionada = "";
-        let tempoRestante;
-
-        function irPara(tela) {
-            document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
-            document.getElementById('scr-' + tela).classList.remove('hidden');
-            if(tela === 'menu') {
-                document.getElementById('status-user').innerText = "Bem-vindo, " + document.getElementById('p-nome').value;
-            }
-        }
-
-        function criarSalas(containerId) {
-            const container = document.getElementById(containerId);
-            for(let i=1; i<=9; i++) {
-                let b = document.createElement('button');
-                b.className = 'sala-btn'; b.innerText = i + 'º ANO A';
-                b.onclick = (e) => {
-                    e.preventDefault();
-                    document.querySelectorAll('.sala-btn').forEach(x => x.classList.remove('active'));
-                    b.classList.add('active');
-                    salaSelecionada = b.innerText;
-                };
-                container.appendChild(b);
-            }
-        }
-
-        function iniciarReserva() {
-            const hFim = document.getElementById('h-fim').value;
-            if(!salaSelecionada || !hFim) return alert("Por favor, preencha todos os campos obrigatórios.");
-            
-            irPara('timer');
-            document.getElementById('timer-info').innerText = "Recurso locado para: " + salaSelecionada;
-            
-            // Lógica Simples de Timer
-            setInterval(() => {
-                const agora = new Date();
-                const [h, m] = hFim.split(':');
-                const fim = new Date(); fim.setHours(h, m, 0);
-                const diff = fim - agora;
-                
-                if(diff <= 0) {
-                    document.getElementById('timer-label').innerText = "EXPIRADO";
-                    document.getElementById('timer-label').style.color = "red";
-                } else {
-                    let min = Math.floor(diff/60000);
-                    let seg = Math.floor((diff%60000)/1000);
-                    document.getElementById('timer-label').innerText = `${min.toString().padStart(2,'0')}:${seg.toString().padStart(2,'0')}`;
-                }
-            }, 1000);
-        }
-
-        function enviarSuporte() {
-            if(!salaSelecionada) return alert("Selecione a sala da ocorrência.");
-            alert("Chamado registrado com sucesso. Protocolo enviado ao NTi.");
-            irPara('menu');
-        }
-
-        criarSalas('grid-salas-res');
-        criarSalas('grid-salas-ti');
-    </script>
-</body>
-</html>
+                <label>Motivo do Chamado:</label>
+                <textarea id="sup-msg" rows="4" placeholder="
