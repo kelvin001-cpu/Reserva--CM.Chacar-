@@ -2,68 +2,90 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SISTEMA NTi - DASHBOARD ESTRATÉGICO</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NTi - TECNOLOGIA EDUCACIONAL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-
     <style>
         :root {
-            --pref-navy: #001a33; --pref-blue: #00adef; --glass: rgba(0, 15, 30, 0.9);
-        }
-        
-        * { box-sizing: border-box; font-family: 'Outfit', sans-serif; }
-        
-        body { 
-            margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
-            /* FUNDO TECNOLÓGICO DE ALTO NÍVEL */
-            background: linear-gradient(rgba(0, 10, 30, 0.8), rgba(0, 10, 30, 0.8)), 
-                        url('https://img.freepik.com/free-vector/abstract-technology-particle-background_52683-25766.jpg?t=st=1716922572~exp=1716926172~hmac=6b937667d71688d01d4a96a1a4b9e27c1f4e1f705191f635c75e2f75d9e50e8d&w=1380') no-repeat center center fixed;
-            background-size: cover; padding: 15px;
+            --neon-blue: #00d2ff; --neon-green: #39ff14; --neon-yellow: #fff01f; --neon-red: #ff3131;
+            --glass: rgba(0, 15, 30, 0.85); --border: rgba(0, 210, 255, 0.25);
         }
 
-        .main-card {
-            width: 100%; max-width: 520px; background: var(--glass);
-            backdrop-filter: blur(20px); border: 1px solid rgba(0, 173, 239, 0.3);
-            border-radius: 40px; padding: 45px 35px; box-shadow: 0 50px 100px rgba(0,0,0,0.9);
-            text-align: center; position: relative;
+        /* FUNDO TECNOLÓGICO DINÂMICO */
+        body {
+            margin: 0; min-height: 100vh; font-family: 'Rajdhani', sans-serif; color: white;
+            background: #00050a url('https://w0.peakpx.com/wallpaper/559/541/HD-wallpaper-digital-art-circuit-board-blue.jpg') no-repeat center center fixed;
+            background-size: cover; display: flex; align-items: center; justify-content: center; overflow-x: hidden;
         }
 
-        .header h1 { font-family: 'Montserrat'; font-size: 55px; margin: 0; color: #fff; letter-spacing: -3px; line-height: 1; }
-        .header p { font-size: 11px; text-transform: uppercase; letter-spacing: 5px; color: var(--pref-blue); font-weight: 700; margin-bottom: 35px; }
-
-        /* INPUTS LIMPOS */
-        .input-box { text-align: left; margin-bottom: 20px; }
-        .input-box label { font-size: 10px; font-weight: 700; color: var(--pref-blue); margin-left: 10px; opacity: 0.8; }
-        .pref-field { 
-            width: 100%; height: 58px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px; padding: 0 20px; color: #fff; font-size: 16px; margin-top: 5px;
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 20%, #000 90%); pointer-events: none;
         }
-        .pref-field:focus { border-color: var(--pref-blue); outline: none; background: rgba(0, 173, 239, 0.1); }
 
-        /* MENU DE TILES */
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .menu-tile { 
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 25px; padding: 30px 10px; cursor: pointer; transition: 0.4s;
+        /* PAINEL DE VIDRO (CONTAINER) */
+        .glass-panel {
+            width: 90%; max-width: 450px; background: var(--glass); backdrop-filter: blur(25px);
+            border: 1px solid var(--border); border-radius: 30px; padding: 35px;
+            box-shadow: 0 0 60px rgba(0, 210, 255, 0.15); position: relative;
+            animation: fadeIn 0.8s ease-out;
         }
-        .menu-tile:hover { background: rgba(0, 173, 239, 0.15); border-color: var(--pref-blue); transform: scale(1.05); }
-        .menu-tile b { display: block; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: #fff; }
 
-        /* SELETOR DE CHROMEBOOK (FOCO NA USABILIDADE) */
-        .chrome-selector { display: flex; gap: 10px; margin: 20px 0; }
-        .sel-btn { 
-            flex: 1; padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(255,255,255,0.05); color: #fff; font-size: 11px; font-weight: 800; cursor: pointer;
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        h1, h2 { font-family: 'Orbitron'; text-align: center; color: var(--neon-blue); text-shadow: 0 0 15px var(--neon-blue); margin-bottom: 25px; }
+
+        /* ESTILO DOS INPUTS */
+        .input-group { position: relative; margin-bottom: 20px; }
+        .input-box { 
+            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); 
+            border-radius: 12px; padding: 15px; color: white; font-size: 16px; outline: none;
+            transition: 0.3s;
         }
-        .sel-btn.active { background: var(--pref-blue); color: #001a33; border-color: var(--pref-blue); }
+        .input-box:focus { border-color: var(--neon-blue); background: rgba(0, 210, 255, 0.05); box-shadow: 0 0 15px rgba(0, 210, 255, 0.3); }
 
-        .btn-confirm { 
-            width: 100%; height: 65px; background: var(--pref-blue); color: #001a33;
-            border: none; border-radius: 22px; font-family: 'Montserrat'; font-weight: 900;
-            font-size: 17px; cursor: pointer; margin-top: 25px; text-transform: uppercase;
+        /* DESIGN DOS MENUS (CARDS) */
+        .menu-grid { display: grid; gap: 15px; }
+        .menu-card {
+            background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 18px;
+            padding: 18px; display: flex; align-items: center; gap: 15px; cursor: pointer;
+            transition: 0.3s; position: relative; overflow: hidden;
+        }
+        .menu-card:hover { background: rgba(0, 210, 255, 0.1); transform: scale(1.03); border-color: var(--neon-blue); }
+        .icon-box { font-size: 24px; min-width: 45px; height: 45px; background: rgba(0, 210, 255, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--neon-blue); }
+
+        /* GRADE DE SALAS - 1 AO 9 ANO */
+        .sala-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 15px 0; }
+        .btn-sala { 
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: white; 
+            padding: 10px; border-radius: 8px; cursor: pointer; font-family: 'Orbitron'; font-size: 10px;
+        }
+        .btn-sala.active { background: var(--neon-blue); color: black; box-shadow: 0 0 15px var(--neon-blue); border-color: white; }
+
+        /* BOTÃO DE AÇÃO PRINCIPAL */
+        .btn-glow {
+            width: 100%; padding: 16px; border-radius: 12px; border: none; font-family: 'Orbitron';
+            font-weight: 700; cursor: pointer; text-transform: uppercase; background: var(--neon-blue);
+            color: #000; box-shadow: 0 0 20px rgba(0, 210, 255, 0.4); transition: 0.3s;
+        }
+        .btn-glow:hover { box-shadow: 0 0 30px var(--neon-blue); transform: translateY(-2px); }
+
+        /* GRAVIDADE TI */
+        .grav-row { display: flex; gap: 10px; margin: 15px 0; }
+        .grav-btn { 
+            flex: 1; padding: 12px; border-radius: 10px; border: none; font-weight: 800; cursor: pointer;
+            font-size: 11px; opacity: 0.3; transition: 0.3s;
+        }
+        .grav-btn.active { opacity: 1; transform: translateY(-3px); box-shadow: 0 5px 15px currentColor; }
+
+        /* TIMER NEON */
+        .timer-circle {
+            width: 180px; height: 180px; border-radius: 50%; border: 4px solid var(--neon-red);
+            margin: 20px auto; display: flex; align-items: center; justify-content: center;
+            font-family: 'Orbitron'; font-size: 32px; color: var(--neon-red);
+            text-shadow: 0 0 15px var(--neon-red); box-shadow: inset 0 0 20px rgba(255, 49, 49, 0.2), 0 0 20px rgba(255, 49, 49, 0.2);
         }
 
         .hidden { display: none; }
@@ -71,126 +93,133 @@
 </head>
 <body>
 
-    <div class="main-card">
-        <div class="header">
-            <h1>NTi</h1>
-            <p>Santana de Parnaíba</p>
+    <div class="glass-panel">
+        <div id="scr-login">
+            <h1>NTi LOGIN</h1>
+            <div class="input-group">
+                <input type="email" id="l-email" class="input-box" placeholder="E-mail Institucional">
+            </div>
+            <div class="input-group">
+                <input type="password" id="l-pass" class="input-box" placeholder="Senha">
+            </div>
+            <button class="btn-glow" onclick="app.nav('perfil')">AUTENTICAR</button>
         </div>
 
-        <div id="scr1">
-            <div class="input-box">
-                <label>DOCENTE</label>
-                <input type="text" id="p-nome" class="pref-field" placeholder="Nome Completo">
-            </div>
-            <div style="display:flex; gap:12px">
-                <div class="input-box" style="flex:1"><label>RP</label><input type="text" id="p-id" class="pref-field" placeholder="000.000"></div>
-                <div class="input-box" style="flex:1"><label>MATÉRIA</label><input type="text" id="p-mat" class="pref-field" placeholder="Disciplina"></div>
-            </div>
-            <button class="btn-confirm" onclick="app.login()">Entrar no Sistema</button>
+        <div id="scr-perfil" class="hidden">
+            <h2>MEU PERFIL</h2>
+            <input type="text" id="p-nome" class="input-box" placeholder="Nome Completo">
+            <input type="text" id="p-id" class="input-box" placeholder="Prontuário (RP)">
+            <input type="text" id="p-mat" class="input-box" placeholder="Matéria">
+            <button class="btn-glow" onclick="app.nav('menu')">GRAVAR DADOS</button>
         </div>
 
-        <div id="scr2" class="hidden">
+        <div id="scr-menu" class="hidden">
+            <h1>CENTRAL</h1>
             <div class="menu-grid">
-                <div class="menu-tile" onclick="app.nav(2, 3)"><b>📅 Agendar</b></div>
-                <div class="menu-tile" onclick="app.nav(2, 5)"><b>🛠️ Suporte</b></div>
-                <div class="menu-tile" style="grid-column: span 2; padding: 18px;" onclick="location.reload()"><b>Sair do Portal</b></div>
+                <div class="menu-card" onclick="app.nav('reserva')">
+                    <div class="icon-box">📅</div>
+                    <div><b>RESERVA</b><br><small>Equipamentos e Salas</small></div>
+                </div>
+                <div class="menu-card" onclick="app.nav('suporte')" style="border-color: var(--neon-yellow);">
+                    <div class="icon-box" style="border-color: var(--neon-yellow); color: var(--neon-yellow);">🛠️</div>
+                    <div><b style="color: var(--neon-yellow);">SUPORTE TI</b><br><small>Chamados de Urgência</small></div>
+                </div>
+                <button class="btn-glow" style="background:none; border: 1px solid #444; color:#666; margin-top:10px" onclick="location.reload()">SAIR DO SISTEMA</button>
             </div>
         </div>
 
-        <div id="scr3" class="hidden">
-            <select id="item-sel" class="pref-field" onchange="app.checkChrome(this.value)" style="margin-bottom:15px; appearance:none;">
-                <option value="">Selecione o Item...</option>
-                <option value="LAB. INFO">LAB. INFORMÁTICA</option>
-                <option value="CHROMEBOOKS">CHROMEBOOKS</option>
+        <div id="scr-reserva" class="hidden">
+            <h2>RESERVA</h2>
+            <div class="sala-grid" id="grid-salas"></div>
+            <select id="res-item" class="input-box" onchange="app.toggleChrome(this.value)">
+                <option value="Laboratório">LAB. INFORMÁTICA</option>
+                <option value="Chromebooks">CHROMEBOOKS</option>
                 <option value="TV">TV INTERATIVA</option>
             </select>
-
-            <div id="chrome-ui" class="hidden">
-                <div class="chrome-selector">
-                    <button class="sel-btn active" id="m1" onclick="app.setModo('CARRINHO', 'm1')">CARRINHO CHEIO</button>
-                    <button class="sel-btn" id="m2" onclick="app.setModo('INDIVIDUAL', 'm2')">INDIVIDUAL</button>
-                </div>
-                <div id="qtd-box" class="hidden">
-                    <input type="number" id="res-qtd" class="pref-field" placeholder="Quantidade de Unidades">
-                </div>
-                <textarea id="res-dev" class="pref-field" style="height:90px; padding-top:15px; margin-top:10px" placeholder="Plano de Aula..."></textarea>
+            <input type="number" id="res-qtd" class="input-box hidden" placeholder="Qtd Chromebooks">
+            <div style="display:flex; gap:10px">
+                <input type="time" id="t-ini" class="input-box">
+                <input type="time" id="t-fim" class="input-box">
             </div>
-
-            <div style="display:flex; gap:12px; margin-top:10px">
-                <input type="time" id="res-ini" class="pref-field" style="flex:1">
-                <input type="text" id="res-sala" class="pref-field" style="flex:1" placeholder="Sala">
-            </div>
-
-            <button class="btn-confirm" onclick="app.enviarReserva()">Confirmar Reserva</button>
-            <button onclick="app.nav(3, 2)" style="background:none; border:none; color:#555; font-size:12px; margin-top:20px; cursor:pointer;">VOLTAR</button>
+            <button class="btn-glow" onclick="app.iniciarUso()">CONFIRMAR E INICIAR</button>
+            <button class="btn-glow" style="background:none; color:#555" onclick="app.nav('menu')">VOLTAR</button>
         </div>
 
-        <div id="scr5" class="hidden">
-            <div class="chrome-selector">
-                <button class="sel-btn" id="g1" onclick="app.setGr('NORMAL', 'g1')">NORMAL</button>
-                <button class="sel-btn" id="g2" onclick="app.setGr('TÁTICO', 'g2')">TÁTICO</button>
-                <button class="sel-btn" id="g3" onclick="app.setGr('URGENTE', 'g3')">CRÍTICO</button>
+        <div id="scr-timer" class="hidden">
+            <h2>EM USO</h2>
+            <div class="timer-circle" id="timer-val">00:00</div>
+            <p id="timer-alert" style="text-align: center; color: var(--neon-red); font-weight: bold;"></p>
+            <button class="btn-glow" style="background: var(--neon-green)" onclick="app.finalizar()">FINALIZAR E DEVOLVER</button>
+        </div>
+
+        <div id="scr-suporte" class="hidden">
+            <h2>TICKET TI</h2>
+            <div class="sala-grid" id="grid-salas-ti"></div>
+            <div class="grav-row">
+                <button class="grav-btn active" id="g-v" style="background: var(--neon-green); color:#000" onclick="app.setG('BAIXA','g-v')">BAIXA</button>
+                <button class="grav-btn" id="g-a" style="background: var(--neon-yellow); color:#000" onclick="app.setG('MÉDIA','g-a')">MÉDIA</button>
+                <button class="grav-btn" id="g-r" style="background: var(--neon-red); color:#fff" onclick="app.setG('ALTA','g-r')">ALTA</button>
             </div>
-            <textarea id="sup-msg" class="pref-field" style="height:140px; padding-top:15px" placeholder="Descreva o problema técnico..."></textarea>
-            <button class="btn-confirm" style="background:#ff3b3b; color:#fff" onclick="app.enviarChamado()">Enviar ao TI</button>
+            <textarea id="ti-msg" class="input-box" style="height: 100px;" placeholder="Relate o problema técnico..."></textarea>
+            <button class="btn-glow" onclick="app.enviarTI()">ENVIAR CHAMADO</button>
+            <button class="btn-glow" style="background:none; color:#555" onclick="app.nav('menu')">VOLTAR</button>
         </div>
     </div>
 
-<script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyBoGfDKz-nBwKvczzGpxg-fHJYdVykcBUQ",
-        databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com",
-        projectId: "escala-chacara",
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    const app = {
-        modo: "CARRINHO", gr: "",
-        nav(a, p) {
-            document.querySelectorAll('.main-card > div[id]').forEach(d => d.classList.add('hidden'));
-            document.getElementById(`scr${p}`).classList.remove('hidden');
-        },
-        login() {
-            if(!document.getElementById('p-nome').value || !document.getElementById('p-id').value) return alert("Identifique-se primeiro.");
-            this.nav(1, 2);
-        },
-        checkChrome(v) {
-            v === 'CHROMEBOOKS' ? document.getElementById('chrome-ui').classList.remove('hidden') : document.getElementById('chrome-ui').classList.add('hidden');
-        },
-        setModo(m, id) {
-            this.modo = m;
-            document.querySelectorAll('.chrome-selector .sel-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            m === 'INDIVIDUAL' ? document.getElementById('qtd-box').classList.remove('hidden') : document.getElementById('qtd-box').classList.add('hidden');
-        },
-        setGr(v, id) {
-            this.gr = v;
-            document.querySelectorAll('#scr5 .sel-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        },
-        enviarReserva() {
-            const d = {
-                prof: document.getElementById('p-nome').value, 
-                rp: document.getElementById('p-id').value,
-                mat: document.getElementById('p-mat').value,
-                item: document.getElementById('item-sel').value, 
-                modo: this.modo,
-                sala: document.getElementById('res-sala').value, 
-                qtd: document.getElementById('res-qtd').value || 'Cheio',
-                aula: document.getElementById('res-dev').value || '', 
-                data: new Date().toLocaleString()
-            };
-            db.ref('NTi_Final').push(d).then(() => { alert("Agendado com Sucesso!"); location.reload(); });
-        },
-        enviarChamado() {
-            const d = {
-                prof: document.getElementById('p-nome').value, rp: document.getElementById('p-id').value,
-                prioridade: this.gr, msg: document.getElementById('sup-msg').value, data: new Date().toLocaleString()
-            };
-            db.ref('Suporte_Final').push(d).then(() => { alert("Enviado ao Monitoramento!"); location.reload(); });
-        }
-    };
-</script>
+    <script>
+        const app = {
+            sala: "", grav: "BAIXA", timer: null,
+            init() {
+                this.buildSalas('grid-salas');
+                this.buildSalas('grid-salas-ti');
+            },
+            buildSalas(id) {
+                const g = document.getElementById(id);
+                for(let i=1; i<=9; i++) {
+                    const b = document.createElement('button');
+                    b.className = 'btn-sala'; b.innerText = `${i}º ANO A`;
+                    b.onclick = () => {
+                        document.querySelectorAll(`#${id} .btn-sala`).forEach(x => x.classList.remove('active'));
+                        b.classList.add('active'); this.sala = b.innerText;
+                    };
+                    g.appendChild(b);
+                }
+            },
+            nav(s) {
+                document.querySelectorAll('.glass-panel > div').forEach(d => d.classList.add('hidden'));
+                document.getElementById(`scr-${s}`).classList.remove('hidden');
+            },
+            toggleChrome(v) { document.getElementById('res-qtd').classList.toggle('hidden', v !== 'Chromebooks'); },
+            setG(v, id) {
+                this.grav = v;
+                document.querySelectorAll('.grav-btn').forEach(b => b.classList.remove('active'));
+                document.getElementById(id).classList.add('active');
+            },
+            iniciarUso() {
+                const tFim = document.getElementById('t-fim').value;
+                if(!this.sala || !tFim) return alert("Selecione Sala e Horário!");
+                this.nav('timer');
+                this.startClock(tFim);
+            },
+            startClock(entrega) {
+                this.timer = setInterval(() => {
+                    const [h, m] = entrega.split(':');
+                    const target = new Date(); target.setHours(h, m, 0);
+                    const diff = target - new Date();
+                    if(diff <= 0) {
+                        clearInterval(this.timer);
+                        document.getElementById('timer-val').innerText = "00:00";
+                        document.getElementById('timer-alert').innerText = "ENTREGA ATRASADA!";
+                        return;
+                    }
+                    const min = Math.floor(diff/60000); const seg = Math.floor((diff%60000)/1000);
+                    document.getElementById('timer-val').innerText = `${min.toString().padStart(2,'0')}:${seg.toString().padStart(2,'0')}`;
+                }, 1000);
+            },
+            finalizar() { clearInterval(this.timer); alert("Uso Concluído!"); this.nav('menu'); },
+            enviarTI() { alert("Chamado Enviado ao TI!"); this.nav('menu'); }
+        };
+        app.init();
+    </script>
 </body>
 </html>
