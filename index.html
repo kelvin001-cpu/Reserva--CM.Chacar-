@@ -3,123 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SISTEMA NTi - PARNAÍBA</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Orbitron:wght@600&display=swap" rel="stylesheet">
+    <title>SISTEMA NTi - GESTÃO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
     <style>
         :root {
-            --pref-azul: #004a99; --pref-sky: #00adef; --neon: #00ff9d;
-            --glass: rgba(0, 25, 51, 0.85);
+            --azul-gov: #002d5e;
+            --sky: #00adef;
+            --neon: #00ff9d;
+            --bg: #000b1a;
         }
-        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: 0.3s; }
+        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         
         body { 
-            margin: 0; background: #000b1a url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed;
+            margin: 0; background: var(--bg) url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
             background-size: cover; min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white; padding: 15px;
         }
 
-        .container-premium {
-            width: 100%; max-width: 550px; background: var(--glass);
-            backdrop-filter: blur(20px); border: 1px solid rgba(0, 173, 239, 0.4); border-radius: 35px;
-            padding: 30px; box-shadow: 0 30px 60px rgba(0,0,0,0.6);
-            text-align: center; border-bottom: 8px solid var(--pref-sky);
+        .glass-panel {
+            width: 100%; max-width: 500px; background: rgba(0, 15, 35, 0.9);
+            backdrop-filter: blur(25px); border: 1px solid rgba(0, 173, 239, 0.4); border-radius: 30px;
+            padding: 30px; box-shadow: 0 50px 100px rgba(0,0,0,0.7);
+            text-align: center; overflow: hidden; position: relative;
         }
 
-        .header-nti { margin-bottom: 25px; }
-        .unidade-txt { font-size: 28px; font-weight: 700; color: white; font-family: 'Orbitron'; letter-spacing: 2px; margin: 0; }
-        .sub-txt { font-size: 11px; color: var(--pref-sky); font-weight: 600; text-transform: uppercase; letter-spacing: 2px; }
+        /* BARRA SUPERIOR */
+        .header-top { border-bottom: 2px solid var(--sky); padding-bottom: 15px; margin-bottom: 20px; }
+        .logo-nti { font-family: 'Orbitron'; font-size: 32px; color: #fff; letter-spacing: 3px; margin: 0; text-shadow: 0 0 15px var(--sky); }
+        .sub-label { font-size: 9px; text-transform: uppercase; letter-spacing: 2px; color: var(--sky); font-weight: 700; }
 
-        .data-viva { font-family: 'Orbitron', sans-serif; font-size: 12px; color: var(--neon); margin-bottom: 20px; opacity: 0.9; }
-        
-        h2 { font-size: 16px; font-weight: 700; text-transform: uppercase; color: #fff; margin: 10px 0; letter-spacing: 1px; }
-        
-        label { display: block; text-align: left; font-size: 10px; font-weight: 700; color: var(--pref-sky); margin: 12px 0 5px 5px; text-transform: uppercase; }
-        
-        .campo { width: 100%; height: 50px; background: #fff; border-radius: 12px; border: 2px solid transparent; padding: 0 15px; font-size: 14px; color: #111; margin-bottom: 10px; font-weight: 600; }
-        .campo:focus { border-color: var(--pref-sky); outline: none; }
+        .clock-bar { font-family: 'Orbitron'; font-size: 11px; color: var(--neon); background: rgba(0,0,0,0.4); padding: 5px 15px; border-radius: 50px; display: inline-block; margin: 10px 0; border: 1px solid rgba(0, 255, 157, 0.2); }
 
-        /* GRID DE BOTÕES */
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-        .btn-item { 
-            height: 75px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 18px; color: white; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+        /* INPUTS MODERNOS */
+        .login-box { display: flex; flex-direction: column; gap: 12px; }
+        .input-group { text-align: left; }
+        .input-group label { font-size: 10px; font-weight: 700; color: var(--sky); margin-left: 10px; text-transform: uppercase; }
+        .input-main { width: 100%; height: 55px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); border-radius: 15px; padding: 0 20px; color: #fff; font-size: 15px; }
+        .input-main:focus { background: rgba(255,255,255,0.1); border-color: var(--sky); outline: none; box-shadow: 0 0 15px rgba(0, 173, 239, 0.3); }
+
+        /* MENU DASHBOARD */
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
+        .card-menu { 
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;
+            padding: 20px; cursor: pointer; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
         }
-        .btn-item b { font-size: 11px; text-transform: uppercase; }
-        .btn-item.active { background: var(--pref-sky); border-color: #fff; box-shadow: 0 0 15px var(--pref-sky); }
+        .card-menu:hover { background: rgba(0, 173, 239, 0.15); border-color: var(--sky); transform: translateY(-5px); }
+        .card-menu .icon { font-size: 30px; }
+        .card-menu span { font-size: 12px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
 
-        .btn-acao { width: 100%; height: 60px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--pref-azul), var(--pref-sky)); color: white; font-weight: 700; text-transform: uppercase; cursor: pointer; font-size: 14px; letter-spacing: 1px; }
+        /* AGENDAMENTO ITEMS */
+        .item-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn-select { 
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px;
+            padding: 15px; color: #ccc; cursor: pointer; font-size: 11px; font-weight: 600;
+        }
+        .btn-select.active { background: var(--sky); color: #fff; border-color: #fff; box-shadow: 0 0 20px rgba(0, 173, 239, 0.5); }
+
+        /* AÇÃO PRINCIPAL */
+        .btn-action { 
+            width: 100%; height: 60px; background: linear-gradient(135deg, var(--azul-gov), var(--sky)); 
+            border: none; border-radius: 18px; color: #fff; font-weight: 800; text-transform: uppercase; 
+            font-size: 15px; cursor: pointer; margin-top: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        .btn-action:active { transform: scale(0.98); }
+
+        .chrome-info { background: rgba(0, 173, 239, 0.08); padding: 15px; border-radius: 15px; border: 1px dashed var(--sky); margin: 15px 0; }
         
-        .box-chrome { background: rgba(0, 173, 239, 0.1); padding: 15px; border-radius: 15px; border: 1px dashed var(--pref-sky); margin-bottom: 15px; }
-
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <div class="container-premium">
-        <div class="header-nti">
-            <div class="unidade-txt">SISTEMA NTi</div>
-            <div class="sub-txt">Núcleo de Tecnologia e Inovação</div>
+    <div class="glass-panel">
+        <div class="header-top">
+            <h1 class="logo-nti">NTi</h1>
+            <div class="sub-label">Núcleo de Tecnologia e Inovação</div>
         </div>
-        <div class="data-viva" id="clock">CARREGANDO...</div>
+        
+        <div class="clock-bar" id="clock">00:00:00</div>
 
-        <div id="scr1">
-            <h2>Portal do Docente</h2>
-            <input type="text" class="campo" id="p-nome" placeholder="Nome Completo">
-            <input type="text" class="campo" id="p-id" placeholder="Nº Prontuário">
-            <input type="text" class="campo" id="p-mat" placeholder="Matéria / Disciplina">
-            <button class="btn-acao" onclick="app.login()">Acessar Sistema</button>
+        <div id="scr1" class="login-box">
+            <div class="input-group">
+                <label>Nome do Docente</label>
+                <input type="text" class="input-main" id="p-nome" placeholder="Ex: João Silva">
+            </div>
+            <div class="input-group">
+                <label>Nº Prontuário</label>
+                <input type="text" class="input-main" id="p-id" placeholder="Digite seu RP">
+            </div>
+            <div class="input-group">
+                <label>Matéria / Disciplina</label>
+                <input type="text" class="input-main" id="p-mat" placeholder="Ex: Matemática">
+            </div>
+            <button class="btn-action" onclick="app.login()">Entrar no Dashboard</button>
         </div>
 
         <div id="scr2" class="hidden">
-            <h2>Selecione o Serviço</h2>
-            <div class="btn-grid">
-                <button class="btn-item" onclick="app.nav(2, 3)"><b>📅 Agendamento</b></button>
-                <button class="btn-item" onclick="app.nav(2, 5)"><b>🛠️ Suporte TI</b></button>
+            <h2 style="font-size: 14px; opacity: 0.8;">BEM-VINDO AO PORTAL DE GESTÃO</h2>
+            <div class="menu-grid">
+                <div class="card-menu" onclick="app.nav(2, 3)">
+                    <div class="icon">📅</div>
+                    <span>Reservas</span>
+                </div>
+                <div class="card-menu" onclick="app.nav(2, 5)">
+                    <div class="icon">🛠️</div>
+                    <span>Suporte</span>
+                </div>
+                <div class="card-menu" style="opacity: 0.5; cursor: default;">
+                    <div class="icon">📊</div>
+                    <span>Relatórios</span>
+                </div>
+                <div class="card-menu" onclick="location.reload()">
+                    <div class="icon">🚪</div>
+                    <span>Sair</span>
+                </div>
             </div>
-            <button onclick="location.reload()" style="background:none; border:none; color:#aaa; font-size:11px; cursor:pointer;">Sair do Sistema</button>
         </div>
 
         <div id="scr3" class="hidden">
-            <h2>Nova Reserva</h2>
-            <div style="display:flex; gap:10px">
-                <div style="flex:1"><label>Início</label><input type="time" class="campo" id="res-inicio"></div>
-                <div style="flex:1"><label>Fim</label><input type="time" class="campo" id="res-fim"></div>
+            <h2 style="font-size: 14px;">NOVO AGENDAMENTO</h2>
+            <div style="display:flex; gap:10px; margin-bottom: 15px;">
+                <input type="time" class="input-main" id="res-inicio" style="flex:1">
+                <input type="time" class="input-main" id="res-fim" style="flex:1">
             </div>
-            <input type="text" class="campo" id="res-sala" placeholder="Sala/Série (Ex: 7º Ano C)">
+            <input type="text" class="input-main" id="res-sala" placeholder="Sala ou Série">
 
-            <label>Equipamento</label>
-            <div class="btn-grid">
-                <button class="btn-item" id="e1" onclick="app.setEq('SALA INFO', 'e1')"><b>Lab. Info</b></button>
-                <button class="btn-item" id="e2" onclick="app.setEq('CHROMEBOOKS', 'e2')"><b>Chromebooks</b></button>
-                <button class="btn-item" id="e3" onclick="app.setEq('TV 1', 'e3')"><b>TV 1º Andar</b></button>
-                <button class="btn-item" id="e4" onclick="app.setEq('TV 2', 'e4')"><b>TV 2º Andar</b></button>
-            </div>
-
-            <div id="extra-chrome" class="box-chrome hidden">
-                <label style="color:#fff">Qtd. de Chromebooks</label>
-                <input type="number" class="campo" id="res-qtd" placeholder="Quantidade (ex: 30)">
-                <label style="color:#fff">Desenvolvimento da Aula</label>
-                <textarea class="campo" id="res-obs" style="height:70px; padding-top:10px;" placeholder="Qual conteúdo será trabalhado?"></textarea>
+            <label style="display:block; text-align:left; font-size:9px; color:var(--sky); margin:10px 0 5px 5px;">EQUIPAMENTO</label>
+            <div class="item-list">
+                <div class="btn-select" id="e1" onclick="app.setEq('LAB. INFO', 'e1')">💻 LAB. INFO</div>
+                <div class="btn-select" id="e2" onclick="app.setEq('CHROMEBOOKS', 'e2')">📱 CHROMEBOOKS</div>
+                <div class="btn-select" id="e3" onclick="app.setEq('TV 1', 'e3')">📺 TV 1º ANDAR</div>
+                <div class="btn-select" id="e4" onclick="app.setEq('TV 2', 'e4')">📺 TV 2º ANDAR</div>
             </div>
 
-            <button class="btn-acao" onclick="app.enviarReserva()">Confirmar Agendamento</button>
-            <button onclick="app.nav(3, 2)" style="background:none; border:none; color:#aaa; font-size:11px; cursor:pointer; margin-top:10px;">Voltar</button>
+            <div id="box-chrome" class="chrome-info hidden">
+                <input type="number" class="input-main" id="res-qtd" placeholder="Qtd de Chromebooks">
+                <textarea class="input-main" id="res-dev" style="height:80px; padding-top:10px; margin-top:10px;" placeholder="Desenvolvimento da aula..."></textarea>
+            </div>
+
+            <button class="btn-action" onclick="app.enviarReserva()">Salvar Agendamento</button>
+            <button onclick="app.nav(3, 2)" style="background:none; border:none; color:#777; font-size:11px; margin-top:15px; cursor:pointer;">Voltar ao Menu</button>
         </div>
 
         <div id="scr5" class="hidden">
-            <h2>Suporte Técnico</h2>
-            <label>Nível de Urgência</label>
-            <div class="btn-grid">
-                <button class="btn-item" id="g1" onclick="app.setGrau('BAIXO', 'g1')"><b>BAIXO</b></button>
-                <button class="btn-item" id="g2" onclick="app.setGrau('CRÍTICO', 'g2')"><b>CRÍTICO</b></button>
+            <h2 style="font-size: 14px;">ABRIR CHAMADO NTi</h2>
+            <div class="menu-grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="btn-select" id="g1" onclick="app.setGrau('NORMAL', 'g1')">🟢 BAIXA</div>
+                <div class="btn-select" id="g2" onclick="app.setGrau('URGENTE', 'g2')">🔴 URGENTE</div>
             </div>
-            <textarea class="campo" id="sup-problema" style="height:120px; padding-top:15px;" placeholder="Descreva o problema detalhadamente..."></textarea>
-            <button class="btn-acao" onclick="app.enviarChamado()">Enviar para o NTi</button>
-            <button onclick="app.nav(5, 2)" style="background:none; border:none; color:#aaa; font-size:11px; cursor:pointer; margin-top:10px;">Cancelar</button>
+            <textarea class="input-main" id="sup-msg" style="height:120px; padding-top:15px; margin-top:15px;" placeholder="Descreva o problema técnico..."></textarea>
+            <button class="btn-action" onclick="app.enviarChamado()">Enviar para o Zé</button>
+            <button onclick="app.nav(5, 2)" style="background:none; border:none; color:#777; font-size:11px; margin-top:15px; cursor:pointer;">Cancelar</button>
         </div>
     </div>
 
@@ -135,73 +172,58 @@
     const app = {
         equip: "", grau: "",
         nav(a, p) {
-            document.querySelectorAll('.container-premium > div[id]').forEach(d => d.classList.add('hidden'));
+            document.querySelectorAll('.glass-panel > div[id]').forEach(d => d.classList.add('hidden'));
             document.getElementById(`scr${p}`).classList.remove('hidden');
         },
         login() {
             const n = document.getElementById('p-nome').value;
             const i = document.getElementById('p-id').value;
             const m = document.getElementById('p-mat').value;
-            if(!n || !i || !m) return alert("NTi INFORMA: Preencha todos os campos de identificação!");
+            if(!n || !i || !m) return alert("ERRO: Identificação completa obrigatória!");
             this.nav(1, 2);
         },
         setEq(val, id) {
             this.equip = val;
-            document.querySelectorAll('#scr3 .btn-item').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.btn-select').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            
-            // MOSTRAR CAMPOS EXTRAS SE FOR CHROMEBOOK
-            const extra = document.getElementById('extra-chrome');
-            val === 'CHROMEBOOKS' ? extra.classList.remove('hidden') : extra.classList.add('hidden');
+            val === 'CHROMEBOOKS' ? document.getElementById('box-chrome').classList.remove('hidden') : document.getElementById('box-chrome').classList.add('hidden');
         },
         setGrau(val, id) {
             this.grau = val;
-            document.querySelectorAll('#scr5 .btn-item').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('#scr5 .btn-select').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         },
         enviarReserva() {
             const dados = {
-                docente: document.getElementById('p-nome').value,
-                prontuario: document.getElementById('p-id').value,
+                nome: document.getElementById('p-nome').value,
+                rp: document.getElementById('p-id').value,
                 materia: document.getElementById('p-mat').value,
                 sala: document.getElementById('res-sala').value,
                 item: this.equip,
-                horario: `${document.getElementById('res-inicio').value} às ${document.getElementById('res-fim').value}`,
-                qtd: document.getElementById('res-qtd').value || "N/A",
-                desenvolvimento: document.getElementById('res-obs').value || "Não informado",
-                timestamp: new Date().toLocaleString()
+                periodo: `${document.getElementById('res-inicio').value} - ${document.getElementById('res-fim').value}`,
+                quantidade: document.getElementById('res-qtd').value || "1",
+                aula: document.getElementById('res-dev').value || "Uso padrão",
+                data: new Date().toLocaleString()
             };
-
-            if(!dados.item || !dados.sala || !document.getElementById('res-inicio').value) {
-                return alert("NTi INFORMA: Faltam detalhes do agendamento!");
-            }
-
-            db.ref('Agendamentos_NTi').push(dados).then(() => {
-                alert("SUCESSO! Agendamento registrado no Núcleo de Tecnologia.");
-                location.reload();
-            });
+            if(!dados.item || !dados.sala) return alert("Preencha os detalhes da reserva!");
+            db.ref('Agendamentos_NTi').push(dados).then(() => { alert("REGISTRADO!"); location.reload(); });
         },
         enviarChamado() {
             const dados = {
-                docente: document.getElementById('p-nome').value,
-                prontuario: document.getElementById('p-id').value,
+                nome: document.getElementById('p-nome').value,
+                rp: document.getElementById('p-id').value,
                 materia: document.getElementById('p-mat').value,
-                urgencia: this.grau,
-                relato: document.getElementById('sup-problema').value,
-                timestamp: new Date().toLocaleString()
+                prioridade: this.grau,
+                relato: document.getElementById('sup-msg').value,
+                data: new Date().toLocaleString()
             };
-            if(!dados.urgencia || !dados.relato) return alert("NTi INFORMA: Descreva o problema!");
-
-            db.ref('Chamados_Tecnicos').push(dados).then(() => {
-                alert("CHAMADO ENVIADO! O NTi analisará sua solicitação.");
-                location.reload();
-            });
+            if(!dados.relato) return alert("Descreva o problema!");
+            db.ref('Chamados_Tecnicos').push(dados).then(() => { alert("ENVIADO!"); location.reload(); });
         }
     };
 
     setInterval(() => {
-        const d = new Date();
-        document.getElementById('clock').innerText = d.toLocaleDateString() + " | " + d.toLocaleTimeString();
+        document.getElementById('clock').innerText = new Date().toLocaleTimeString();
     }, 1000);
 </script>
 </body>
