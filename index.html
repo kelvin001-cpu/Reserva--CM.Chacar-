@@ -1,80 +1,129 @@
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISTEMA TECH - CHÁCARA DAS GARÇAS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Orbitron:wght@600&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+    <style>
+        :root {
+            --pref-azul: #004a99; --pref-sky: #00adef; --neon: #00ff9d;
+            --grad-verde: linear-gradient(135deg, #2ed573, #1e9658);
+            --grad-amarelo: linear-gradient(135deg, #ffa502, #e67e22);
+            --grad-vermelho: linear-gradient(135deg, #ff4757, #c0392b);
+        }
+        body { 
+            margin: 0; background: #000b1a url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover; color: white; font-family: 'Poppins', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh;
+        }
+        .container {
+            width: 95%; max-width: 500px; background: rgba(0, 15, 40, 0.9); border: 2px solid var(--pref-sky);
+            border-radius: 30px; padding: 30px; text-align: center; backdrop-filter: blur(15px);
+        }
+        .topo { border-bottom: 1px solid var(--pref-sky); margin-bottom: 20px; padding-bottom: 10px; }
+        .topo h1 { font-size: 18px; margin: 0; }
+        .topo p { font-size: 10px; letter-spacing: 2px; color: var(--pref-sky); text-transform: uppercase; }
+        
+        label { display: block; text-align: left; font-size: 10px; color: var(--pref-sky); margin: 10px 0 5px; font-weight: 700; }
+        .campo { width: 100%; height: 45px; border-radius: 10px; border: none; padding: 0 15px; margin-bottom: 10px; font-weight: 600; }
+        
+        .grid-ti { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 15px 0; }
+        .btn-ti { height: 60px; border-radius: 12px; border: 2px solid transparent; color: white; font-weight: 800; cursor: pointer; font-size: 10px; }
+        .btn-ti.active { border-color: white; transform: scale(1.05); box-shadow: 0 0 15px currentColor; }
+        
+        .btn-acao { width: 100%; height: 55px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--pref-azul), var(--pref-sky)); color: white; font-weight: 700; cursor: pointer; text-transform: uppercase; margin-top: 15px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="topo">
+        <p>Santana de Parnaíba</p>
+        <h1>CM. Chácara das Garças</h1>
+    </div>
+
+    <div id="scr1">
+        <h2>Identificação</h2>
+        <input type="text" class="campo" id="p-nome" placeholder="Nome Completo *">
+        <input type="text" class="campo" id="p-id" placeholder="Prontuário *">
+        <button class="btn-acao" onclick="app.irParaMenu()">Entrar</button>
+    </div>
+
+    <div id="scr2" class="hidden">
+        <h2>O que deseja fazer?</h2>
+        <button class="btn-acao" onclick="app.nav(2, 5)">Abrir Chamado TI</button>
+        <button class="btn-acao" style="background: #333;" onclick="location.reload()">Sair</button>
+    </div>
+
+    <div id="scr5" class="hidden">
+        <h2>Suporte Técnico</h2>
+        <label>Gravidade *</label>
+        <div class="grid-ti">
+            <button class="btn-ti" id="g1" style="background:var(--grad-verde)" onclick="app.setGrau('BAIXO', 'g1')">BAIXO</button>
+            <button class="btn-ti" id="g2" style="background:var(--grad-amarelo)" onclick="app.setGrau('CRÍTICO', 'g2')">CRÍTICO</button>
+            <button class="btn-ti" id="g3" style="background:var(--grad-vermelho)" onclick="app.setGrau('URGENTE', 'g3')">URGENTE</button>
+        </div>
+        <label>Relato do Problema *</label>
+        <textarea class="campo" id="sup-motivo" style="height:100px; padding:10px;" placeholder="Descreva aqui..."></textarea>
+        <button class="btn-acao" onclick="app.enviarChamado()">Enviar ao Painel do Zé</button>
+        <button onclick="app.nav(5, 2)" style="background:none; border:none; color:white; margin-top:10px; cursor:pointer;">Voltar</button>
+    </div>
+</div>
 
 <script>
-    // Zé, preencha a API KEY que você pega na engrenagem do seu Firebase
     const firebaseConfig = {
-        apiKey: "COLE_AQUI_SUA_API_KEY", 
+        apiKey: "AIzaSyBoGfDKz-nBwKvczzGpxg-fHJYdVykcBUQ",
         authDomain: "escala-chacara.firebaseapp.com",
         databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com",
         projectId: "escala-chacara",
         storageBucket: "escala-chacara.appspot.com"
     };
     
-    // Inicializa
-    if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-    }
+    firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
     const app = {
-        equip: "", grau: "",
-
-        // FUNÇÃO PARA ENVIAR CHAMADO (COM TRAVA TOTAL)
+        grau: "",
+        nav(at, px) {
+            document.getElementById(`scr${at}`).classList.add('hidden');
+            document.getElementById(`scr${px}`).classList.remove('hidden');
+        },
+        irParaMenu() {
+            if(!document.getElementById('p-nome').value || !document.getElementById('p-id').value) return alert("Preencha seu nome e prontuário!");
+            this.nav(1, 2);
+        },
+        setGrau(val, id) {
+            this.grau = val;
+            document.querySelectorAll('.btn-ti').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        },
         enviarChamado() {
             const nome = document.getElementById('p-nome').value;
-            const pront = document.getElementById('p-id').value;
             const mot = document.getElementById('sup-motivo').value;
 
-            // TRAVA OBRIGATÓRIA - NÃO DEIXA PASSAR SEM TUDO PREENCHIDO
-            if(!nome || !pront || !this.grau || !mot) {
-                return alert("⚠️ SISTEMA TRAVADO: Preencha seu nome, selecione a cor da urgência e descreva o problema!");
-            }
+            // TRAVA OBRIGATÓRIA
+            if(!this.grau || !mot) return alert("ERRO: Escolha a gravidade e descreva o problema!");
 
-            const dados = {
+            const chamado = {
                 professor: nome,
-                prontuario: pront,
+                prontuario: document.getElementById('p-id').value,
                 urgencia: this.grau,
                 problema: mot,
                 data: new Date().toLocaleString('pt-BR'),
-                status: "Aberto"
+                status: "Pendente"
             };
 
-            // Envia para a pasta 'chamados'
-            database.ref('chamados').push(dados)
-                .then(() => {
-                    alert("✅ SUCESSO! O chamado foi enviado para o Zé (ADM).");
-                    location.reload(); // Limpa a tela
-                })
-                .catch(e => alert("ERRO: " + e.message));
-        },
-
-        // FUNÇÃO PARA ENVIAR RESERVA (COM TRAVA TOTAL)
-        enviarReserva() {
-            const nome = document.getElementById('p-nome').value;
-            const ini = document.getElementById('res-inicio').value;
-            const fim = document.getElementById('res-fim').value;
-            const sala = document.getElementById('res-sala-manual').value;
-
-            if(!nome || !ini || !fim || !sala || !this.equip) {
-                return alert("⚠️ SISTEMA TRAVADO: Preencha todos os campos da reserva!");
-            }
-
-            const reserva = {
-                professor: nome,
-                inicio: ini,
-                fim: fim,
-                sala: sala,
-                equipamento: this.equip,
-                data_registro: new Date().toLocaleString('pt-BR')
-            };
-
-            database.ref('reservas').push(reserva)
-                .then(() => {
-                    alert("✅ RESERVA SALVA COM SUCESSO!");
-                    location.reload();
-                })
-                .catch(e => alert("ERRO: " + e.message));
+            database.ref('chamados').push(chamado).then(() => {
+                alert("✅ ENVIADO! Verifique seu painel, Zé.");
+                location.reload();
+            }).catch(e => alert("Erro: " + e.message));
         }
     };
 </script>
+</body>
+</html>
