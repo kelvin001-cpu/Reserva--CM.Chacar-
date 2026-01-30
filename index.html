@@ -2,287 +2,212 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NTi - Gestão de Ativos C.M. Chácara Das Garças</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SISTEMA CHÁCARA DAS GARÇAS - ELITE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Orbitron:wght@600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --azul-gov: #002d5e;
-            --azul-claro: #0056b3;
-            --dourado: #c5a059;
-            --branco: #ffffff;
-            --glass: rgba(255, 255, 255, 0.9);
+            --azul-pref: #004a99; --azul-sky: #00adef; --neon: #00ff9d;
+            --nivel-1: #2ed573; --nivel-2: #ffa502; --nivel-3: #ff4757;
         }
-
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', sans-serif;
-            /* Fundo tecnológico lindo */
-            background: linear-gradient(rgba(0, 45, 94, 0.8), rgba(0, 45, 94, 0.8)), 
-                        url('https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
-            background-size: cover;
-            background-attachment: fixed;
-            background-position: center;
-            color: #333;
-            min-height: 100vh;
-        }
-
-        header {
-            background: var(--azul-gov);
-            color: white;
-            padding: 15px 5%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 4px solid var(--dourado);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-
-        .brasao-img { height: 50px; filter: brightness(0) invert(1); }
-
-        .container { max-width: 850px; margin: 40px auto; padding: 10px; }
-
-        .panel {
-            background: var(--glass);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            margin-bottom: 20px;
-        }
-
-        h2 { color: var(--azul-gov); text-align: center; text-transform: uppercase; letter-spacing: 1px; }
-
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-weight: bold; margin-bottom: 8px; color: var(--azul-gov); }
+        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: 0.3s; }
         
-        input, select, textarea { 
-            width: 100%; padding: 12px; border: 1px solid #ccc; 
-            border-radius: 8px; font-size: 15px; background: white;
+        body { 
+            margin: 0; background: #000b1a url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover; min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white;
         }
 
-        .btn {
-            background: var(--azul-claro);
-            color: white; border: none; padding: 15px;
-            width: 100%; font-weight: bold; cursor: pointer;
-            text-transform: uppercase; border-radius: 8px;
-            transition: 0.3s; font-size: 16px;
+        .balao-premium {
+            width: 95%; max-width: 480px; background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.25); border-radius: 40px;
+            padding: 30px; box-shadow: 0 30px 60px rgba(0,0,0,0.7);
+            text-align: center; border-bottom: 5px solid var(--azul-sky);
         }
-        .btn:hover { background: #003d7a; transform: scale(1.02); }
 
-        .sala-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; margin: 15px 0; }
-        .sala-btn {
-            background: white; border: 2px solid #ddd; padding: 10px; 
-            border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.2s;
+        .clock-header { font-size: 11px; font-weight: 600; color: var(--azul-sky); margin-bottom: 20px; letter-spacing: 1px; }
+        h1 { font-size: 18px; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 1px; }
+        p.sub { font-size: 11px; opacity: 0.7; margin-bottom: 25px; text-transform: uppercase; }
+
+        label { display: block; text-align: left; font-size: 10px; font-weight: 700; color: var(--azul-sky); margin: 15px 0 5px 10px; text-transform: uppercase; }
+        .campo { width: 100%; height: 52px; background: white; border-radius: 14px; border: none; padding: 0 18px; font-size: 14px; color: #111; margin-bottom: 12px; font-weight: 500; }
+        .campo:focus { border: 2px solid var(--azul-sky); outline: none; }
+
+        /* GRID DE EQUIPAMENTOS */
+        .btn-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 20px; }
+        .btn-item { 
+            height: 55px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 14px; color: white; cursor: pointer; font-size: 12px; font-weight: 600; text-align: center;
         }
-        .sala-btn.active { background: var(--azul-gov); color: white; border-color: var(--dourado); }
+        .btn-item.active { background: var(--azul-sky); border-color: white; transform: translateY(-2px); box-shadow: 0 8px 15px rgba(0, 173, 239, 0.3); }
 
-        #timer-display { font-size: 70px; font-weight: bold; color: var(--azul-gov); margin: 20px 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
-        
-        .hidden { display: none !important; }
-        .status-badge { background: #d9534f; color: white; padding: 5px 10px; border-radius: 20px; font-size: 12px; }
+        /* SUPORTE IA */
+        .ia-box { background: rgba(0, 173, 239, 0.15); border: 1px dashed var(--azul-sky); border-radius: 15px; padding: 15px; margin-bottom: 15px; font-size: 11px; text-align: left; }
 
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .menu-card {
-            background: var(--glass); padding: 40px; border-radius: 15px;
-            text-align: center; cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.3);
-        }
-        .menu-card:hover { background: white; transform: translateY(-5px); }
+        .btn-gravidade { height: 50px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; font-size: 9px; color: #000; }
+        .btn-gravidade.active { border: 2px solid white; transform: scale(1.05); }
+
+        .timer-view { font-family: 'Orbitron', sans-serif; font-size: 50px; color: var(--neon); margin: 20px 0; text-shadow: 0 0 15px var(--neon); }
+        .btn-acao { width: 100%; height: 60px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); color: white; font-weight: 700; text-transform: uppercase; cursor: pointer; }
+        .btn-voltar { background: none; border: 1px solid rgba(255,255,255,0.2); color: white; font-size: 11px; margin-top: 15px; width: 100%; padding: 10px; cursor: pointer; border-radius: 10px; }
+
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-<header>
-    <div style="display: flex; align-items: center; gap: 15px;">
-        <img src="https://www.santanadeparnaiba.sp.gov.br/portal/img/brasao.png" class="brasao-img" alt="Brasão">
-        <div>
-            <h1 style="margin:0; font-size: 18px;">NTi - CHÁCARA DAS GARÇAS</h1>
-            <small>Sistema de Controle de Ativos</small>
-        </div>
-    </div>
-    <div id="user-display" style="font-weight: bold;">Acesso Restrito</div>
-</header>
+    <div class="balao-premium">
+        <div class="clock-header" id="relogio-top">00/00/0000 00:00:00</div>
 
-<div class="container">
-
-    <div id="scr-login" class="panel">
-        <h2>Acesso do Professor</h2>
-        <div class="form-group">
-            <label>Usuário</label>
-            <input type="text" id="log-user" placeholder="E-mail ou RP">
-        </div>
-        <div class="form-group">
-            <label>Senha</label>
-            <input type="password" id="log-pass" placeholder="******">
-        </div>
-        <button class="btn" onclick="show('scr-perfil')">Entrar</button>
-    </div>
-
-    <div id="scr-perfil" class="panel hidden">
-        <h2>Dados de Identificação</h2>
-        <input type="text" id="prof-nome" placeholder="Seu nome completo" class="form-group">
-        <div style="display: flex; gap: 10px;">
-            <input type="text" id="prof-rp" placeholder="Prontuário/RP" class="form-group">
-            <input type="text" id="prof-mat" placeholder="Matéria" class="form-group">
-        </div>
-        <button class="btn" onclick="salvarPerfil()">Confirmar Dados</button>
-    </div>
-
-    <div id="scr-menu" class="hidden">
-        <div class="menu-grid">
-            <div class="menu-card" onclick="show('scr-reserva')">
-                <span style="font-size: 50px;">📅</span><br><b>RESERVAR</b>
-            </div>
-            <div class="menu-card" onclick="show('scr-suporte')">
-                <span style="font-size: 50px;">🛠️</span><br><b>SUPORTE TI</b>
-            </div>
-        </div>
-    </div>
-
-    <div id="scr-reserva" class="panel hidden">
-        <h2>Agendar Equipamento</h2>
-        
-        <label>1. Selecione a Sala de Aula:</label>
-        <div id="grid-salas" class="sala-grid"></div>
-
-        <label>2. Escolha o Equipamento:</label>
-        <select id="res-item" onchange="checkChrome()">
-            <option value="TV Digital (Pat: 230180)">TV Digital (Pat: 230180)</option>
-            <option value="Carrinho Chromebook (Pat: 247880)">Carrinho Chromebook (Pat: 247880)</option>
-            <option value="Lab. Informática">Laboratório de Informática</option>
-        </select>
-
-        <div id="chrome-box" class="form-group hidden" style="margin-top: 15px;">
-            <label>Quantidade de Chromebooks:</label>
-            <input type="number" id="res-qtd" min="1" max="40" value="1">
+        <div id="scr0">
+            <h1>PAINEL DE RESERVAS</h1>
+            <p class="sub">Gestão de Equipamentos e Suporte TI</p>
+            <button class="btn-acao" onclick="app.nav(0, 1)">ENTRAR NO SISTEMA</button>
         </div>
 
-        <div style="display: flex; gap: 10px; margin-top: 15px;">
-            <div class="form-group" style="flex: 1;">
-                <label>Data e Hora Início:</label>
-                <input type="datetime-local" id="res-data-ini">
-            </div>
-            <div class="form-group" style="flex: 1;">
-                <label>Previsão de Entrega:</label>
-                <input type="datetime-local" id="res-data-fim">
+        <div id="scr1" class="hidden">
+            <h1>CADASTRO DOCENTE</h1>
+            <p class="sub">Preenchimento Obrigatório</p>
+            <input type="text" class="campo" id="p-nome" placeholder="Nome Completo">
+            <input type="text" class="campo" id="p-id" placeholder="Prontuário">
+            <input type="text" class="campo" id="p-mat" placeholder="Matéria/Disciplina">
+            <button class="btn-acao" onclick="app.validarPerfil()">SALVAR E CONTINUAR</button>
+        </div>
+
+        <div id="scr2" class="hidden">
+            <h1>MENU PRINCIPAL</h1>
+            <div class="btn-grid">
+                <button class="btn-item active" onclick="app.nav(2, 3)">📅 REALIZAR NOVA RESERVA</button>
+                <button class="btn-item" onclick="app.nav(2, 5)">🤖 SUPORTE IA & CHAMADOS</button>
             </div>
         </div>
 
-        <button class="btn" onclick="validarReserva()">Confirmar e Protocolar</button>
-        <button class="btn" style="background:#777; margin-top:10px;" onclick="show('scr-menu')">Voltar</button>
-    </div>
+        <div id="scr3" class="hidden">
+            <h1>RESERVA</h1>
+            
+            <label>Data da Reserva</label>
+            <input type="date" class="campo" id="res-data">
 
-    <div id="scr-timer" class="panel hidden" style="text-align: center;">
-        <h2>Reserva Ativa</h2>
-        <div id="timer-display">00:00:00</div>
-        <p id="timer-msg" style="font-size: 18px; color: #555;"></p>
-        <button class="btn" style="background: #28a745;" onclick="liberarEquipamento()">FINALIZAR USO / LIBERAR ITEM</button>
-    </div>
+            <label>Série / Sala</label>
+            <select class="campo" id="res-sala">
+                <script>for(let i=1; i<=9; i++) document.write(`<option>${i}º Ano A</option>`);</script>
+            </select>
+            
+            <label>Escolha o Equipamento</label>
+            <div class="btn-grid">
+                <button class="btn-item" id="e1" onclick="app.setEq('SALA INFO', 'e1')">SALA DE INFORMÁTICA</button>
+                <button class="btn-item" id="e2" onclick="app.setEq('CHROMEBOOKS', 'e2')">CHROMEBOOKS (CONTROLE QTD)</button>
+                <button class="btn-item" id="e3" onclick="app.setEq('TV 1º ANDAR', 'e3')">TV DIGITAL - 1º ANDAR</button>
+                <button class="btn-item" id="e4" onclick="app.setEq('TV 2º ANDAR', 'e4')">TV DIGITAL - 2º ANDAR</button>
+            </div>
 
-    <div id="scr-suporte" class="panel hidden">
-        <h2>Chamado Técnico</h2>
-        <label>Gravidade:</label>
-        <select id="sup-cor" style="font-weight: bold; margin-bottom: 15px;">
-            <option value="verde" style="color: green;">🟢 VERDE (Pode esperar)</option>
-            <option value="amarelo" style="color: orange;">🟡 AMARELO (Urgente)</option>
-            <option value="vermelho" style="color: red;">🔴 VERMELHO (IMEDIATO)</option>
-        </select>
-        <textarea id="sup-txt" rows="5" placeholder="Descreva o problema..."></textarea>
-        <button class="btn" style="background: #d9534f; margin-top: 15px;" onclick="alert('Enviado!'); show('scr-menu')">Enviar para TI</button>
-        <button class="btn" style="background:#777; margin-top:10px;" onclick="show('scr-menu')">Voltar</button>
-    </div>
+            <div id="chrome-box" class="hidden">
+                <label>Tipo de Uso</label>
+                <select class="campo" id="c-modo" onchange="app.toggleChrome()">
+                    <option value="Carrinho">Carrinho Completo</option>
+                    <option value="Individual">Retirada Individual</option>
+                </select>
+                <input type="number" class="campo hidden" id="c-qtd" placeholder="Quantidade de aparelhos">
+            </div>
 
-</div>
+            <label>Horário de Entrega</label>
+            <input type="time" class="campo" id="res-hora">
+
+            <button class="btn-acao" onclick="app.iniciarUso()">CONFIRMAR E GERAR TIMER</button>
+            <button class="btn-voltar" onclick="app.nav(3, 2)">VOLTAR</button>
+        </div>
+
+        <div id="scr4" class="hidden">
+            <h1>CONTAGEM DE USO</h1>
+            <div class="timer-view" id="relogio-timer">50:00</div>
+            <p id="status-final" style="font-size:12px; opacity:0.8"></p>
+            <button class="btn-acao" style="background:var(--nivel-3)" onclick="location.reload()">FINALIZAR E LIBERAR</button>
+        </div>
+
+        <div id="scr5" class="hidden">
+            <h1>ASSISTENTE IA</h1>
+            <div class="ia-box">
+                <b style="color:var(--neon)">🤖 DICA DA IA:</b> <span id="ia-txt">Descreva o erro para eu te ajudar...</span>
+            </div>
+            <label>Impacto da Ocorrência</label>
+            <div class="btn-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+                <button class="btn-gravidade" id="g1" style="background:var(--nivel-1)" onclick="app.setGrau('BAIXO', 'g1')">BAIXO</button>
+                <button class="btn-gravidade" id="g2" style="background:var(--nivel-2)" onclick="app.setGrau('CRÍTICO', 'g2')">CRÍTICO</button>
+                <button class="btn-gravidade" id="g3" style="background:var(--nivel-3); color:white" onclick="app.setGrau('INTERRUPÇÃO', 'g3')">PARADA</button>
+            </div>
+            <label>Relato do Problema</label>
+            <textarea class="campo" id="sup-motivo" style="height:80px; padding:15px;" oninput="app.iaDica()"></textarea>
+            <button class="btn-acao" onclick="app.enviarSuporte()">ABRIR CHAMADO</button>
+            <button class="btn-voltar" onclick="app.nav(5, 2)">VOLTAR</button>
+        </div>
+    </div>
 
 <script>
-    let salaAtiva = "";
-    let itemEmUso = ""; // Simulação de "banco de dados" para bloquear itens
-    let profGlobal = {};
-    let tInterval;
-
-    function show(id) {
-        document.querySelectorAll('.panel, #scr-menu').forEach(p => p.classList.add('hidden'));
-        document.getElementById(id).classList.remove('hidden');
-    }
-
-    function salvarPerfil() {
-        profGlobal.nome = document.getElementById('prof-nome').value;
-        if(!profGlobal.nome) return alert("Preencha seu nome!");
-        document.getElementById('user-display').innerText = "Prof: " + profGlobal.nome;
-        show('scr-menu');
-    }
-
-    function initSalas() {
-        const grid = document.getElementById('grid-salas');
-        for(let i=1; i<=9; i++) {
-            let b = document.createElement('button');
-            b.className = 'sala-btn';
-            b.innerText = i + "º ANO A";
-            b.onclick = () => {
-                grid.querySelectorAll('.sala-btn').forEach(x => x.classList.remove('active'));
-                b.classList.add('active');
-                salaAtiva = b.innerText;
-            };
-            grid.appendChild(b);
+    const app = {
+        equip: "", grau: "", timer: null,
+        nav(at, px) {
+            document.getElementById(`scr${at}`).classList.add('hidden');
+            document.getElementById(`scr${px}`).classList.remove('hidden');
+        },
+        validarPerfil() {
+            const n = document.getElementById('p-nome').value;
+            const i = document.getElementById('p-id').value;
+            const m = document.getElementById('p-mat').value;
+            if(!n || !i || !m) return alert("ERRO: Todos os campos do docente são obrigatórios!");
+            this.nav(1, 2);
+        },
+        setEq(val, id) {
+            this.equip = val;
+            document.querySelectorAll('.btn-item').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.getElementById('chrome-box').className = (val === 'CHROMEBOOKS') ? '' : 'hidden';
+        },
+        toggleChrome() {
+            const m = document.getElementById('c-modo').value;
+            document.getElementById('c-qtd').className = (m === 'Individual') ? 'campo' : 'campo hidden';
+        },
+        setGrau(val, id) {
+            this.grau = val;
+            document.querySelectorAll('.btn-gravidade').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        },
+        iaDica() {
+            const m = document.getElementById('sup-motivo').value.toLowerCase();
+            const r = document.getElementById('ia-txt');
+            if(m.includes("wi") || m.includes("net")) r.innerText = "Verifique se o modo avião está desativado.";
+            else if(m.includes("liga") || m.includes("preta")) r.innerText = "Mantenha o botão Power pressionado por 15 segundos.";
+            else r.innerText = "Se o problema persistir, abra o chamado para o TI.";
+        },
+        iniciarUso() {
+            if(!this.equip || !document.getElementById('res-data').value || !document.getElementById('res-hora').value) 
+                return alert("Preencha a DATA, o EQUIPAMENTO e a HORA DE ENTREGA!");
+            
+            this.nav(3, 4);
+            const prof = document.getElementById('p-nome').value;
+            const data = new Date(document.getElementById('res-data').value).toLocaleDateString();
+            document.getElementById('status-final').innerHTML = `<b>DOCENTE:</b> ${prof}<br><b>ITEM:</b> ${this.equip}<br><b>DATA:</b> ${data} até as ${document.getElementById('res-hora').value}`;
+            this.startTimer(50);
+        },
+        startTimer(m) {
+            let s = m * 60;
+            this.timer = setInterval(() => {
+                let min = Math.floor(s/60), seg = s%60;
+                document.getElementById('relogio-timer').innerText = `${min.toString().padStart(2,'0')}:${seg.toString().padStart(2,'0')}`;
+                if(s === 300) alert("SISTEMA: Restam apenas 5 minutos!");
+                if(s <= 0) { clearInterval(this.timer); alert("TEMPO ESGOTADO!"); }
+                s--;
+            }, 1000);
+        },
+        enviarSuporte() {
+            if(!this.grau || !document.getElementById('sup-motivo').value) return alert("Preencha todos os campos do chamado!");
+            alert("Chamado enviado! O TI foi notificado com prioridade " + this.grau);
+            this.nav(5, 2);
         }
-    }
+    };
 
-    function checkChrome() {
-        const val = document.getElementById('res-item').value;
-        document.getElementById('chrome-box').classList.toggle('hidden', !val.includes("Chromebook"));
-    }
-
-    function validarReserva() {
-        const item = document.getElementById('res-item').value;
-        const fim = document.getElementById('res-data-fim').value;
-
-        // Regra de Notificação: Se o item já estiver reservado
-        if(itemEmUso === item) {
-            alert("⚠️ NOTIFICAÇÃO: O item [" + item + "] já se encontra RESERVADO ou EM USO por outro professor no momento!");
-            return;
-        }
-
-        if(!salaAtiva || !fim) return alert("Preencha todos os dados!");
-
-        itemEmUso = item; // Bloqueia o item
-        show('scr-timer');
-        document.getElementById('timer-msg').innerText = "Item: " + item + " | Sala: " + salaAtiva;
-        startCountdown(fim);
-    }
-
-    function startCountdown(fim) {
-        clearInterval(tInterval);
-        tInterval = setInterval(() => {
-            const agora = new Date().getTime();
-            const target = new Date(fim).getTime();
-            const dist = target - agora;
-
-            if (dist < 0) {
-                clearInterval(tInterval);
-                document.getElementById('timer-display').innerText = "EXPIRADO";
-                document.getElementById('timer-display').style.color = "red";
-                alert("O tempo acabou! Devolva o equipamento para liberar ao próximo.");
-            } else {
-                let h = Math.floor(dist / (1000 * 60 * 60));
-                let m = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60));
-                let s = Math.floor((dist % (1000 * 60)) / 1000);
-                document.getElementById('timer-display').innerText = 
-                    `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-                
-                if(m === 5 && s === 0) alert("Faltam 5 minutos para o horário de entrega!");
-            }
-        }, 1000);
-    }
-
-    function liberarEquipamento() {
-        clearInterval(tInterval);
-        itemEmUso = ""; // Libera o item para a próxima pessoa
-        alert("Equipamento finalizado e liberado no sistema!");
-        show('scr-menu');
-    }
-
-    initSalas();
+    setInterval(() => {
+        document.getElementById('relogio-top').innerText = new Date().toLocaleString('pt-BR');
+    }, 1000);
 </script>
-
 </body>
 </html>
