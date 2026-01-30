@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SISTEMA CHÁCARA DAS GARÇAS - ELITE V3</title>
+    <title>SISTEMA NTi - CHÁCARA DAS GARÇAS</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Orbitron:wght@600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -39,16 +39,16 @@
         }
         .btn-item.active { background: var(--azul-sky); border-color: white; box-shadow: 0 5px 15px rgba(0, 173, 239, 0.4); }
 
-        /* Estilo do Log/Histórico */
+        /* Estilo Ranking de Problemas */
+        .rank-box { display: flex; gap: 5px; margin-bottom: 15px; }
+        .rank-btn { flex: 1; height: 45px; border-radius: 10px; border: none; font-size: 9px; font-weight: 800; cursor: pointer; opacity: 0.4; }
+        .rank-btn.active { opacity: 1; transform: scale(1.05); border: 2px solid white; }
+
         .historico-box { 
             margin-top: 20px; text-align: left; background: rgba(0,0,0,0.4); 
-            border-radius: 15px; padding: 15px; max-height: 150px; overflow-y: auto; font-size: 10px;
+            border-radius: 15px; padding: 15px; max-height: 120px; overflow-y: auto; font-size: 10px;
         }
         .log-item { border-left: 3px solid var(--neon); padding-left: 10px; margin-bottom: 8px; color: #ddd; }
-
-        /* Checklist Style */
-        .check-container { text-align: left; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px; margin-bottom: 15px; }
-        .check-container input { margin-right: 10px; }
 
         .timer-view { font-family: 'Orbitron', sans-serif; font-size: 50px; color: var(--neon); margin: 20px 0; }
         .btn-acao { width: 100%; height: 60px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); color: white; font-weight: 700; text-transform: uppercase; cursor: pointer; }
@@ -63,32 +63,29 @@
         <div class="clock-header" id="relogio-top">00/00/0000 00:00:00</div>
 
         <div id="scr1">
-            <h1>ACESSO DOCENTE</h1>
-            <p class="sub">Identificação Obrigatória</p>
-            <input type="text" class="campo" id="p-nome" placeholder="Nome Completo">
-            <input type="text" class="campo" id="p-id" placeholder="Prontuário (RP)">
+            <h1>SISTEMA ELITE</h1>
+            <p class="sub">Portal do Docente - NTi</p>
+            <input type="text" class="campo" id="p-nome" placeholder="Nome do Professor">
+            <input type="text" class="campo" id="p-id" placeholder="RP / Prontuário">
             <input type="text" class="campo" id="p-mat" placeholder="Matéria">
-            <button class="btn-acao" onclick="app.validarPerfil()">ENTRAR NO PAINEL</button>
+            <button class="btn-acao" onclick="app.validarPerfil()">CONECTAR</button>
         </div>
 
         <div id="scr2" class="hidden">
-            <h1>OLÁ, PROF(A)!</h1>
-            <p class="sub">O que deseja realizar hoje?</p>
+            <h1>PAINEL PRINCIPAL</h1>
             <div class="btn-grid" style="grid-template-columns: 1fr;">
-                <button class="btn-item active" onclick="app.nav(2, 3)">📅 AGENDAR EQUIPAMENTO</button>
-                <button class="btn-item" onclick="app.nav(2, 5)">🛠️ SUPORTE TI / SALAS</button>
+                <button class="btn-item active" onclick="app.nav(2, 3)">📅 RESERVAR ATIVO</button>
+                <button class="btn-item" onclick="app.nav(2, 5)">🛠️ CHAMADO TÉCNICO</button>
             </div>
-            
             <div class="historico-box">
-                <b style="color:var(--azul-sky)">📋 ÚLTIMAS ATIVIDADES:</b>
-                <div id="log-lista"><i>Nenhum registro hoje.</i></div>
+                <b style="color:var(--azul-sky)">📋 LOG DE HOJE:</b>
+                <div id="log-lista"></div>
             </div>
         </div>
 
         <div id="scr3" class="hidden">
-            <h1>NOVA RESERVA</h1>
-            
-            <label>Equipamento</label>
+            <h1>RESERVA</h1>
+            <label>Selecione o Ativo</label>
             <div class="btn-grid">
                 <button class="btn-item" id="e1" onclick="app.setEq('SALA INFO', 'e1')">SALA INFO</button>
                 <button class="btn-item" id="e2" onclick="app.setEq('CHROMEBOOKS', 'e2')">CHROMEBOOKS</button>
@@ -96,44 +93,56 @@
                 <button class="btn-item" id="e4" onclick="app.setEq('TV 2º ANDAR', 'e4')">TV 2º ANDAR</button>
             </div>
 
-            <div class="check-container">
-                <label style="margin:0; color:white; font-size:9px">CHECKLIST DE RETIRADA:</label>
-                <input type="checkbox" id="chk1"> <small>Equipamento liga normalmente?</small><br>
-                <input type="checkbox" id="chk2"> <small>Cabos/Acessórios estão completos?</small>
+            <div id="chrome-options" class="hidden">
+                <label>Modo de Retirada</label>
+                <select class="campo" id="chrome-modo" onchange="app.toggleChromeQtd()">
+                    <option value="CARRINHO COMPLETO">Carrinho Completo (Todos)</option>
+                    <option value="UNIDADES">Unidades Avulsas</option>
+                </select>
+                <input type="number" id="chrome-qtd" class="campo hidden" placeholder="Quantos aparelhos?">
             </div>
 
-            <label>Horário de Devolução</label>
+            <label>Devolução Programada</label>
             <input type="time" class="campo" id="res-hora-fim">
 
-            <button class="btn-acao" onclick="app.iniciarUso()">CONFIRMAR RETIRADA</button>
+            <button class="btn-acao" onclick="app.iniciarUso()">GERAR PROTOCOLO</button>
             <button class="btn-voltar" onclick="app.nav(3, 2)">VOLTAR</button>
         </div>
 
         <div id="scr4" class="hidden">
-            <h1>USO EM CURSO</h1>
+            <h1>CRONÔMETRO DE USO</h1>
             <div class="timer-view" id="relogio-timer">00:00</div>
-            <p id="status-final" style="font-size:11px; opacity:0.8"></p>
-            <button class="btn-acao" style="background:var(--nivel-3)" onclick="app.finalizar()">FINALIZAR E DEVOLVER</button>
+            <p id="status-final" style="font-size:11px; line-height:1.6"></p>
+            <button class="btn-acao" style="background:var(--nivel-3)" onclick="app.finalizar()">FINALIZAR E LIBERAR</button>
         </div>
 
         <div id="scr5" class="hidden">
-            <h1>CHAMADO TI</h1>
-            <label>Sala/Setor</label>
+            <h1>SUPORTE TI</h1>
+            <label>Sala / Local</label>
             <select class="campo" id="sup-local">
                 <script>for(let i=1; i<=9; i++) document.write(`<option>${i}º Ano A</option>`);</script>
-                <option>Sala dos Professores</option>
-                <option>Secretaria / Direção</option>
+                <option>SALA DOS PROFESSORES</option>
+                <option>SECRETARIA</option>
             </select>
-            <label>Problema Encontrado</label>
+
+            <label>Grau do Problema (Ranking)</label>
+            <div class="rank-box">
+                <button class="rank-btn" id="r1" style="background:var(--nivel-1)" onclick="app.setRank('BAIXO', 'r1')">BAIXO<br>(Simples)</button>
+                <button class="rank-btn" id="r2" style="background:var(--nivel-2)" onclick="app.setRank('MÉDIO', 'r2')">MÉDIO<br>(Urgente)</button>
+                <button class="rank-btn" id="r3" style="background:var(--nivel-3); color:white" onclick="app.setRank('ALTO', 'r3')">ALTO<br>(Imediato)</button>
+            </div>
+
+            <label>Relatório da Ocorrência</label>
             <textarea class="campo" id="sup-motivo" style="height:70px; padding:10px;"></textarea>
-            <button class="btn-acao" onclick="app.enviarSuporte()">ENVIAR CHAMADO</button>
+            
+            <button class="btn-acao" onclick="app.enviarSuporte()">NOTIFICAR NTi</button>
             <button class="btn-voltar" onclick="app.nav(5, 2)">VOLTAR</button>
         </div>
     </div>
 
 <script>
     const app = {
-        equip: "", timer: null,
+        equip: "", rank: "", timer: null,
         
         nav(at, px) {
             document.getElementById(`scr${at}`).classList.add('hidden');
@@ -142,29 +151,46 @@
         },
 
         validarPerfil() {
-            if(!document.getElementById('p-nome').value) return alert("Insira seu nome!");
+            if(!document.getElementById('p-nome').value) return alert("Erro: Nome obrigatório!");
             this.nav(1, 2);
         },
 
         setEq(val, id) {
             const ocupado = localStorage.getItem(`uso_${val}`);
-            if(ocupado) return alert(`⚠️ OCUPADO: ${val} está com Prof. ${ocupado}`);
+            if(ocupado) return alert(`ITEM EM USO: Prof. ${ocupado}`);
+            
             this.equip = val;
             document.querySelectorAll('#scr3 .btn-item').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            
+            document.getElementById('chrome-options').className = (val === 'CHROMEBOOKS') ? '' : 'hidden';
+        },
+
+        toggleChromeQtd() {
+            const modo = document.getElementById('chrome-modo').value;
+            document.getElementById('chrome-qtd').className = (modo === 'UNIDADES') ? 'campo' : 'campo hidden';
+        },
+
+        setRank(val, id) {
+            this.rank = val;
+            document.querySelectorAll('.rank-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         },
 
         iniciarUso() {
             const hora = document.getElementById('res-hora-fim').value;
-            const c1 = document.getElementById('chk1').checked;
-            const c2 = document.getElementById('chk2').checked;
-
             if(!this.equip || !hora) return alert("Escolha o item e o horário!");
-            if(!c1 || !c2) return alert("Por favor, confirme o Checklist de integridade!");
+
+            let infoExtra = "";
+            if(this.equip === 'CHROMEBOOKS') {
+                const modo = document.getElementById('chrome-modo').value;
+                const qtd = document.getElementById('chrome-qtd').value;
+                infoExtra = modo === 'UNIDADES' ? `(${qtd} un)` : `(CARRINHO)`;
+            }
 
             localStorage.setItem(`uso_${this.equip}`, document.getElementById('p-nome').value);
             this.nav(3, 4);
-            document.getElementById('status-final').innerText = `${this.equip} em uso até as ${hora}`;
+            document.getElementById('status-final').innerHTML = `<b>ATIVO:</b> ${this.equip} ${infoExtra}<br><b>DEVOLUÇÃO:</b> ${hora}h`;
             this.startTimer(hora);
         },
 
@@ -175,7 +201,6 @@
                 const [h, m] = horaAlvo.split(':');
                 const t = new Date(); t.setHours(h, m, 0);
                 const diff = t - agora;
-                
                 if(diff <= 0) {
                     document.getElementById('relogio-timer').innerText = "00:00";
                     return clearInterval(this.timer);
@@ -186,29 +211,25 @@
         },
 
         finalizar() {
-            const prof = document.getElementById('p-nome').value;
-            const log = `${new Date().toLocaleTimeString()} - ${prof} devolveu ${this.equip}`;
-            
-            // Salva no histórico (localStorage)
-            let historico = JSON.parse(localStorage.getItem('logs') || '[]');
-            historico.unshift(log);
-            localStorage.setItem('logs', JSON.stringify(historico.slice(0, 5))); // Guarda os últimos 5
+            const log = `${new Date().toLocaleTimeString()} - ${this.equip} Liberado por ${document.getElementById('p-nome').value}`;
+            let logs = JSON.parse(localStorage.getItem('logs_chacara') || '[]');
+            logs.unshift(log);
+            localStorage.setItem('logs_chacara', JSON.stringify(logs.slice(0, 5)));
             
             localStorage.removeItem(`uso_${this.equip}`);
-            alert("Devolução registrada com sucesso!");
+            alert("Ativo liberado no sistema!");
             location.reload();
         },
 
         carregarLogs() {
             const lista = document.getElementById('log-lista');
-            const logs = JSON.parse(localStorage.getItem('logs') || '[]');
-            if(logs.length > 0) {
-                lista.innerHTML = logs.map(l => `<div class="log-item">${l}</div>`).join('');
-            }
+            const logs = JSON.parse(localStorage.getItem('logs_chacara') || '[]');
+            lista.innerHTML = logs.map(l => `<div class="log-item">${l}</div>`).join('') || "Sem registros.";
         },
 
         enviarSuporte() {
-            alert("Chamado enviado ao NTi!");
+            if(!this.rank) return alert("Selecione o grau do problema!");
+            alert(`NOTIFICADO! Prioridade: ${this.rank}. O TI foi avisado.`);
             this.nav(5, 2);
         }
     };
