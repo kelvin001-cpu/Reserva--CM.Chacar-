@@ -4,71 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SISTEMA NTi - CHÁCARA DAS GARÇAS</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Orbitron:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --azul-pref: #004a99; --azul-sky: #00adef; --neon: #00ff9d;
-            --nivel-1: #2ed573; --nivel-2: #ffa502; --nivel-3: #ff4757;
-            --bg-glass: rgba(255, 255, 255, 0.1);
+            --azul-pref: #004a99; --azul-sky: #00adef; --neon: #00ff9d; --danger: #ff4757;
+            --fundo: #000b1a;
         }
         * { box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: 0.3s; }
         
         body { 
-            margin: 0; background: #000b1a url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed;
+            margin: 0; background: var(--fundo) url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed;
             background-size: cover; min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white; padding: 15px;
         }
 
         .balao-premium {
-            width: 100%; max-width: 450px; background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255,255,255,0.25); border-radius: 35px;
-            padding: 25px; box-shadow: 0 30px 60px rgba(0,0,0,0.7);
-            text-align: center; border-bottom: 5px solid var(--azul-sky);
+            width: 100%; max-width: 550px; background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.25); border-radius: 30px;
+            padding: 25px; box-shadow: 0 30px 60px rgba(0,0,0,0.7); text-align: center;
         }
 
-        /* Estilização das "Sub-Bolhas" para inputs */
-        .input-group-bolha {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 20px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
+        .clock-header { font-size: 12px; font-weight: 600; color: var(--azul-sky); margin-bottom: 15px; letter-spacing: 1px; }
+        h1 { font-size: 22px; font-weight: 700; text-transform: uppercase; margin: 0; color: #fff; }
+        p.sub { font-size: 11px; opacity: 0.8; margin-bottom: 20px; letter-spacing: 1px; }
 
-        .clock-header { font-size: 11px; font-weight: 600; color: var(--azul-sky); margin-bottom: 15px; letter-spacing: 1px; }
-        h1 { font-size: 18px; font-weight: 700; text-transform: uppercase; margin: 0; letter-spacing: 1px; }
-        p.sub { font-size: 10px; opacity: 0.7; margin-bottom: 20px; text-transform: uppercase; }
-
-        label { display: block; text-align: left; font-size: 10px; font-weight: 700; color: var(--azul-sky); margin: 0 0 8px 5px; text-transform: uppercase; }
+        .input-group-bolha { background: rgba(0, 0, 0, 0.4); border-radius: 20px; padding: 15px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        label { display: block; text-align: left; font-size: 10px; font-weight: 700; color: var(--azul-sky); margin: 0 0 5px 5px; text-transform: uppercase; }
         
-        .campo { 
-            width: 100%; height: 48px; background: white; border-radius: 12px; border: none; 
-            padding: 0 15px; font-size: 14px; color: #111; margin-bottom: 10px; font-weight: 600;
-            appearance: none; /* Remove seta padrão no mobile */
-        }
+        .campo { width: 100%; height: 45px; background: white; border-radius: 12px; border: none; padding: 0 15px; font-size: 14px; color: #111; margin-bottom: 12px; font-weight: 600; }
         
-        /* Ajuste específico para input de hora e select no mobile */
-        input[type="time"], select.campo {
-            text-align: center;
-            cursor: pointer;
-        }
+        .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
+        
+        .btn-item { height: 40px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; cursor: pointer; font-size: 9px; font-weight: 700; }
+        .btn-item.active { background: var(--azul-sky); border-color: white; }
 
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
-        .btn-item { 
-            height: 48px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 12px; color: white; cursor: pointer; font-size: 10px; font-weight: 600;
-        }
-        .btn-item.active { background: var(--azul-sky); border-color: white; box-shadow: 0 5px 15px rgba(0, 173, 239, 0.4); }
+        .btn-acao { width: 100%; height: 50px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); color: white; font-weight: 700; text-transform: uppercase; cursor: pointer; margin-top: 10px; }
+        .btn-voltar { background: none; border: 1px solid rgba(255,255,255,0.2); color: white; font-size: 10px; margin-top: 15px; width: 100%; padding: 10px; cursor: pointer; border-radius: 10px; }
 
-        .btn-acao { width: 100%; height: 55px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); color: white; font-weight: 700; text-transform: uppercase; cursor: pointer; margin-top: 10px;}
-        .btn-voltar { background: none; border: 1px solid rgba(255,255,255,0.2); color: white; font-size: 11px; margin-top: 10px; width: 100%; padding: 10px; cursor: pointer; border-radius: 10px; }
-
-        .timer-view { font-family: 'Orbitron', sans-serif; font-size: 45px; color: var(--neon); margin: 15px 0; text-shadow: 0 0 15px rgba(0,255,157,0.3); }
+        .card-cronograma { background: rgba(0,0,0,0.5); padding: 12px; border-radius: 15px; margin-bottom: 10px; text-align: left; border-left: 5px solid var(--azul-sky); font-size: 11px; }
         .hidden { display: none; }
-
-        /* Monitoramento Card */
-        .monitor-card { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 15px; margin-bottom: 10px; text-align: left; border-left: 4px solid var(--neon); font-size: 11px; }
-        .monitor-card.busy { border-left-color: var(--nivel-3); }
+        
+        /* Estilo Calendário/Cronograma */
+        .calendario-mini { display: flex; overflow-x: auto; gap: 10px; margin-bottom: 20px; padding-bottom: 10px; }
+        .dia-col { min-width: 140px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        .dia-titulo { font-size: 10px; font-weight: 700; color: var(--neon); text-align: center; margin-bottom: 10px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
     </style>
 </head>
 <body>
@@ -77,182 +56,164 @@
         <div class="clock-header" id="relogio-top">00/00/0000 00:00:00</div>
 
         <div id="scr1">
-            <h1>SISTEMA ELITE</h1>
-            <p class="sub">Portal do Docente - NTi</p>
+            <h1>SISTEMA NTi</h1>
+            <p class="sub">CHÁCARA DAS GARÇAS - ELITE</p>
             <input type="text" class="campo" id="p-nome" placeholder="Nome do Professor">
-            <input type="text" class="campo" id="p-id" placeholder="RP / Prontuário (admin p/ monitor)">
-            <input type="text" class="campo" id="p-mat" placeholder="Matéria">
-            <button class="btn-acao" onclick="app.validarPerfil()">CONECTAR</button>
+            <input type="text" class="campo" id="p-id" placeholder="Prontuário / RP">
+            <input type="text" class="campo" id="p-materia" placeholder="Sua Matéria">
+            <button class="btn-acao" onclick="app.validarPerfil()">ENTRAR NO PORTAL</button>
         </div>
 
         <div id="scr2" class="hidden">
-            <h1>PAINEL PRINCIPAL</h1>
-            <div class="btn-grid" style="grid-template-columns: 1fr; margin-top: 20px;">
-                <button class="btn-item active" style="height: 60px; font-size: 13px;" onclick="app.nav(2, 3)">📅 RESERVAR ATIVO</button>
-                <button class="btn-item" style="height: 60px; font-size: 13px;" onclick="app.nav(2, 5)">🛠️ CHAMADO TÉCNICO</button>
+            <h1 id="boas-vindas">OLÁ</h1>
+            <div class="nav-grid">
+                <button class="btn-item" style="height: 80px;" onclick="app.nav(2, 3)">📅 RESERVAR<br>EQUIPAMENTO</button>
+                <button class="btn-item" style="height: 80px;" onclick="app.nav(2, 6)">🖥️ CRONOGRAMA<br>& RESERVAS</button>
+                <button class="btn-item" style="height: 80px; grid-column: span 2; border-color: var(--neon);" onclick="app.nav(2, 7)">🛠️ ABRIR CHAMADO NTi</button>
             </div>
-            <button class="btn-voltar" onclick="location.reload()">SAIR DO SISTEMA</button>
+            <button class="btn-voltar" onclick="location.reload()">SAIR</button>
         </div>
 
         <div id="scr3" class="hidden">
-            <h1>RESERVA</h1>
-            
-            <label>1. Selecione o Ativo</label>
+            <h1>NOVA RESERVA</h1>
+            <label>Selecione o Ativo</label>
             <div class="btn-grid">
                 <button class="btn-item" id="e1" onclick="app.setEq('SALA INFO', 'e1')">SALA INFO</button>
                 <button class="btn-item" id="e2" onclick="app.setEq('CHROMEBOOKS', 'e2')">CHROMEBOOKS</button>
-                <button class="btn-item" id="e3" onclick="app.setEq('TV 1º ANDAR', 'e3')">TV 1º ANDAR</button>
-                <button class="btn-item" id="e4" onclick="app.setEq('TV 2º ANDAR', 'e4')">TV 2º ANDAR</button>
+                <button class="btn-item" id="e3" onclick="app.setEq('TV 01', 'e3')">TV 01</button>
+                <button class="btn-item" id="e4" onclick="app.setEq('TV 02', 'e4')">TV 02</button>
+                <button class="btn-item" id="e5" onclick="app.setEq('TV 03', 'e5')">TV 03</button>
+                <button class="btn-item" id="e6" onclick="app.setEq('CELULARES', 'e6')">CELULARES</button>
             </div>
 
             <div class="input-group-bolha">
-                <div id="chrome-options" class="hidden">
-                    <label>Modo Chromebook</label>
-                    <select class="campo" id="chrome-modo" onchange="app.toggleChromeQtd()">
-                        <option value="CARRINHO COMPLETO">Carrinho Completo</option>
-                        <option value="UNIDADES">Unidades Avulsas</option>
-                    </select>
-                    <input type="number" id="chrome-qtd" class="campo hidden" placeholder="Quantidade?">
-                </div>
+                <label>Frequência da Reserva</label>
+                <select class="campo" id="res-tipo">
+                    <option value="HOJE">Somente Hoje</option>
+                    <option value="RECORRENTE">Vitalícia (Próximas 6 semanas)</option>
+                </select>
 
-                <label>2. Horário de Devolução</label>
-                <input type="time" class="campo" id="res-hora-fim" value="12:00">
+                <label>Dia da Semana</label>
+                <select class="campo" id="res-dia">
+                    <option value="Segunda">Segunda-feira</option>
+                    <option value="Terça">Terça-feira</option>
+                    <option value="Quarta">Quarta-feira</option>
+                    <option value="Quinta">Quinta-feira</option>
+                    <option value="Sexta">Sexta-feira</option>
+                </select>
+
+                <label>Horário de Devolução</label>
+                <input type="time" class="campo" id="res-hora-fim">
             </div>
 
-            <button class="btn-acao" onclick="app.iniciarUso()">CONFIRMAR RESERVA</button>
+            <button class="btn-acao" onclick="app.confirmarReserva()">SALVAR NO CALENDÁRIO</button>
             <button class="btn-voltar" onclick="app.nav(3, 2)">CANCELAR</button>
         </div>
 
-        <div id="scr4" class="hidden">
-            <h1>EM USO</h1>
-            <div class="timer-view" id="relogio-timer">00:00</div>
-            <div class="input-group-bolha" id="status-final" style="font-size:12px; line-height:1.6; color: #fff;"></div>
-            <button class="btn-acao" style="background:var(--nivel-3)" onclick="app.finalizar()">FINALIZAR E LIBERAR</button>
-        </div>
-
         <div id="scr6" class="hidden">
-            <h1>PAINEL DE CONTROLE</h1>
-            <div id="admin-monitor" style="margin-top:15px; max-height: 380px; overflow-y: auto; padding-right: 5px;"></div>
-            <button class="btn-voltar" style="border-color: var(--nivel-3); color: var(--nivel-3)" onclick="app.resetarSistema()">LIMPAR TUDO</button>
-            <button class="btn-voltar" onclick="location.reload()">VOLTAR</button>
-        </div>
-        
-        <div id="scr5" class="hidden">
-            <h1>SUPORTE</h1>
-            <div class="input-group-bolha">
-                <label>Local</label>
-                <input type="text" class="campo" id="sup-local" placeholder="Ex: Sala 05">
-                <label>Ocorrência</label>
-                <textarea class="campo" id="sup-motivo" style="height:80px; padding-top:10px;"></textarea>
-            </div>
-            <button class="btn-acao" onclick="app.enviarSuporte()">ENVIAR CHAMADO</button>
-            <button class="btn-voltar" onclick="app.nav(5, 2)">VOLTAR</button>
+            <h1>CRONOGRAMA SEMANAL</h1>
+            <p class="sub">Reservas por dia da semana</p>
+            <div class="calendario-mini" id="calendario-view">
+                </div>
+            <button class="btn-voltar" onclick="app.nav(6, 2)">VOLTAR</button>
         </div>
 
+        <div id="scr7" class="hidden">
+            <h1>CHAMADO NTi</h1>
+            <p class="sub">Suporte técnico especializado</p>
+            <div class="input-group-bolha">
+                <label>Tipo de Problema</label>
+                <select class="campo" id="chamado-tipo">
+                    <option value="INTERNET">Internet / Wi-Fi</option>
+                    <option value="HARDWARE">Computador / TV com defeito</option>
+                    <option value="SENHA">Acesso / Senhas</option>
+                    <option value="OUTROS">Outros Problemas</option>
+                </select>
+                <label>Descrição breve</label>
+                <textarea class="campo" id="chamado-desc" style="height: 80px; padding: 10px;" placeholder="Explique o que houve..."></textarea>
+            </div>
+            <button class="btn-acao" style="background: var(--neon); color: #000;" onclick="app.enviarChamado()">ENVIAR CHAMADO</button>
+            <button class="btn-voltar" onclick="app.nav(7, 2)">VOLTAR</button>
+        </div>
     </div>
 
 <script>
     const app = {
-        equip: "", timer: null,
-        ativos: ['SALA INFO', 'CHROMEBOOKS', 'TV 1º ANDAR', 'TV 2º ANDAR'],
+        equip: "",
+        dias: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'],
 
         nav(at, px) {
             document.querySelectorAll('.balao-premium > div[id^="scr"]').forEach(d => d.classList.add('hidden'));
             document.getElementById(`scr${px}`).classList.remove('hidden');
-            if(px === 6) this.atualizarMonitor();
+            if(px === 6) this.atualizarCalendario();
         },
 
         validarPerfil() {
-            const nome = document.getElementById('p-nome').value;
-            const id = document.getElementById('p-id').value;
-            if(!nome) return alert("Por favor, digite seu nome.");
-            if(id.toLowerCase() === 'admin') return this.nav(1, 6);
+            const n = document.getElementById('p-nome').value;
+            const m = document.getElementById('p-materia').value;
+            if(!n || !m) return alert("Preencha seu nome e matéria!");
+            document.getElementById('boas-vindas').innerText = `OLÁ, PROF. ${n.split(' ')[0]}`;
             this.nav(1, 2);
         },
 
         setEq(val, id) {
-            if(localStorage.getItem(`uso_${val}`)) return alert("Este item já está ocupado!");
             this.equip = val;
             document.querySelectorAll('#scr3 .btn-item').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            document.getElementById('chrome-options').classList.toggle('hidden', val !== 'CHROMEBOOKS');
         },
 
-        toggleChromeQtd() {
-            const modo = document.getElementById('chrome-modo').value;
-            document.getElementById('chrome-qtd').classList.toggle('hidden', modo !== 'UNIDADES');
-        },
-
-        iniciarUso() {
+        confirmarReserva() {
+            const tipo = document.getElementById('res-tipo').value;
+            const dia = document.getElementById('res-dia').value;
             const hora = document.getElementById('res-hora-fim').value;
-            if(!this.equip || !hora) return alert("Selecione o ativo e o horário!");
-
             const prof = document.getElementById('p-nome').value;
-            localStorage.setItem(`uso_${this.equip}`, prof);
-            localStorage.setItem(`detalhe_${this.equip}`, `Até às ${hora}`);
-            
-            this.nav(3, 4);
-            document.getElementById('status-final').innerHTML = `<b>ATIVO:</b> ${this.equip}<br><b>RESPONSÁVEL:</b> ${prof}<br><b>DEVOLUÇÃO:</b> ${hora}`;
-            this.startTimer(hora);
-        },
+            const materia = document.getElementById('p-materia').value;
 
-        startTimer(horaAlvo) {
-            clearInterval(this.timer);
-            const atualizar = () => {
-                const agora = new Date();
-                const [h, m] = horaAlvo.split(':');
-                const t = new Date(); t.setHours(h, m, 0);
-                const diff = t - agora;
-                if(diff <= 0) {
-                    document.getElementById('relogio-timer').innerText = "EXCEDIDO";
-                    document.getElementById('relogio-timer').style.color = "var(--nivel-3)";
-                    return;
-                }
-                const min = Math.floor(diff/60000), seg = Math.floor((diff%60000)/1000);
-                document.getElementById('relogio-timer').innerText = `${min}:${seg.toString().padStart(2,'0')}`;
+            if(!this.equip || !hora) return alert("Selecione o equipamento e horário!");
+
+            const reserva = {
+                prof, materia, dia, hora, 
+                equip: this.equip, 
+                tipo: tipo === 'RECORRENTE' ? 'Vitalícia' : 'Única'
             };
-            atualizar();
-            this.timer = setInterval(atualizar, 1000);
+
+            let banco = JSON.parse(localStorage.getItem('reservas_elite_v2') || '[]');
+            banco.push(reserva);
+            localStorage.setItem('reservas_elite_v2', JSON.stringify(banco));
+
+            alert("RESERVA ADICIONADA AO CRONOGRAMA!");
+            this.nav(3, 6);
         },
 
-        finalizar() {
-            localStorage.removeItem(`uso_${this.equip}`);
-            localStorage.removeItem(`detalhe_${this.equip}`);
-            location.reload();
+        atualizarCalendario() {
+            const container = document.getElementById('calendario-view');
+            let banco = JSON.parse(localStorage.getItem('reservas_elite_v2') || '[]');
+            
+            container.innerHTML = this.dias.map(dia => {
+                const reservasDoDia = banco.filter(r => r.dia === dia);
+                return `
+                    <div class="dia-col">
+                        <div class="dia-titulo">${dia}</div>
+                        ${reservasDoDia.length === 0 ? '<p style="font-size:8px; opacity:0.4; text-align:center">Sem reservas</p>' : ''}
+                        ${reservasDoDia.map((r, i) => `
+                            <div class="card-cronograma" style="border-left-color: ${r.tipo === 'Vitalícia' ? 'var(--neon)' : 'var(--azul-sky)'}">
+                                <b>${r.equip}</b><br>
+                                <span style="color:var(--azul-sky)">${r.prof}</span><br>
+                                <i>${r.materia}</i><br>
+                                Fim: ${r.hora}h
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }).join('');
         },
 
-        atualizarMonitor() {
-            const container = document.getElementById('admin-monitor');
-            let html = `<label>Status dos Equipamentos</label>`;
-            this.ativos.forEach(at => {
-                const user = localStorage.getItem(`uso_${at}`);
-                html += `
-                    <div class="monitor-card ${user ? 'busy' : ''}">
-                        <div style="display:flex; justify-content:space-between">
-                            <b>${at}</b>
-                            <span>${user ? '🔴' : '🟢'}</span>
-                        </div>
-                        <div style="opacity:0.8; margin-top:5px">
-                            ${user ? 'Prof: ' + user + '<br>' + localStorage.getItem(`detalhe_${at}`) : 'Disponível'}
-                        </div>
-                    </div>`;
-            });
-            container.innerHTML = html;
-        },
-
-        resetarSistema() {
-            if(confirm("Deseja liberar todos os ativos?")) {
-                this.ativos.forEach(at => {
-                    localStorage.removeItem(`uso_${at}`);
-                    localStorage.removeItem(`detalhe_${at}`);
-                });
-                this.atualizarMonitor();
-            }
-        },
-
-        enviarSuporte() {
-            alert("Chamado enviado ao NTi!");
-            this.nav(5, 2);
+        enviarChamado() {
+            const desc = document.getElementById('chamado-desc').value;
+            if(!desc) return alert("Descreva o problema!");
+            alert("CHAMADO ENVIADO AO NTi! Protocolo gerado.");
+            document.getElementById('chamado-desc').value = "";
+            this.nav(7, 2);
         }
     };
 
