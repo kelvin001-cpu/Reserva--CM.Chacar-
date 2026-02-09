@@ -3,81 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SISTEMA NTi - CHÁCARA DAS GARÇAS</title>
+    <title>SISTEMA NTi - ELITE</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+
     <style>
         :root {
-            --azul-pref: #004a99; --azul-sky: #00adef; --neon: #00ff9d; --danger: #ff4757;
+            --azul-pref: #004a99; --azul-sky: #00adef; --neon: #00ff9d;
             --fundo: #000b1a;
         }
         * { box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: 0.3s; }
-        
         body { 
             margin: 0; background: var(--fundo) url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed;
-            background-size: cover; min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white; padding: 15px;
+            background-size: cover; min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white; padding: 10px;
         }
-
         .balao-premium {
-            width: 100%; max-width: 550px; background: rgba(255, 255, 255, 0.1);
+            width: 100%; max-width: 600px; background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.25); border-radius: 30px;
-            padding: 25px; box-shadow: 0 30px 60px rgba(0,0,0,0.7); text-align: center;
+            padding: 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.7); text-align: center;
         }
-
-        .clock-header { font-size: 12px; font-weight: 600; color: var(--azul-sky); margin-bottom: 15px; letter-spacing: 1px; }
-        h1 { font-size: 22px; font-weight: 700; text-transform: uppercase; margin: 0; color: #fff; }
-        p.sub { font-size: 11px; opacity: 0.8; margin-bottom: 20px; letter-spacing: 1px; }
-
-        .input-group-bolha { background: rgba(0, 0, 0, 0.4); border-radius: 20px; padding: 15px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
-        label { display: block; text-align: left; font-size: 10px; font-weight: 700; color: var(--azul-sky); margin: 0 0 5px 5px; text-transform: uppercase; }
+        .clock-header { font-size: 11px; color: var(--azul-sky); margin-bottom: 10px; font-weight: 600; }
+        h1 { font-size: 18px; text-transform: uppercase; margin: 0; }
+        .campo { width: 100%; height: 45px; background: white; border-radius: 12px; border: none; padding: 0 15px; font-size: 14px; color: #111; margin-bottom: 10px; font-weight: 600; }
         
-        .campo { width: 100%; height: 45px; background: white; border-radius: 12px; border: none; padding: 0 15px; font-size: 14px; color: #111; margin-bottom: 12px; font-weight: 600; }
-        
-        .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        /* Grid de Botões */
         .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
-        
-        .btn-item { height: 40px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; cursor: pointer; font-size: 9px; font-weight: 700; }
+        .btn-item { height: 45px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; cursor: pointer; font-size: 9px; font-weight: 700; }
         .btn-item.active { background: var(--azul-sky); border-color: white; }
 
-        .btn-acao { width: 100%; height: 50px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); color: white; font-weight: 700; text-transform: uppercase; cursor: pointer; margin-top: 10px; }
-        .btn-voltar { background: none; border: 1px solid rgba(255,255,255,0.2); color: white; font-size: 10px; margin-top: 15px; width: 100%; padding: 10px; cursor: pointer; border-radius: 10px; }
-
-        .card-cronograma { background: rgba(0,0,0,0.5); padding: 12px; border-radius: 15px; margin-bottom: 10px; text-align: left; border-left: 5px solid var(--azul-sky); font-size: 11px; }
-        .hidden { display: none; }
+        /* Estilo Cronograma */
+        .cronograma-container { display: flex; overflow-x: auto; gap: 10px; padding: 10px 0; margin-top: 10px; }
+        .dia-coluna { min-width: 160px; background: rgba(0,0,0,0.3); border-radius: 15px; padding: 10px; border: 1px solid rgba(255,255,255,0.1); }
+        .dia-nome { color: var(--neon); font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .reserva-card { background: rgba(255,255,255,0.05); padding: 8px; border-radius: 10px; margin-bottom: 8px; text-align: left; font-size: 11px; border-left: 3px solid var(--azul-sky); }
         
-        /* Estilo Calendário/Cronograma */
-        .calendario-mini { display: flex; overflow-x: auto; gap: 10px; margin-bottom: 20px; padding-bottom: 10px; }
-        .dia-col { min-width: 140px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
-        .dia-titulo { font-size: 10px; font-weight: 700; color: var(--neon); text-align: center; margin-bottom: 10px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
+        .btn-acao { width: 100%; height: 50px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); color: white; font-weight: 700; cursor: pointer; }
+        .btn-voltar { background: none; border: 1px solid rgba(255,255,255,0.2); color: white; margin-top: 10px; width: 100%; padding: 8px; cursor: pointer; border-radius: 10px; font-size: 10px; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
     <div class="balao-premium">
-        <div class="clock-header" id="relogio-top">00/00/0000 00:00:00</div>
+        <div class="clock-header" id="relogio">00/00/0000 00:00:00</div>
 
         <div id="scr1">
             <h1>SISTEMA NTi</h1>
-            <p class="sub">CHÁCARA DAS GARÇAS - ELITE</p>
+            <p style="font-size:10px; opacity:0.7">PORTAL DO DOCENTE</p>
             <input type="text" class="campo" id="p-nome" placeholder="Nome do Professor">
             <input type="text" class="campo" id="p-id" placeholder="Prontuário / RP">
-            <input type="text" class="campo" id="p-materia" placeholder="Sua Matéria">
-            <button class="btn-acao" onclick="app.validarPerfil()">ENTRAR NO PORTAL</button>
+            <input type="text" class="campo" id="p-materia" placeholder="Matéria">
+            <button class="btn-acao" onclick="app.login()">ENTRAR</button>
         </div>
 
         <div id="scr2" class="hidden">
-            <h1 id="boas-vindas">OLÁ</h1>
-            <div class="nav-grid">
-                <button class="btn-item" style="height: 80px;" onclick="app.nav(2, 3)">📅 RESERVAR<br>EQUIPAMENTO</button>
-                <button class="btn-item" style="height: 80px;" onclick="app.nav(2, 6)">🖥️ CRONOGRAMA<br>& RESERVAS</button>
-                <button class="btn-item" style="height: 80px; grid-column: span 2; border-color: var(--neon);" onclick="app.nav(2, 7)">🛠️ ABRIR CHAMADO NTi</button>
+            <h1 id="user-txt">OLÁ</h1>
+            <div style="display:grid; gap:10px; margin-top:20px;">
+                <button class="btn-acao" onclick="app.nav(3)">📅 NOVA RESERVA</button>
+                <button class="btn-acao" style="background:#000" onclick="app.nav(6)">🖥️ VER CRONOGRAMA</button>
+                <button class="btn-acao" style="background:var(--danger)" onclick="app.nav(7)">🛠️ CHAMADO NTi</button>
             </div>
             <button class="btn-voltar" onclick="location.reload()">SAIR</button>
         </div>
 
         <div id="scr3" class="hidden">
-            <h1>NOVA RESERVA</h1>
-            <label>Selecione o Ativo</label>
-            <div class="btn-grid">
+            <h1>RESERVAR ATIVO</h1>
+            <div class="btn-grid" style="margin-top:15px;">
                 <button class="btn-item" id="e1" onclick="app.setEq('SALA INFO', 'e1')">SALA INFO</button>
                 <button class="btn-item" id="e2" onclick="app.setEq('CHROMEBOOKS', 'e2')">CHROMEBOOKS</button>
                 <button class="btn-item" id="e3" onclick="app.setEq('TV 01', 'e3')">TV 01</button>
@@ -85,15 +78,12 @@
                 <button class="btn-item" id="e5" onclick="app.setEq('TV 03', 'e5')">TV 03</button>
                 <button class="btn-item" id="e6" onclick="app.setEq('CELULARES', 'e6')">CELULARES</button>
             </div>
-
-            <div class="input-group-bolha">
-                <label>Frequência da Reserva</label>
+            
+            <div style="background:rgba(0,0,0,0.3); padding:15px; border-radius:15px;">
                 <select class="campo" id="res-tipo">
-                    <option value="HOJE">Somente Hoje</option>
-                    <option value="RECORRENTE">Vitalícia (Próximas 6 semanas)</option>
+                    <option value="UNICA">Somente Hoje</option>
+                    <option value="VITALICIA">Recorrente (Próximos 40 dias)</option>
                 </select>
-
-                <label>Dia da Semana</label>
                 <select class="campo" id="res-dia">
                     <option value="Segunda">Segunda-feira</option>
                     <option value="Terça">Terça-feira</option>
@@ -101,125 +91,126 @@
                     <option value="Quinta">Quinta-feira</option>
                     <option value="Sexta">Sexta-feira</option>
                 </select>
-
-                <label>Horário de Devolução</label>
-                <input type="time" class="campo" id="res-hora-fim">
+                <input type="time" class="campo" id="res-hora">
             </div>
-
-            <button class="btn-acao" onclick="app.confirmarReserva()">SALVAR NO CALENDÁRIO</button>
-            <button class="btn-voltar" onclick="app.nav(3, 2)">CANCELAR</button>
+            
+            <button class="btn-acao" style="margin-top:10px;" onclick="app.salvarReserva()">CONFIRMAR NO BANCO</button>
+            <button class="btn-voltar" onclick="app.nav(2)">VOLTAR</button>
         </div>
 
         <div id="scr6" class="hidden">
-            <h1>CRONOGRAMA SEMANAL</h1>
-            <p class="sub">Reservas por dia da semana</p>
-            <div class="calendario-mini" id="calendario-view">
-                </div>
-            <button class="btn-voltar" onclick="app.nav(6, 2)">VOLTAR</button>
+            <h1>CRONOGRAMA DE USO</h1>
+            <div class="cronograma-container" id="cronograma-view"></div>
+            <button class="btn-voltar" onclick="app.nav(2)">VOLTAR</button>
         </div>
 
         <div id="scr7" class="hidden">
-            <h1>CHAMADO NTi</h1>
-            <p class="sub">Suporte técnico especializado</p>
-            <div class="input-group-bolha">
-                <label>Tipo de Problema</label>
-                <select class="campo" id="chamado-tipo">
-                    <option value="INTERNET">Internet / Wi-Fi</option>
-                    <option value="HARDWARE">Computador / TV com defeito</option>
-                    <option value="SENHA">Acesso / Senhas</option>
-                    <option value="OUTROS">Outros Problemas</option>
-                </select>
-                <label>Descrição breve</label>
-                <textarea class="campo" id="chamado-desc" style="height: 80px; padding: 10px;" placeholder="Explique o que houve..."></textarea>
-            </div>
-            <button class="btn-acao" style="background: var(--neon); color: #000;" onclick="app.enviarChamado()">ENVIAR CHAMADO</button>
-            <button class="btn-voltar" onclick="app.nav(7, 2)">VOLTAR</button>
+            <h1>SUPORTE NTi</h1>
+            <textarea class="campo" id="ch-desc" style="height:100px; padding:10px; margin-top:15px;" placeholder="Descreva o problema técnico..."></textarea>
+            <button class="btn-acao" onclick="app.enviarChamado()">ENVIAR PARA O TI</button>
+            <button class="btn-voltar" onclick="app.nav(2)">VOLTAR</button>
         </div>
     </div>
 
 <script>
+    // ==========================================
+    // CONFIGURAÇÃO DO FIREBASE (COLE SEUS DADOS AQUI)
+    // ==========================================
+    const firebaseConfig = {
+        apiKey: "SUA_API_KEY",
+        authDomain: "SEU_PROJETO.firebaseapp.com",
+        databaseURL: "https://SEU_PROJETO-default-rtdb.firebaseio.com",
+        projectId: "SEU_PROJETO",
+        storageBucket: "SEU_PROJETO.appspot.com",
+        messagingSenderId: "SEU_ID",
+        appId: "SUA_APP_ID"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
     const app = {
+        user: {},
         equip: "",
         dias: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'],
 
-        nav(at, px) {
+        nav(px) {
             document.querySelectorAll('.balao-premium > div[id^="scr"]').forEach(d => d.classList.add('hidden'));
             document.getElementById(`scr${px}`).classList.remove('hidden');
-            if(px === 6) this.atualizarCalendario();
+            if(px === 6) this.carregarCronograma();
         },
 
-        validarPerfil() {
+        login() {
             const n = document.getElementById('p-nome').value;
             const m = document.getElementById('p-materia').value;
-            if(!n || !m) return alert("Preencha seu nome e matéria!");
-            document.getElementById('boas-vindas').innerText = `OLÁ, PROF. ${n.split(' ')[0]}`;
-            this.nav(1, 2);
+            const id = document.getElementById('p-id').value;
+            if(!n || !m || !id) return alert("Preencha tudo!");
+            this.user = { nome: n, materia: m, id: id };
+            document.getElementById('user-txt').innerText = "OLÁ, " + n.split(' ')[0].toUpperCase();
+            this.nav(2);
         },
 
         setEq(val, id) {
             this.equip = val;
-            document.querySelectorAll('#scr3 .btn-item').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.btn-item').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         },
 
-        confirmarReserva() {
-            const tipo = document.getElementById('res-tipo').value;
-            const dia = document.getElementById('res-dia').value;
-            const hora = document.getElementById('res-hora-fim').value;
-            const prof = document.getElementById('p-nome').value;
-            const materia = document.getElementById('p-materia').value;
+        salvarReserva() {
+            const hora = document.getElementById('res-hora').value;
+            if(!this.equip || !hora) return alert("Escolha o ativo e a hora!");
 
-            if(!this.equip || !hora) return alert("Selecione o equipamento e horário!");
-
-            const reserva = {
-                prof, materia, dia, hora, 
-                equip: this.equip, 
-                tipo: tipo === 'RECORRENTE' ? 'Vitalícia' : 'Única'
+            const dados = {
+                ...this.user,
+                equip: this.equip,
+                dia: document.getElementById('res-dia').value,
+                tipo: document.getElementById('res-tipo').value,
+                hora: hora
             };
 
-            let banco = JSON.parse(localStorage.getItem('reservas_elite_v2') || '[]');
-            banco.push(reserva);
-            localStorage.setItem('reservas_elite_v2', JSON.stringify(banco));
-
-            alert("RESERVA ADICIONADA AO CRONOGRAMA!");
-            this.nav(3, 6);
+            db.ref('reservas').push(dados).then(() => {
+                alert("Reservado com sucesso!");
+                this.nav(6);
+            });
         },
 
-        atualizarCalendario() {
-            const container = document.getElementById('calendario-view');
-            let banco = JSON.parse(localStorage.getItem('reservas_elite_v2') || '[]');
-            
-            container.innerHTML = this.dias.map(dia => {
-                const reservasDoDia = banco.filter(r => r.dia === dia);
-                return `
-                    <div class="dia-col">
-                        <div class="dia-titulo">${dia}</div>
-                        ${reservasDoDia.length === 0 ? '<p style="font-size:8px; opacity:0.4; text-align:center">Sem reservas</p>' : ''}
-                        ${reservasDoDia.map((r, i) => `
-                            <div class="card-cronograma" style="border-left-color: ${r.tipo === 'Vitalícia' ? 'var(--neon)' : 'var(--azul-sky)'}">
-                                <b>${r.equip}</b><br>
-                                <span style="color:var(--azul-sky)">${r.prof}</span><br>
-                                <i>${r.materia}</i><br>
-                                Fim: ${r.hora}h
+        carregarCronograma() {
+            db.ref('reservas').on('value', (snap) => {
+                const container = document.getElementById('cronograma-view');
+                const dados = snap.val() || {};
+                const lista = Object.keys(dados).map(k => ({id: k, ...dados[k]}));
+
+                container.innerHTML = this.dias.map(dia => `
+                    <div class="dia-coluna">
+                        <div class="dia-nome">${dia}</div>
+                        ${lista.filter(r => r.dia === dia).map(r => `
+                            <div class="reserva-card">
+                                <b style="color:var(--neon)">${r.equip}</b><br>
+                                ${r.nome}<br>
+                                <small>${r.materia}</small><br>
+                                <b>Até: ${r.hora}</b>
+                                <button onclick="app.deletar('${r.id}')" style="background:none; border:none; color:red; font-size:7px; cursor:pointer;">[X]</button>
                             </div>
                         `).join('')}
                     </div>
-                `;
-            }).join('');
+                `).join('');
+            });
+        },
+
+        deletar(id) {
+            if(confirm("Excluir reserva?")) db.ref('reservas/'+id).remove();
         },
 
         enviarChamado() {
-            const desc = document.getElementById('chamado-desc').value;
-            if(!desc) return alert("Descreva o problema!");
-            alert("CHAMADO ENVIADO AO NTi! Protocolo gerado.");
-            document.getElementById('chamado-desc').value = "";
-            this.nav(7, 2);
+            const desc = document.getElementById('ch-desc').value;
+            if(!desc) return;
+            db.ref('chamados').push({ prof: this.user.nome, desc: desc, data: new Date().toLocaleString() });
+            alert("Chamado enviado!");
+            this.nav(2);
         }
     };
 
-    setInterval(() => {
-        document.getElementById('relogio-top').innerText = new Date().toLocaleString('pt-BR');
-    }, 1000);
+    setInterval(() => { document.getElementById('relogio').innerText = new Date().toLocaleString('pt-BR'); }, 1000);
 </script>
 </body>
 </html>
