@@ -1,213 +1,19 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SISTEMA NTi - CHÁCARA DAS GARÇAS</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --azul-pref: #004a99; --azul-sky: #00adef; --neon: #00ff9d;
-            --nivel-3: #ff4757; --glass: rgba(255, 255, 255, 0.1);
-        }
-        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        
-        body { 
-            margin: 0; background: #000b1a url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200') no-repeat center center fixed;
-            background-size: cover; color: white; display: flex; justify-content: center; padding: 10px;
-        }
-
-        .balao-premium {
-            width: 100%; max-width: 500px; background: rgba(0, 10, 30, 0.85);
-            backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 30px; padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-        }
-
-        .cronograma-table {
-            width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 10px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden;
-        }
-        .cronograma-table th { background: var(--azul-pref); padding: 8px; color: white; }
-        .cronograma-table td { border: 1px solid rgba(255,255,255,0.1); padding: 8px; vertical-align: top; min-height: 50px; }
-        .reserva-item { background: var(--azul-sky); color: black; padding: 4px; border-radius: 4px; margin-bottom: 4px; font-weight: 700; font-size: 9px; line-height: 1.1; }
-        .reserva-item small { display: block; font-weight: 400; font-size: 8px; }
-
-        .input-group-bolha { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 15px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1); }
-        
-        h1 { font-size: 18px; text-align: center; margin: 0; color: var(--azul-sky); }
-        .sub { font-size: 10px; text-align: center; opacity: 0.7; display: block; margin-bottom: 15px; }
-
-        .campo { width: 100%; height: 40px; background: white; border-radius: 8px; border: none; padding: 0 12px; margin-bottom: 10px; font-weight: 600; font-size: 13px; color: #000; }
-        
-        .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-bottom: 10px; }
-        .btn-item { height: 40px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; color: white; cursor: pointer; font-size: 9px; font-weight: 700; }
-        .btn-item.active { background: var(--neon); color: black; border-color: white; }
-
-        .btn-acao { width: 100%; height: 50px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); color: white; font-weight: 700; text-transform: uppercase; cursor: pointer; }
-        .btn-voltar { background: none; border: 1px solid rgba(255,255,255,0.3); color: white; font-size: 10px; margin-top: 10px; width: 100%; padding: 8px; cursor: pointer; border-radius: 8px; }
-
-        .monitor-card { background: rgba(255, 71, 87, 0.2); padding: 10px; border-radius: 10px; border-left: 4px solid var(--nivel-3); margin-bottom: 10px; font-size: 11px; text-align: left; position: relative; }
-        
-        /* NOVO ESTILO: BOTÃO BAIXA */
-        .btn-baixa { position: absolute; right: 10px; top: 10px; background: var(--neon); color: black; border: none; padding: 5px 8px; border-radius: 5px; font-size: 8px; font-weight: 800; cursor: pointer; }
-
-        .hidden { display: none; }
-    </style>
-</head>
-<body>
-
-    <div class="balao-premium">
-        <div id="scr1">
-            <h1>SISTEMA ELITE</h1>
-            <span class="sub">Portal NTi - Chácara das Garças</span>
-            <input type="text" class="campo" id="p-nome" placeholder="Seu Nome">
-            <input type="text" class="campo" id="p-mat" placeholder="Sua Matéria (Ex: História)">
-            <button class="btn-acao" onclick="app.login()">ENTRAR</button>
-        </div>
-
-        <div id="scr2" class="hidden">
-            <h1>MENU DOCENTE</h1>
-            <span class="sub" id="user-info"></span>
-            <button class="btn-acao" onclick="app.nav(2, 3)" style="margin-bottom:10px">📅 RESERVAR EQUIPAMENTO</button>
-            <button class="btn-acao" onclick="app.nav(2, 4)" style="background: var(--azul-pref); margin-bottom:10px">🗓️ VER CRONOGRAMA SEMANAL</button>
-            <button class="btn-acao" onclick="app.nav(2, 5)" style="background: var(--nivel-3)">🛠️ CHAMADO TÉCNICO NTi</button>
-            <button class="btn-voltar" onclick="location.reload()">SAIR</button>
-        </div>
-
-        <div id="scr3" class="hidden">
-            <h1>NOVA RESERVA</h1>
-            <label style="font-size:10px; color:var(--azul-sky)">QUAL EQUIPAMENTO?</label>
-            <div class="btn-grid">
-                <button class="btn-item" id="e1" onclick="app.setEq('INFO', 'e1')">SALA INFO</button>
-                <button class="btn-item" id="e2" onclick="app.setEq('CHROME', 'e2')">CHROME</button>
-                <button class="btn-item" id="e3" onclick="app.setEq('TV 01', 'e3')">TV 01</button>
-                <button class="btn-item" id="e4" onclick="app.setEq('TV 02', 'e4')">TV 02</button>
-                <button class="btn-item" id="e5" onclick="app.setEq('TV 03', 'e5')">TV 03</button>
-            </div>
-
-            <div class="input-group-bolha">
-                <label style="font-size:10px; color:var(--azul-sky)">QUANDO? (VITALÍCIO/40 DIAS)</label>
-                <select class="campo" id="res-dia">
-                    <option value="seg">Toda Segunda</option>
-                    <option value="ter">Toda Terça</option>
-                    <option value="qua">Toda Quarta</option>
-                    <option value="qui">Toda Quinta</option>
-                    <option value="sex">Toda Sexta</option>
-                </select>
-                <input type="time" class="campo" id="res-hora" title="Horário">
-            </div>
-
-            <button class="btn-acao" onclick="app.salvarReserva()">CONFIRMAR CRONOGRAMA</button>
-            <button class="btn-voltar" onclick="app.nav(3, 2)">VOLTAR</button>
-        </div>
-
-        <div id="scr4" class="hidden">
-            <h1>CRONOGRAMA SEMANAL</h1>
-            <table class="cronograma-table">
-                <thead>
-                    <tr>
-                        <th>SEG</th><th>TER</th><th>QUA</th><th>QUI</th><th>SEX</th>
-                    </tr>
-                </thead>
-                <tbody id="cronograma-corpo">
-                    <tr>
-                        <td id="td-seg"></td><td id="td-ter"></td><td id="td-qua"></td><td id="td-qui"></td><td id="td-sex"></td>
-                    </tr>
-                </tbody>
-            </table>
-            <button class="btn-voltar" onclick="app.nav(4, 2)">VOLTAR AO MENU</button>
-            <button class="btn-voltar" style="color:red; border-color:red" onclick="app.limparReservas()">LIMPAR TUDO</button>
-        </div>
-
-        <div id="scr5" class="hidden">
-            <h1>CHAMADO NTi</h1>
-            <div class="input-group-bolha">
-                <input type="text" class="campo" id="n-local" placeholder="Onde é o problema?">
-                <textarea class="campo" id="n-erro" style="height:80px; padding:10px" placeholder="Descreva o erro técnico..."></textarea>
-            </div>
-            <button class="btn-acao" style="background:var(--nivel-3)" onclick="app.enviarChamado()">NOTIFICAR SUPORTE</button>
-            
-            <h2 style="font-size: 12px; margin-top: 20px; color: var(--nivel-3)">PENDÊNCIAS TÉCNICAS:</h2>
-            <div id="lista-chamados" style="margin-top:10px"></div>
-            
-            <button class="btn-voltar" onclick="app.nav(5, 2)">VOLTAR</button>
-        </div>
-    </div>
-
-<script>
-    const app = {
-        user: {}, equip: "",
-        
-        login() {
-            this.user.nome = document.getElementById('p-nome').value;
-            this.user.mat = document.getElementById('p-mat').value;
-            if(!this.user.nome || !this.user.mat) return alert("Preencha Nome e Matéria!");
-            document.getElementById('user-info').innerText = `${this.user.nome} | ${this.user.mat}`;
-            this.nav(1, 2);
-        },
-
-        nav(at, px) {
-            document.getElementById(`scr${at}`).classList.add('hidden');
-            document.getElementById(`scr${px}`).classList.remove('hidden');
-            if(px === 4) this.desenharCronograma();
-            if(px === 5) this.desenharChamados();
-        },
-
-        setEq(val, id) {
-            this.equip = val;
-            document.querySelectorAll('.btn-item').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        },
-
-        salvarReserva() {
-            const dia = document.getElementById('res-dia').value;
-            const hora = document.getElementById('res-hora').value;
-            if(!this.equip || !hora) return alert("Escolha o equipamento e o horário!");
-
-            const reserva = {
-                prof: this.user.nome,
-                mat: this.user.mat,
-                equip: this.equip,
-                hora: hora,
-                dia: dia
-            };
-
-            let db = JSON.parse(localStorage.getItem('chacara_db') || '[]');
-            db.push(reserva);
-            localStorage.setItem('chacara_db', JSON.stringify(db));
-            alert("Reserva Vitalícia Adicionada!");
-            this.nav(3, 4);
-        },
-
-        desenharCronograma() {
-            const dias = ['seg', 'ter', 'qua', 'qui', 'sex'];
-            dias.forEach(d => document.getElementById(`td-${d}`).innerHTML = '');
-            
-            let db = JSON.parse(localStorage.getItem('chacara_db') || '[]');
-            db.forEach(r => {
-                const item = `<div class="reserva-item">${r.equip} - ${r.hora}h<small>${r.prof} (${r.mat})</small></div>`;
-                document.getElementById(`td-${r.dia}`).innerHTML += item;
-            });
-        },
+// ... dentro do objeto app ...
 
         enviarChamado() {
-            const local = document.getElementById('n-local').value;
-            const erro = document.getElementById('n-erro').value;
-            
-            if(!local || !erro) return alert("Preencha o local e o erro!");
-
             const chamado = {
-                id: Date.now(), // ID Único para facilitar a exclusão
                 prof: this.user.nome,
                 mat: this.user.mat,
-                local: local,
-                erro: erro
+                local: document.getElementById('n-local').value,
+                erro: document.getElementById('n-erro').value
             };
-
+            if(!chamado.local || !chamado.erro) return alert("Preencha o local e o erro!");
+            
             let chamados = JSON.parse(localStorage.getItem('chacara_chamados') || '[]');
             chamados.push(chamado);
             localStorage.setItem('chacara_chamados', JSON.stringify(chamados));
             
-            // Limpa campos
+            // Limpa os campos após enviar
             document.getElementById('n-local').value = '';
             document.getElementById('n-erro').value = '';
             
@@ -219,38 +25,32 @@
             const lista = document.getElementById('lista-chamados');
             let chamados = JSON.parse(localStorage.getItem('chacara_chamados') || '[]');
             
-            if(chamados.length === 0) {
-                lista.innerHTML = '<p style="font-size:10px; opacity:0.5; text-align:center">Nenhum chamado pendente.</p>';
-                return;
-            }
-
-            lista.innerHTML = chamados.map((c) => `
+            // Usamos o índice original para saber qual excluir
+            lista.innerHTML = chamados.map((c, index) => `
                 <div class="monitor-card">
-                    <button class="btn-baixa" onclick="app.darBaixa(${c.id})">BAIXA</button>
-                    <b>LOCAL: ${c.local}</b><br>
-                    <small>Erro: ${c.erro}</small><br>
-                    <small style="opacity:0.7">Por: ${c.prof} (${c.mat})</small>
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                        <div>
+                            <b>LOCAL: ${c.local}</b><br>
+                            <small>Erro: ${c.erro}</small><br>
+                            <small style="opacity:0.7">Por: ${c.prof} (${c.mat})</small>
+                        </div>
+                        <button onclick="app.concluirChamado(${index})" 
+                                style="background:#00ff9d; border:none; border-radius:5px; padding:5px 8px; cursor:pointer; font-size:9px; font-weight:bold; color:#000">
+                            ✓ RESOLVIDO
+                        </button>
+                    </div>
                 </div>
             `).reverse().join('');
         },
 
-        darBaixa(id) {
-            if(confirm("Confirmar que o problema técnico foi resolvido?")) {
+        concluirChamado(index) {
+            if(confirm("Deseja marcar este chamado como resolvido e removê-lo?")) {
                 let chamados = JSON.parse(localStorage.getItem('chacara_chamados') || '[]');
-                // Filtra a lista removendo apenas o chamado com o ID clicado
-                chamados = chamados.filter(c => c.id !== id);
+                // Remove o item pelo índice
+                chamados.splice(index, 1);
                 localStorage.setItem('chacara_chamados', JSON.stringify(chamados));
                 this.desenharChamados();
             }
         },
 
-        limparReservas() {
-            if(confirm("Limpar todo o cronograma?")) {
-                localStorage.removeItem('chacara_db');
-                this.desenharCronograma();
-            }
-        }
-    };
-</script>
-</body>
-</html>
+// ... resto do código ...
