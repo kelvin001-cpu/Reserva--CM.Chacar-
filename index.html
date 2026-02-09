@@ -23,12 +23,13 @@
             border-radius: 30px; padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
         }
 
+        /* Estilo da Tabela de Cronograma */
         .cronograma-table {
             width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 10px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden;
         }
         .cronograma-table th { background: var(--azul-pref); padding: 8px; color: white; }
         .cronograma-table td { border: 1px solid rgba(255,255,255,0.1); padding: 8px; vertical-align: top; min-height: 50px; }
-        .reserva-item { background: var(--azul-sky); color: black; padding: 4px; border-radius: 4px; margin-bottom: 4px; font-weight: 700; font-size: 9px; line-height: 1.1; position: relative;}
+        .reserva-item { background: var(--azul-sky); color: black; padding: 4px; border-radius: 4px; margin-bottom: 4px; font-weight: 700; font-size: 9px; line-height: 1.1; }
         .reserva-item small { display: block; font-weight: 400; font-size: 8px; }
 
         .input-group-bolha { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 15px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1); }
@@ -36,7 +37,7 @@
         h1 { font-size: 18px; text-align: center; margin: 0; color: var(--azul-sky); }
         .sub { font-size: 10px; text-align: center; opacity: 0.7; display: block; margin-bottom: 15px; }
 
-        .campo { width: 100%; height: 40px; background: white; border-radius: 8px; border: none; padding: 0 12px; margin-bottom: 10px; font-weight: 600; font-size: 13px; color: #333; }
+        .campo { width: 100%; height: 40px; background: white; border-radius: 8px; border: none; padding: 0 12px; margin-bottom: 10px; font-weight: 600; font-size: 13px; }
         
         .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-bottom: 10px; }
         .btn-item { height: 40px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; color: white; cursor: pointer; font-size: 9px; font-weight: 700; }
@@ -45,8 +46,11 @@
         .btn-acao { width: 100%; height: 50px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); color: white; font-weight: 700; text-transform: uppercase; cursor: pointer; }
         .btn-voltar { background: none; border: 1px solid rgba(255,255,255,0.3); color: white; font-size: 10px; margin-top: 10px; width: 100%; padding: 8px; cursor: pointer; border-radius: 8px; }
 
-        .monitor-card { background: rgba(255, 71, 87, 0.2); padding: 10px; border-radius: 10px; border-left: 4px solid var(--nivel-3); margin-bottom: 10px; font-size: 11px; text-align: left; }
+        .monitor-card { background: rgba(255, 71, 87, 0.2); padding: 10px; border-radius: 10px; border-left: 4px solid var(--nivel-3); margin-bottom: 10px; font-size: 11px; text-align: left; position: relative; }
         .hidden { display: none; }
+
+        /* Pequeno ajuste apenas para o botão de baixa dentro do card */
+        .btn-baixa { position: absolute; top: 10px; right: 10px; background: var(--neon); color: black; border: none; border-radius: 4px; padding: 4px 8px; font-size: 8px; font-weight: 700; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -81,7 +85,7 @@
             </div>
 
             <div class="input-group-bolha">
-                <label style="font-size:10px; color:var(--azul-sky)">QUANDO? (VITALÍCIO)</label>
+                <label style="font-size:10px; color:var(--azul-sky)">QUANDO? (VITALÍCIO/40 DIAS)</label>
                 <select class="campo" id="res-dia">
                     <option value="seg">Toda Segunda</option>
                     <option value="ter">Toda Terça</option>
@@ -89,7 +93,7 @@
                     <option value="qui">Toda Quinta</option>
                     <option value="sex">Toda Sexta</option>
                 </select>
-                <input type="time" class="campo" id="res-hora">
+                <input type="time" class="campo" id="res-hora" title="Horário">
             </div>
 
             <button class="btn-acao" onclick="app.salvarReserva()">CONFIRMAR CRONOGRAMA</button>
@@ -126,22 +130,9 @@
         </div>
     </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-
 <script>
-    // Configuração do seu Firebase
-    const firebaseConfig = {
-        databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com"
-    };
-    
-    // Inicializa o Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
     const app = {
-        user: {}, 
-        equip: "",
+        user: {}, equip: "",
         
         login() {
             this.user.nome = document.getElementById('p-nome').value;
@@ -154,8 +145,8 @@
         nav(at, px) {
             document.getElementById(`scr${at}`).classList.add('hidden');
             document.getElementById(`scr${px}`).classList.remove('hidden');
-            if(px === 4) this.ouvirCronograma();
-            if(px === 5) this.ouvirChamados();
+            if(px === 4) this.desenharCronograma();
+            if(px === 5) this.desenharChamados();
         },
 
         setEq(val, id) {
@@ -169,86 +160,80 @@
             const hora = document.getElementById('res-hora').value;
             if(!this.equip || !hora) return alert("Escolha o equipamento e o horário!");
 
-            const novaReserva = {
+            const reserva = {
                 prof: this.user.nome,
                 mat: this.user.mat,
                 equip: this.equip,
                 hora: hora,
-                dia: dia,
-                timestamp: Date.now()
+                dia: dia
             };
 
-            // Salva no Firebase
-            db.ref('reservas').push(novaReserva)
-                .then(() => {
-                    alert("Reserva Adicionada na Nuvem!");
-                    this.nav(3, 4);
-                })
-                .catch(e => alert("Erro ao salvar: " + e.message));
+            let db = JSON.parse(localStorage.getItem('chacara_db') || '[]');
+            db.push(reserva);
+            localStorage.setItem('chacara_db', JSON.stringify(db));
+            alert("Reserva Vitalícia Adicionada!");
+            this.nav(3, 4);
         },
 
-        ouvirCronograma() {
+        desenharCronograma() {
             const dias = ['seg', 'ter', 'qua', 'qui', 'sex'];
+            dias.forEach(d => document.getElementById(`td-${d}`).innerHTML = '');
             
-            // "Ouve" mudanças no banco em tempo real
-            db.ref('reservas').on('value', (snapshot) => {
-                dias.forEach(d => document.getElementById(`td-${d}`).innerHTML = '');
-                const dados = snapshot.val();
-                
-                if(dados) {
-                    Object.values(dados).forEach(r => {
-                        const item = `<div class="reserva-item">${r.equip} - ${r.hora}h<small>${r.prof} (${r.mat})</small></div>`;
-                        const celula = document.getElementById(`td-${r.dia}`);
-                        if(celula) celula.innerHTML += item;
-                    });
-                }
+            let db = JSON.parse(localStorage.getItem('chacara_db') || '[]');
+            db.forEach(r => {
+                const item = `<div class="reserva-item">${r.equip} - ${r.hora}h<small>${r.prof} (${r.mat})</small></div>`;
+                document.getElementById(`td-${r.dia}`).innerHTML += item;
             });
         },
 
         enviarChamado() {
-            const local = document.getElementById('n-local').value;
-            const erro = document.getElementById('n-erro').value;
-            if(!local || !erro) return alert("Preencha os dados do problema!");
-
             const chamado = {
+                id: Date.now(),
                 prof: this.user.nome,
                 mat: this.user.mat,
-                local: local,
-                erro: erro,
-                status: 'Aberto',
-                data: new Date().toLocaleDateString()
+                local: document.getElementById('n-local').value,
+                erro: document.getElementById('n-erro').value
             };
+            if(!chamado.local || !chamado.erro) return alert("Preencha o local e o erro!");
 
-            db.ref('chamados').push(chamado).then(() => {
-                alert("NTi Notificado via Nuvem!");
-                document.getElementById('n-local').value = '';
-                document.getElementById('n-erro').value = '';
-            });
+            let chamados = JSON.parse(localStorage.getItem('chacara_chamados') || '[]');
+            chamados.push(chamado);
+            localStorage.setItem('chacara_chamados', JSON.stringify(chamados));
+            this.desenharChamados();
+            alert("NTi Notificado!");
+            document.getElementById('n-local').value = "";
+            document.getElementById('n-erro').value = "";
         },
 
-        ouvirChamados() {
-            db.ref('chamados').on('value', (snapshot) => {
-                const lista = document.getElementById('lista-chamados');
-                const dados = snapshot.val();
-                if(!dados) {
-                    lista.innerHTML = "";
-                    return;
-                }
-                
-                const html = Object.values(dados).reverse().map(c => `
-                    <div class="monitor-card">
-                        <b>LOCAL: ${c.local}</b><br>
-                        <small>Erro: ${c.erro}</small><br>
-                        <small style="opacity:0.7">Por: ${c.prof} (${c.mat}) - ${c.data}</small>
-                    </div>
-                `).join('');
-                lista.innerHTML = html;
-            });
+        desenharChamados() {
+            const lista = document.getElementById('lista-chamados');
+            let chamados = JSON.parse(localStorage.getItem('chacara_chamados') || '[]');
+            lista.innerHTML = chamados.map((c, index) => `
+                <div class="monitor-card">
+                    <button class="btn-baixa" onclick="app.darBaixa(${index})">BAIXA</button>
+                    <b>LOCAL: ${c.local}</b><br>
+                    <small>Erro: ${c.erro}</small><br>
+                    <small style="opacity:0.7">Por: ${c.prof} (${c.mat})</small>
+                </div>
+            `).reverse().join('');
+        },
+
+        darBaixa(idx) {
+            if(confirm("Confirmar resolução do problema?")) {
+                let chamados = JSON.parse(localStorage.getItem('chacara_chamados') || '[]');
+                // Como usamos reverse() no map, precisamos inverter o index ou trabalhar com o array original
+                // A forma mais segura mantendo seu código é remover do array original e redesenhar:
+                let originalIndex = JSON.parse(localStorage.getItem('chacara_chamados') || '[]').length - 1 - idx;
+                chamados.splice(originalIndex, 1);
+                localStorage.setItem('chacara_chamados', JSON.stringify(chamados));
+                this.desenharChamados();
+            }
         },
 
         limparReservas() {
-            if(confirm("Deseja apagar TODO o cronograma da nuvem?")) {
-                db.ref('reservas').remove();
+            if(confirm("Limpar todo o cronograma?")) {
+                localStorage.removeItem('chacara_db');
+                this.desenharCronograma();
             }
         }
     };
