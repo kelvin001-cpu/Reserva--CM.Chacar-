@@ -23,7 +23,6 @@
             border-radius: 30px; padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
         }
 
-        /* Estilo da Tabela de Cronograma */
         .cronograma-table {
             width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 10px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden;
         }
@@ -47,10 +46,8 @@
         .btn-voltar { background: none; border: 1px solid rgba(255,255,255,0.3); color: white; font-size: 10px; margin-top: 10px; width: 100%; padding: 8px; cursor: pointer; border-radius: 8px; }
 
         .monitor-card { background: rgba(255, 71, 87, 0.2); padding: 10px; border-radius: 10px; border-left: 4px solid var(--nivel-3); margin-bottom: 10px; font-size: 11px; text-align: left; position: relative; }
-        .hidden { display: none; }
-
-        /* Pequeno ajuste apenas para o botão de baixa dentro do card */
         .btn-baixa { position: absolute; top: 10px; right: 10px; background: var(--neon); color: black; border: none; border-radius: 4px; padding: 4px 8px; font-size: 8px; font-weight: 700; cursor: pointer; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
@@ -130,7 +127,17 @@
         </div>
     </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
 <script>
+    // --- CONFIGURAÇÃO DO FIREBASE (SUBSTITUA PELOS SEUS DADOS) ---
+    const firebaseConfig = {
+        databaseURL: "SUA_URL_AQUI" 
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
     const app = {
         user: {}, equip: "",
         
@@ -145,10 +152,94 @@
         nav(at, px) {
             document.getElementById(`scr${at}`).classList.add('hidden');
             document.getElementById(`scr${px}`).classList.remove('hidden');
-            if(px === 4) this.desenharCronograma();
-            if(px === 5) this.desenharChamados();
+            if(px === 4) this.ouvirCronograma();
+            if(px === 5) this.ouvirChamados();
         },
 
         setEq(val, id) {
             this.equip = val;
-            document.querySelectorAll('.btn-item').
+            document.querySelectorAll('.btn-item').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        },
+
+        salvarReserva() {
+            const dia = document.getElementById('res-dia').value;
+            const hora = document.getElementById('res-hora').value;
+            if(!this.equip || !hora) return alert("Escolha o equipamento e o horário!");
+
+            const reserva = {
+                prof: this.user.nome,
+                mat: this.user.mat,
+                equip: this.equip,
+                hora: hora,
+                dia: dia
+            };
+
+            db.ref('reservas').push(reserva);
+            alert("Reserva Vitalícia Adicionada!");
+            this.nav(3, 4);
+        },
+
+        ouvirCronograma() {
+            db.ref('reservas').on('value', (snap) => {
+                const dias = ['seg', 'ter', 'qua', 'qui', 'sex'];
+                dias.forEach(d => document.getElementById(`td-${d}`).innerHTML = '');
+                
+                snap.forEach((child) => {
+                    const r = child.val();
+                    const item = `<div class="reserva-item">${r.equip} - ${r.hora}h<small>${r.prof} (${r.mat})</small></div>`;
+                    document.getElementById(`td-${r.dia}`).innerHTML += item;
+                });
+            });
+        },
+
+        enviarChamado() {
+            const chamado = {
+                prof: this.user.nome,
+                mat: this.user.mat,
+                local: document.getElementById('n-local').value,
+                erro: document.getElementById('n-erro').value
+            };
+            if(!chamado.local || !chamado.erro) return alert("Preencha o local e o erro!");
+
+            db.ref('chamados').push(chamado);
+            alert("NTi Notificado!");
+            document.getElementById('n-local').value = "";
+            document.getElementById('n-erro').value = "";
+        },
+
+        ouvirChamados() {
+            db.ref('chamados').on('value', (snap) => {
+                const lista = document.getElementById('lista-chamados');
+                let html = "";
+                snap.forEach((child) => {
+                    const c = child.val();
+                    const key = child.key;
+                    html = `
+                        <div class="monitor-card">
+                            <button class="btn-baixa" onclick="app.darBaixa('${key}')">BAIXA</button>
+                            <b>LOCAL: ${c.local}</b><br>
+                            <small>Erro: ${c.erro}</small><br>
+                            <small style="opacity:0.7">Por: ${c.prof} (${c.mat})</small>
+                        </div>
+                    ` + html;
+                });
+                lista.innerHTML = html;
+            });
+        },
+
+        darBaixa(key) {
+            if(confirm("Confirmar resolução do problema?")) {
+                db.ref('chamados/' + key).remove();
+            }
+        },
+
+        limparReservas() {
+            if(confirm("Limpar todo o cronograma?")) {
+                db.ref('reservas').remove();
+            }
+        }
+    };
+</script>
+</body>
+</html>
