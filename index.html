@@ -28,16 +28,22 @@
         }
 
         .input-group-bolha { background: rgba(0, 0, 0, 0.2); border-radius: 20px; padding: 15px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
+
         .clock-header { font-size: 11px; font-weight: 600; color: var(--azul-sky); margin-bottom: 15px; letter-spacing: 1px; }
         h1 { font-size: 18px; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; }
         p.sub { font-size: 10px; opacity: 0.7; margin-bottom: 20px; text-transform: uppercase; }
+
         label { display: block; text-align: left; font-size: 10px; font-weight: 700; color: var(--azul-sky); margin: 0 0 8px 5px; text-transform: uppercase; }
+        
         .campo { width: 100%; height: 45px; background: white; border-radius: 12px; border: none; padding: 0 15px; font-size: 13px; color: #111; margin-bottom: 10px; font-weight: 600; }
+        
         .btn-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 15px; }
         .btn-item { height: 45px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: white; cursor: pointer; font-size: 9px; font-weight: 700; }
         .btn-item.active { background: var(--azul-sky); border-color: white; box-shadow: 0 5px 15px rgba(0, 173, 239, 0.4); }
+
         .btn-acao { width: 100%; height: 55px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); color: white; font-weight: 700; text-transform: uppercase; cursor: pointer; margin-top: 10px;}
         .btn-voltar { background: none; border: 1px solid rgba(255,255,255,0.2); color: white; font-size: 10px; margin-top: 10px; width: 100%; padding: 8px; cursor: pointer; border-radius: 10px; }
+
         .monitor-card { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 15px; margin-bottom: 10px; text-align: left; border-left: 4px solid var(--neon); font-size: 11px; }
         .hidden { display: none; }
     </style>
@@ -66,6 +72,7 @@
 
         <div id="scr3" class="hidden">
             <h1>RESERVA</h1>
+            
             <label>Selecione o Ativo</label>
             <div class="btn-grid">
                 <button class="btn-item" id="e1" onclick="app.setEq('SALA INFO', 'e1')">SALA INFO</button>
@@ -111,15 +118,15 @@
     </div>
 
 <script>
-    // --- LIGAÇÃO COM SEU PAINEL (COLE SEUS DADOS AQUI) ---
+    // --- CONFIGURAÇÃO FIREBASE (Substitua pelos seus dados do console) ---
     const firebaseConfig = {
         apiKey: "AIzaSyBoGfDKz-nBwKvczzGpxg-fHJYdVykcBUQ",
-        authDomain: "SEU-PROJETO.firebaseapp.com",
-        databaseURL: "https://SEU-PROJETO-default-rtdb.firebaseio.com",
-        projectId: "SEU-PROJETO",
-        storageBucket: "SEU-PROJETO.appspot.com",
+        authDomain: "seu-projeto.firebaseapp.com",
+        databaseURL: "https://seu-projeto-default-rtdb.firebaseio.com",
+        projectId: "seu-projeto",
+        storageBucket: "seu-projeto.appspot.com",
         messagingSenderId: "123456789",
-        appId: "SEU-APP-ID"
+        appId: "seu-app-id"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -127,6 +134,7 @@
 
     const app = {
         equip: "",
+        ativos: ['SALA INFO', 'CHROMEBOOKS', 'TV 01', 'TV 02', 'TV 03'],
 
         nav(at, px) {
             document.querySelectorAll('.balao-premium > div[id^="scr"]').forEach(d => d.classList.add('hidden'));
@@ -150,7 +158,6 @@
             document.getElementById('area-recorrente').classList.toggle('hidden', tipo !== 'RECORRENTE');
         },
 
-        // AGORA SALVA NO FIREBASE
         confirmarReserva() {
             const tipo = document.getElementById('res-tipo').value;
             const hora = document.getElementById('res-hora-fim').value;
@@ -167,24 +174,28 @@
                 expira: tipo === 'RECORRENTE' ? document.getElementById('res-semanas').value + " semanas" : 'Hoje'
             };
 
-            // Envia para o painel
-            db.ref('reservas_elite').push(reserva).then(() => {
-                alert("RESERVA CONFIRMADA NA NUVEM!");
-                this.nav(3, 2);
-            });
+            // SALVANDO NO FIREBASE EM VEZ DO LOCALSTORAGE
+            db.ref('reservas_elite').push(reserva)
+                .then(() => {
+                    alert("RESERVA CONFIRMADA NA NUVEM!");
+                    this.nav(3, 2);
+                })
+                .catch(err => alert("Erro ao salvar: " + err.message));
         },
 
-        // AGORA BUSCA DO FIREBASE EM TEMPO REAL
         atualizarMonitor() {
             const container = document.getElementById('admin-monitor');
             
+            // BUSCANDO DO FIREBASE EM TEMPO REAL
             db.ref('reservas_elite').on('value', (snapshot) => {
                 const dados = snapshot.val();
+                
                 if(!dados) {
                     container.innerHTML = "<p style='font-size:12px; opacity:0.5'>Nenhuma reserva ativa.</p>";
                     return;
                 }
 
+                // Renderiza os cards usando as chaves do Firebase (keys) para poder deletar depois
                 container.innerHTML = Object.keys(dados).map((key) => {
                     const r = dados[key];
                     return `
@@ -205,9 +216,9 @@
             });
         },
 
-        excluirReserva(idNoFirebase) {
+        excluirReserva(idFirebase) {
             if(confirm("Deseja apagar essa reserva?")) {
-                db.ref('reservas_elite').child(idNoFirebase).remove();
+                db.ref('reservas_elite').child(idFirebase).remove();
             }
         }
     };
