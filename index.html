@@ -131,12 +131,10 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
 <script>
-    // --- COLE SUA CONFIGURAÇÃO DO FIREBASE AQUI ---
-    const firebaseConfig = {
-        databaseURL: "COLE_SUA_URL_DO_DATABASE_AQUI"
-    };
+    // Cole sua URL do Firebase abaixo
+    const firebaseConfig = { databaseURL: "SUA_URL_AQUI" };
     firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
+    const db = firebase.database();
 
     const app = {
         user: {}, equip: "",
@@ -175,22 +173,19 @@
                 dia: dia
             };
 
-            // Salva no Firebase
-            database.ref('chacara_db').push(reserva);
+            db.ref('chacara_db').push(reserva);
             alert("Reserva Vitalícia Adicionada!");
             this.nav(3, 4);
         },
 
         desenharCronograma() {
             const dias = ['seg', 'ter', 'qua', 'qui', 'sex'];
-            
-            // Ouve as mudanças no Firebase em tempo real
-            database.ref('chacara_db').on('value', (snapshot) => {
+            db.ref('chacara_db').on('value', (snap) => {
                 dias.forEach(d => document.getElementById(`td-${d}`).innerHTML = '');
-                snapshot.forEach((childSnapshot) => {
-                    const r = childSnapshot.val();
-                    const item = `<div class="reserva-item">${r.equip} - ${r.hora}h<small>${r.prof} (${r.mat})</small></div>`;
-                    document.getElementById(`td-${r.dia}`).innerHTML += item;
+                snap.forEach((item) => {
+                    const r = item.val();
+                    const html = `<div class="reserva-item">${r.equip} - ${r.hora}h<small>${r.prof} (${r.mat})</small></div>`;
+                    document.getElementById(`td-${r.dia}`).innerHTML += html;
                 });
             });
         },
@@ -202,38 +197,32 @@
                 local: document.getElementById('n-local').value,
                 erro: document.getElementById('n-erro').value
             };
-            
-            // Salva no Firebase
-            database.ref('chacara_chamados').push(chamado);
+            db.ref('chacara_chamados').push(chamado);
+            this.desenharChamados();
             alert("NTi Notificado!");
-            document.getElementById('n-local').value = "";
-            document.getElementById('n-erro').value = "";
         },
 
         desenharChamados() {
             const lista = document.getElementById('lista-chamados');
-            
-            database.ref('chacara_chamados').on('value', (snapshot) => {
-                let chamadosHtml = "";
-                let chamadosArray = [];
-                snapshot.forEach((childSnapshot) => {
-                    const c = childSnapshot.val();
-                    const card = `
+            db.ref('chacara_chamados').on('value', (snap) => {
+                let html = "";
+                snap.forEach((item) => {
+                    const c = item.val();
+                    html = `
                         <div class="monitor-card">
                             <b>LOCAL: ${c.local}</b><br>
                             <small>Erro: ${c.erro}</small><br>
                             <small style="opacity:0.7">Por: ${c.prof} (${c.mat})</small>
                         </div>
-                    `;
-                    chamadosArray.push(card);
+                    ` + html;
                 });
-                lista.innerHTML = chamadosArray.reverse().join('');
+                lista.innerHTML = html;
             });
         },
 
         limparReservas() {
             if(confirm("Limpar todo o cronograma?")) {
-                database.ref('chacara_db').remove();
+                db.ref('chacara_db').remove();
             }
         }
     };
