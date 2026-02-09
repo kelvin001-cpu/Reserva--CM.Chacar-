@@ -14,46 +14,33 @@
         
         body { 
             margin: 0; background: #000b1a url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed;
-            background-size: cover; min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white; padding: 20px 0;
+            background-size: cover; min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white; padding: 15px;
         }
 
         .balao-premium {
-            width: 95%; max-width: 500px; background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255,255,255,0.25); border-radius: 40px;
-            padding: 30px; box-shadow: 0 30px 60px rgba(0,0,0,0.7);
-            text-align: center; border-bottom: 5px solid var(--azul-sky);
+            width: 100%; max-width: 480px; background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.25); border-radius: 35px;
+            padding: 25px; box-shadow: 0 30px 60px rgba(0,0,0,0.7); text-align: center;
         }
 
-        .clock-header { font-size: 11px; font-weight: 600; color: var(--azul-sky); margin-bottom: 20px; letter-spacing: 1px; }
-        h1 { font-size: 18px; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 1px; }
-        p.sub { font-size: 11px; opacity: 0.7; margin-bottom: 25px; text-transform: uppercase; }
+        .input-group-bolha { background: rgba(0, 0, 0, 0.2); border-radius: 20px; padding: 15px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
 
-        label { display: block; text-align: left; font-size: 10px; font-weight: 700; color: var(--azul-sky); margin: 15px 0 5px 10px; text-transform: uppercase; }
-        .campo { width: 100%; height: 50px; background: white; border-radius: 14px; border: none; padding: 0 18px; font-size: 14px; color: #111; margin-bottom: 12px; font-weight: 500; }
+        .clock-header { font-size: 11px; font-weight: 600; color: var(--azul-sky); margin-bottom: 15px; letter-spacing: 1px; }
+        h1 { font-size: 18px; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; }
+        p.sub { font-size: 10px; opacity: 0.7; margin-bottom: 20px; text-transform: uppercase; }
+
+        label { display: block; text-align: left; font-size: 10px; font-weight: 700; color: var(--azul-sky); margin: 0 0 8px 5px; text-transform: uppercase; }
         
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
-        .btn-item { 
-            height: 50px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 12px; color: white; cursor: pointer; font-size: 11px; font-weight: 600;
-        }
+        .campo { width: 100%; height: 45px; background: white; border-radius: 12px; border: none; padding: 0 15px; font-size: 13px; color: #111; margin-bottom: 10px; font-weight: 600; }
+        
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 15px; }
+        .btn-item { height: 45px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: white; cursor: pointer; font-size: 9px; font-weight: 700; }
         .btn-item.active { background: var(--azul-sky); border-color: white; box-shadow: 0 5px 15px rgba(0, 173, 239, 0.4); }
 
-        /* Estilo Ranking de Problemas */
-        .rank-box { display: flex; gap: 5px; margin-bottom: 15px; }
-        .rank-btn { flex: 1; height: 45px; border-radius: 10px; border: none; font-size: 9px; font-weight: 800; cursor: pointer; opacity: 0.4; }
-        .rank-btn.active { opacity: 1; transform: scale(1.05); border: 2px solid white; }
+        .btn-acao { width: 100%; height: 55px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); color: white; font-weight: 700; text-transform: uppercase; cursor: pointer; margin-top: 10px;}
+        .btn-voltar { background: none; border: 1px solid rgba(255,255,255,0.2); color: white; font-size: 10px; margin-top: 10px; width: 100%; padding: 8px; cursor: pointer; border-radius: 10px; }
 
-        .historico-box { 
-            margin-top: 20px; text-align: left; background: rgba(0,0,0,0.4); 
-            border-radius: 15px; padding: 15px; max-height: 120px; overflow-y: auto; font-size: 10px;
-        }
-        .log-item { border-left: 3px solid var(--neon); padding-left: 10px; margin-bottom: 8px; color: #ddd; }
-
-        .timer-view { font-family: 'Orbitron', sans-serif; font-size: 50px; color: var(--neon); margin: 20px 0; }
-        .btn-acao { width: 100%; height: 60px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); color: white; font-weight: 700; text-transform: uppercase; cursor: pointer; }
-        .btn-voltar { background: none; border: 1px solid rgba(255,255,255,0.2); color: white; font-size: 11px; margin-top: 10px; width: 100%; padding: 10px; cursor: pointer; border-radius: 10px; }
-
+        .monitor-card { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 15px; margin-bottom: 10px; text-align: left; border-left: 4px solid var(--neon); font-size: 11px; }
         .hidden { display: none; }
     </style>
 </head>
@@ -67,170 +54,146 @@
             <p class="sub">Portal do Docente - NTi</p>
             <input type="text" class="campo" id="p-nome" placeholder="Nome do Professor">
             <input type="text" class="campo" id="p-id" placeholder="RP / Prontuário">
-            <input type="text" class="campo" id="p-mat" placeholder="Matéria">
-            <button class="btn-acao" onclick="app.validarPerfil()">CONECTAR</button>
+            <button class="btn-acao" onclick="app.validarPerfil()">ENTRAR</button>
         </div>
 
         <div id="scr2" class="hidden">
-            <h1>PAINEL PRINCIPAL</h1>
-            <div class="btn-grid" style="grid-template-columns: 1fr;">
-                <button class="btn-item active" onclick="app.nav(2, 3)">📅 RESERVAR ATIVO</button>
-                <button class="btn-item" onclick="app.nav(2, 5)">🛠️ CHAMADO TÉCNICO</button>
+            <h1>OLÁ, PROFESSOR</h1>
+            <div class="btn-grid" style="grid-template-columns: 1fr; margin-top: 20px;">
+                <button class="btn-item active" style="height: 50px;" onclick="app.nav(2, 3)">📅 NOVA RESERVA</button>
+                <button class="btn-item" style="height: 50px;" onclick="app.nav(2, 6)">🖥️ VER MONITORAMENTO</button>
             </div>
-            <div class="historico-box">
-                <b style="color:var(--azul-sky)">📋 LOG DE HOJE:</b>
-                <div id="log-lista"></div>
-            </div>
+            <button class="btn-voltar" onclick="location.reload()">SAIR</button>
         </div>
 
         <div id="scr3" class="hidden">
             <h1>RESERVA</h1>
+            
             <label>Selecione o Ativo</label>
             <div class="btn-grid">
                 <button class="btn-item" id="e1" onclick="app.setEq('SALA INFO', 'e1')">SALA INFO</button>
                 <button class="btn-item" id="e2" onclick="app.setEq('CHROMEBOOKS', 'e2')">CHROMEBOOKS</button>
-                <button class="btn-item" id="e3" onclick="app.setEq('TV 1º ANDAR', 'e3')">TV 1º ANDAR</button>
-                <button class="btn-item" id="e4" onclick="app.setEq('TV 2º ANDAR', 'e4')">TV 2º ANDAR</button>
+                <button class="btn-item" id="e3" onclick="app.setEq('TV 01', 'e3')">TV 01</button>
+                <button class="btn-item" id="e4" onclick="app.setEq('TV 02', 'e4')">TV 02</button>
+                <button class="btn-item" id="e5" onclick="app.setEq('TV 03', 'e5')">TV 03</button>
             </div>
 
-            <div id="chrome-options" class="hidden">
-                <label>Modo de Retirada</label>
-                <select class="campo" id="chrome-modo" onchange="app.toggleChromeQtd()">
-                    <option value="CARRINHO COMPLETO">Carrinho Completo (Todos)</option>
-                    <option value="UNIDADES">Unidades Avulsas</option>
+            <div class="input-group-bolha">
+                <label>Tipo de Reserva</label>
+                <select class="campo" id="res-tipo" onchange="app.toggleAgenda()">
+                    <option value="HOJE">Somente Hoje</option>
+                    <option value="RECORRENTE">Recorrente (Vitalícia)</option>
                 </select>
-                <input type="number" id="chrome-qtd" class="campo hidden" placeholder="Quantos aparelhos?">
+
+                <div id="area-recorrente" class="hidden">
+                    <label>Dia da Semana</label>
+                    <select class="campo" id="res-dia">
+                        <option value="Segunda">Toda Segunda</option>
+                        <option value="Terça">Toda Terça</option>
+                        <option value="Quarta">Toda Quarta</option>
+                        <option value="Quinta">Toda Quinta</option>
+                        <option value="Sexta">Toda Sexta</option>
+                    </select>
+                    <label>Duração (Semanas)</label>
+                    <input type="number" class="campo" id="res-semanas" placeholder="Ex: 6 semanas (42 dias)" value="6">
+                </div>
+
+                <label>Horário de Devolução (Fim da aula)</label>
+                <input type="time" class="campo" id="res-hora-fim">
             </div>
 
-            <label>Devolução Programada</label>
-            <input type="time" class="campo" id="res-hora-fim">
-
-            <button class="btn-acao" onclick="app.iniciarUso()">GERAR PROTOCOLO</button>
+            <button class="btn-acao" onclick="app.confirmarReserva()">SALVAR RESERVA</button>
             <button class="btn-voltar" onclick="app.nav(3, 2)">VOLTAR</button>
         </div>
 
-        <div id="scr4" class="hidden">
-            <h1>CRONÔMETRO DE USO</h1>
-            <div class="timer-view" id="relogio-timer">00:00</div>
-            <p id="status-final" style="font-size:11px; line-height:1.6"></p>
-            <button class="btn-acao" style="background:var(--nivel-3)" onclick="app.finalizar()">FINALIZAR E LIBERAR</button>
-        </div>
-
-        <div id="scr5" class="hidden">
-            <h1>SUPORTE TI</h1>
-            <label>Sala / Local</label>
-            <select class="campo" id="sup-local">
-                <script>for(let i=1; i<=9; i++) document.write(`<option>${i}º Ano A</option>`);</script>
-                <option>SALA DOS PROFESSORES</option>
-                <option>SECRETARIA</option>
-            </select>
-
-            <label>Grau do Problema (Ranking)</label>
-            <div class="rank-box">
-                <button class="rank-btn" id="r1" style="background:var(--nivel-1)" onclick="app.setRank('BAIXO', 'r1')">BAIXO<br>(Simples)</button>
-                <button class="rank-btn" id="r2" style="background:var(--nivel-2)" onclick="app.setRank('MÉDIO', 'r2')">MÉDIO<br>(Urgente)</button>
-                <button class="rank-btn" id="r3" style="background:var(--nivel-3); color:white" onclick="app.setRank('ALTO', 'r3')">ALTO<br>(Imediato)</button>
-            </div>
-
-            <label>Relatório da Ocorrência</label>
-            <textarea class="campo" id="sup-motivo" style="height:70px; padding:10px;"></textarea>
-            
-            <button class="btn-acao" onclick="app.enviarSuporte()">NOTIFICAR NTi</button>
-            <button class="btn-voltar" onclick="app.nav(5, 2)">VOLTAR</button>
+        <div id="scr6" class="hidden">
+            <h1>AGENDA DE ATIVOS</h1>
+            <div id="admin-monitor" style="margin-top:15px; max-height: 380px; overflow-y: auto;"></div>
+            <button class="btn-voltar" onclick="app.nav(6, 2)">VOLTAR</button>
         </div>
     </div>
 
 <script>
     const app = {
-        equip: "", rank: "", timer: null,
-        
+        equip: "",
+        ativos: ['SALA INFO', 'CHROMEBOOKS', 'TV 01', 'TV 02', 'TV 03'],
+
         nav(at, px) {
-            document.getElementById(`scr${at}`).classList.add('hidden');
+            document.querySelectorAll('.balao-premium > div[id^="scr"]').forEach(d => d.classList.add('hidden'));
             document.getElementById(`scr${px}`).classList.remove('hidden');
-            if(px === 2) this.carregarLogs();
+            if(px === 6) this.atualizarMonitor();
         },
 
         validarPerfil() {
-            if(!document.getElementById('p-nome').value) return alert("Erro: Nome obrigatório!");
+            if(!document.getElementById('p-nome').value) return alert("Digite seu nome!");
             this.nav(1, 2);
         },
 
         setEq(val, id) {
-            const ocupado = localStorage.getItem(`uso_${val}`);
-            if(ocupado) return alert(`ITEM EM USO: Prof. ${ocupado}`);
-            
             this.equip = val;
             document.querySelectorAll('#scr3 .btn-item').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            
-            document.getElementById('chrome-options').className = (val === 'CHROMEBOOKS') ? '' : 'hidden';
         },
 
-        toggleChromeQtd() {
-            const modo = document.getElementById('chrome-modo').value;
-            document.getElementById('chrome-qtd').className = (modo === 'UNIDADES') ? 'campo' : 'campo hidden';
+        toggleAgenda() {
+            const tipo = document.getElementById('res-tipo').value;
+            document.getElementById('area-recorrente').classList.toggle('hidden', tipo !== 'RECORRENTE');
         },
 
-        setRank(val, id) {
-            this.rank = val;
-            document.querySelectorAll('.rank-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        },
-
-        iniciarUso() {
+        confirmarReserva() {
+            const tipo = document.getElementById('res-tipo').value;
             const hora = document.getElementById('res-hora-fim').value;
-            if(!this.equip || !hora) return alert("Escolha o item e o horário!");
+            const prof = document.getElementById('p-nome').value;
 
-            let infoExtra = "";
-            if(this.equip === 'CHROMEBOOKS') {
-                const modo = document.getElementById('chrome-modo').value;
-                const qtd = document.getElementById('chrome-qtd').value;
-                infoExtra = modo === 'UNIDADES' ? `(${qtd} un)` : `(CARRINHO)`;
+            if(!this.equip || !hora) return alert("Preencha tudo!");
+
+            const reserva = {
+                prof: prof,
+                equip: this.equip,
+                tipo: tipo,
+                hora: hora,
+                dia: tipo === 'RECORRENTE' ? document.getElementById('res-dia').value : 'Hoje',
+                expira: tipo === 'RECORRENTE' ? document.getElementById('res-semanas').value + " semanas" : 'Hoje'
+            };
+
+            let banco = JSON.parse(localStorage.getItem('reservas_elite') || '[]');
+            banco.push(reserva);
+            localStorage.setItem('reservas_elite', JSON.stringify(banco));
+
+            alert("RESERVA CONFIRMADA!");
+            this.nav(3, 2);
+        },
+
+        atualizarMonitor() {
+            const container = document.getElementById('admin-monitor');
+            let banco = JSON.parse(localStorage.getItem('reservas_elite') || '[]');
+            
+            if(banco.length === 0) {
+                container.innerHTML = "<p style='font-size:12px; opacity:0.5'>Nenhuma reserva ativa.</p>";
+                return;
             }
 
-            localStorage.setItem(`uso_${this.equip}`, document.getElementById('p-nome').value);
-            this.nav(3, 4);
-            document.getElementById('status-final').innerHTML = `<b>ATIVO:</b> ${this.equip} ${infoExtra}<br><b>DEVOLUÇÃO:</b> ${hora}h`;
-            this.startTimer(hora);
+            container.innerHTML = banco.map((r, i) => `
+                <div class="monitor-card" style="border-left-color: ${r.tipo === 'RECORRENTE' ? 'var(--azul-sky)' : 'var(--neon)'}">
+                    <div style="display:flex; justify-content:space-between">
+                        <b>${r.equip}</b>
+                        <small style="color:var(--azul-sky)">${r.tipo}</small>
+                    </div>
+                    <div style="margin-top:5px; opacity:0.9">
+                        Prof: ${r.prof}<br>
+                        Dia: ${r.dia} | Fim: ${r.hora}h<br>
+                        Duração: ${r.expira}
+                    </div>
+                    <button onclick="app.excluirReserva(${i})" style="background:none; border:none; color:red; font-size:9px; padding:0; cursor:pointer; margin-top:5px">DELETAR RESERVA</button>
+                </div>
+            `).join('');
         },
 
-        startTimer(horaAlvo) {
-            clearInterval(this.timer);
-            this.timer = setInterval(() => {
-                const agora = new Date();
-                const [h, m] = horaAlvo.split(':');
-                const t = new Date(); t.setHours(h, m, 0);
-                const diff = t - agora;
-                if(diff <= 0) {
-                    document.getElementById('relogio-timer').innerText = "00:00";
-                    return clearInterval(this.timer);
-                }
-                const min = Math.floor(diff/60000), seg = Math.floor((diff%60000)/1000);
-                document.getElementById('relogio-timer').innerText = `${min}:${seg.toString().padStart(2,'0')}`;
-            }, 1000);
-        },
-
-        finalizar() {
-            const log = `${new Date().toLocaleTimeString()} - ${this.equip} Liberado por ${document.getElementById('p-nome').value}`;
-            let logs = JSON.parse(localStorage.getItem('logs_chacara') || '[]');
-            logs.unshift(log);
-            localStorage.setItem('logs_chacara', JSON.stringify(logs.slice(0, 5)));
-            
-            localStorage.removeItem(`uso_${this.equip}`);
-            alert("Ativo liberado no sistema!");
-            location.reload();
-        },
-
-        carregarLogs() {
-            const lista = document.getElementById('log-lista');
-            const logs = JSON.parse(localStorage.getItem('logs_chacara') || '[]');
-            lista.innerHTML = logs.map(l => `<div class="log-item">${l}</div>`).join('') || "Sem registros.";
-        },
-
-        enviarSuporte() {
-            if(!this.rank) return alert("Selecione o grau do problema!");
-            alert(`NOTIFICADO! Prioridade: ${this.rank}. O TI foi avisado.`);
-            this.nav(5, 2);
+        excluirReserva(index) {
+            let banco = JSON.parse(localStorage.getItem('reservas_elite') || '[]');
+            banco.splice(index, 1);
+            localStorage.setItem('reservas_elite', JSON.stringify(banco));
+            this.atualizarMonitor();
         }
     };
 
