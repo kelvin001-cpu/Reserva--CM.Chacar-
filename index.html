@@ -10,23 +10,19 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
     <style>
-        :root { --azul-pref: #004a99; --azul-sky: #00adef; --neon: #00ff9d; --nivel-3: #ff4757; }
+        :root { --azul-pref: #004a99; --azul-sky: #00adef; --neon: #00ff9d; --danger: #ff4757; }
         * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { margin: 0; background: #000b1a; color: white; display: flex; justify-content: center; padding: 10px; }
         .balao-premium { width: 100%; max-width: 500px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2); border-radius: 30px; padding: 20px; text-align: center; }
-        
-        /* Tabela Cronograma */
-        .cronograma-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 9px; background: rgba(0,0,0,0.3); }
+        .cronograma-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 9px; background: rgba(0,0,0,0.3); table-layout: fixed; }
         .cronograma-table th { background: var(--azul-pref); padding: 5px; }
-        .cronograma-table td { border: 1px solid rgba(255,255,255,0.1); padding: 5px; vertical-align: top; width: 20%; min-height: 60px; }
-        
-        .reserva-item { background: var(--azul-sky); color: black; padding: 4px; border-radius: 4px; margin-bottom: 5px; font-weight: 700; text-align: left; position: relative; }
-        .reserva-item small { display: block; font-weight: 400; font-size: 7px; color: #333; }
-
-        .campo { width: 100%; height: 40px; border-radius: 8px; border: none; padding: 0 10px; margin-bottom: 10px; font-weight: 600; background: white; color: black; }
-        .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-bottom: 10px; }
-        .btn-item { height: 40px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; color: white; cursor: pointer; font-size: 9px; font-weight: 700; }
-        .btn-item.active { background: var(--neon); color: black; }
+        .cronograma-table td { border: 1px solid rgba(255,255,255,0.1); padding: 5px; vertical-align: top; min-height: 80px; }
+        .reserva-item { background: var(--azul-sky); color: black; padding: 5px; border-radius: 6px; margin-bottom: 5px; font-weight: 700; text-align: left; font-size: 8px; }
+        .reserva-item small { display: block; font-weight: 400; font-size: 7px; color: #1a1a1a; }
+        .campo { width: 100%; height: 45px; border-radius: 10px; border: none; padding: 0 15px; margin-bottom: 12px; font-weight: 600; background: white; color: black; }
+        .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
+        .btn-item { height: 45px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); border-radius: 10px; color: white; cursor: pointer; font-size: 10px; font-weight: 700; }
+        .btn-item.active { background: var(--neon); color: black; border-color: var(--neon); }
         .btn-acao { width: 100%; height: 50px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); color: white; font-weight: 700; cursor: pointer; }
         .hidden { display: none; }
     </style>
@@ -43,7 +39,7 @@
 
     <div id="scr2" class="hidden">
         <h2 id="user-info"></h2>
-        <button class="btn-acao" onclick="app.nav(2, 3)" style="margin-bottom:10px">📅 RESERVAR AGORA</button>
+        <button class="btn-acao" onclick="app.nav(2, 3)" style="margin-bottom:12px">📅 NOVA RESERVA</button>
         <button class="btn-acao" onclick="app.nav(2, 4)" style="background:var(--azul-pref)">🗓️ VER CRONOGRAMA</button>
     </div>
 
@@ -57,123 +53,81 @@
             <button class="btn-item" id="e5" onclick="app.setEq('TV 03', 'e5')">TV 03</button>
         </div>
         <select class="campo" id="res-dia">
-            <option value="seg">Segunda</option>
-            <option value="ter">Terça</option>
-            <option value="qua">Quarta</option>
-            <option value="qui">Quinta</option>
-            <option value="sex">Sexta</option>
+            <option value="seg">Segunda</option><option value="ter">Terça</option>
+            <option value="qua">Quarta</option><option value="qui">Quinta</option><option value="sex">Sexta</option>
         </select>
         <input type="time" class="campo" id="res-hora">
-        <button class="btn-acao" onclick="app.salvarNoFirebase()">SALVAR NO CLOUD</button>
-        <button class="btn-acao" onclick="app.nav(3, 2)" style="background:gray; margin-top:10px; height:40px">VOLTAR</button>
+        <button class="btn-acao" onclick="app.salvarNoFirebase()">CONFIRMAR RESERVA</button>
     </div>
 
     <div id="scr4" class="hidden">
-        <h3>CRONOGRAMA SEMANAL (LIVE)</h3>
+        <h3>CRONOGRAMA (LIVE)</h3>
         <table class="cronograma-table">
             <thead><tr><th>SEG</th><th>TER</th><th>QUA</th><th>QUI</th><th>SEX</th></tr></thead>
-            <tbody>
-                <tr>
-                    <td id="td-seg"></td>
-                    <td id="td-ter"></td>
-                    <td id="td-qua"></td>
-                    <td id="td-qui"></td>
-                    <td id="td-sex"></td>
-                </tr>
-            </tbody>
+            <tbody><tr><td id="td-seg"></td><td id="td-ter"></td><td id="td-qua"></td><td id="td-qui"></td><td id="td-sex"></td></tr></tbody>
         </table>
-        <button class="btn-acao" onclick="app.nav(4, 2)" style="margin-top:10px">VOLTAR AO MENU</button>
+        <button class="btn-acao" onclick="app.nav(4, 2)" style="margin-top:15px">VOLTAR</button>
     </div>
 </div>
 
 <script>
-    // --- CONFIGURAÇÃO FIREBASE INTEGRADA ---
     const firebaseConfig = {
         apiKey: "AIzaSyBoGfDKz-nBwKvczzGpxg-fHJYdVykcBUQ",
         authDomain: "escala-chacara.firebaseapp.com",
-        databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com",
         projectId: "escala-chacara",
         storageBucket: "escala-chacara.firebasestorage.app",
         messagingSenderId: "741259231706",
-        appId: "1:741259231706:web:27e2b60be100e6a34180e3",
-        measurementId: "G-J1RMMKQCLG"
+        appId: "1:741259231706:web:27e2b60be100e6a34180e3"
     };
     
-    // Inicialização
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
     const app = {
-        user: {}, 
-        equip: "",
-        
+        user: {}, equip: "",
         login() {
             this.user.nome = document.getElementById('p-nome').value;
             this.user.mat = document.getElementById('p-mat').value;
-            if(!this.user.nome || !this.user.mat) return alert("Preencha seu nome e matéria!");
-            document.getElementById('user-info').innerText = "Olá, Prof. " + this.user.nome;
+            if(!this.user.nome) return alert("Digite seu nome!");
+            document.getElementById('user-info').innerText = "Prof. " + this.user.nome;
             this.nav(1, 2);
         },
-
         nav(at, px) {
             document.getElementById(`scr${at}`).classList.add('hidden');
             document.getElementById(`scr${px}`).classList.remove('hidden');
             if(px === 4) this.ouvirFirebase();
         },
-
         setEq(val, id) {
             this.equip = val;
             document.querySelectorAll('.btn-item').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         },
-
         async salvarNoFirebase() {
             const dia = document.getElementById('res-dia').value;
             const hora = document.getElementById('res-hora').value;
-            
-            if(!this.equip || !hora) return alert("Selecione o equipamento e o horário!");
+            if(!this.equip || !hora) return alert("Preencha tudo!");
 
-            try {
-                await db.collection("reservas_chacara").add({
-                    prof: this.user.nome,
-                    mat: this.user.mat,
-                    equip: this.equip,
-                    dia: dia,
-                    hora: hora,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                alert("Reserva confirmada com sucesso!");
-                this.nav(3, 4);
-            } catch (e) {
-                console.error("Erro ao salvar: ", e);
-                alert("Erro ao conectar com o banco de dados. Verifique as Regras de Segurança!");
-            }
+            await db.collection("reservas_chacara").add({
+                prof: this.user.nome,
+                mat: this.user.mat,
+                equip: this.equip,
+                dia: dia,
+                hora: hora
+            });
+            alert("Reserva Salva!");
+            this.nav(3, 4);
         },
-
         ouvirFirebase() {
-            // Ordena por hora para o cronograma ficar organizado
-            db.collection("reservas_chacara").orderBy("hora").onSnapshot((snapshot) => {
+            db.collection("reservas_chacara").onSnapshot((snapshot) => {
                 const dias = ['seg', 'ter', 'qua', 'qui', 'sex'];
-                dias.forEach(d => {
-                    const el = document.getElementById(`td-${d}`);
-                    if(el) el.innerHTML = '';
-                });
-                
+                dias.forEach(d => document.getElementById(`td-${d}`).innerHTML = '');
                 snapshot.forEach(doc => {
                     const r = doc.data();
-                    const itemHtml = `
-                        <div class="reserva-item">
-                            ${r.equip} - ${r.hora}
-                            <small>${r.prof}<br>(${r.mat})</small>
-                        </div>`;
-                    
-                    const coluna = document.getElementById(`td-${r.dia}`);
-                    if(coluna) {
-                        coluna.innerHTML += itemHtml;
+                    const item = `<div class="reserva-item">${r.equip} - ${r.hora}h<small>${r.prof}</small></div>`;
+                    if(document.getElementById(`td-${r.dia}`)) {
+                        document.getElementById(`td-${r.dia}`).innerHTML += item;
                     }
                 });
-            }, (error) => {
-                console.error("Erro no Snapshot: ", error);
             });
         }
     };
