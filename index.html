@@ -3,14 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SISTEMA NTI 2026 - CONTROLE TOTAL</title>
+    <title>SISTEMA NTI 2026 | KELVIN MASTER</title>
+    
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <style>
-        :root { --azul-pref: #004a99; --azul-sky: #00adef; --neon: #00ff9d; --danger: #ff4757; --warning: #ffb102; }
-        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: 0.3s; }
+        /* --- VARIÁVEIS DE DESIGN --- */
+        :root {
+            --azul-deep: #001a33;
+            --azul-sky: #00adef;
+            --neon-green: #00ff9d;
+            --danger: #ff4757;
+            --warning: #ffb102;
+            --glass: rgba(0, 0, 0, 0.85);
+        }
+
+        /* --- RESET E BASE --- */
+        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: 0.3s ease; }
         
         body { 
             margin: 0; 
@@ -20,282 +31,316 @@
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            color: white; 
+            overflow: hidden;
         }
-        
-        .balao-premium { 
+
+        /* --- CONTAINERS ORGANIZADOS --- */
+        .container-master { 
             width: 95%; 
-            max-width: 550px; 
-            background: rgba(0, 0, 0, 0.85); 
-            backdrop-filter: blur(15px); 
+            max-width: 600px; 
+            background: var(--glass); 
+            backdrop-filter: blur(20px); 
             border: 1px solid rgba(255, 255, 255, 0.1); 
-            border-radius: 25px; 
-            padding: 25px; 
-            box-shadow: 0 25px 50px rgba(0,0,0,0.6); 
-            position: relative; 
+            border-radius: 30px; 
+            padding: 30px; 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+            position: relative;
         }
 
         .hidden { display: none !important; }
-        input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: none; font-weight: 600; }
-        
-        .btn-acao { 
-            width: 100%; height: 48px; border-radius: 15px; border: none; 
-            background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); 
-            color: white; font-weight: 700; cursor: pointer; margin-bottom: 10px; 
-            text-transform: uppercase; font-size: 12px; 
+
+        /* --- INPUTS E BOTÕES ESTILIZADOS --- */
+        .campo-input {
+            width: 100%; padding: 14px; margin-bottom: 12px;
+            border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.9); font-weight: 600; color: #111;
         }
 
-        /* Sistema de Avisos Kelvin */
-        #notificacao { 
-            position: fixed; top: 20px; width: 90%; max-width: 400px; 
-            padding: 15px; border-radius: 10px; z-index: 10000; text-align: center; font-weight: bold; 
+        .btn-universal {
+            width: 100%; height: 50px; border-radius: 15px; border: none;
+            font-weight: 700; text-transform: uppercase; cursor: pointer;
+            margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 10px;
         }
-        .urgente { background: var(--danger); box-shadow: 0 0 30px red; }
-        .medio { background: var(--warning); color: black; }
-        .basico { background: var(--azul-sky); }
 
-        .card-reserva { 
-            background: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px; 
-            margin-bottom: 8px; font-size: 12px; border-left: 4px solid var(--neon); 
+        .btn-primary { background: linear-gradient(135deg, #004a99, var(--azul-sky)); color: white; }
+        .btn-outline { background: transparent; border: 1px solid var(--azul-sky); color: var(--azul-sky); }
+        .btn-danger { background: var(--danger); color: white; }
+
+        /* --- CARDS DE MONITORAMENTO --- */
+        .card-log {
+            background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px;
+            margin-bottom: 10px; border-left: 4px solid var(--azul-sky); font-size: 13px;
         }
-        
-        .status-badge { padding: 2px 6px; border-radius: 4px; font-size: 10px; float: right; }
+
+        /* --- SISTEMA DE AVISOS --- */
+        #alert-box {
+            position: fixed; top: 20px; width: 90%; max-width: 450px;
+            padding: 20px; border-radius: 15px; z-index: 10001; text-align: center; font-weight: bold;
+        }
+
+        /* --- TELA DE CONGELAMENTO --- */
+        #freeze-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.98); z-index: 10000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
     </style>
 </head>
 <body onload="app.init()">
 
-    <div id="congelador" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px;">
-        <h1 style="color:var(--danger); font-size:60px;">⚠️</h1>
-        <h2 id="congelar-msg">SISTEMA SUSPENSO PELO TI MASTER</h2>
-        <button onclick="location.reload()" style="background:white; color:black; border:none; padding:10px 20px; border-radius:10px; font-weight:bold; cursor:pointer;">RECONECTAR</button>
+    <div id="freeze-overlay" class="hidden">
+        <h1 style="color:var(--danger); font-size:80px;">⚠️</h1>
+        <h2 id="freeze-msg">SISTEMA BLOQUEADO PELO TI</h2>
+        <p>Aguarde a liberação do Administrador Kelvin.</p>
     </div>
 
-    <div id="notificacao" class="hidden"></div>
+    <div id="alert-box" class="hidden"></div>
 
-    <div class="balao-premium">
-        <div id="relogio" style="text-align:right; font-size:12px; color:var(--azul-sky); margin-bottom:10px; font-weight:bold;"></div>
+    <div class="container-master">
+        <div id="relogio" style="text-align:right; font-size:12px; color:var(--azul-sky); font-weight:700;"></div>
 
-        <div id="tela-inicio">
-            <h2 style="text-align:center;">NTI MASTER 2026</h2>
-            <button class="btn-acao" onclick="app.setPortal('PROF')">Portal Professor</button>
-            <button class="btn-acao" style="background:#444" onclick="app.setPortal('GEST')">Portal Gestão</button>
-            <button class="btn-acao" style="background:#333" onclick="app.setPortal('SEC')">Portal Secretaria</button>
-            <button class="btn-acao" style="background:transparent; border:1px solid var(--danger); color:var(--danger)" onclick="app.irPara('ti-login')">Acesso TI Master</button>
+        <div id="section-home">
+            <h2 style="text-align:center; letter-spacing:2px;">NTI MASTER 2026</h2>
+            <p style="text-align:center; color:#888; font-size:12px;">Selecione seu Portal de Acesso</p>
+            <button class="btn-universal btn-primary" onclick="app.setPortal('PROFESSOR')">👨‍🏫 Portal Professor</button>
+            <button class="btn-universal btn-primary" style="background:#333" onclick="app.setPortal('GESTÃO')">👔 Portal Gestão</button>
+            <button class="btn-universal btn-primary" style="background:#222" onclick="app.setPortal('SECRETARIA')">📝 Portal Secretaria</button>
+            <hr style="border:0; border-top:1px solid #333; margin:20px 0;">
+            <button class="btn-universal btn-outline" style="border-color:var(--danger); color:var(--danger)" onclick="app.nav('ti-auth')">🛡️ ACESSO TI MASTER</button>
         </div>
 
-        <div id="tela-auth" class="hidden">
-            <h3 id="auth-header">Portal</h3>
-            <input type="number" id="auth-pront" placeholder="Prontuário" oninput="app.verificarUsuario(this.value)">
+        <div id="section-auth" class="hidden">
+            <h3 id="auth-title">LOGIN</h3>
+            <input type="number" id="field-id" class="campo-input" placeholder="Digite seu Prontuário" oninput="app.checkUser(this.value)">
             
-            <div id="campos-cadastro" class="hidden">
-                <input type="text" id="auth-nome" placeholder="Nome Completo">
-                <input type="text" id="auth-materia" class="hidden" placeholder="Disciplina/Matéria">
+            <div id="form-new-user" class="hidden">
+                <input type="text" id="field-nome" class="campo-input" placeholder="Nome Completo">
+                <input type="text" id="field-materia" class="campo-input hidden" placeholder="Disciplina / Matéria">
             </div>
 
-            <input type="password" id="auth-senha" placeholder="Senha">
-            <button class="btn-acao" id="btn-auth" onclick="app.confirmarAcesso()">ENTRAR</button>
-            <button onclick="location.reload()" style="background:none; border:none; color:#777; width:100%; cursor:pointer;">Cancelar</button>
+            <input type="password" id="field-pass" class="campo-input" placeholder="Senha de Acesso">
+            <button class="btn-universal btn-primary" id="btn-login-main" onclick="app.handleAuth()">Acessar Sistema</button>
+            <button class="btn-universal" style="background:none; color:#555;" onclick="location.reload()">Voltar ao Início</button>
         </div>
 
-        <div id="tela-portal" class="hidden">
-            <h3 id="boas-vindas">Olá</h3>
+        <div id="section-portal" class="hidden">
+            <h3 id="user-welcome">Bem-vindo</h3>
             
-            <div id="funcoes-ativas">
-                <button class="btn-acao" onclick="app.abrirReserva()">📅 RESERVAR EQUIPAMENTO</button>
-                <button class="btn-acao" style="background:var(--warning); color:black;" onclick="app.abrirChamado()">🆘 ABRIR CHAMADO TI</button>
+            <div id="user-actions">
+                <button class="btn-universal btn-primary" onclick="app.modal('reserva')">📅 Nova Reserva de Equipamento</button>
+                <button class="btn-universal" style="background:var(--warning); color:black;" onclick="app.modal('chamado')">🆘 Abrir Chamado TI</button>
             </div>
 
             <div style="margin-top:20px;">
-                <strong style="font-size:14px; color:var(--neon)">📅 Calendário / Reservas em Tempo Real:</strong>
-                <div id="lista-reservas" style="margin-top:10px; max-height:200px; overflow-y:auto;"></div>
+                <p style="font-size:12px; font-weight:700; color:var(--azul-sky)">📊 MONITOR DE RESERVAS (TEMPO REAL):</p>
+                <div id="realtime-reservas" style="max-height:250px; overflow-y:auto; padding-right:5px;"></div>
             </div>
 
-            <button onclick="location.reload()" style="margin-top:20px; background:none; border:none; color:#555; width:100%; cursor:pointer;">Sair do Sistema</button>
+            <button class="btn-universal" style="background:none; border:1px solid #333; color:#555; margin-top:20px;" onclick="location.reload()">Sair do Sistema</button>
         </div>
 
-        <div id="tela-ti-painel" class="hidden">
-            <h2 style="color:var(--danger)">TI MASTER CONTROL</h2>
+        <div id="section-ti-painel" class="hidden">
+            <h3 style="color:var(--danger)">🛡️ PAINEL MASTER KELVIN</h3>
             
-            <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px; margin-bottom:15px;">
-                <p style="font-size:11px; margin:0 0 10px 0;">CENTRAL DE ALERTAS:</p>
-                <div style="display:flex; gap:5px;">
-                    <button onclick="app.enviarAviso('urgente')" style="flex:1; background:red; border:none; color:white; font-size:10px; padding:5px; border-radius:5px;">URGENTE</button>
-                    <button onclick="app.enviarAviso('medio')" style="flex:1; background:orange; border:none; font-size:10px; padding:5px; border-radius:5px;">MÉDIO</button>
-                    <button onclick="app.enviarAviso('basico')" style="flex:1; background:var(--azul-sky); border:none; font-size:10px; padding:5px; border-radius:5px;">BÁSICO</button>
+            <div class="card-log" style="background:rgba(255,255,255,0.1)">
+                <strong>📢 COMANDOS DE REDE:</strong>
+                <div style="display:flex; gap:5px; margin-top:10px;">
+                    <button onclick="app.broadcast('urgente')" style="background:red; color:white; border:none; flex:1; padding:8px; border-radius:8px; font-size:10px; font-weight:bold;">URGENTE</button>
+                    <button onclick="app.broadcast('medio')" style="background:orange; border:none; flex:1; padding:8px; border-radius:8px; font-size:10px; font-weight:bold;">MÉDIO</button>
+                    <button onclick="app.broadcast('basico')" style="background:var(--azul-sky); border:none; flex:1; padding:8px; border-radius:8px; font-size:10px; font-weight:bold;">BÁSICO</button>
                 </div>
             </div>
 
-            <div id="ti-users" style="max-height:150px; overflow-y:auto; margin-bottom:10px;"></div>
-            <div id="ti-chamados" style="max-height:150px; overflow-y:auto; background:rgba(0,0,0,0.3); padding:10px; border-radius:10px;">
-                <small>Chamados TI:</small>
+            <div id="ti-users-list" style="max-height:200px; overflow-y:auto; margin-bottom:15px;"></div>
+            <div id="ti-chamados-list" style="max-height:200px; overflow-y:auto; background:rgba(0,0,0,0.4); padding:10px; border-radius:15px;">
+                <p style="font-size:10px; color:var(--warning)">💬 ÚLTIMOS CHAMADOS:</p>
             </div>
             
-            <button onclick="location.reload()" class="btn-acao" style="background:#222; margin-top:10px;">Fechar Torre</button>
+            <button class="btn-universal btn-outline" onclick="location.reload()" style="margin-top:15px;">Fechar Torre</button>
         </div>
 
-        <div id="tela-ti-login" class="hidden">
+        <div id="section-ti-auth" class="hidden">
             <h3>CHAVE MESTRA</h3>
-            <input type="password" id="ti-key" placeholder="Senha do Administrador">
-            <button class="btn-acao" style="background:var(--danger)" onclick="app.entrarTI()">ACESSAR PAINEL</button>
+            <input type="password" id="ti-password" class="campo-input" placeholder="Senha do Administrador">
+            <button class="btn-universal btn-danger" onclick="app.accessTI()">Desbloquear Painel</button>
         </div>
+
     </div>
 
 <script>
-    // Config do Firebase do Kelvin
+    /* --- MÓDULO FIREBASE --- */
     const firebaseConfig = { databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    /* --- MOTOR DO SISTEMA --- */
     const app = {
-        role: '', user: null, existe: false,
+        currentRole: '',
+        currentUser: null,
+        userExists: false,
 
         init() {
             setInterval(() => { document.getElementById('relogio').innerText = new Date().toLocaleString(); }, 1000);
-            this.ouvirSistema();
+            this.listenToNetwork();
+            this.listenToReservas();
         },
 
-        irPara(tela) {
-            document.querySelectorAll('.balao-premium > div').forEach(d => { if(d.id !== 'relogio') d.classList.add('hidden'); });
-            document.getElementById('tela-' + tela).classList.remove('hidden');
+        nav(section) {
+            document.querySelectorAll('.container-master > div').forEach(div => { if(div.id !== 'relogio') div.classList.add('hidden'); });
+            document.getElementById('section-' + section).classList.remove('hidden');
         },
 
-        setPortal(p) {
-            this.role = p;
-            document.getElementById('auth-header').innerText = "Portal " + p;
-            this.irPara('auth');
+        setPortal(role) {
+            this.currentRole = role;
+            document.getElementById('auth-title').innerText = "Acesso " + role;
+            this.nav('auth');
         },
 
-        async verificarUsuario(p) {
-            if(p.length < 2) return;
-            const snap = await db.ref('usuarios/' + p).once('value');
-            this.existe = snap.exists();
-            
-            document.getElementById('campos-cadastro').classList.toggle('hidden', this.existe);
-            document.getElementById('auth-materia').classList.toggle('hidden', this.role !== 'PROF' || this.existe);
-            document.getElementById('btn-auth').innerText = this.existe ? "ENTRAR" : "CADASTRAR E ENTRAR";
+        async checkUser(id) {
+            if(id.length < 3) return;
+            const snap = await db.ref('usuarios/' + id).once('value');
+            this.userExists = snap.exists();
+
+            document.getElementById('form-new-user').classList.toggle('hidden', this.userExists);
+            document.getElementById('field-materia').classList.toggle('hidden', this.currentRole !== 'PROFESSOR' || this.userExists);
+            document.getElementById('btn-login-main').innerText = this.userExists ? "Confirmar Entrada" : "Cadastrar e Entrar";
         },
 
-        async confirmarAcesso() {
-            const p = document.getElementById('auth-pront').value;
-            const s = document.getElementById('auth-senha').value;
+        async handleAuth() {
+            const id = document.getElementById('field-id').value;
+            const pass = document.getElementById('field-pass').value;
 
-            if(this.existe) {
-                const snap = await db.ref('usuarios/' + p).once('value');
+            if(this.userExists) {
+                const snap = await db.ref('usuarios/' + id).once('value');
                 const u = snap.val();
-                if(u.senha !== s) return alert("Senha Incorreta!");
-                if(u.bloqueado) return this.congelar("ACESSO BLOQUEADO PELO TI MASTER.");
-                this.user = u;
-                this.abrirPortal();
+                if(u.pass !== pass) return alert("Senha Incorreta!");
+                if(u.blocked) return this.freeze("Acesso bloqueado por segurança.");
+                this.currentUser = u;
+                this.openPortal();
             } else {
-                const n = document.getElementById('auth-nome').value;
-                const m = document.getElementById('auth-materia').value || 'N/A';
-                if(!n || !s) return alert("Preencha todos os campos de cadastro!");
-                const novo = { pront: p, senha: s, nome: n, materia: m, cargo: this.role, bloqueado: false };
-                await db.ref('usuarios/' + p).set(novo);
-                this.user = novo;
-                this.abrirPortal();
+                const nome = document.getElementById('field-nome').value;
+                const materia = document.getElementById('field-materia').value || 'N/A';
+                if(!nome || !pass) return alert("Preencha todos os dados!");
+                
+                const newUser = { id, pass, nome, materia, role: this.currentRole, blocked: false };
+                await db.ref('usuarios/' + id).set(newUser);
+                this.currentUser = newUser;
+                this.openPortal();
             }
         },
 
-        abrirPortal() {
-            document.getElementById('boas-vindas').innerText = "Olá, " + this.user.nome;
-            this.irPara('portal');
-            // Gestores não reservam nem abrem chamado, apenas monitoram
-            if(this.user.cargo === 'GEST') document.getElementById('funcoes-ativas').classList.add('hidden');
+        openPortal() {
+            document.getElementById('user-welcome').innerText = "Olá, " + this.currentUser.nome;
+            this.nav('portal');
+            if(this.currentUser.role === 'GESTÃO') document.getElementById('user-actions').classList.add('hidden');
         },
 
-        abrirReserva() {
-            const eq = prompt("Equipamento para reserva:");
-            if(eq) db.ref('reservas').push({ 
-                equip: eq, prof: this.user.nome, cargo: this.user.cargo, 
-                status: 'EM USO', data: new Date().toLocaleTimeString() 
-            });
+        // --- MÓDULO DE RESERVAS ---
+        modal(type) {
+            if(type === 'reserva') {
+                const item = prompt("Qual equipamento você deseja reservar?");
+                if(item) {
+                    db.ref('reservas').push({
+                        item, user: this.currentUser.nome, role: this.currentUser.role,
+                        time: new Date().toLocaleTimeString(), status: 'EM USO'
+                    });
+                }
+            } else if(type === 'chamado') {
+                const desc = prompt("Descreva o problema para o TI:");
+                if(desc) db.ref('chamados').push({ user: this.currentUser.nome, desc, timestamp: Date.now() });
+            }
         },
 
-        abrirChamado() {
-            const desc = prompt("Descreva o problema para o TI:");
-            if(desc) db.ref('chamados').push({ nome: this.user.nome, desc, status: 'ABERTO' });
-        },
-
-        ouvirSistema() {
-            // Monitor de Reservas em Tempo Real
+        listenToReservas() {
             db.ref('reservas').on('value', snap => {
-                const list = document.getElementById('lista-reservas');
-                list.innerHTML = "";
+                const container = document.getElementById('realtime-reservas');
+                container.innerHTML = "";
                 snap.forEach(res => {
                     const r = res.val();
-                    const bg = r.status === 'ENTREGUE' ? '#2ecc71' : '#f1c40f';
-                    list.innerHTML += `<div class="card-reserva">
-                        <span class="status-badge" style="background:${bg}">${r.status}</span>
-                        <b>${r.equip}</b><br><small>${r.prof} (${r.cargo}) - ${r.data}</small>
-                        ${(this.role === 'PROF' || this.role === 'SEC') && r.status === 'EM USO' ? `<br><button onclick="app.entregar('${res.key}')" style="font-size:9px; margin-top:5px; cursor:pointer;">ENTREGAR</button>` : ''}
-                    </div>`;
+                    const isEntregue = r.status === 'ENTREGUE';
+                    container.innerHTML += `
+                        <div class="card-log" style="border-left-color: ${isEntregue ? 'var(--neon-green)' : 'var(--warning)'}">
+                            <span style="float:right; font-size:10px; background:#333; padding:2px 5px; border-radius:5px;">${r.status}</span>
+                            <b>${r.item}</b><br>
+                            <small>${r.user} (${r.role}) - ${r.time}</small>
+                            ${!isEntregue && this.currentUser && this.currentUser.role !== 'GESTÃO' ? 
+                            `<br><button onclick="app.returnItem('${res.key}')" style="font-size:10px; margin-top:5px; cursor:pointer;">Marcar como Entregue</button>` : ''}
+                        </div>`;
                 });
             });
+        },
 
-            // Monitor de Alertas Kelvin
-            db.ref('config/aviso').on('value', snap => {
+        returnItem(key) { db.ref('reservas/' + key).update({ status: 'ENTREGUE' }); },
+
+        // --- MÓDULO TI MASTER ---
+        accessTI() {
+            if(document.getElementById('ti-password').value === 'nti2026') {
+                this.nav('ti-painel');
+                this.loadTIMaster();
+            } else { alert("Chave Incorreta!"); }
+        },
+
+        loadTIMaster() {
+            // Usuários
+            db.ref('usuarios').on('value', snap => {
+                const list = document.getElementById('ti-users-list');
+                list.innerHTML = "<p style='font-size:10px; color:var(--azul-sky)'>GERENCIAR USUÁRIOS:</p>";
+                snap.forEach(u => {
+                    const d = u.val();
+                    list.innerHTML += `
+                        <div class="card-log" style="border-left-color: ${d.blocked ? 'red' : 'var(--neon-green)'}">
+                            ${d.nome} (${d.role})<br>
+                            <button onclick="app.tiControl('${d.id}', 'block', ${d.blocked})" style="font-size:9px">${d.blocked ? 'Ativar' : 'Bloquear'}</button>
+                            <button onclick="app.tiControl('${d.id}', 'reset')" style="font-size:9px">Reset Senha</button>
+                        </div>`;
+                });
+            });
+            // Chamados
+            db.ref('chamados').on('value', snap => {
+                const list = document.getElementById('ti-chamados-list');
+                list.innerHTML = "<p style='font-size:10px; color:var(--warning)'>💬 ÚLTIMOS CHAMADOS:</p>";
+                snap.forEach(c => {
+                    const d = c.val();
+                    list.innerHTML += `<div style="font-size:11px; padding:5px; border-bottom:1px solid #222"><b>${d.user}:</b> ${d.desc}</div>`;
+                });
+            });
+        },
+
+        tiControl(id, action, state) {
+            if(action === 'block') db.ref('usuarios/' + id).update({ blocked: !state });
+            if(action === 'reset') {
+                const nova = prompt("Nova senha:");
+                if(nova) db.ref('usuarios/' + id).update({ pass: nova });
+            }
+        },
+
+        broadcast(type) {
+            const msg = prompt("Mensagem do Alerta:");
+            if(msg) db.ref('config/alert').set({ type, msg, ts: Date.now() });
+        },
+
+        listenToNetwork() {
+            db.ref('config/alert').on('value', snap => {
                 const a = snap.val();
                 if(!a) return;
-                if(a.tipo === 'urgente') {
-                    this.congelar(a.msg);
+                const box = document.getElementById('alert-box');
+                box.innerText = a.msg;
+                box.className = a.type;
+                
+                if(a.type === 'urgente') {
+                    this.freeze(a.msg);
                 } else {
-                    const not = document.getElementById('notificacao');
-                    not.innerText = a.msg;
-                    not.className = a.tipo;
-                    not.classList.remove('hidden');
-                    setTimeout(() => not.classList.add('hidden'), 5000);
+                    box.classList.remove('hidden');
+                    if(a.type === 'medio') { box.style.background = "var(--warning)"; box.style.color = "black"; }
+                    if(a.type === 'basico') { box.style.background = "var(--azul-sky)"; box.style.color = "white"; }
+                    setTimeout(() => box.classList.add('hidden'), 5000);
                 }
             });
         },
 
-        entregar(key) { db.ref('reservas/' + key).update({ status: 'ENTREGUE' }); },
-
-        // --- ÁREA TI MASTER ---
-        entrarTI() {
-            if(document.getElementById('ti-key').value === 'nti2026') {
-                this.irPara('ti-painel');
-                this.carregarPainelTI();
-            }
-        },
-
-        carregarPainelTI() {
-            db.ref('usuarios').on('value', snap => {
-                const list = document.getElementById('ti-users');
-                list.innerHTML = "<small>Usuários:</small>";
-                snap.forEach(u => {
-                    const d = u.val();
-                    list.innerHTML += `<div class="card-reserva" style="border-left-color:${d.bloqueado?'red':'var(--neon)'}">
-                        ${d.nome} (${d.cargo})<br>
-                        <button onclick="app.tiBloquear('${d.pront}', ${d.bloqueado})" style="font-size:9px">${d.bloqueado?'ATIVAR':'BLOQUEAR'}</button>
-                        <button onclick="app.tiReset('${d.pront}')" style="font-size:9px">SENHA</button>
-                    </div>`;
-                });
-            });
-
-            db.ref('chamados').on('value', snap => {
-                const list = document.getElementById('ti-chamados');
-                list.innerHTML = "<small>Chamados TI:</small>";
-                snap.forEach(c => {
-                    const d = c.val();
-                    list.innerHTML += `<div style="font-size:10px; border-bottom:1px solid #333; padding:5px;">
-                        <b>${d.nome}:</b> ${d.desc}
-                    </div>`;
-                });
-            });
-        },
-
-        tiBloquear(id, status) { db.ref('usuarios/' + id).update({ bloqueado: !status }); },
-        tiReset(id) { const ns = prompt("Nova senha:"); if(ns) db.ref('usuarios/' + id).update({ senha: ns }); },
-        
-        enviarAviso(tipo) {
-            const m = prompt("Mensagem do Alerta:");
-            if(m) db.ref('config/aviso').set({ tipo, msg: m, time: Date.now() });
-        },
-
-        congelar(msg) {
-            document.getElementById('congelar-msg').innerText = msg;
-            document.getElementById('congelador').classList.remove('hidden');
+        freeze(msg) {
+            document.getElementById('freeze-msg').innerText = msg;
+            document.getElementById('freeze-overlay').classList.remove('hidden');
         }
     }
 </script>
