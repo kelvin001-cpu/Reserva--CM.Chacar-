@@ -4,192 +4,298 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SISTEMA NTI 2026 - CONTROLE TOTAL</title>
-    
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-    
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <style>
-        :root {
-            --azul-pref: #004a99;
-            --azul-sky: #00adef;
-            --neon: #00ff9d;
-            --danger: #ff4757;
-            --warning: #ffb102;
-        }
-
+        :root { --azul-pref: #004a99; --azul-sky: #00adef; --neon: #00ff9d; --danger: #ff4757; --warning: #ffb102; }
         * { box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: 0.3s; }
-
-        body {
-            margin: 0;
-            background: #00081a url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072') no-repeat center center fixed;
-            background-size: cover;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        
+        body { 
+            margin: 0; 
+            background: #000 url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072') no-repeat center center fixed; 
+            background-size: cover; 
+            min-height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: white; 
         }
-
-        /* O Balão de Vidro da Foto */
-        .balao-premium {
-            width: 100%;
-            max-width: 480px;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 25px;
-            padding: 30px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-            text-align: center;
+        
+        .balao-premium { 
+            width: 95%; 
+            max-width: 550px; 
+            background: rgba(0, 0, 0, 0.85); 
+            backdrop-filter: blur(15px); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 25px; 
+            padding: 25px; 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6); 
+            position: relative; 
         }
 
         .hidden { display: none !important; }
-
-        h2 { color: white; letter-spacing: 1px; margin-bottom: 25px; font-weight: 700; }
-
-        .btn-acao {
-            width: 100%;
-            height: 50px;
-            border-radius: 15px;
-            border: 1px solid rgba(255,255,255,0.1);
-            background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky));
-            color: white;
-            font-weight: 600;
-            margin-bottom: 12px;
-            cursor: pointer;
-            text-transform: uppercase;
-            font-size: 13px;
+        input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: none; font-weight: 600; }
+        
+        .btn-acao { 
+            width: 100%; height: 48px; border-radius: 15px; border: none; 
+            background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); 
+            color: white; font-weight: 700; cursor: pointer; margin-bottom: 10px; 
+            text-transform: uppercase; font-size: 12px; 
         }
 
-        .btn-ti-master {
-            background: transparent;
-            border: 1px solid var(--danger);
-            color: var(--danger);
+        /* Sistema de Avisos Kelvin */
+        #notificacao { 
+            position: fixed; top: 20px; width: 90%; max-width: 400px; 
+            padding: 15px; border-radius: 10px; z-index: 10000; text-align: center; font-weight: bold; 
         }
+        .urgente { background: var(--danger); box-shadow: 0 0 30px red; }
+        .medio { background: var(--warning); color: black; }
+        .basico { background: var(--azul-sky); }
 
-        /* Estilo do Chat que aparece na segunda foto */
-        .chat-box {
-            height: 200px;
-            background: rgba(0,0,0,0.4);
-            border-radius: 15px;
-            overflow-y: auto;
-            padding: 15px;
-            margin-bottom: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+        .card-reserva { 
+            background: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px; 
+            margin-bottom: 8px; font-size: 12px; border-left: 4px solid var(--neon); 
         }
-
-        .msg { padding: 8px 12px; border-radius: 12px; font-size: 12px; max-width: 85%; }
-        .msg-ti { align-self: flex-end; background: var(--azul-pref); color: white; }
-        .msg-user { align-self: flex-start; background: rgba(255,255,255,0.1); color: white; }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            background: white;
-            border-radius: 10px;
-            border: none;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        .input-chat {
-            background: rgba(255,255,255,0.9);
-            border-radius: 20px;
-            padding: 10px 20px;
-        }
+        
+        .status-badge { padding: 2px 6px; border-radius: 4px; font-size: 10px; float: right; }
     </style>
 </head>
 <body onload="app.init()">
 
+    <div id="congelador" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px;">
+        <h1 style="color:var(--danger); font-size:60px;">⚠️</h1>
+        <h2 id="congelar-msg">SISTEMA SUSPENSO PELO TI MASTER</h2>
+        <button onclick="location.reload()" style="background:white; color:black; border:none; padding:10px 20px; border-radius:10px; font-weight:bold; cursor:pointer;">RECONECTAR</button>
+    </div>
+
+    <div id="notificacao" class="hidden"></div>
+
     <div class="balao-premium">
-        <div id="relogio" style="color: var(--azul-sky); font-size: 12px; margin-bottom: 10px;"></div>
+        <div id="relogio" style="text-align:right; font-size:12px; color:var(--azul-sky); margin-bottom:10px; font-weight:bold;"></div>
 
         <div id="tela-inicio">
-            <h2>NTI MASTER 2026</h2>
-            <button class="btn-acao" onclick="app.showLogin('PROFESSOR')">PORTAL PROFESSOR</button>
-            <button class="btn-acao" style="background: #444;" onclick="app.showLogin('GESTÃO')">PORTAL GESTÃO</button>
-            <button class="btn-acao" style="background: #333;" onclick="app.showLogin('SECRETARIA')">PORTAL SECRETARIA</button>
-            <button class="btn-acao btn-ti-master" onclick="app.showLogin('TI MASTER')">ACESSO TI MASTER</button>
+            <h2 style="text-align:center;">NTI MASTER 2026</h2>
+            <button class="btn-acao" onclick="app.setPortal('PROF')">Portal Professor</button>
+            <button class="btn-acao" style="background:#444" onclick="app.setPortal('GEST')">Portal Gestão</button>
+            <button class="btn-acao" style="background:#333" onclick="app.setPortal('SEC')">Portal Secretaria</button>
+            <button class="btn-acao" style="background:transparent; border:1px solid var(--danger); color:var(--danger)" onclick="app.irPara('ti-login')">Acesso TI Master</button>
         </div>
 
-        <div id="tela-master" class="hidden">
-            <h2 id="user-title">Portal: TI MASTER</h2>
+        <div id="tela-auth" class="hidden">
+            <h3 id="auth-header">Portal</h3>
+            <input type="number" id="auth-pront" placeholder="Prontuário" oninput="app.verificarUsuario(this.value)">
             
-            <button class="btn-acao" style="border-color: var(--neon); background: rgba(0,255,157,0.1); color: var(--neon);">
-                🏠 CENTRAL DE CHAMADOS
-            </button>
-            <button class="btn-acao" style="background: rgba(0,173,239,0.1); border-color: var(--azul-sky);">
-                🗓️ CRONOGRAMA DE USO
-            </button>
-
-            <div class="chat-box" id="chat-content">
-                <div class="msg msg-user">professor: oi</div>
-                <div class="msg msg-ti">TI MASTER: testando</div>
+            <div id="campos-cadastro" class="hidden">
+                <input type="text" id="auth-nome" placeholder="Nome Completo">
+                <input type="text" id="auth-materia" class="hidden" placeholder="Disciplina/Matéria">
             </div>
 
-            <div style="display: flex; gap: 5px;">
-                <input type="text" id="chat-input" class="input-chat" placeholder="Conversar...">
-                <button onclick="app.sendMsg()" style="width: 50px; border-radius: 20px; border: none; background: var(--neon); cursor: pointer;">➡</button>
-            </div>
-            
-            <button onclick="location.reload()" style="background: none; border: none; color: #777; font-size: 10px; cursor: pointer; margin-top: 10px;">DESCONECTAR</button>
+            <input type="password" id="auth-senha" placeholder="Senha">
+            <button class="btn-acao" id="btn-auth" onclick="app.confirmarAcesso()">ENTRAR</button>
+            <button onclick="location.reload()" style="background:none; border:none; color:#777; width:100%; cursor:pointer;">Cancelar</button>
         </div>
 
-        <div id="tela-login" class="hidden">
-            <h2 id="login-title">LOGIN</h2>
-            <input type="number" id="prontuario" placeholder="Prontuário">
-            <input type="password" id="senha" placeholder="Senha">
-            <button class="btn-acao" onclick="app.entrar()">ENTRAR</button>
-            <button onclick="app.irPara('inicio')" style="background:none; border:none; color:white; cursor:pointer;">Voltar</button>
+        <div id="tela-portal" class="hidden">
+            <h3 id="boas-vindas">Olá</h3>
+            
+            <div id="funcoes-ativas">
+                <button class="btn-acao" onclick="app.abrirReserva()">📅 RESERVAR EQUIPAMENTO</button>
+                <button class="btn-acao" style="background:var(--warning); color:black;" onclick="app.abrirChamado()">🆘 ABRIR CHAMADO TI</button>
+            </div>
+
+            <div style="margin-top:20px;">
+                <strong style="font-size:14px; color:var(--neon)">📅 Calendário / Reservas em Tempo Real:</strong>
+                <div id="lista-reservas" style="margin-top:10px; max-height:200px; overflow-y:auto;"></div>
+            </div>
+
+            <button onclick="location.reload()" style="margin-top:20px; background:none; border:none; color:#555; width:100%; cursor:pointer;">Sair do Sistema</button>
+        </div>
+
+        <div id="tela-ti-painel" class="hidden">
+            <h2 style="color:var(--danger)">TI MASTER CONTROL</h2>
+            
+            <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px; margin-bottom:15px;">
+                <p style="font-size:11px; margin:0 0 10px 0;">CENTRAL DE ALERTAS:</p>
+                <div style="display:flex; gap:5px;">
+                    <button onclick="app.enviarAviso('urgente')" style="flex:1; background:red; border:none; color:white; font-size:10px; padding:5px; border-radius:5px;">URGENTE</button>
+                    <button onclick="app.enviarAviso('medio')" style="flex:1; background:orange; border:none; font-size:10px; padding:5px; border-radius:5px;">MÉDIO</button>
+                    <button onclick="app.enviarAviso('basico')" style="flex:1; background:var(--azul-sky); border:none; font-size:10px; padding:5px; border-radius:5px;">BÁSICO</button>
+                </div>
+            </div>
+
+            <div id="ti-users" style="max-height:150px; overflow-y:auto; margin-bottom:10px;"></div>
+            <div id="ti-chamados" style="max-height:150px; overflow-y:auto; background:rgba(0,0,0,0.3); padding:10px; border-radius:10px;">
+                <small>Chamados TI:</small>
+            </div>
+            
+            <button onclick="location.reload()" class="btn-acao" style="background:#222; margin-top:10px;">Fechar Torre</button>
+        </div>
+
+        <div id="tela-ti-login" class="hidden">
+            <h3>CHAVE MESTRA</h3>
+            <input type="password" id="ti-key" placeholder="Senha do Administrador">
+            <button class="btn-acao" style="background:var(--danger)" onclick="app.entrarTI()">ACESSAR PAINEL</button>
         </div>
     </div>
 
 <script>
-    // Dados do seu Firebase que peguei na foto
-    const firebaseConfig = {
-        databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com",
-    };
+    // Config do Firebase do Kelvin
+    const firebaseConfig = { databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     const app = {
+        role: '', user: null, existe: false,
+
         init() {
-            setInterval(() => {
-                document.getElementById('relogio').innerText = new Date().toLocaleString();
-            }, 1000);
+            setInterval(() => { document.getElementById('relogio').innerText = new Date().toLocaleString(); }, 1000);
+            this.ouvirSistema();
         },
+
         irPara(tela) {
-            document.querySelectorAll('.balao-premium > div').forEach(d => {
-                if(d.id !== 'relogio') d.classList.add('hidden');
-            });
+            document.querySelectorAll('.balao-premium > div').forEach(d => { if(d.id !== 'relogio') d.classList.add('hidden'); });
             document.getElementById('tela-' + tela).classList.remove('hidden');
         },
-        showLogin(cargo) {
-            this.cargo = cargo;
-            document.getElementById('login-title').innerText = cargo;
-            this.irPara('login');
+
+        setPortal(p) {
+            this.role = p;
+            document.getElementById('auth-header').innerText = "Portal " + p;
+            this.irPara('auth');
         },
-        entrar() {
-            const p = document.getElementById('prontuario').value;
-            const s = document.getElementById('senha').value;
+
+        async verificarUsuario(p) {
+            if(p.length < 2) return;
+            const snap = await db.ref('usuarios/' + p).once('value');
+            this.existe = snap.exists();
             
-            if(this.cargo === 'TI MASTER' && s === 'nti2026') {
-                this.irPara('master');
-            } else if(p && s) {
-                // Aqui entraria a lógica de professor
-                alert("Acesso liberado para " + this.cargo);
+            document.getElementById('campos-cadastro').classList.toggle('hidden', this.existe);
+            document.getElementById('auth-materia').classList.toggle('hidden', this.role !== 'PROF' || this.existe);
+            document.getElementById('btn-auth').innerText = this.existe ? "ENTRAR" : "CADASTRAR E ENTRAR";
+        },
+
+        async confirmarAcesso() {
+            const p = document.getElementById('auth-pront').value;
+            const s = document.getElementById('auth-senha').value;
+
+            if(this.existe) {
+                const snap = await db.ref('usuarios/' + p).once('value');
+                const u = snap.val();
+                if(u.senha !== s) return alert("Senha Incorreta!");
+                if(u.bloqueado) return this.congelar("ACESSO BLOQUEADO PELO TI MASTER.");
+                this.user = u;
+                this.abrirPortal();
+            } else {
+                const n = document.getElementById('auth-nome').value;
+                const m = document.getElementById('auth-materia').value || 'N/A';
+                if(!n || !s) return alert("Preencha todos os campos de cadastro!");
+                const novo = { pront: p, senha: s, nome: n, materia: m, cargo: this.role, bloqueado: false };
+                await db.ref('usuarios/' + p).set(novo);
+                this.user = novo;
+                this.abrirPortal();
             }
         },
-        sendMsg() {
-            const inp = document.getElementById('chat-input');
-            if(!inp.value) return;
-            const chat = document.getElementById('chat-content');
-            chat.innerHTML += `<div class="msg msg-ti">TI MASTER: ${inp.value}</div>`;
-            inp.value = "";
-            chat.scrollTop = chat.scrollHeight;
+
+        abrirPortal() {
+            document.getElementById('boas-vindas').innerText = "Olá, " + this.user.nome;
+            this.irPara('portal');
+            // Gestores não reservam nem abrem chamado, apenas monitoram
+            if(this.user.cargo === 'GEST') document.getElementById('funcoes-ativas').classList.add('hidden');
+        },
+
+        abrirReserva() {
+            const eq = prompt("Equipamento para reserva:");
+            if(eq) db.ref('reservas').push({ 
+                equip: eq, prof: this.user.nome, cargo: this.user.cargo, 
+                status: 'EM USO', data: new Date().toLocaleTimeString() 
+            });
+        },
+
+        abrirChamado() {
+            const desc = prompt("Descreva o problema para o TI:");
+            if(desc) db.ref('chamados').push({ nome: this.user.nome, desc, status: 'ABERTO' });
+        },
+
+        ouvirSistema() {
+            // Monitor de Reservas em Tempo Real
+            db.ref('reservas').on('value', snap => {
+                const list = document.getElementById('lista-reservas');
+                list.innerHTML = "";
+                snap.forEach(res => {
+                    const r = res.val();
+                    const bg = r.status === 'ENTREGUE' ? '#2ecc71' : '#f1c40f';
+                    list.innerHTML += `<div class="card-reserva">
+                        <span class="status-badge" style="background:${bg}">${r.status}</span>
+                        <b>${r.equip}</b><br><small>${r.prof} (${r.cargo}) - ${r.data}</small>
+                        ${(this.role === 'PROF' || this.role === 'SEC') && r.status === 'EM USO' ? `<br><button onclick="app.entregar('${res.key}')" style="font-size:9px; margin-top:5px; cursor:pointer;">ENTREGAR</button>` : ''}
+                    </div>`;
+                });
+            });
+
+            // Monitor de Alertas Kelvin
+            db.ref('config/aviso').on('value', snap => {
+                const a = snap.val();
+                if(!a) return;
+                if(a.tipo === 'urgente') {
+                    this.congelar(a.msg);
+                } else {
+                    const not = document.getElementById('notificacao');
+                    not.innerText = a.msg;
+                    not.className = a.tipo;
+                    not.classList.remove('hidden');
+                    setTimeout(() => not.classList.add('hidden'), 5000);
+                }
+            });
+        },
+
+        entregar(key) { db.ref('reservas/' + key).update({ status: 'ENTREGUE' }); },
+
+        // --- ÁREA TI MASTER ---
+        entrarTI() {
+            if(document.getElementById('ti-key').value === 'nti2026') {
+                this.irPara('ti-painel');
+                this.carregarPainelTI();
+            }
+        },
+
+        carregarPainelTI() {
+            db.ref('usuarios').on('value', snap => {
+                const list = document.getElementById('ti-users');
+                list.innerHTML = "<small>Usuários:</small>";
+                snap.forEach(u => {
+                    const d = u.val();
+                    list.innerHTML += `<div class="card-reserva" style="border-left-color:${d.bloqueado?'red':'var(--neon)'}">
+                        ${d.nome} (${d.cargo})<br>
+                        <button onclick="app.tiBloquear('${d.pront}', ${d.bloqueado})" style="font-size:9px">${d.bloqueado?'ATIVAR':'BLOQUEAR'}</button>
+                        <button onclick="app.tiReset('${d.pront}')" style="font-size:9px">SENHA</button>
+                    </div>`;
+                });
+            });
+
+            db.ref('chamados').on('value', snap => {
+                const list = document.getElementById('ti-chamados');
+                list.innerHTML = "<small>Chamados TI:</small>";
+                snap.forEach(c => {
+                    const d = c.val();
+                    list.innerHTML += `<div style="font-size:10px; border-bottom:1px solid #333; padding:5px;">
+                        <b>${d.nome}:</b> ${d.desc}
+                    </div>`;
+                });
+            });
+        },
+
+        tiBloquear(id, status) { db.ref('usuarios/' + id).update({ bloqueado: !status }); },
+        tiReset(id) { const ns = prompt("Nova senha:"); if(ns) db.ref('usuarios/' + id).update({ senha: ns }); },
+        
+        enviarAviso(tipo) {
+            const m = prompt("Mensagem do Alerta:");
+            if(m) db.ref('config/aviso').set({ tipo, msg: m, time: Date.now() });
+        },
+
+        congelar(msg) {
+            document.getElementById('congelar-msg').innerText = msg;
+            document.getElementById('congelador').classList.remove('hidden');
         }
     }
 </script>
