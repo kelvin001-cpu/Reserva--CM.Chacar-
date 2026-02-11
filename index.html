@@ -2,316 +2,185 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SISTEMA NTi 2026 - KELVIN ADMIN</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISTEMA NTi 2026 - KELVIN MASTER</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
-        :root { --azul-pref: #004a99; --azul-sky: #00adef; --neon: #00ff9d; --danger: #ff4757; }
-        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: 0.2s; }
-        body { margin: 0; background: #000b1a url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed; background-size: cover; min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white; padding: 10px; }
-        .balao-premium { width: 100%; max-width: 600px; background: rgba(0, 0, 0, 0.96); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; padding: 25px; box-shadow: 0 25px 50px rgba(0,0,0,1); text-align: center; }
+        :root { --azul: #004a99; --perigo: #ff4757; --neon: #00ff9d; }
+        body { margin: 0; font-family: 'Poppins', sans-serif; background: #000b1a; color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .caixa { width: 90%; max-width: 500px; background: rgba(255,255,255,0.05); padding: 30px; border-radius: 20px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); text-align: center; }
         .hidden { display: none !important; }
-        .campo { width: 100%; height: 45px; border-radius: 12px; border: 1px solid #333; padding: 0 15px; margin-bottom: 12px; font-weight: 600; color: #000; outline: none; background: #fff; }
-        .btn-acao { width: 100%; height: 50px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); color: white; font-weight: 700; cursor: pointer; margin-bottom: 10px; text-transform: uppercase; font-size: 12px; }
-        .btn-mini { padding: 6px 12px; border-radius: 8px; border: none; font-size: 10px; font-weight: bold; cursor: pointer; margin-top: 5px; margin-right: 5px; background: var(--neon); color: #000; }
-        .btn-voltar { background: none; border: 1px solid #444; color: #aaa; padding: 10px; border-radius: 12px; cursor: pointer; font-size: 11px; width: 100%; margin-top: 10px; }
-        .card { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; margin-bottom: 12px; border-left: 6px solid var(--azul-sky); text-align: left; }
-        #chat-box { height: 180px; background: rgba(0,0,0,0.6); border-radius: 15px; overflow-y: auto; padding: 15px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; }
-        .msg { padding: 8px 14px; border-radius: 12px; font-size: 11px; max-width: 85%; width: fit-content; }
-        .msg-ti { align-self: flex-end; background: var(--azul-pref); }
-        .msg-user { align-self: flex-start; background: rgba(255,255,255,0.1); }
-        .badge { font-size: 9px; padding: 3px 7px; border-radius: 5px; font-weight: 900; text-transform: uppercase; margin-bottom: 5px; display: inline-block; background: var(--azul-sky); color: #000; }
+        input, select { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: none; outline: none; font-weight: bold; }
+        button { width: 100%; padding: 15px; border-radius: 10px; border: none; background: var(--azul); color: white; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-top: 10px; }
+        .card { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; margin-top: 10px; text-align: left; border-left: 4px solid var(--neon); }
+        .btn-ti { padding: 5px; font-size: 10px; margin: 2px; cursor: pointer; }
     </style>
 </head>
 <body onload="app.init()">
 
-<div class="balao-premium">
-    <div id="relogio" style="font-size: 12px; color: var(--azul-sky); margin-bottom: 15px; font-weight: bold;"></div>
+<div class="caixa">
+    <div id="relogio" style="margin-bottom: 20px; color: var(--neon);"></div>
 
     <div id="tela-inicio">
-        <h2>SISTEMA NTi 2026</h2>
-        <p style="font-size: 11px; opacity: 0.6;">Acesso Seguro & Persistente</p>
-        <button class="btn-acao" onclick="app.irPara('login-geral', 'PROF')">Portal Professor</button>
-        <button class="btn-acao" style="background:#444" onclick="app.irPara('login-geral', 'GESTOR')">Portal Gestão</button>
-        <button class="btn-acao" style="background:#222" onclick="app.irPara('login-geral', 'SEC')">Portal Secretaria</button>
-        <button class="btn-acao" style="background:#000; border: 1px solid var(--danger)" onclick="app.irPara('login-ti')">Acesso Técnico Kelvin</button>
+        <h2>PORTAL NTi 2026</h2>
+        <button onclick="app.abrir('PROF')">Professor</button>
+        <button style="background:#444" onclick="app.abrir('GESTOR')">Gestão</button>
+        <button style="background:#222" onclick="app.abrir('SEC')">Secretaria</button>
+        <button style="background:black; border: 1px solid red" onclick="app.irPara('ti-login')">ADMIN KELVIN</button>
     </div>
 
-    <div id="tela-login-geral" class="hidden">
-        <h3 id="titulo-login">LOGIN</h3>
-        <input type="text" id="log-id" class="campo" placeholder="Prontuário / ID">
-        <div id="campos-cadastro" class="hidden">
-            <input type="text" id="log-nome" class="campo" placeholder="Nome Completo">
-            <input type="text" id="log-extra" class="campo" placeholder="Matéria / Setor">
+    <div id="tela-login" class="hidden">
+        <h3 id="titulo-portal">ACESSO</h3>
+        <input type="text" id="p-prontuario" placeholder="Prontuário" oninput="app.checar(this.value)">
+        
+        <div id="campos-novos" class="hidden">
+            <input type="text" id="p-nome" placeholder="Nome Completo">
+            <input type="text" id="p-materia" class="hidden" placeholder="Matéria">
         </div>
-        <input type="password" id="log-pass" class="campo" placeholder="Senha">
-        <button class="btn-acao" id="btn-entrar" onclick="app.authGeral()">ENTRAR</button>
-        <button class="btn-voltar" onclick="app.irPara('inicio')">VOLTAR</button>
-        <p id="msg-login" style="font-size: 10px; color: var(--neon); margin-top: 10px;"></p>
+
+        <input type="password" id="p-senha" placeholder="Senha">
+        <button onclick="app.entrar()">CONECTAR</button>
+        <button style="background:none; color:gray" onclick="app.irPara('inicio')">VOLTAR</button>
     </div>
 
-    <div id="tela-login-ti" class="hidden">
-        <h3 style="color:var(--danger)">KELVIN MASTER ADMIN</h3>
-        <input type="password" id="ti-pass" class="campo" placeholder="Senha Mestra">
-        <button class="btn-acao" style="background:var(--danger)" onclick="app.authTI()">ACESSAR SISTEMA</button>
-        <button class="btn-voltar" onclick="app.irPara('inicio')">VOLTAR</button>
+    <div id="tela-ti-login" class="hidden">
+        <h3>KELVIN MASTER</h3>
+        <input type="password" id="ti-pass" placeholder="Senha Mestra">
+        <button style="background:red" onclick="app.loginTI()">ENTRAR</button>
+        <button style="background:none" onclick="app.irPara('inicio')">VOLTAR</button>
     </div>
 
     <div id="tela-menu" class="hidden">
-        <h3 id="boas-vindas" style="color:var(--azul-sky)">Olá</h3>
-        <div id="area-comum">
-            <button class="btn-acao" onclick="app.irPara('reserva')">📅 RESERVAR EQUIPAMENTO</button>
-            <button class="btn-acao" style="background:var(--danger)" onclick="app.irPara('chamado')">🛠️ ABRIR CHAMADO TI</button>
+        <h2 id="msg-user">Olá</h2>
+        <div id="bloco-ti" class="hidden">
+            <button style="background:red" onclick="app.irPara('ti-controle')">GERENCIAR USUÁRIOS</button>
         </div>
-        <div id="area-ti" class="hidden">
-            <button class="btn-acao" style="background:#000; border: 2px solid var(--neon)" onclick="app.irPara('painel-chamados')">📥 CENTRAL DE CHAMADOS</button>
-            <button class="btn-acao" style="background:#111; border: 1px solid var(--azul-sky)" onclick="app.irPara('painel-usuarios')">👥 GERENCIAR USUÁRIOS</button>
-        </div>
-        <button class="btn-acao" style="background:rgba(0,173,239,0.2)" onclick="app.irPara('cronograma')">🖥️ CRONOGRAMA</button>
-        <div style="margin-top:20px; border-top: 1px solid #333; padding-top: 15px;">
-            <div id="chat-box"></div>
-            <div style="display:flex; gap:8px;">
-                <input type="text" id="chat-input" class="campo" style="margin:0; height:42px;" placeholder="Mensagem...">
-                <button onclick="app.enviarMsg()" style="background:var(--neon); border:none; border-radius:12px; padding:0 20px; cursor:pointer; color:#000;">➔</button>
-            </div>
-        </div>
-        <button class="btn-voltar" onclick="app.logout()">SAIR</button>
+        <button onclick="alert('Reserva em breve...')">FAZER RESERVA</button>
+        <button style="background:none" onclick="app.logout()">SAIR</button>
     </div>
 
-    <div id="tela-painel-usuarios" class="hidden">
-        <h3>CONTROLE DE ACESSOS</h3>
-        <div id="lista-usuarios" style="max-height:350px; overflow-y:auto;"></div>
-        <button class="btn-voltar" onclick="app.irPara('menu')">VOLTAR</button>
+    <div id="tela-ti-controle" class="hidden">
+        <h3>CONTROLE DE ACESSO</h3>
+        <div id="lista-users" style="max-height: 300px; overflow-y: auto;"></div>
+        <button onclick="app.irPara('menu')">VOLTAR</button>
     </div>
-
-    <div id="tela-reserva" class="hidden">
-        <h3>NOVA RESERVA</h3>
-        <select id="res-item" class="campo"><option value="SALA INFO">SALA INFO</option><option value="CHROMEBOOKS">CHROMEBOOKS</option><option value="TVs">TVs</option></select>
-        <input type="date" id="res-data" class="campo"><input type="time" id="res-hora" class="campo">
-        <button class="btn-acao" onclick="app.salvarReserva()">CONFIRMAR</button>
-        <button class="btn-voltar" onclick="app.irPara('menu')">VOLTAR</button>
-    </div>
-
-    <div id="tela-painel-chamados" class="hidden">
-        <h3>CENTRAL TI</h3>
-        <div id="lista-chamados" style="max-height:350px; overflow-y:auto;"></div>
-        <button class="btn-voltar" onclick="app.irPara('menu')">VOLTAR</button>
-    </div>
-
-    <div id="tela-cronograma" class="hidden">
-        <h3>CRONOGRAMA</h3>
-        <input type="date" id="filtro-data" class="campo" onchange="app.renderCronograma()">
-        <div id="lista-crono" style="max-height:300px; overflow-y:auto;"></div>
-        <button class="btn-voltar" onclick="app.irPara('menu')">VOLTAR</button>
-    </div>
-
-    <div id="tela-chamado" class="hidden">
-        <h3>ABRIR CHAMADO</h3>
-        <textarea id="ch-txt" class="campo" style="height:80px; padding-top:10px;" placeholder="Qual o problema?"></textarea>
-        <button class="btn-acao" style="background:var(--danger)" onclick="app.salvarChamado()">ENVIAR AO TI</button>
-        <button class="btn-voltar" onclick="app.irPara('menu')">VOLTAR</button>
-    </div>
-
 </div>
 
 <script>
+    // VERIFIQUE SE ESTAS CHAVES SÃO AS DO SEU FIREBASE ATUAL
     const firebaseConfig = {
         apiKey: "AIzaSyBoGfDKz-nBwKvczzGpxg-fHJYdVykcBUQ",
-        authDomain: "escala-chacara.firebaseapp.com",
         databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com",
         projectId: "escala-chacara",
-        storageBucket: "escala-chacara.firebasestorage.app",
-        messagingSenderId: "741259231706",
         appId: "1:741259231706:web:27e2b60be100e6a34180e3"
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     const app = {
-        user: null, currentType: null,
+        user: null, cargo: '', existe: false,
 
         init() {
-            const saved = localStorage.getItem('nti_user');
-            const tela = localStorage.getItem('nti_tela');
-            if(saved) {
-                this.user = JSON.parse(saved);
-                this.loginSuccess(tela || 'menu');
-            } else { this.irPara('inicio'); }
+            const cache = localStorage.getItem('user_kelvin');
+            if(cache) { this.user = JSON.parse(cache); this.sucesso(); }
+            else { this.irPara('inicio'); }
+            setInterval(() => { document.getElementById('relogio').innerText = new Date().toLocaleString(); }, 1000);
         },
 
-        irPara(tela, tipo = null) {
-            localStorage.setItem('nti_tela', tela);
-            if(tipo) {
-                this.currentType = tipo;
-                document.getElementById('titulo-login').innerText = "PORTAL " + tipo;
-                this.resetLoginFields();
-            }
-            document.querySelectorAll('.balao-premium > div').forEach(d => { if(d.id !== 'relogio') d.classList.add('hidden'); });
-            document.getElementById('tela-' + tela).classList.remove('hidden');
-            if(tela === 'painel-usuarios') this.renderUsuarios();
-            if(tela === 'cronograma') this.renderCronograma();
-            if(tela === 'painel-chamados') this.renderPainelChamados();
+        irPara(t) {
+            document.querySelectorAll('.caixa > div').forEach(d => { if(d.id !== 'relogio') d.classList.add('hidden'); });
+            document.getElementById('tela-' + t).classList.remove('hidden');
+            if(t === 'ti-controle') this.carregarUsers();
         },
 
-        resetLoginFields() {
-            document.getElementById('log-id').value = "";
-            document.getElementById('log-pass').value = "";
-            document.getElementById('campos-cadastro').classList.add('hidden');
-            document.getElementById('msg-login').innerText = "Digite seu prontuário";
+        abrir(c) {
+            this.cargo = c;
+            document.getElementById('titulo-portal').innerText = "PORTAL " + c;
+            this.irPara('login');
         },
 
-        // LÓGICA DE LOGIN/CADASTRO INTELIGENTE
-        async authGeral() {
-            const id = document.getElementById('log-id').value;
-            const pass = document.getElementById('log-pass').value;
-            if(!id || !pass) return alert("Preencha os campos!");
-
-            const snap = await db.ref('usuarios/' + id).once('value');
-            const exist = snap.exists();
-
-            if(!exist) {
-                // Modo Cadastro
-                const cadDiv = document.getElementById('campos-cadastro');
-                if(cadDiv.classList.contains('hidden')) {
-                    cadDiv.classList.remove('hidden');
-                    document.getElementById('msg-login').innerText = "Usuário novo! Complete o cadastro:";
-                    return;
-                }
-                const nome = document.getElementById('log-nome').value.toUpperCase();
-                const extra = document.getElementById('log-extra').value.toUpperCase();
-                if(!nome) return alert("Nome obrigatório!");
-                
-                const newUser = { id, nome, extra, pass, tipo: this.currentType };
-                await db.ref('usuarios/' + id).set(newUser);
-                this.user = newUser;
+        async checar(p) {
+            if(p.length < 3) return;
+            const snap = await db.ref('usuarios/' + p).once('value');
+            this.existe = snap.exists();
+            document.getElementById('campos-novos').classList.toggle('hidden', this.existe);
+            if(!this.existe && this.cargo === 'PROF') {
+                document.getElementById('p-materia').classList.remove('hidden');
             } else {
-                // Modo Login
-                const userData = snap.val();
-                if(userData.pass !== pass) return alert("Senha Incorreta!");
-                this.user = userData;
+                document.getElementById('p-materia').classList.add('hidden');
             }
-
-            localStorage.setItem('nti_user', JSON.stringify(this.user));
-            this.loginSuccess('menu');
         },
 
-        authTI() {
-            const pass = document.getElementById('ti-pass').value;
-            if(pass === "nti2026") {
-                this.user = { nome: "TÉCNICO KELVIN", id: "KELVIN-MASTER", tipo: "TI" };
-                localStorage.setItem('nti_user', JSON.stringify(this.user));
-                this.loginSuccess('menu');
-            } else { alert("Acesso Negado!"); }
+        async entrar() {
+            const pront = document.getElementById('p-prontuario').value;
+            const senha = document.getElementById('p-senha').value;
+
+            if(this.existe) {
+                const snap = await db.ref('usuarios/' + pront).once('value');
+                const dados = snap.val();
+                if(dados.senha !== senha) return alert("Senha Incorreta!");
+                if(dados.status === 'CONGELADO') return alert("SUA CONTA FOI CONGELADA PELO TI!");
+                this.user = dados;
+            } else {
+                const nome = document.getElementById('p-nome').value;
+                const mat = document.getElementById('p-materia').value || "N/A";
+                if(!nome || !senha) return alert("Preencha tudo!");
+                this.user = { pront, nome, senha, cargo: this.cargo, materia: mat, status: 'ATIVO' };
+                await db.ref('usuarios/' + pront).set(this.user);
+            }
+            localStorage.setItem('user_kelvin', JSON.stringify(this.user));
+            this.sucesso();
         },
 
-        loginSuccess(tela) {
-            document.getElementById('boas-vindas').innerText = "Olá, " + this.user.nome;
-            const areaTi = document.getElementById('area-ti');
-            const areaComum = document.getElementById('area-comum');
-            if(this.user.tipo === 'TI') { areaTi.classList.remove('hidden'); areaComum.classList.add('hidden'); }
-            else { areaTi.classList.add('hidden'); areaComum.classList.remove('hidden'); }
-            this.irPara(tela);
-            this.ouvirChat();
+        loginTI() {
+            if(document.getElementById('ti-pass').value === 'nti2026') {
+                this.user = { nome: 'TÉCNICO KELVIN', cargo: 'TI' };
+                this.sucesso();
+            } else { alert("Acesso Negado"); }
         },
 
-        logout() { localStorage.clear(); location.reload(); },
+        sucesso() {
+            document.getElementById('msg-user').innerText = "Olá, " + this.user.nome;
+            document.getElementById('bloco-ti').classList.toggle('hidden', this.user.cargo !== 'TI');
+            this.irPara('menu');
+        },
 
-        // FUNÇÕES EXCLUSIVAS DO KELVIN (TI)
-        renderUsuarios() {
-            const list = document.getElementById('lista-usuarios');
+        carregarUsers() {
+            const lista = document.getElementById('lista-users');
             db.ref('usuarios').on('value', snap => {
-                list.innerHTML = "";
-                snap.forEach(it => {
-                    const u = it.val();
-                    list.innerHTML += `<div class="card">
-                        <span class="badge">${u.tipo}</span><br>
-                        <b>${u.nome}</b> (ID: ${u.id})<br>
-                        <small>Senha Atual: <b>${u.pass}</b></small><br>
-                        <button class="btn-mini" onclick="app.resetSenha('${u.id}')">RESET SENHA</button>
-                        <button class="btn-mini" style="background:red; color:white" onclick="app.delUser('${u.id}')">EXCLUIR CONTA</button>
-                    </div>`;
-                });
-            });
-        },
-
-        resetSenha(id) {
-            const nova = prompt("Digite a nova senha:");
-            if(nova) db.ref('usuarios/'+id).update({ pass: nova });
-        },
-
-        delUser(id) {
-            if(confirm("Deseja apagar permanentemente este usuário?")) db.ref('usuarios/'+id).remove();
-        },
-
-        // RESTANTE DAS FUNÇÕES
-        salvarReserva() {
-            const data = document.getElementById('res-data').value;
-            if(!data) return;
-            db.ref('reservas').push({ user: this.user.nome, pront: this.user.id, tipo: this.user.tipo, item: document.getElementById('res-item').value, data: data, hora: document.getElementById('res-hora').value, status: "ATIVO" });
-            this.irPara('menu');
-        },
-
-        salvarChamado() {
-            const txt = document.getElementById('ch-txt').value;
-            if(!txt) return;
-            db.ref('chamados').push({ user: this.user.nome, problema: txt, status: "PENDENTE", ts: Date.now() });
-            this.irPara('menu');
-        },
-
-        renderCronograma() {
-            if(!document.getElementById('filtro-data').value) document.getElementById('filtro-data').valueAsDate = new Date();
-            const list = document.getElementById('lista-crono');
-            const filtro = document.getElementById('filtro-data').value;
-            db.ref('reservas').on('value', snap => {
-                list.innerHTML = "";
-                snap.forEach(it => {
-                    const r = it.val();
-                    if(r.data === filtro) {
-                        list.innerHTML += `<div class="card">
-                            <span class="badge">${r.tipo}</span> <b>${r.item}</b> (${r.hora})<br>
-                            <small>${r.user} | ${r.pront}</small>
+                lista.innerHTML = "";
+                snap.forEach(u => {
+                    const d = u.val();
+                    lista.innerHTML += `
+                        <div class="card" style="border-color:${d.status === 'CONGELADO' ? 'red' : 'green'}">
+                            <b>${d.nome}</b> (${d.cargo})<br>
+                            Senha: ${d.senha} | Status: ${d.status}<br>
+                            <button class="btn-ti" onclick="app.mudarSenha('${d.pront}')">SENHA</button>
+                            <button class="btn-ti" onclick="app.mudarStatus('${d.pront}', '${d.status}')">CONGELAR/ATIVAR</button>
+                            <button class="btn-ti" style="color:red" onclick="app.deletar('${d.pront}')">APAGAR</button>
                         </div>`;
-                    }
                 });
             });
         },
 
-        renderPainelChamados() {
-            const list = document.getElementById('lista-chamados');
-            db.ref('chamados').on('value', snap => {
-                list.innerHTML = "";
-                snap.forEach(it => {
-                    const c = it.val();
-                    list.innerHTML += `<div class="card">
-                        <b>${c.user}:</b> ${c.problema}<br>
-                        <button class="btn-mini" onclick="db.ref('chamados/${it.key}').remove()">APAGAR</button>
-                    </div>`;
-                });
-            });
+        mudarSenha(p) { 
+            const n = prompt("Nova senha:"); 
+            if(n) db.ref('usuarios/'+p).update({ senha: n }); 
         },
 
-        enviarMsg() {
-            const inp = document.getElementById('chat-input');
-            if(!inp.value) return;
-            db.ref('chat').push({ user: this.user.nome, msg: inp.value, ts: Date.now() });
-            inp.value = "";
+        mudarStatus(p, s) { 
+            db.ref('usuarios/'+p).update({ status: s === 'ATIVO' ? 'CONGELADO' : 'ATIVO' }); 
         },
 
-        ouvirChat() {
-            db.ref('chat').limitToLast(15).on('value', snap => {
-                const box = document.getElementById('chat-box'); box.innerHTML = "";
-                snap.forEach(m => {
-                    const d = m.val();
-                    box.innerHTML += `<div class="msg ${d.user.includes('KELVIN')?'msg-ti':'msg-user'}"><b>${d.user}:</b> ${d.msg}</div>`;
-                });
-                box.scrollTop = box.scrollHeight;
-            });
-        }
+        deletar(p) { 
+            if(confirm("Apagar conta?")) db.ref('usuarios/'+p).remove(); 
+        },
+
+        logout() { localStorage.clear(); location.reload(); }
     };
-    setInterval(() => { document.getElementById('relogio').innerText = new Date().toLocaleString(); }, 1000);
 </script>
 </body>
 </html>
