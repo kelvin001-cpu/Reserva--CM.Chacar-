@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SISTEMA NTi - CHÁCARA DAS GARÇAS</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Orbitron:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -32,13 +32,23 @@
         h1 { font-size: 18px; font-weight: 700; text-transform: uppercase; margin-bottom: 2px; }
         p.sub { font-size: 9px; opacity: 0.7; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
         label { display: block; font-size: 9px; font-weight: 700; color: var(--azul-sky); margin: 0 0 5px 5px; text-transform: uppercase; }
+        
         .campo { width: 100%; height: 42px; background: white; border-radius: 10px; border: none; padding: 0 12px; font-size: 13px; color: #111; margin-bottom: 10px; font-weight: 600; }
+        
         .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 15px; }
         .btn-item { height: 40px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; cursor: pointer; font-size: 8px; font-weight: 700; }
-        .btn-item.active { background: var(--azul-sky); border-color: white; box-shadow: 0 5px 12px rgba(0, 173, 239, 0.4); }
+        .btn-item.active { background: var(--azul-sky); border-color: white; }
+
+        /* Estilo para seleção de dias */
+        .dia-selector { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+        .dia-chip { padding: 5px 10px; background: rgba(255,255,255,0.1); border-radius: 15px; font-size: 10px; cursor: pointer; border: 1px solid transparent; }
+        .dia-chip.selected { background: var(--neon); color: black; font-weight: 700; }
+
         .btn-acao { width: 100%; height: 50px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); color: white; font-weight: 700; text-transform: uppercase; cursor: pointer; margin-top: 5px; font-size: 12px;}
         .btn-voltar { background: none; border: 1px solid rgba(255,255,255,0.2); color: white; font-size: 9px; margin-top: 8px; width: 100%; padding: 8px; cursor: pointer; border-radius: 10px; }
-        .monitor-card { background: rgba(0,0,0,0.4); padding: 12px; border-radius: 15px; margin-bottom: 8px; text-align: left; border-left: 4px solid var(--neon); font-size: 11px; }
+
+        .monitor-card { background: rgba(0,0,0,0.4); padding: 12px; border-radius: 15px; margin-bottom: 8px; text-align: left; border-left: 4px solid var(--neon); font-size: 11px; position: relative; }
+        .btn-finalizar { background: var(--nivel-1); color: black; border: none; border-radius: 5px; padding: 4px 8px; font-size: 9px; font-weight: 700; cursor: pointer; float: right; margin-top: -5px; }
         .hidden { display: none; }
         .badge { padding: 2px 6px; border-radius: 4px; font-size: 8px; text-transform: uppercase; font-weight: bold; margin-right: 5px; }
         .badge-materia { background: var(--azul-pref); color: white; }
@@ -55,7 +65,7 @@
             <input type="text" class="campo" id="p-nome" placeholder="Nome Completo">
             <input type="text" class="campo" id="p-id" placeholder="RP / Prontuário">
             <input type="text" class="campo" id="p-mat" placeholder="Matéria / Disciplina">
-            <button class="btn-acao" id="btn-entrar" onclick="app.validarPerfil()">ENTRAR NO SISTEMA</button>
+            <button class="btn-acao" onclick="app.validarPerfil()">ENTRAR NO SISTEMA</button>
         </div>
 
         <div id="scr2" class="hidden">
@@ -66,15 +76,15 @@
             </div>
             
             <div class="btn-grid" style="grid-template-columns: 1fr; gap: 10px;">
-                <button class="btn-item active" id="btn-reserva-nav" style="height: 50px; font-size: 11px;" onclick="app.nav(2, 3)">📅 NOVA RESERVA DE EQUIPAMENTO</button>
-                <button class="btn-item" style="height: 50px; font-size: 11px; background: rgba(0,173,239,0.2);" onclick="app.nav(2, 6)">🖥️ VER CRONOGRAMA GERAL</button>
-                <button class="btn-item" style="height: 50px; font-size: 11px; border-color: var(--nivel-3);" onclick="app.nav(2, 5)">🛠️ SUPORTE TI (CHAMADO)</button>
+                <button class="btn-item active" style="height: 50px; font-size: 11px;" id="btn-reserva-main" onclick="app.nav(2, 3)">📅 NOVA RESERVA</button>
+                <button class="btn-item" style="height: 50px; font-size: 11px; background: rgba(0,173,239,0.2);" onclick="app.nav(2, 6)">🖥️ VER CRONOGRAMA / DAR BAIXA</button>
+                <button class="btn-item" style="height: 50px; font-size: 11px; border-color: var(--nivel-3);" onclick="app.nav(2, 5)">🛠️ SUPORTE TI</button>
             </div>
             <button class="btn-voltar" onclick="location.reload()">SAIR DO SISTEMA</button>
         </div>
 
         <div id="scr3" class="hidden">
-            <h1>RESERVA DE ATIVOS</h1>
+            <h1>RESERVA MÚLTIPLA</h1>
             <label>Selecione o Equipamento</label>
             <div class="btn-grid">
                 <button class="btn-item" id="e1" onclick="app.setEq('SALA INFO', 'e1')">SALA INFO</button>
@@ -85,41 +95,42 @@
             </div>
 
             <div class="input-group-bolha">
+                <label>Dias do Agendamento (Pode marcar vários)</label>
+                <div class="dia-selector">
+                    <span class="dia-chip" onclick="app.toggleDia(this, 'Segunda')">Segunda</span>
+                    <span class="dia-chip" onclick="app.toggleDia(this, 'Terça')">Terça</span>
+                    <span class="dia-chip" onclick="app.toggleDia(this, 'Quarta')">Quarta</span>
+                    <span class="dia-chip" onclick="app.toggleDia(this, 'Quinta')">Quinta</span>
+                    <span class="dia-chip" onclick="app.toggleDia(this, 'Sexta')">Sexta</span>
+                </div>
+
                 <label>Horário Limite de Uso</label>
                 <input type="time" class="campo" id="res-hora-fim">
-                <label>Frequência</label>
-                <select class="campo" id="res-tipo">
-                    <option value="HOJE">Somente Hoje</option>
-                    <option value="RECORRENTE">Toda Semana (Fixo)</option>
-                </select>
             </div>
 
-            <button class="btn-acao" id="btn-confirmar-res" onclick="app.confirmarReserva()">CONFIRMAR RESERVA</button>
+            <button class="btn-acao" onclick="app.confirmarReserva()">CONFIRMAR AGENDAMENTO</button>
             <button class="btn-voltar" onclick="app.nav(3, 2)">VOLTAR</button>
         </div>
 
         <div id="scr5" class="hidden">
             <h1>SUPORTE TÉCNICO</h1>
             <div class="input-group-bolha">
-                <label>Local / Sala</label>
-                <input type="text" class="campo" id="sup-local" placeholder="Ex: Sala 05">
-                <label>Nível de Emergência</label>
+                <input type="text" class="campo" id="sup-local" placeholder="Local / Sala">
                 <select class="campo" id="sup-emergencia">
-                    <option value="1">Nível 1 - Baixa</option>
-                    <option value="2">Nível 2 - Média</option>
-                    <option value="3">Nível 3 - Crítica</option>
+                    <option value="1">Baixa Emergência</option>
+                    <option value="2">Média Emergência</option>
+                    <option value="3">Urgência Total</option>
                 </select>
-                <label>Descrição do Problema</label>
-                <textarea class="campo" id="sup-motivo" style="height:70px; padding:10px;" placeholder="Relate o ocorrido..."></textarea>
+                <textarea class="campo" id="sup-motivo" style="height:70px; padding:10px;" placeholder="Relate o problema..."></textarea>
             </div>
-            <button class="btn-acao" style="background: var(--nivel-3)" onclick="app.enviarSuporte()">ABRIR CHAMADO URGENTE</button>
+            <button class="btn-acao" style="background: var(--nivel-3)" onclick="app.enviarSuporte()">ABRIR CHAMADO</button>
             <button class="btn-voltar" onclick="app.nav(5, 2)">CANCELAR</button>
         </div>
 
         <div id="scr6" class="hidden">
-            <h1>CRONOGRAMA & STATUS</h1>
+            <h1>CRONOGRAMA GERAL</h1>
             <div id="admin-monitor" style="margin-top:10px; max-height: 380px; overflow-y: auto; padding-right:5px;">
-                <p>Sincronizando com a nuvem...</p>
+                <p>Buscando dados...</p>
             </div>
             <button class="btn-voltar" onclick="app.nav(6, 2)">VOLTAR AO MENU</button>
         </div>
@@ -142,6 +153,7 @@
     const app = {
         equip: "",
         user: { nome: "", id: "", mat: "" },
+        diasSelecionados: [],
         
         nav(at, px) {
             document.querySelectorAll('.balao-premium > div[id^="scr"]').forEach(d => d.classList.add('hidden'));
@@ -153,10 +165,11 @@
             this.user.nome = document.getElementById('p-nome').value.toUpperCase();
             this.user.id = document.getElementById('p-id').value;
             this.user.mat = document.getElementById('p-mat').value.toUpperCase();
-            if(!this.user.nome || !this.user.id || !this.user.mat) return alert("Preencha todos os campos!");
+            if(!this.user.nome || !this.user.id || !this.user.mat) return alert("Preencha seu perfil!");
             document.getElementById('display-prof').innerText = this.user.nome;
-            document.getElementById('display-info').innerText = `ID: ${this.user.id} | DISCIPLINA: ${this.user.mat}`;
+            document.getElementById('display-info').innerText = `ID: ${this.user.id} | ${this.user.mat}`;
             this.nav(1, 2);
+            this.verificarStatusPortal();
         },
 
         setEq(val, id) {
@@ -165,40 +178,57 @@
             document.getElementById(id).classList.add('active');
         },
 
+        toggleDia(el, dia) {
+            el.classList.toggle('selected');
+            if(el.classList.contains('selected')) {
+                this.diasSelecionados.push(dia);
+            } else {
+                this.diasSelecionados = this.diasSelecionados.filter(d => d !== dia);
+            }
+        },
+
         confirmarReserva() {
             const hora = document.getElementById('res-hora-fim').value;
-            if(!this.equip || !hora) return alert("Escolha o ativo e o horário!");
+            if(!this.equip || this.diasSelecionados.length === 0 || !hora) return alert("Selecione o Ativo, os Dias e a Hora!");
 
-            // Mapeado para os campos que seu ADM lê (inicio e equipamento)
             const novaReserva = {
                 prof: this.user.nome,
                 prontuario: this.user.id,
                 materia: this.user.mat,
                 equipamento: this.equip,
-                inicio: new Date().toLocaleDateString() + " " + hora,
-                entrega: "---",
+                inicio: "📅 " + this.diasSelecionados.join(', ') + " às " + hora,
                 registro: 'RESERVA',
-                timestamp: Date.now()
+                timestamp: Date.now(),
+                status: 'ATIVO'
             };
 
             db.ref('reservas').push(novaReserva).then(() => {
-                alert("Reserva confirmada!");
+                alert("Agendamento Multiplo Concluído!");
+                this.diasSelecionados = [];
+                document.querySelectorAll('.dia-chip').forEach(c => c.classList.remove('selected'));
                 this.nav(3, 6);
             });
+        },
+
+        darBaixa(key) {
+            if(confirm("Deseja finalizar o uso deste equipamento e liberá-lo?")) {
+                db.ref('reservas/' + key).remove().then(() => {
+                    alert("Equipamento liberado com sucesso!");
+                });
+            }
         },
 
         enviarSuporte() {
             const local = document.getElementById('sup-local').value;
             const motivo = document.getElementById('sup-motivo').value;
             const emerg = document.getElementById('sup-emergencia').value;
-            if(!local || !motivo) return alert("Preencha o local e o problema!");
+            if(!local || !motivo) return alert("Preencha os dados do chamado!");
 
             const chamado = {
                 prof: this.user.nome,
                 materia: this.user.mat,
-                prontuario: this.user.id,
                 equipamento: "🛠️ SUPORTE: " + local,
-                inicio: new Date().toLocaleTimeString(),
+                inicio: "Chamado: " + new Date().toLocaleTimeString(),
                 motivo: motivo,
                 nivel: emerg,
                 registro: 'SUPORTE',
@@ -206,65 +236,56 @@
             };
 
             db.ref('reservas').push(chamado).then(() => {
-                alert("Chamado enviado!");
+                alert("Técnico notificado!");
                 this.nav(5, 2);
             });
         },
 
         ouvirDados() {
             const container = document.getElementById('admin-monitor');
-            // 'reservas' é o caminho que seu ADM vigia
-            db.ref('reservas').orderByChild('timestamp').limitToLast(20).on('value', (snapshot) => {
-                const dados = [];
-                snapshot.forEach(item => { dados.push(item.val()); });
-                
-                if(dados.length === 0) {
-                    container.innerHTML = "<p>Sem atividades registradas.</p>";
-                    return;
-                }
+            db.ref('reservas').orderByChild('timestamp').on('value', (snapshot) => {
+                let html = "";
+                snapshot.forEach(item => {
+                    const r = item.val();
+                    const key = item.key;
+                    const cor = r.registro === 'SUPORTE' ? `var(--nivel-${r.nivel})` : 'var(--neon)';
+                    
+                    // Só mostra o botão de finalizar se for uma RESERVA e se for o próprio PROFESSOR ou se for TI
+                    const botaoFinalizar = r.registro === 'RESERVA' ? `<button class="btn-finalizar" onclick="app.darBaixa('${key}')">FINALIZAR</button>` : '';
 
-                container.innerHTML = dados.reverse().map(r => {
-                    const corBorda = r.registro === 'SUPORTE' ? `var(--nivel-${r.nivel || 1})` : 'var(--neon)';
-                    return `
-                        <div class="monitor-card" style="border-left-color: ${corBorda}">
-                            <div style="display:flex; justify-content:space-between">
-                                <b>${r.equipamento}</b>
-                                <small style="color:var(--azul-sky)">${r.inicio.split(' ')[1] || r.inicio}</small>
-                            </div>
+                    html = `
+                        <div class="monitor-card" style="border-left-color: ${cor}">
+                            ${botaoFinalizar}
+                            <b>${r.equipamento}</b><br>
                             <span class="badge badge-materia">${r.materia}</span>
-                            <div style="font-size:9px; margin-top:5px; opacity:0.8">
-                                Prof: ${r.prof} ${r.motivo ? '<br>⚠️ ' + r.motivo : ''}
+                            <div style="font-size:10px; margin-top:5px;">
+                                <b>Prof:</b> ${r.prof}<br>
+                                <b>Agendamento:</b> ${r.inicio}<br>
+                                ${r.motivo ? '<i>Prob: ' + r.motivo + '</i>' : ''}
                             </div>
                         </div>
-                    `;
-                }).join('');
+                    ` + html;
+                });
+                container.innerHTML = html || "<p>Nenhuma reserva ativa.</p>";
             });
         },
 
-        verificarPortal() {
-            // Escuta o botão que você tem no ADM (setPortal)
+        verificarStatusPortal() {
             db.ref('ativo').on('value', (snap) => {
-                const ativo = snap.val();
-                const btnRes = document.getElementById('btn-reserva-nav');
-                const btnConf = document.getElementById('btn-confirmar-res');
-                
-                if(ativo === false) {
-                    btnRes.style.opacity = "0.5";
-                    btnRes.innerText = "SISTEMA BLOQUEADO PELO TI";
-                    btnRes.onclick = () => alert("O sistema está em manutenção ou bloqueado pelo técnico.");
-                    if(btnConf) btnConf.disabled = true;
+                const isAtivo = snap.val();
+                const btn = document.getElementById('btn-reserva-main');
+                if(isAtivo === false) {
+                    btn.style.opacity = "0.5";
+                    btn.innerText = "BLOQUEADO PELO TI";
+                    btn.onclick = () => alert("O sistema está fechado temporariamente para manutenção.");
                 } else {
-                    btnRes.style.opacity = "1";
-                    btnRes.innerText = "📅 NOVA RESERVA DE EQUIPAMENTO";
-                    btnRes.onclick = () => app.nav(2, 3);
-                    if(btnConf) btnConf.disabled = false;
+                    btn.style.opacity = "1";
+                    btn.innerText = "📅 NOVA RESERVA";
+                    btn.onclick = () => app.nav(2, 3);
                 }
             });
         }
     };
-
-    // Inicia a verificação do portal assim que carregar
-    app.verificarPortal();
 
     setInterval(() => {
         document.getElementById('relogio-top').innerText = new Date().toLocaleString('pt-BR');
