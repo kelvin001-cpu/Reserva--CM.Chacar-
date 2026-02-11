@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SISTEMA NTi - CHÁCARA DAS GARÇAS</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Orbitron:wght@600&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
     <style>
         :root {
             --azul-pref: #004a99; --azul-sky: #00adef; --neon: #00ff9d;
@@ -40,35 +44,41 @@
         .btn-acao { width: 100%; height: 50px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); color: white; font-weight: 700; text-transform: uppercase; cursor: pointer; margin-top: 5px; font-size: 12px;}
         .btn-voltar { background: none; border: 1px solid rgba(255,255,255,0.2); color: white; font-size: 9px; margin-top: 8px; width: 100%; padding: 8px; cursor: pointer; border-radius: 10px; }
 
-        .monitor-card { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 15px; margin-bottom: 8px; text-align: left; border-left: 4px solid var(--neon); font-size: 10px; }
+        .monitor-card { background: rgba(0,0,0,0.4); padding: 12px; border-radius: 15px; margin-bottom: 8px; text-align: left; border-left: 4px solid var(--neon); font-size: 11px; }
         .hidden { display: none; }
         
-        .badge-materia { background: var(--azul-pref); color: white; padding: 2px 6px; border-radius: 4px; font-size: 8px; text-transform: uppercase; margin-top: 4px; display: inline-block; }
+        .badge { padding: 2px 6px; border-radius: 4px; font-size: 8px; text-transform: uppercase; font-weight: bold; margin-right: 5px; }
+        .badge-materia { background: var(--azul-pref); color: white; }
+        .badge-emerg { color: white; }
     </style>
 </head>
 <body>
 
     <div class="balao-premium">
-        <div class="clock-header" id="relogio-top">00/00/0000 00:00:00</div>
+        <div class="clock-header" id="relogio-top">--/--/---- 00:00:00</div>
 
         <div id="scr1">
             <h1>SISTEMA ELITE</h1>
             <p class="sub">Portal do Docente - NTi</p>
             <input type="text" class="campo" id="p-nome" placeholder="Nome Completo">
-            <input type="text" class="campo" id="p-mat" placeholder="Sua Matéria / Disciplina">
-            <input type="text" class="campo" id="p-id" placeholder="RP / Prontuário (admin p/ monitor)">
+            <input type="text" class="campo" id="p-id" placeholder="RP / Prontuário">
+            <input type="text" class="campo" id="p-mat" placeholder="Matéria / Disciplina">
             <button class="btn-acao" onclick="app.validarPerfil()">ENTRAR NO SISTEMA</button>
         </div>
 
         <div id="scr2" class="hidden">
-            <h1>OLÁ, PROFESSOR</h1>
-            <p class="sub" id="display-prof"></p>
-            <div class="btn-grid" style="grid-template-columns: 1fr; margin-top: 10px;">
-                <button class="btn-item active" style="height: 45px; font-size: 11px;" onclick="app.nav(2, 3)">📅 NOVA RESERVA</button>
-                <button class="btn-item" style="height: 45px; font-size: 11px; background: rgba(0,0,0,0.3);" onclick="app.nav(2, 6)">🖥️ CRONOGRAMA & AGENDA</button>
-                <button class="btn-item" style="height: 45px; font-size: 11px; border-color: var(--nivel-3);" onclick="app.nav(2, 5)">🛠️ CHAMADO TÉCNICO NTi</button>
+            <h1>PAINEL DO DOCENTE</h1>
+            <div class="input-group-bolha" style="text-align: center; border: 1px solid var(--azul-sky);">
+                <div id="display-prof" style="font-weight: 700; font-size: 14px;"></div>
+                <div id="display-info" style="font-size: 10px; opacity: 0.8; color: var(--azul-sky);"></div>
             </div>
-            <button class="btn-voltar" onclick="location.reload()">DESCONECTAR</button>
+            
+            <div class="btn-grid" style="grid-template-columns: 1fr; gap: 10px;">
+                <button class="btn-item active" style="height: 50px; font-size: 11px;" onclick="app.nav(2, 3)">📅 NOVA RESERVA DE EQUIPAMENTO</button>
+                <button class="btn-item" style="height: 50px; font-size: 11px; background: rgba(0,173,239,0.2);" onclick="app.nav(2, 6)">🖥️ VER CRONOGRAMA GERAL</button>
+                <button class="btn-item" style="height: 50px; font-size: 11px; border-color: var(--nivel-3);" onclick="app.nav(2, 5)">🛠️ SUPORTE TI (CHAMADO)</button>
+            </div>
+            <button class="btn-voltar" onclick="location.reload()">SAIR DO SISTEMA</button>
         </div>
 
         <div id="scr3" class="hidden">
@@ -83,74 +93,87 @@
             </div>
 
             <div class="input-group-bolha">
-                <label>Frequência</label>
-                <select class="campo" id="res-tipo" onchange="app.toggleAgenda()">
-                    <option value="HOJE">Somente Hoje</option>
-                    <option value="RECORRENTE">Recorrente (Toda Semana)</option>
-                </select>
-
-                <div id="area-recorrente" class="hidden">
-                    <label>Dia Fixo</label>
-                    <select class="campo" id="res-dia">
-                        <option>Segunda-feira</option><option>Terça-feira</option>
-                        <option>Quarta-feira</option><option>Quinta-feira</option><option>Sexta-feira</option>
-                    </select>
-                </div>
-
-                <label>Horário de Devolução</label>
+                <label>Horário Limite de Uso</label>
                 <input type="time" class="campo" id="res-hora-fim">
+                
+                <label>Frequência</label>
+                <select class="campo" id="res-tipo">
+                    <option value="HOJE">Somente Hoje</option>
+                    <option value="RECORRENTE">Toda Semana (Fixo)</option>
+                </select>
             </div>
 
-            <button class="btn-acao" onclick="app.confirmarReserva()">SALVAR NO CRONOGRAMA</button>
+            <button class="btn-acao" onclick="app.confirmarReserva()">CONFIRMAR RESERVA</button>
             <button class="btn-voltar" onclick="app.nav(3, 2)">VOLTAR</button>
         </div>
 
         <div id="scr5" class="hidden">
             <h1>SUPORTE TÉCNICO</h1>
             <div class="input-group-bolha">
-                <label>Local do Problema</label>
-                <input type="text" class="campo" id="sup-local" placeholder="Ex: Sala 02 ou Sala de Informática">
-                <label>Descrição da Ocorrência</label>
-                <textarea class="campo" id="sup-motivo" style="height:80px; padding:10px;" placeholder="O que está acontecendo?"></textarea>
+                <label>Local / Sala</label>
+                <input type="text" class="campo" id="sup-local" placeholder="Ex: Sala 05">
+                
+                <label>Nível de Emergência</label>
+                <select class="campo" id="sup-emergencia">
+                    <option value="1" style="color: green;">Nível 1 - Baixa (Dúvidas/Config)</option>
+                    <option value="2" style="color: orange;">Nível 2 - Média (Lento/Parcial)</option>
+                    <option value="3" style="color: red;">Nível 3 - Crítica (Parou tudo)</option>
+                </select>
+
+                <label>Descrição do Problema</label>
+                <textarea class="campo" id="sup-motivo" style="height:70px; padding:10px;" placeholder="Relate o ocorrido..."></textarea>
             </div>
-            <button class="btn-acao" style="background: var(--nivel-3)" onclick="app.enviarSuporte()">ABRIR CHAMADO</button>
+            <button class="btn-acao" style="background: var(--nivel-3)" onclick="app.enviarSuporte()">ABRIR CHAMADO URGENTE</button>
             <button class="btn-voltar" onclick="app.nav(5, 2)">CANCELAR</button>
         </div>
 
         <div id="scr6" class="hidden">
-            <h1>CRONOGRAMA DE USO</h1>
-            <div id="admin-monitor" style="margin-top:10px; max-height: 350px; overflow-y: auto; padding-right:5px;"></div>
+            <h1>CRONOGRAMA & STATUS</h1>
+            <div id="admin-monitor" style="margin-top:10px; max-height: 380px; overflow-y: auto; padding-right:5px;">
+                <p>Carregando dados sincronizados...</p>
+            </div>
             <button class="btn-voltar" onclick="app.nav(6, 2)">VOLTAR AO MENU</button>
         </div>
     </div>
 
 <script>
+    // Configuração do Firebase - SUBSTITUA PELOS SEUS DADOS DO CONSOLE
+    const firebaseConfig = {
+        apiKey: "SUA_API_KEY",
+        authDomain: "seu-projeto.firebaseapp.com",
+        databaseURL: "https://seu-projeto-default-rtdb.firebaseio.com",
+        projectId: "seu-projeto",
+        storageBucket: "seu-projeto.appspot.com",
+        messagingSenderId: "000000000000",
+        appId: "1:000000000:web:00000000"
+    };
+
+    // Inicializar Firebase (apenas se os dados acima forem preenchidos)
+    if(firebaseConfig.apiKey !== "SUA_API_KEY") {
+        firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.database();
+
     const app = {
         equip: "",
+        user: { nome: "", id: "", mat: "" },
         
         nav(at, px) {
             document.querySelectorAll('.balao-premium > div[id^="scr"]').forEach(d => d.classList.add('hidden'));
-            const prox = document.getElementById(`scr${px}`);
-            if(prox) prox.classList.remove('hidden');
-            
-            if(px === 2) {
-                document.getElementById('display-prof').innerText = `${document.getElementById('p-nome').value} | ${document.getElementById('p-mat').value}`;
-            }
-            if(px === 6) this.atualizarMonitor();
+            document.getElementById(`scr${px}`).classList.remove('hidden');
+            if(px === 6) this.ouvirDados();
         },
 
         validarPerfil() {
-            const nome = document.getElementById('p-nome').value;
-            const mat = document.getElementById('p-mat').value;
-            const id = document.getElementById('p-id').value.toLowerCase();
+            this.user.nome = document.getElementById('p-nome').value.toUpperCase();
+            this.user.id = document.getElementById('p-id').value;
+            this.user.mat = document.getElementById('p-mat').value.toUpperCase();
             
-            if(!nome || !mat) return alert("Preencha Nome e Matéria!");
+            if(!this.user.nome || !this.user.id || !this.user.mat) return alert("Preencha todos os campos!");
             
-            if(id === 'admin') {
-                this.nav(1, 6);
-            } else {
-                this.nav(1, 2);
-            }
+            document.getElementById('display-prof').innerText = this.user.nome;
+            document.getElementById('display-info').innerText = `ID: ${this.user.id} | DISCIPLINA: ${this.user.mat}`;
+            this.nav(1, 2);
         },
 
         setEq(val, id) {
@@ -159,91 +182,81 @@
             document.getElementById(id).classList.add('active');
         },
 
-        toggleAgenda() {
-            const tipo = document.getElementById('res-tipo').value;
-            document.getElementById('area-recorrente').classList.toggle('hidden', tipo !== 'RECORRENTE');
-        },
-
         confirmarReserva() {
-            const tipo = document.getElementById('res-tipo').value;
             const hora = document.getElementById('res-hora-fim').value;
-            if(!this.equip || !hora) return alert("Escolha o ativo e a hora!");
+            if(!this.equip || !hora) return alert("Escolha o ativo e o horário!");
 
-            const reserva = {
-                prof: document.getElementById('p-nome').value,
-                materia: document.getElementById('p-mat').value,
+            const novaReserva = {
+                prof: this.user.nome,
+                prontuario: this.user.id,
+                materia: this.user.mat,
                 equip: this.equip,
-                tipo: tipo,
-                dia: tipo === 'RECORRENTE' ? document.getElementById('res-dia').value : 'Hoje',
+                tipo: document.getElementById('res-tipo').value,
                 hora: hora,
-                registro: 'RESERVA'
+                registro: 'RESERVA',
+                timestamp: Date.now()
             };
 
-            let banco = JSON.parse(localStorage.getItem('banco_chacara') || '[]');
-            banco.push(reserva);
-            localStorage.setItem('banco_chacara', JSON.stringify(banco));
-
-            alert("Reserva salva no cronograma!");
+            db.ref('atividades').push(novaReserva);
+            alert("Reserva registrada com sucesso!");
             this.nav(3, 6);
         },
 
         enviarSuporte() {
             const local = document.getElementById('sup-local').value;
             const motivo = document.getElementById('sup-motivo').value;
-            if(!local || !motivo) return alert("Preencha o local e o motivo!");
+            const emerg = document.getElementById('sup-emergencia').value;
+
+            if(!local || !motivo) return alert("Preencha o local e o problema!");
 
             const chamado = {
+                prof: this.user.nome,
+                materia: this.user.mat,
                 local: local,
                 motivo: motivo,
-                prof: document.getElementById('p-nome').value,
-                materia: document.getElementById('p-mat').value,
-                tipo: 'CHAMADO NTi',
+                nivel: emerg,
                 registro: 'SUPORTE',
-                dia: 'Agora',
-                hora: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+                hora: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                timestamp: Date.now()
             };
-            
-            let banco = JSON.parse(localStorage.getItem('banco_chacara') || '[]');
-            banco.push(chamado);
-            localStorage.setItem('banco_chacara', JSON.stringify(banco));
-            
-            alert("Chamado NTi enviado com sucesso!");
+
+            db.ref('atividades').push(chamado);
+            alert("Chamado enviado ao técnico!");
             this.nav(5, 2);
         },
 
-        atualizarMonitor() {
+        ouvirDados() {
             const container = document.getElementById('admin-monitor');
-            let banco = JSON.parse(localStorage.getItem('banco_chacara') || '[]');
-            
-            if(banco.length === 0) {
-                container.innerHTML = "<p style='font-size:11px; opacity:0.5'>Nenhum registro no cronograma.</p>";
-                return;
-            }
+            db.ref('atividades').orderByChild('timestamp').on('value', (snapshot) => {
+                const dados = [];
+                snapshot.forEach(item => { dados.push({key: item.key, ...item.val()}); });
+                
+                if(dados.length === 0) {
+                    container.innerHTML = "<p>Nenhum registro encontrado.</p>";
+                    return;
+                }
 
-            container.innerHTML = banco.map((r, i) => `
-                <div class="monitor-card" style="border-left-color: ${r.registro === 'SUPORTE' ? 'var(--nivel-3)' : 'var(--neon)'}">
-                    <div style="display:flex; justify-content:space-between; align-items:start">
-                        <div>
-                            <b>${r.registro === 'SUPORTE' ? '🛠️ SUPORTE: ' + r.local : r.equip}</b><br>
-                            <span class="badge-materia">${r.materia}</span>
+                container.innerHTML = dados.reverse().map(r => {
+                    const corBorda = r.registro === 'SUPORTE' ? `var(--nivel-${r.nivel})` : 'var(--neon)';
+                    const labelSup = r.registro === 'SUPORTE' ? `<span class="badge" style="background:${corBorda}">NÍVEL ${r.nivel}</span>` : '';
+
+                    return `
+                        <div class="monitor-card" style="border-left-color: ${corBorda}">
+                            <div style="display:flex; justify-content:space-between; align-items:start">
+                                <div>
+                                    <b>${r.registro === 'SUPORTE' ? '🛠️ SUPORTE: ' + r.local : '📅 ' + r.equip}</b><br>
+                                    <span class="badge badge-materia">${r.materia}</span> ${labelSup}
+                                </div>
+                                <small style="color:var(--azul-sky)">${r.hora}</small>
+                            </div>
+                            <div style="margin-top:8px; font-size:10px">
+                                <b>Prof:</b> ${r.prof} (${r.prontuario || 'TI'})<br>
+                                <i>${r.motivo ? 'Problema: ' + r.motivo : 'Uso: ' + r.tipo}</i>
+                            </div>
                         </div>
-                        <small style="color:var(--azul-sky)">${r.dia} ${r.hora}</small>
-                    </div>
-                    <div style="margin-top:8px; font-size:9px">
-                        <b>Prof(a):</b> ${r.prof}<br>
-                        ${r.motivo ? '<b>Relato:</b> ' + r.motivo : '<b>Reserva:</b> Ativo garantido no sistema'}
-                    </div>
-                    <button onclick="app.deletar(${i})" style="background:none; border:none; color:var(--nivel-3); font-size:8px; cursor:pointer; padding:0; margin-top:5px">[ REMOVER ]</button>
-                </div>
-            `).reverse().join('');
-        },
-
-        deletar(i) {
-            if(!confirm("Deseja remover este registro?")) return;
-            let banco = JSON.parse(localStorage.getItem('banco_chacara') || '[]');
-            banco.splice((banco.length - 1) - i, 1); // Ajuste para o reverse()
-            localStorage.setItem('banco_chacara', JSON.stringify(banco));
-            this.atualizarMonitor();
+                    `;
+                }).join('');
+            });
         }
     };
 
