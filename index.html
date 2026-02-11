@@ -3,74 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA NTi 2026 - KELVIN MASTER</title>
+    <title>SISTEMA NTi 2026 - KELVIN PREMIUM</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <style>
-        :root { --azul: #004a99; --perigo: #ff4757; --neon: #00ff9d; }
-        body { margin: 0; font-family: 'Poppins', sans-serif; background: #000b1a; color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .caixa { width: 90%; max-width: 500px; background: rgba(255,255,255,0.05); padding: 30px; border-radius: 20px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); text-align: center; }
+        :root {
+            --bg: #0a0e17;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+            --primary: #0070f3;
+            --accent: #00dfd8;
+            --danger: #ff0055;
+            --text: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body {
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(0, 112, 243, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(0, 223, 216, 0.1) 0px, transparent 50%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text);
+            overflow: hidden;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 450px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        h2 { font-weight: 700; font-size: 24px; margin-bottom: 8px; letter-spacing: -0.5px; }
+        p { color: #888; font-size: 14px; margin-bottom: 30px; }
+
+        .input-group { margin-bottom: 16px; text-align: left; }
+        
+        input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: white;
+            font-size: 15px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus { border-color: var(--primary); background: rgba(255, 255, 255, 0.08); }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -10px var(--primary); }
+
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: #ccc; }
+        .btn-outline:hover { background: var(--border); color: white; }
+
+        .btn-ti { background: var(--danger); color: white; margin-top: 20px; font-size: 12px; opacity: 0.7; }
+        .btn-ti:hover { opacity: 1; }
+
         .hidden { display: none !important; }
-        input, select { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: none; outline: none; font-weight: bold; }
-        button { width: 100%; padding: 15px; border-radius: 10px; border: none; background: var(--azul); color: white; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-top: 10px; }
-        .card { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; margin-top: 10px; text-align: left; border-left: 4px solid var(--neon); }
-        .btn-ti { padding: 5px; font-size: 10px; margin: 2px; cursor: pointer; }
+
+        .user-card {
+            background: rgba(255,255,255,0.03);
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 12px;
+            text-align: left;
+            border-left: 3px solid var(--primary);
+            font-size: 13px;
+        }
+
+        .status-dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+        .status-on { background: #00ff88; }
+        .status-off { background: var(--danger); }
+
+        #relogio { font-size: 12px; font-weight: 600; color: var(--accent); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Estilo da barra de rolagem */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
     </style>
 </head>
 <body onload="app.init()">
 
-<div class="caixa">
-    <div id="relogio" style="margin-bottom: 20px; color: var(--neon);"></div>
+<div class="container">
+    <div id="relogio"></div>
 
     <div id="tela-inicio">
-        <h2>PORTAL NTi 2026</h2>
-        <button onclick="app.abrir('PROF')">Professor</button>
-        <button style="background:#444" onclick="app.abrir('GESTOR')">Gestão</button>
-        <button style="background:#222" onclick="app.abrir('SEC')">Secretaria</button>
-        <button style="background:black; border: 1px solid red" onclick="app.irPara('ti-login')">ADMIN KELVIN</button>
+        <h2>Bem-vindo</h2>
+        <p>Selecione seu portal de acesso</p>
+        <button class="btn-primary" onclick="app.abrir('PROF')">Portal Professor</button>
+        <button class="btn-outline" onclick="app.abrir('GESTOR')">Portal Gestão</button>
+        <button class="btn-outline" onclick="app.abrir('SEC')">Portal Secretaria</button>
+        <button class="btn-ti" onclick="app.irPara('ti-login')">ADMINISTRAÇÃO KELVIN</button>
     </div>
 
     <div id="tela-login" class="hidden">
-        <h3 id="titulo-portal">ACESSO</h3>
-        <input type="text" id="p-prontuario" placeholder="Prontuário" oninput="app.checar(this.value)">
+        <h2 id="titulo-portal">Acesso</h2>
+        <p id="subtitulo-portal">Identifique-se para continuar</p>
+        
+        <input type="text" id="p-prontuario" placeholder="Seu Prontuário" oninput="app.checar(this.value)" style="margin-bottom:12px">
         
         <div id="campos-novos" class="hidden">
-            <input type="text" id="p-nome" placeholder="Nome Completo">
-            <input type="text" id="p-materia" class="hidden" placeholder="Matéria">
+            <input type="text" id="p-nome" placeholder="Nome Completo" style="margin-bottom:12px">
+            <input type="text" id="p-materia" class="hidden" placeholder="Sua Matéria" style="margin-bottom:12px">
         </div>
 
-        <input type="password" id="p-senha" placeholder="Senha">
-        <button onclick="app.entrar()">CONECTAR</button>
-        <button style="background:none; color:gray" onclick="app.irPara('inicio')">VOLTAR</button>
+        <input type="password" id="p-senha" placeholder="Sua Senha">
+        
+        <button class="btn-primary" onclick="app.entrar()">Entrar no Sistema</button>
+        <button class="btn-outline" onclick="app.irPara('inicio')">Voltar</button>
     </div>
 
     <div id="tela-ti-login" class="hidden">
-        <h3>KELVIN MASTER</h3>
+        <h2>Acesso Master</h2>
+        <p>Área restrita ao Técnico Kelvin</p>
         <input type="password" id="ti-pass" placeholder="Senha Mestra">
-        <button style="background:red" onclick="app.loginTI()">ENTRAR</button>
-        <button style="background:none" onclick="app.irPara('inicio')">VOLTAR</button>
+        <button class="btn-primary" style="background:var(--danger)" onclick="app.loginTI()">Autenticar</button>
+        <button class="btn-outline" onclick="app.irPara('inicio')">Voltar</button>
     </div>
 
     <div id="tela-menu" class="hidden">
-        <h2 id="msg-user">Olá</h2>
+        <h2 id="msg-user">Olá!</h2>
+        <p>O que deseja fazer hoje?</p>
+        
         <div id="bloco-ti" class="hidden">
-            <button style="background:red" onclick="app.irPara('ti-controle')">GERENCIAR USUÁRIOS</button>
+            <button class="btn-primary" style="background:var(--danger)" onclick="app.irPara('ti-controle')">Gerenciar Usuários</button>
         </div>
-        <button onclick="alert('Reserva em breve...')">FAZER RESERVA</button>
-        <button style="background:none" onclick="app.logout()">SAIR</button>
+        
+        <button class="btn-primary">Fazer Nova Reserva</button>
+        <button class="btn-outline" onclick="app.logout()">Encerrar Sessão</button>
     </div>
 
     <div id="tela-ti-controle" class="hidden">
-        <h3>CONTROLE DE ACESSO</h3>
-        <div id="lista-users" style="max-height: 300px; overflow-y: auto;"></div>
-        <button onclick="app.irPara('menu')">VOLTAR</button>
+        <h2>Gestão de Usuários</h2>
+        <p>Monitoramento em tempo real</p>
+        <div id="lista-users" style="max-height: 250px; overflow-y: auto; margin-bottom: 20px;"></div>
+        <button class="btn-outline" onclick="app.irPara('menu')">Voltar ao Menu</button>
     </div>
 </div>
 
 <script>
-    // VERIFIQUE SE ESTAS CHAVES SÃO AS DO SEU FIREBASE ATUAL
     const firebaseConfig = {
         apiKey: "AIzaSyBoGfDKz-nBwKvczzGpxg-fHJYdVykcBUQ",
         databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com",
@@ -87,18 +187,18 @@
             const cache = localStorage.getItem('user_kelvin');
             if(cache) { this.user = JSON.parse(cache); this.sucesso(); }
             else { this.irPara('inicio'); }
-            setInterval(() => { document.getElementById('relogio').innerText = new Date().toLocaleString(); }, 1000);
+            setInterval(() => { document.getElementById('relogio').innerText = new Date().toLocaleTimeString(); }, 1000);
         },
 
         irPara(t) {
-            document.querySelectorAll('.caixa > div').forEach(d => { if(d.id !== 'relogio') d.classList.add('hidden'); });
+            document.querySelectorAll('.container > div').forEach(d => { if(d.id !== 'relogio') d.classList.add('hidden'); });
             document.getElementById('tela-' + t).classList.remove('hidden');
             if(t === 'ti-controle') this.carregarUsers();
         },
 
         abrir(c) {
             this.cargo = c;
-            document.getElementById('titulo-portal').innerText = "PORTAL " + c;
+            document.getElementById('titulo-portal').innerText = "Portal " + (c == 'PROF' ? 'Professor' : c == 'GESTOR' ? 'Gestão' : 'Secretaria');
             this.irPara('login');
         },
 
@@ -107,6 +207,8 @@
             const snap = await db.ref('usuarios/' + p).once('value');
             this.existe = snap.exists();
             document.getElementById('campos-novos').classList.toggle('hidden', this.existe);
+            document.getElementById('subtitulo-portal').innerText = this.existe ? "Bem-vindo de volta!" : "Primeiro acesso? Cadastre-se";
+            
             if(!this.existe && this.cargo === 'PROF') {
                 document.getElementById('p-materia').classList.remove('hidden');
             } else {
@@ -122,12 +224,12 @@
                 const snap = await db.ref('usuarios/' + pront).once('value');
                 const dados = snap.val();
                 if(dados.senha !== senha) return alert("Senha Incorreta!");
-                if(dados.status === 'CONGELADO') return alert("SUA CONTA FOI CONGELADA PELO TI!");
+                if(dados.status === 'CONGELADO') return alert("ACESSO BLOQUEADO PELO TI");
                 this.user = dados;
             } else {
                 const nome = document.getElementById('p-nome').value;
                 const mat = document.getElementById('p-materia').value || "N/A";
-                if(!nome || !senha) return alert("Preencha tudo!");
+                if(!nome || !senha) return alert("Preencha todos os campos");
                 this.user = { pront, nome, senha, cargo: this.cargo, materia: mat, status: 'ATIVO' };
                 await db.ref('usuarios/' + pront).set(this.user);
             }
@@ -137,13 +239,13 @@
 
         loginTI() {
             if(document.getElementById('ti-pass').value === 'nti2026') {
-                this.user = { nome: 'TÉCNICO KELVIN', cargo: 'TI' };
+                this.user = { nome: 'Técnico Kelvin', cargo: 'TI' };
                 this.sucesso();
-            } else { alert("Acesso Negado"); }
+            } else { alert("Senha Mestra Incorreta"); }
         },
 
         sucesso() {
-            document.getElementById('msg-user').innerText = "Olá, " + this.user.nome;
+            document.getElementById('msg-user').innerText = "Olá, " + this.user.nome.split(' ')[0];
             document.getElementById('bloco-ti').classList.toggle('hidden', this.user.cargo !== 'TI');
             this.irPara('menu');
         },
@@ -155,30 +257,21 @@
                 snap.forEach(u => {
                     const d = u.val();
                     lista.innerHTML += `
-                        <div class="card" style="border-color:${d.status === 'CONGELADO' ? 'red' : 'green'}">
-                            <b>${d.nome}</b> (${d.cargo})<br>
-                            Senha: ${d.senha} | Status: ${d.status}<br>
-                            <button class="btn-ti" onclick="app.mudarSenha('${d.pront}')">SENHA</button>
-                            <button class="btn-ti" onclick="app.mudarStatus('${d.pront}', '${d.status}')">CONGELAR/ATIVAR</button>
-                            <button class="btn-ti" style="color:red" onclick="app.deletar('${d.pront}')">APAGAR</button>
+                        <div class="user-card">
+                            <span class="status-dot ${d.status == 'ATIVO' ? 'status-on' : 'status-off'}"></span>
+                            <strong>${d.nome}</strong><br>
+                            <span style="font-size:11px; color:#aaa">${d.cargo} | Pront: ${d.pront}</span><br>
+                            <div style="margin-top:8px">
+                                <button class="btn-outline" style="width:auto; padding:4px 8px; font-size:10px" onclick="app.mudarStatus('${d.pront}', '${d.status}')">${d.status == 'ATIVO' ? 'Congelar' : 'Ativar'}</button>
+                                <button class="btn-outline" style="width:auto; padding:4px 8px; font-size:10px; border-color:var(--danger); color:var(--danger)" onclick="app.deletar('${d.pront}')">Remover</button>
+                            </div>
                         </div>`;
                 });
             });
         },
 
-        mudarSenha(p) { 
-            const n = prompt("Nova senha:"); 
-            if(n) db.ref('usuarios/'+p).update({ senha: n }); 
-        },
-
-        mudarStatus(p, s) { 
-            db.ref('usuarios/'+p).update({ status: s === 'ATIVO' ? 'CONGELADO' : 'ATIVO' }); 
-        },
-
-        deletar(p) { 
-            if(confirm("Apagar conta?")) db.ref('usuarios/'+p).remove(); 
-        },
-
+        mudarStatus(p, s) { db.ref('usuarios/'+p).update({ status: s === 'ATIVO' ? 'CONGELADO' : 'ATIVO' }); },
+        deletar(p) { if(confirm("Deseja remover este usuário permanentemente?")) db.ref('usuarios/'+p).remove(); },
         logout() { localStorage.clear(); location.reload(); }
     };
 </script>
