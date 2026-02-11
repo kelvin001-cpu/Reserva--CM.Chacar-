@@ -9,229 +9,33 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 
     <style>
-        :root { --azul-pref: #004a99; --azul-sky: #00adef; --neon: #00ff9d; --danger: #ff4757; --warning: #ffa502; }
+        :root { --azul-pref: #004a99; --azul-sky: #00adef; --neon: #00ff9d; --danger: #ff4757; }
         * { box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: 0.2s; }
-        body { margin: 0; background: #000b1a url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed; background-size: cover; min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white; }
-        
-        .balao-premium { width: 95%; max-width: 600px; background: rgba(0, 0, 0, 0.96); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; padding: 25px; box-shadow: 0 25px 50px rgba(0,0,0,1); text-align: center; }
+        body { margin: 0; background: #000b1a url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed; background-size: cover; min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white; padding: 10px; }
+        .balao-premium { width: 100%; max-width: 550px; background: rgba(0, 0, 0, 0.96); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 25px; padding: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); text-align: center; }
         .hidden { display: none !important; }
-        .campo { width: 100%; height: 45px; border-radius: 12px; border: 1px solid #333; padding: 0 15px; margin-bottom: 12px; font-weight: 600; color: #000; outline: none; background: #fff; }
-        .btn-acao { width: 100%; height: 50px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); color: white; font-weight: 700; cursor: pointer; margin-bottom: 10px; text-transform: uppercase; }
+        .campo { width: 100%; height: 48px; border-radius: 12px; border: 1px solid #333; padding: 0 15px; margin-bottom: 15px; font-weight: 600; color: #000; background: #fff; outline: none; }
+        .btn-acao { width: 100%; height: 50px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); color: white; font-weight: 700; cursor: pointer; text-transform: uppercase; margin-bottom: 10px; }
         .btn-voltar { background: none; border: 1px solid #444; color: #aaa; padding: 10px; border-radius: 12px; cursor: pointer; width: 100%; margin-top: 10px; }
-        
-        #overlay-emergencia { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 0, 0, 0.9); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
-        .card { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; margin-bottom: 12px; border-left: 6px solid var(--azul-sky); text-align: left; }
-        .btn-mini { padding: 6px 10px; border-radius: 8px; border: none; font-size: 10px; font-weight: bold; cursor: pointer; margin: 2px; background: var(--neon); color: #000; }
+        #overlay-emergencia { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 0, 0, 0.95); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .card { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; margin-bottom: 10px; border-left: 5px solid var(--azul-sky); text-align: left; }
+        .btn-mini { padding: 5px 10px; border-radius: 8px; border: none; font-size: 10px; font-weight: bold; cursor: pointer; background: var(--neon); color: #000; margin-right: 5px; }
     </style>
 </head>
 <body onload="app.init()">
 
 <div id="overlay-emergencia" class="hidden">
-    <h1 style="font-size: 40px;">⚠️ BLOQUEIO TI ⚠️</h1>
-    <h2 id="msg-emergencia">SISTEMA CONGELADO</h2>
-    <p>Aguarde o Técnico Kelvin liberar o acesso.</p>
+    <h1 style="font-size: 50px; margin: 0;">⚠️</h1>
+    <h2>SISTEMA CONGELADO</h2>
+    <p id="msg-emergencia">Aguarde a liberação do Técnico Kelvin.</p>
 </div>
 
 <div class="balao-premium">
-    <div id="relogio" style="font-size: 12px; color: var(--azul-sky); margin-bottom: 15px; font-weight: bold;"></div>
-    <div id="aviso-basico" style="background: rgba(0,255,157,0.1); color: var(--neon); padding: 5px; border-radius: 10px; margin-bottom: 10px; font-size: 11px;" class="hidden"></div>
+    <div id="relogio" style="font-size: 12px; color: var(--azul-sky); margin-bottom: 20px; font-weight: bold;"></div>
 
     <div id="tela-inicio">
-        <h2>NTi MASTER 2026</h2>
-        <button class="btn-acao" onclick="app.irPara('login-geral', 'PROF')">Portal Professor</button>
-        <button class="btn-acao" style="background:#444" onclick="app.irPara('login-geral', 'GESTOR')">Portal Gestão</button>
-        <button class="btn-acao" style="background:#222" onclick="app.irPara('login-geral', 'SEC')">Portal Secretaria</button>
-        <button class="btn-acao" style="background:#000; border: 1px solid var(--danger)" onclick="app.irPara('login-ti')">Acesso Técnico Kelvin</button>
-    </div>
-
-    <div id="tela-login-geral" class="hidden">
-        <h3 id="titulo-login">LOGIN</h3>
-        <input type="text" id="log-id" class="campo" placeholder="Prontuário">
-        
-        <div id="campos-cadastro" class="hidden">
-            <input type="text" id="log-nome" class="campo" placeholder="Nome Completo">
-            <input type="text" id="log-materia" class="campo hidden" placeholder="Matéria">
-        </div>
-
-        <input type="password" id="log-pass" class="campo" placeholder="Senha">
-        <button class="btn-acao" onclick="app.authGeral()">ACESSAR</button>
-        <button class="btn-voltar" onclick="app.irPara('inicio')">VOLTAR</button>
-    </div>
-
-    <div id="tela-login-ti" class="hidden">
-        <h3 style="color:var(--danger)">KELVIN MASTER ADMIN</h3>
-        <input type="password" id="ti-pass" class="campo" placeholder="Senha Mestra">
-        <button class="btn-acao" style="background:var(--danger)" onclick="app.authTI()">ENTRAR</button>
-        <button class="btn-voltar" onclick="app.irPara('inicio')">VOLTAR</button>
-    </div>
-
-    <div id="tela-menu" class="hidden">
-        <h3 id="boas-vindas">Olá</h3>
-        <div id="area-ti" class="hidden">
-            <button class="btn-acao" style="background:var(--danger)" onclick="app.irPara('painel-avisos')">📢 LANÇAR AVISO/BLOQUEIO</button>
-            <button class="btn-acao" style="background:#000; border: 2px solid var(--neon)" onclick="app.irPara('painel-usuarios')">👥 GERENCIAR USUÁRIOS</button>
-        </div>
-        <button class="btn-acao" onclick="app.irPara('reserva')">📅 RESERVAR EQUIPAMENTO</button>
-        <button class="btn-voltar" onclick="app.logout()">SAIR DO SISTEMA</button>
-    </div>
-
-    <div id="tela-painel-usuarios" class="hidden">
-        <h3>CONTROLE DE ACESSOS</h3>
-        <div id="lista-usuarios" style="max-height:350px; overflow-y:auto;"></div>
-        <button class="btn-voltar" onclick="app.irPara('menu')">VOLTAR</button>
-    </div>
-
-    <div id="tela-painel-avisos" class="hidden">
-        <h3>ALERTAS DO SISTEMA</h3>
-        <input type="text" id="aviso-texto" class="campo" placeholder="Texto do aviso...">
-        <select id="aviso-nivel" class="campo">
-            <option value="BASICO">BÁSICO (Topo)</option>
-            <option value="MEDIO">MÉDIO (Pop-up)</option>
-            <option value="URGENTE">URGENTE (Congelar Tudo)</option>
-        </select>
-        <button class="btn-acao" onclick="app.lancarAviso()">PUBLICAR</button>
-        <button class="btn-acao" style="background:#444" onclick="app.limparAviso()">REMOVER ALERTAS</button>
-        <button class="btn-voltar" onclick="app.irPara('menu')">VOLTAR</button>
-    </div>
-</div>
-
-<script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyBoGfDKz-nBwKvczzGpxg-fHJYdVykcBUQ",
-        authDomain: "escala-chacara.firebaseapp.com",
-        databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com",
-        projectId: "escala-chacara",
-        storageBucket: "escala-chacara.firebasestorage.app",
-        messagingSenderId: "741259231706",
-        appId: "1:741259231706:web:27e2b60be100e6a34180e3"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    const app = {
-        user: null, currentType: null,
-
-        init() {
-            this.monitorarAvisos();
-            const saved = localStorage.getItem('nti_user');
-            if(saved) { this.user = JSON.parse(saved); this.loginSuccess('menu'); }
-            else { this.irPara('inicio'); }
-        },
-
-        irPara(tela, tipo = null) {
-            if(tipo) {
-                this.currentType = tipo;
-                document.getElementById('titulo-login').innerText = "PORTAL " + tipo;
-                document.getElementById('campos-cadastro').classList.add('hidden');
-                document.getElementById('log-materia').classList.add('hidden');
-            }
-            document.querySelectorAll('.balao-premium > div').forEach(d => { if(d.id !== 'relogio' && d.id !== 'aviso-basico') d.classList.add('hidden'); });
-            document.getElementById('tela-' + tela).classList.remove('hidden');
-            if(tela === 'painel-usuarios') this.renderUsuarios();
-        },
-
-        async authGeral() {
-            const id = document.getElementById('log-id').value;
-            const pass = document.getElementById('log-pass').value;
-            if(!id || !pass) return alert("Preencha Prontuário e Senha");
-
-            const snap = await db.ref('usuarios/' + id).once('value');
-            
-            if(!snap.exists()) {
-                // MODO CADASTRO
-                const cadDiv = document.getElementById('campos-cadastro');
-                if(cadDiv.classList.contains('hidden')) {
-                    cadDiv.classList.remove('hidden');
-                    if(this.currentType === 'PROF') document.getElementById('log-materia').classList.remove('hidden');
-                    alert("Primeiro acesso! Por favor, preencha seu nome (e matéria se for prof) para cadastrar.");
-                    return;
-                }
-                
-                const nome = document.getElementById('log-nome').value.toUpperCase();
-                const materia = document.getElementById('log-materia').value.toUpperCase();
-                
-                if(!nome) return alert("Nome é obrigatório");
-
-                const novoUsuario = { id, nome, pass, tipo: this.currentType, materia: materia || "N/A", status: "ATIVO" };
-                await db.ref('usuarios/' + id).set(novoUsuario);
-                this.user = novoUsuario;
-            } else {
-                // MODO LOGIN
-                const u = snap.val();
-                if(u.pass !== pass) return alert("Senha incorreta!");
-                if(u.status === "BLOQUEADO") return alert("Acesso bloqueado pelo TI.");
-                this.user = u;
-            }
-
-            localStorage.setItem('nti_user', JSON.stringify(this.user));
-            this.loginSuccess('menu');
-        },
-
-        authTI() {
-            if(document.getElementById('ti-pass').value === "nti2026") {
-                this.user = { nome: "TÉCNICO KELVIN", tipo: "TI", id: "MASTER" };
-                this.loginSuccess('menu');
-            } else { alert("Acesso Negado"); }
-        },
-
-        loginSuccess(tela) {
-            document.getElementById('boas-vindas').innerText = "Bem-vindo, " + this.user.nome;
-            if(this.user.tipo === 'TI') document.getElementById('area-ti').classList.remove('hidden');
-            this.irPara(tela);
-        },
-
-        // GERENCIAMENTO KELVIN
-        renderUsuarios() {
-            const list = document.getElementById('lista-usuarios');
-            db.ref('usuarios').on('value', snap => {
-                list.innerHTML = "";
-                snap.forEach(it => {
-                    const u = it.val();
-                    list.innerHTML += `<div class="card" style="border-left-color:${u.status==='BLOQUEADO'?'red':'green'}">
-                        <b>${u.nome}</b> [${u.tipo}]<br>
-                        <small>Prontuário: ${u.id} | Senha: ${u.pass}</small><br>
-                        ${u.materia !== 'N/A' ? `<small>Matéria: ${u.materia}</small><br>` : ''}
-                        <button class="btn-mini" onclick="app.mudarStatus('${u.id}', '${u.status}')">${u.status==='BLOQUEADO'?'ATIVAR':'BLOQUEAR'}</button>
-                        <button class="btn-mini" style="background:red; color:white" onclick="app.excluirU('${u.id}')">APAGAR</button>
-                    </div>`;
-                });
-            });
-        },
-
-        mudarStatus(id, atual) { db.ref('usuarios/'+id).update({ status: atual === 'BLOQUEADO' ? 'ATIVO' : 'BLOQUEADO' }); },
-        excluirU(id) { if(confirm("Remover usuário?")) db.ref('usuarios/'+id).remove(); },
-
-        lancarAviso() {
-            const txt = document.getElementById('aviso-texto').value;
-            const nivel = document.getElementById('aviso-nivel').value;
-            db.ref('sistema/aviso').set({ txt, nivel });
-        },
-        limparAviso() { db.ref('sistema/aviso').remove(); },
-
-        monitorarAvisos() {
-            db.ref('sistema/aviso').on('value', snap => {
-                const a = snap.val();
-                const over = document.getElementById('overlay-emergencia');
-                const basico = document.getElementById('aviso-basico');
-                over.classList.add('hidden'); basico.classList.add('hidden');
-                
-                if(a) {
-                    if(a.nivel === 'URGENTE') {
-                        over.classList.remove('hidden');
-                        document.getElementById('msg-emergencia').innerText = a.txt;
-                    } else if(a.nivel === 'MEDIO') {
-                        alert("📢 AVISO TI: " + a.txt);
-                    } else {
-                        basico.innerText = "📢 " + a.txt;
-                        basico.classList.remove('hidden');
-                    }
-                }
-            });
-        },
-
-        logout() { localStorage.clear(); location.reload(); }
-    };
-    setInterval(() => { document.getElementById('relogio').innerText = new Date().toLocaleString(); }, 1000);
-</script>
-</body>
-</html>
+        <h2 style="margin-bottom: 30px;">NTi MASTER 2026</h2>
+        <button class="btn-acao" onclick="app.abrirPortal('PROF')">Portal Professor</button>
+        <button class="btn-acao" style="background:#444" onclick="app.abrirPortal('GESTOR')">Portal Gestão</button>
+        <button class="btn-acao" style="background:#333" onclick="app.abrirPortal('SEC')">Portal Secretaria</button>
+        <button class="btn-acao" style="background:#000; border: 1px solid var(--danger)" onclick="
