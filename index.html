@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SISTEMA NTi - GESTÃO TOTAL</title>
+    <title>SISTEMA NTi - CONTROLE DE ATIVOS</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -57,14 +57,14 @@
 
         <div id="tela-login-escolha">
             <h1>SISTEMA NTi</h1>
-            <p style="font-size: 11px; opacity: 0.7; margin-bottom: 20px;">CONTROLO DE ATIVOS</p>
-            <button class="btn-acao" onclick="app.irPara('login-prof')">Professor</button>
-            <button class="btn-acao" style="background: #333;" onclick="app.irPara('login-gestor')">Gestor / Secretaria</button>
-            <button class="btn-acao" style="background: #000; border: 1px solid #444;" onclick="app.irPara('login-ti')">Espaço TI</button>
+            <p style="font-size: 11px; opacity: 0.7; margin-bottom: 20px;">CONTROLE DE ACESSO</p>
+            <button class="btn-acao" onclick="app.irPara('login-prof')">Portal Professor</button>
+            <button class="btn-acao" style="background: #333;" onclick="app.irPara('login-gestor')">Portal Gestor (Monitoramento)</button>
+            <button class="btn-acao" style="background: #000; border: 1px solid var(--nivel-3);" onclick="app.irPara('login-ti')">Espaço TI (Master)</button>
         </div>
 
         <div id="tela-login-prof" class="hidden">
-            <h2>ACESSO PROFESSOR</h2>
+            <h2>PROFESSOR</h2>
             <input type="text" class="campo" id="p-nome" placeholder="Nome Completo">
             <input type="text" class="campo" id="p-id" placeholder="RP / Prontuário">
             <input type="text" class="campo" id="p-mat" placeholder="Disciplina">
@@ -73,16 +73,16 @@
         </div>
 
         <div id="tela-login-gestor" class="hidden">
-            <h2>ACESSO GESTOR</h2>
+            <h2>GESTOR</h2>
             <input type="password" class="campo" id="pass-gestor" placeholder="Senha Gestor">
-            <button class="btn-acao" onclick="app.auth('GESTOR')">ENTRAR</button>
+            <button class="btn-acao" onclick="app.auth('GESTOR')">ACESSAR MONITOR</button>
             <button class="btn-voltar" onclick="app.irPara('login-escolha')">VOLTAR</button>
         </div>
 
         <div id="tela-login-ti" class="hidden">
             <h2 style="color: var(--nivel-3);">ADMINISTRAÇÃO TI</h2>
             <input type="password" class="campo" id="pass-ti" placeholder="Senha TI">
-            <button class="btn-acao" style="background: var(--nivel-3);" onclick="app.auth('TI')">ENTRAR NO PAINEL</button>
+            <button class="btn-acao" style="background: var(--nivel-3);" onclick="app.auth('TI')">ACESSO TOTAL</button>
             <button class="btn-voltar" onclick="app.irPara('login-escolha')">VOLTAR</button>
         </div>
 
@@ -94,8 +94,8 @@
                 <button class="btn-acao" onclick="app.irPara('reserva')">📅 NOVA RESERVA</button>
             </div>
             
-            <button class="btn-acao" style="background: rgba(0,173,239,0.2);" onclick="app.abrirCronograma()">🖥️ CRONOGRAMA & CALENDÁRIO</button>
-            <button class="btn-acao" style="background: var(--nivel-3);" onclick="app.irPara('suporte')">🛠️ SUPORTE TÉCNICO</button>
+            <button class="btn-acao" style="background: rgba(0,173,239,0.2);" onclick="app.abrirCronograma()">🖥️ CRONOGRAMA DE USO</button>
+            <button class="btn-acao" style="background: var(--nivel-3);" onclick="app.irPara('suporte')">🛠️ CHAMADO SUPORTE</button>
             <button class="btn-voltar" onclick="location.reload()">SAIR</button>
         </div>
 
@@ -118,19 +118,20 @@
             <h3>CRONOGRAMA</h3>
             <input type="date" class="campo" id="filtro-dia" onchange="app.renderLista()">
             <div id="lista-container" style="max-height: 300px; overflow-y: auto;"></div>
-            <button class="btn-voltar" onclick="app.irPara('menu')">VOLTAR AO MENU</button>
+            <button class="btn-voltar" onclick="app.irPara('menu')">VOLTAR</button>
         </div>
 
         <div id="tela-suporte" class="hidden">
-            <h3>SUPORTE</h3>
-            <input type="text" class="campo" id="sup-local" placeholder="Sala / Local">
-            <textarea class="campo" id="sup-obs" style="height: 70px; padding: 10px;" placeholder="Detalhes do problema..."></textarea>
-            <button class="btn-acao" style="background: var(--nivel-3);" onclick="app.enviarSuporte()">ENVIAR</button>
-            <button class="btn-voltar" onclick="app.irPara('menu')">VOLTAR</button>
+            <h3>ABRIR SUPORTE</h3>
+            <input type="text" class="campo" id="sup-local" placeholder="Onde está o erro?">
+            <textarea class="campo" id="sup-obs" style="height: 70px; padding: 10px;" placeholder="Detalhes..."></textarea>
+            <button class="btn-acao" style="background: var(--nivel-3);" onclick="app.enviarSuporte()">ENVIAR TI</button>
+            <button class="btn-voltar" onclick="app.irPara('menu')">CANCELAR</button>
         </div>
     </div>
 
 <script>
+    // FIREBASE CONFIG
     const firebaseConfig = {
         apiKey: "AIzaSyBoGfDKz-nBwKvczzGpxg-fHJYdVykcBUQ",
         authDomain: "escala-chacara.firebaseapp.com",
@@ -156,25 +157,22 @@
             if(tipo === 'PROF') {
                 const n = document.getElementById('p-nome').value;
                 const r = document.getElementById('p-id').value;
-                if(!n || !r) return alert("Preencha Nome e RP!");
+                if(!n || !r) return alert("Identifique-se!");
                 this.user = { nome: n.toUpperCase(), rp: r, tipo: 'PROF' };
+                document.getElementById('area-reserva').classList.remove('hidden');
             } else if(tipo === 'GESTOR') {
-                if(document.getElementById('pass-gestor').value !== "gestores2026") return alert("Senha incorreta!");
-                this.user = { nome: "GESTOR", tipo: 'GESTOR' };
+                if(document.getElementById('pass-gestor').value !== "gestores2026") return alert("Senha Gestor Inválida!");
+                this.user = { nome: "GESTOR (MONITOR)", tipo: 'GESTOR' };
+                document.getElementById('area-reserva').classList.add('hidden'); // Gestor não reserva
             } else if(tipo === 'TI') {
-                // SENHA DEFINIDA COMO nti2026
-                if(document.getElementById('pass-ti').value !== "nti2026") return alert("Senha TI incorreta!");
-                this.user = { nome: "TI MASTER", tipo: 'TI' };
+                if(document.getElementById('pass-ti').value !== "nti2026") return alert("Senha TI Master Inválida!");
+                this.user = { nome: "ADMIN MASTER TI", tipo: 'TI' };
+                document.getElementById('area-reserva').classList.add('hidden'); // TI não reserva
             }
 
             document.getElementById('badge-user').innerText = this.user.tipo;
             document.getElementById('badge-user').className = 'badge badge-' + this.user.tipo.toLowerCase();
             document.getElementById('txt-saudacao').innerText = "Olá, " + this.user.nome;
-            
-            // Oculta área de reserva se for TI (opcional)
-            if(this.user.tipo === 'TI') document.getElementById('area-reserva').classList.add('hidden');
-            else document.getElementById('area-reserva').classList.remove('hidden');
-
             this.irPara('menu');
         },
 
@@ -187,7 +185,7 @@
         salvarReserva() {
             const d = document.getElementById('res-data').value;
             const h = document.getElementById('res-hora').value;
-            if(!this.tempEq || !d || !h) return alert("Preencha todos os campos!");
+            if(!this.tempEq || !d || !h) return alert("Complete os dados!");
 
             db.ref('atividades').push({
                 prof: this.user.nome,
@@ -198,7 +196,7 @@
                 status: "EM USO",
                 ts: Date.now()
             });
-            alert("Reserva concluída!");
+            alert("Reservado!");
             this.irPara('menu');
         },
 
@@ -220,9 +218,17 @@
 
                     if(r.data === filtro) {
                         const isEntregue = r.status === "ENTREGUE";
-                        const showDel = this.user.tipo === 'TI' ? `<button class="btn-delete" onclick="app.apagar('${key}')">APAGAR</button>` : '';
-                        const showBaixa = (!isEntregue && (r.prof === this.user.nome || this.user.tipo !== 'PROF')) ? 
-                            `<button class="btn-baixa" onclick="app.darBaixa('${key}')">DAR BAIXA / ENTREGAR</button>` : '';
+                        
+                        // Lógica de botões por nível:
+                        // TI vê tudo (Apagar e Baixa). Professor vê apenas o dele (Baixa). Gestor não vê nada.
+                        const showDel = (this.user.tipo === 'TI') ? `<button class="btn-delete" onclick="app.apagar('${key}')">APAGAR</button>` : '';
+                        
+                        let showBaixa = '';
+                        if(!isEntregue) {
+                            if(this.user.tipo === 'TI' || (this.user.tipo === 'PROF' && r.prof === this.user.nome)) {
+                                showBaixa = `<button class="btn-baixa" onclick="app.darBaixa('${key}')">DAR BAIXA / ENTREGAR</button>`;
+                            }
+                        }
 
                         container.innerHTML += `
                             <div class="card ${isEntregue ? 'card-entregue' : ''}">
@@ -235,18 +241,18 @@
                         `;
                     }
                 });
-                if(!container.innerHTML) container.innerHTML = "<p style='font-size:12px; opacity:0.5'>Sem agendamentos para este dia.</p>";
+                if(!container.innerHTML) container.innerHTML = "<p style='font-size:12px; opacity:0.5'>Nenhum ativo para este dia.</p>";
             });
         },
 
         darBaixa(key) {
-            if(confirm("Confirmar devolução do ativo?")) {
+            if(confirm("Confirmar devolução para o sistema?")) {
                 db.ref('atividades/' + key).update({ status: "ENTREGUE" });
             }
         },
 
         apagar(key) {
-            if(confirm("TI: Excluir este registro permanentemente do banco de dados?")) {
+            if(confirm("TI: Excluir definitivamente este registro?")) {
                 db.ref('atividades/' + key).remove();
             }
         },
@@ -254,7 +260,6 @@
         enviarSuporte() {
             const loc = document.getElementById('sup-local').value;
             const obs = document.getElementById('sup-obs').value;
-            if(!loc || !obs) return alert("Descreva o problema!");
             db.ref('atividades').push({
                 prof: this.user.nome,
                 equip: "🛠️ SUPORTE: " + loc,
@@ -264,7 +269,7 @@
                 obs: obs,
                 ts: Date.now()
             });
-            alert("Chamado enviado ao TI!");
+            alert("Enviado ao suporte!");
             this.irPara('menu');
         }
     };
