@@ -19,13 +19,14 @@
             height: 100vh;
         }
         .container {
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.85);
             padding: 30px;
             border-radius: 15px;
             width: 90%;
             max-width: 450px;
             text-align: center;
             border: 2px solid #00adef;
+            box-shadow: 0 0 20px rgba(0, 173, 239, 0.5);
         }
         input {
             width: 100%;
@@ -34,6 +35,7 @@
             border-radius: 5px;
             border: none;
             font-size: 16px;
+            font-weight: bold;
         }
         button {
             width: 100%;
@@ -45,30 +47,33 @@
             font-weight: bold;
             cursor: pointer;
             margin-top: 10px;
+            text-transform: uppercase;
         }
         .btn-ti { background: #ff4757; }
         .hidden { display: none; }
         .card-user {
-            background: #222;
-            padding: 10px;
+            background: #111;
+            padding: 15px;
             margin-top: 10px;
-            border-radius: 5px;
+            border-radius: 8px;
             text-align: left;
             border-left: 5px solid #00adef;
+            font-size: 14px;
         }
-        .ctrl-btns { margin-top: 10px; }
-        .ctrl-btns button { width: auto; padding: 5px 10px; font-size: 12px; margin-right: 5px; }
+        .ctrl-btns { margin-top: 10px; display: flex; gap: 5px; }
+        .ctrl-btns button { width: auto; padding: 8px; font-size: 11px; margin: 0; }
     </style>
 </head>
 <body onload="app.init()">
 
 <div class="container">
-    <div id="relogio" style="margin-bottom: 15px; font-weight: bold; color: #00adef;"></div>
+    <div id="relogio" style="margin-bottom: 15px; font-weight: bold; color: #00adef; font-family: monospace;"></div>
 
     <div id="tela-inicio">
         <h1>SISTEMA NTi 2026</h1>
+        <p style="color: #aaa;">CONTROLE DE ACESSO</p>
         <button onclick="app.abrir('PROF')">PORTAL PROFESSOR</button>
-        <button onclick="app.abrir('GESTOR')" style="background: #555;">PORTAL GESTÃO</button>
+        <button onclick="app.abrir('GESTOR')" style="background: #444;">PORTAL GESTÃO</button>
         <button class="btn-ti" onclick="app.abrir('TI')">TI MASTER KELVIN</button>
     </div>
 
@@ -82,25 +87,27 @@
         </div>
 
         <input type="password" id="id-senha" placeholder="Senha">
-        <button id="btn-entrar" onclick="app.entrar()">ENTRAR NO SISTEMA</button>
-        <button onclick="location.reload()" style="background:none;">Voltar</button>
+        <button id="btn-entrar" onclick="app.entrar()">CONECTAR</button>
+        <button onclick="location.reload()" style="background:none; color: #777;">Voltar</button>
     </div>
 
     <div id="tela-master" class="hidden">
-        <h2>PAINEL TI MASTER</h2>
-        <div id="lista-usuarios" style="max-height: 300px; overflow-y: auto;"></div>
-        <button onclick="location.reload()" style="background:#555;">SAIR DO PAINEL</button>
+        <h2 style="color: #ff4757;">PAINEL TI MASTER</h2>
+        <div id="lista-usuarios" style="max-height: 350px; overflow-y: auto; padding-right: 5px;"></div>
+        <button onclick="location.reload()" style="background:#444; margin-top: 20px;">FECHAR PAINEL</button>
     </div>
 
     <div id="tela-menu" class="hidden">
         <h2 id="msg-bem-vindo">Olá</h2>
-        <button onclick="alert('Sistema de Reservas em breve')">RESERVAR EQUIPAMENTO</button>
-        <button onclick="location.reload()" style="background:none;">SAIR</button>
+        <div style="padding: 20px; border: 1px dashed #333; margin-bottom: 10px;">
+            <p>SISTEMA ONLINE</p>
+        </div>
+        <button onclick="alert('Módulo de Reservas em breve')">RESERVAR EQUIPAMENTO</button>
+        <button onclick="location.reload()" style="background:none; color: #777;">SAIR</button>
     </div>
 </div>
 
 <script>
-    // CONFIGURAÇÃO FIREBASE
     const firebaseConfig = {
         apiKey: "AIzaSyBoGfDKz-nBwKvczzGpxg-fHJYdVykcBUQ",
         databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com",
@@ -120,9 +127,9 @@
         abrir(tipo) {
             this.cargo = tipo;
             if(tipo === 'TI') {
-                const p = prompt("SENHA MESTRE:");
+                const p = prompt("SENHA MESTRE TI:");
                 if(p === 'nti2026') this.carregarTI();
-                else alert("Negado");
+                else alert("ACESSO NEGADO");
                 return;
             }
             document.getElementById('titulo-auth').innerText = "PORTAL " + tipo;
@@ -135,7 +142,7 @@
         },
 
         async checarID(p) {
-            if(p.length < 3) return;
+            if(p.length < 2) return;
             const snap = await db.ref('usuarios/' + p).once('value');
             this.existe = snap.exists();
             document.getElementById('cadastro').classList.toggle('hidden', this.existe);
@@ -149,17 +156,18 @@
         async entrar() {
             const p = document.getElementById('id-pront').value;
             const s = document.getElementById('id-senha').value;
+            if(!p || !s) return alert("Preencha os campos!");
 
             if(this.existe) {
                 const snap = await db.ref('usuarios/' + p).once('value');
                 const user = snap.val();
                 if(user.senha !== s) return alert("Senha Incorreta");
-                if(user.status === 'CONGELADO') return alert("ACESSO BLOQUEADO PELO TI");
+                if(user.status === 'CONGELADO') return alert("SUA CONTA FOI BLOQUEADA PELO TI MASTER");
                 this.logado(user.nome);
             } else {
                 const n = document.getElementById('id-nome').value;
                 const m = document.getElementById('id-materia').value || "N/A";
-                if(!n || !s) return alert("Preencha tudo");
+                if(!n) return alert("Digite seu nome para o cadastro!");
                 const novo = { pront: p, nome: n, senha: s, cargo: this.cargo, materia: m, status: 'ATIVO' };
                 await db.ref('usuarios/' + p).set(novo);
                 this.logado(n);
@@ -180,11 +188,15 @@
                     const d = u.val();
                     lista.innerHTML += `
                         <div class="card-user" style="border-left-color: ${d.status === 'CONGELADO' ? 'red' : '#00adef'}">
-                            <b>${d.nome}</b> (${d.cargo})<br>
+                            <b>${d.nome}</b> [${d.cargo}]<br>
                             ID: ${d.pront} | Senha: ${d.senha}<br>
+                            Status: ${d.status}<br>
                             <div class="ctrl-btns">
-                                <button onclick="app.mudarStatus('${d.pront}', '${d.status}')">${d.status === 'ATIVO' ? 'CONGELAR' : 'ATIVAR'}</button>
-                                <button onclick="app.deletar('${d.pront}')" style="background:red">APAGAR</button>
+                                <button onclick="app.mudarStatus('${d.pront}', '${d.status}')" style="background:${d.status === 'ATIVO' ? '#ff9f43' : '#28c76f'}">
+                                    ${d.status === 'ATIVO' ? 'CONGELAR' : 'ATIVAR'}
+                                </button>
+                                <button onclick="app.mudarSenha('${d.pront}')" style="background:#555">SENHA</button>
+                                <button onclick="app.deletar('${d.pront}')" style="background:#ea5455">APAGAR</button>
                             </div>
                         </div>`;
                 });
@@ -192,7 +204,8 @@
         },
 
         mudarStatus(id, s) { db.ref('usuarios/'+id).update({status: s === 'ATIVO' ? 'CONGELADO' : 'ATIVO'}); },
-        deletar(id) { if(confirm("Apagar?")) db.ref('usuarios/'+id).remove(); }
+        mudarSenha(id) { const n = prompt("Nova senha:"); if(n) db.ref('usuarios/'+id).update({senha: n}); },
+        deletar(id) { if(confirm("Deseja apagar este usuário permanentemente?")) db.ref('usuarios/'+id).remove(); }
     };
 </script>
 </body>
