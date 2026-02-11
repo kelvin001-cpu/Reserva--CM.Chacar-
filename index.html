@@ -13,43 +13,49 @@
         :root {
             --azul-pref: #004a99; --azul-sky: #00adef; --neon: #00ff9d;
             --nivel-1: #2ed573; --nivel-2: #ffa502; --nivel-3: #ff4757;
+            --bg-dark: #000b1a;
         }
         * { box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: 0.3s; }
         
         body { 
-            margin: 0; background: #000b1a url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed;
+            margin: 0; background: var(--bg-dark) url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed;
             background-size: cover; min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white; padding: 10px;
         }
 
         .balao-premium {
-            width: 100%; max-width: 480px; background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.25); border-radius: 35px;
-            padding: 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.7); text-align: center;
+            width: 100%; max-width: 500px; background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.25); border-radius: 30px;
+            padding: 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.7); text-align: center; overflow: hidden;
         }
 
         .input-group-bolha { background: rgba(0, 0, 0, 0.25); border-radius: 20px; padding: 15px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); text-align: left; }
-
         .clock-header { font-size: 11px; font-weight: 600; color: var(--azul-sky); margin-bottom: 10px; letter-spacing: 1px; }
         h1 { font-size: 18px; font-weight: 700; text-transform: uppercase; margin-bottom: 2px; }
         p.sub { font-size: 9px; opacity: 0.7; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
-
         label { display: block; font-size: 9px; font-weight: 700; color: var(--azul-sky); margin: 0 0 5px 5px; text-transform: uppercase; }
         
         .campo { width: 100%; height: 42px; background: white; border-radius: 10px; border: none; padding: 0 12px; font-size: 13px; color: #111; margin-bottom: 10px; font-weight: 600; }
         
         .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 15px; }
         .btn-item { height: 40px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; cursor: pointer; font-size: 8px; font-weight: 700; }
-        .btn-item.active { background: var(--azul-sky); border-color: white; box-shadow: 0 5px 12px rgba(0, 173, 239, 0.4); }
+        .btn-item.active { background: var(--azul-sky); border-color: white; }
 
         .btn-acao { width: 100%; height: 50px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); color: white; font-weight: 700; text-transform: uppercase; cursor: pointer; margin-top: 5px; font-size: 12px;}
         .btn-voltar { background: none; border: 1px solid rgba(255,255,255,0.2); color: white; font-size: 9px; margin-top: 8px; width: 100%; padding: 8px; cursor: pointer; border-radius: 10px; }
 
-        .monitor-card { background: rgba(0,0,0,0.4); padding: 12px; border-radius: 15px; margin-bottom: 8px; text-align: left; border-left: 4px solid var(--neon); font-size: 11px; }
-        .hidden { display: none; }
+        .monitor-card { background: rgba(0,0,0,0.4); padding: 12px; border-radius: 15px; margin-bottom: 8px; text-align: left; border-left: 4px solid var(--neon); font-size: 11px; position: relative; }
+        .entregue { border-left-color: #888 !important; opacity: 0.6; }
         
+        .hidden { display: none; }
         .badge { padding: 2px 6px; border-radius: 4px; font-size: 8px; text-transform: uppercase; font-weight: bold; margin-right: 5px; }
-        .badge-materia { background: var(--azul-pref); color: white; }
-        .badge-emerg { color: white; }
+        
+        /* Estilo Calendário */
+        .cal-container { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 15px; margin-bottom: 15px; }
+        .cal-day { font-size: 10px; padding: 5px; background: rgba(255,255,255,0.05); border-radius: 5px; }
+        .cal-today { border: 1px solid var(--neon); color: var(--neon); }
+        .has-reserva { background: var(--azul-pref); color: white; }
+
+        .btn-entrega { background: var(--neon); color: #000; border: none; padding: 4px 8px; border-radius: 5px; font-size: 9px; font-weight: bold; cursor: pointer; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -57,25 +63,43 @@
     <div class="balao-premium">
         <div class="clock-header" id="relogio-top">--/--/---- 00:00:00</div>
 
-        <div id="scr1">
+        <div id="scr0">
             <h1>SISTEMA ELITE</h1>
-            <p class="sub">Portal do Docente - NTi</p>
+            <p class="sub">Selecione seu acesso</p>
+            <div class="btn-grid" style="grid-template-columns: 1fr;">
+                <button class="btn-acao" onclick="app.nav(0, 1)">SOU PROFESSOR / DOCENTE</button>
+                <button class="btn-acao" style="background: #333" onclick="app.nav(0, 'login-gestor')">GESTÃO / SECRETARIA</button>
+            </div>
+        </div>
+
+        <div id="scr-login-gestor" class="hidden">
+            <h1>ACESSO RESTRITO</h1>
+            <p class="sub">Portal do Gestor</p>
+            <input type="password" class="campo" id="pass-gestor" placeholder="Senha de Acesso">
+            <button class="btn-acao" onclick="app.loginGestor()">AUTENTICAR</button>
+            <button class="btn-voltar" onclick="app.nav('login-gestor', 0)">VOLTAR</button>
+        </div>
+
+        <div id="scr1" class="hidden">
+            <h1>IDENTIFICAÇÃO</h1>
+            <p class="sub">Portal do Docente</p>
             <input type="text" class="campo" id="p-nome" placeholder="Nome Completo">
             <input type="text" class="campo" id="p-id" placeholder="RP / Prontuário">
             <input type="text" class="campo" id="p-mat" placeholder="Matéria / Disciplina">
             <button class="btn-acao" onclick="app.validarPerfil()">ENTRAR NO SISTEMA</button>
+            <button class="btn-voltar" onclick="app.nav(1, 0)">VOLTAR</button>
         </div>
 
         <div id="scr2" class="hidden">
-            <h1>PAINEL DO DOCENTE</h1>
+            <h1 id="tit-boasvindas">PAINEL</h1>
             <div class="input-group-bolha" style="text-align: center; border: 1px solid var(--azul-sky);">
                 <div id="display-prof" style="font-weight: 700; font-size: 14px;"></div>
                 <div id="display-info" style="font-size: 10px; opacity: 0.8; color: var(--azul-sky);"></div>
             </div>
             
             <div class="btn-grid" style="grid-template-columns: 1fr; gap: 10px;">
-                <button class="btn-item active" style="height: 50px; font-size: 11px;" onclick="app.nav(2, 3)">📅 NOVA RESERVA DE EQUIPAMENTO</button>
-                <button class="btn-item" style="height: 50px; font-size: 11px; background: rgba(0,173,239,0.2);" onclick="app.nav(2, 6)">🖥️ VER CRONOGRAMA GERAL</button>
+                <button class="btn-item active" style="height: 50px; font-size: 11px;" id="btn-nova-res" onclick="app.nav(2, 3)">📅 NOVA RESERVA DE EQUIPAMENTO</button>
+                <button class="btn-item" style="height: 50px; font-size: 11px; background: rgba(0,173,239,0.2);" onclick="app.nav(2, 6)">🖥️ CRONOGRAMA & CALENDÁRIO</button>
                 <button class="btn-item" style="height: 50px; font-size: 11px; border-color: var(--nivel-3);" onclick="app.nav(2, 5)">🛠️ SUPORTE TI (CHAMADO)</button>
             </div>
             <button class="btn-voltar" onclick="location.reload()">SAIR DO SISTEMA</button>
@@ -83,7 +107,7 @@
 
         <div id="scr3" class="hidden">
             <h1>RESERVA DE ATIVOS</h1>
-            <label>Selecione o Equipamento</label>
+            <label>Equipamento</label>
             <div class="btn-grid">
                 <button class="btn-item" id="e1" onclick="app.setEq('SALA INFO', 'e1')">SALA INFO</button>
                 <button class="btn-item" id="e2" onclick="app.setEq('CHROMEBOOKS', 'e2')">CHROMEBOOKS</button>
@@ -93,14 +117,10 @@
             </div>
 
             <div class="input-group-bolha">
-                <label>Horário Limite de Uso</label>
+                <label>Data do Uso</label>
+                <input type="date" class="campo" id="res-data-dia">
+                <label>Horário Limite</label>
                 <input type="time" class="campo" id="res-hora-fim">
-                
-                <label>Frequência</label>
-                <select class="campo" id="res-tipo">
-                    <option value="HOJE">Somente Hoje</option>
-                    <option value="RECORRENTE">Toda Semana (Fixo)</option>
-                </select>
             </div>
 
             <button class="btn-acao" onclick="app.confirmarReserva()">CONFIRMAR RESERVA</button>
@@ -110,69 +130,77 @@
         <div id="scr5" class="hidden">
             <h1>SUPORTE TÉCNICO</h1>
             <div class="input-group-bolha">
-                <label>Local / Sala</label>
-                <input type="text" class="campo" id="sup-local" placeholder="Ex: Sala 05">
-                
-                <label>Nível de Emergência</label>
+                <input type="text" class="campo" id="sup-local" placeholder="Local / Sala">
                 <select class="campo" id="sup-emergencia">
-                    <option value="1" style="color: green;">Nível 1 - Baixa (Dúvidas/Config)</option>
-                    <option value="2" style="color: orange;">Nível 2 - Média (Lento/Parcial)</option>
-                    <option value="3" style="color: red;">Nível 3 - Crítica (Parou tudo)</option>
+                    <option value="1">Nível 1 - Baixa</option>
+                    <option value="2">Nível 2 - Média</option>
+                    <option value="3">Nível 3 - Crítica</option>
                 </select>
-
-                <label>Descrição do Problema</label>
-                <textarea class="campo" id="sup-motivo" style="height:70px; padding:10px;" placeholder="Relate o ocorrido..."></textarea>
+                <textarea class="campo" id="sup-motivo" style="height:70px; padding:10px;" placeholder="Descrição do problema..."></textarea>
             </div>
-            <button class="btn-acao" style="background: var(--nivel-3)" onclick="app.enviarSuporte()">ABRIR CHAMADO URGENTE</button>
+            <button class="btn-acao" style="background: var(--nivel-3)" onclick="app.enviarSuporte()">ABRIR CHAMADO</button>
             <button class="btn-voltar" onclick="app.nav(5, 2)">CANCELAR</button>
         </div>
 
         <div id="scr6" class="hidden">
-            <h1>CRONOGRAMA & STATUS</h1>
-            <div id="admin-monitor" style="margin-top:10px; max-height: 380px; overflow-y: auto; padding-right:5px;">
-                <p>Carregando dados sincronizados...</p>
+            <h1>STATUS EM TEMPO REAL</h1>
+            
+            <div class="cal-container" id="calendario-mini"></div>
+
+            <div id="admin-monitor" style="max-height: 250px; overflow-y: auto;">
+                <p>Carregando registros...</p>
             </div>
             <button class="btn-voltar" onclick="app.nav(6, 2)">VOLTAR AO MENU</button>
         </div>
     </div>
 
 <script>
-    // Configuração do Firebase - SUBSTITUA PELOS SEUS DADOS DO CONSOLE
-   const firebaseConfig = {
-  apiKey: "AIzaSyBoGfDKz-nBwKvczzGpxg-fHJYdVykcBUQ",
-  authDomain: "escala-chacara.firebaseapp.com",
-  databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com",
-  projectId: "escala-chacara",
-  storageBucket: "escala-chacara.firebasestorage.app",
-  messagingSenderId: "741259231706",
-  appId: "1:741259231706:web:27e2b60be100e6a34180e3",
-  measurementId: "G-J1RMMKQCLG"
-};
-    // Inicializar Firebase (apenas se os dados acima forem preenchidos)
-    if(firebaseConfig.apiKey !== "SUA_API_KEY") {
-        firebase.initializeApp(firebaseConfig);
-    }
+    const firebaseConfig = {
+        apiKey: "AIzaSyBoGfDKz-nBwKvczzGpxg-fHJYdVykcBUQ",
+        authDomain: "escala-chacara.firebaseapp.com",
+        databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com",
+        projectId: "escala-chacara",
+        storageBucket: "escala-chacara.firebasestorage.app",
+        messagingSenderId: "741259231706",
+        appId: "1:741259231706:web:27e2b60be100e6a34180e3"
+    };
+
+    firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     const app = {
         equip: "",
+        isGestor: false,
         user: { nome: "", id: "", mat: "" },
         
         nav(at, px) {
-            document.querySelectorAll('.balao-premium > div[id^="scr"]').forEach(d => d.classList.add('hidden'));
+            document.querySelectorAll('.balao-premium > div').forEach(d => d.classList.add('hidden'));
             document.getElementById(`scr${px}`).classList.remove('hidden');
+            document.getElementById('relogio-top').classList.remove('hidden');
             if(px === 6) this.ouvirDados();
+        },
+
+        loginGestor() {
+            const pass = document.getElementById('pass-gestor').value;
+            if(pass === "gestores2026") {
+                this.isGestor = true;
+                this.user = { nome: "GESTOR NTi", id: "ADMIN", mat: "COORDENAÇÃO" };
+                document.getElementById('display-prof').innerText = "PAINEL ADMINISTRATIVO";
+                document.getElementById('display-info').innerText = "MONITORAMENTO GERAL ATIVO";
+                document.getElementById('btn-nova-res').style.display = 'none';
+                this.nav('login-gestor', 2);
+            } else {
+                alert("Senha incorreta!");
+            }
         },
 
         validarPerfil() {
             this.user.nome = document.getElementById('p-nome').value.toUpperCase();
             this.user.id = document.getElementById('p-id').value;
             this.user.mat = document.getElementById('p-mat').value.toUpperCase();
-            
-            if(!this.user.nome || !this.user.id || !this.user.mat) return alert("Preencha todos os campos!");
-            
+            if(!this.user.nome || !this.user.id) return alert("Preencha seu nome e prontuário!");
             document.getElementById('display-prof').innerText = this.user.nome;
-            document.getElementById('display-info').innerText = `ID: ${this.user.id} | DISCIPLINA: ${this.user.mat}`;
+            document.getElementById('display-info').innerText = `RP: ${this.user.id} | ${this.user.mat}`;
             this.nav(1, 2);
         },
 
@@ -184,79 +212,97 @@
 
         confirmarReserva() {
             const hora = document.getElementById('res-hora-fim').value;
-            if(!this.equip || !hora) return alert("Escolha o ativo e o horário!");
+            const data = document.getElementById('res-data-dia').value;
+            if(!this.equip || !hora || !data) return alert("Preencha todos os dados!");
 
-            const novaReserva = {
+            db.ref('atividades').push({
                 prof: this.user.nome,
                 prontuario: this.user.id,
                 materia: this.user.mat,
                 equip: this.equip,
-                tipo: document.getElementById('res-tipo').value,
+                data: data,
                 hora: hora,
+                status: 'EM USO',
                 registro: 'RESERVA',
                 timestamp: Date.now()
-            };
-
-            db.ref('atividades').push(novaReserva);
-            alert("Reserva registrada com sucesso!");
+            });
+            alert("Reserva registrada!");
             this.nav(3, 6);
+        },
+
+        entregarEquip(key) {
+            if(confirm("Confirmar a entrega do equipamento agora?")) {
+                db.ref('atividades/' + key).update({ status: 'ENTREGUE' });
+            }
         },
 
         enviarSuporte() {
             const local = document.getElementById('sup-local').value;
             const motivo = document.getElementById('sup-motivo').value;
-            const emerg = document.getElementById('sup-emergencia').value;
+            if(!local || !motivo) return alert("Preencha os campos!");
 
-            if(!local || !motivo) return alert("Preencha o local e o problema!");
-
-            const chamado = {
+            db.ref('atividades').push({
                 prof: this.user.nome,
-                materia: this.user.mat,
                 local: local,
                 motivo: motivo,
-                nivel: emerg,
+                nivel: document.getElementById('sup-emergencia').value,
                 registro: 'SUPORTE',
                 hora: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
                 timestamp: Date.now()
-            };
-
-            db.ref('atividades').push(chamado);
-            alert("Chamado enviado ao técnico!");
+            });
+            alert("Chamado Aberto!");
             this.nav(5, 2);
         },
 
         ouvirDados() {
             const container = document.getElementById('admin-monitor');
+            const calContainer = document.getElementById('calendario-mini');
+            
             db.ref('atividades').orderByChild('timestamp').on('value', (snapshot) => {
-                const dados = [];
-                snapshot.forEach(item => { dados.push({key: item.key, ...item.val()}); });
+                let html = "";
+                let datasReservadas = [];
                 
-                if(dados.length === 0) {
-                    container.innerHTML = "<p>Nenhum registro encontrado.</p>";
-                    return;
-                }
+                snapshot.forEach(item => {
+                    const r = item.val();
+                    const key = item.key;
+                    if(r.data) datasReservadas.push(r.data);
 
-                container.innerHTML = dados.reverse().map(r => {
-                    const corBorda = r.registro === 'SUPORTE' ? `var(--nivel-${r.nivel})` : 'var(--neon)';
-                    const labelSup = r.registro === 'SUPORTE' ? `<span class="badge" style="background:${corBorda}">NÍVEL ${r.nivel}</span>` : '';
-
-                    return `
-                        <div class="monitor-card" style="border-left-color: ${corBorda}">
-                            <div style="display:flex; justify-content:space-between; align-items:start">
-                                <div>
-                                    <b>${r.registro === 'SUPORTE' ? '🛠️ SUPORTE: ' + r.local : '📅 ' + r.equip}</b><br>
-                                    <span class="badge badge-materia">${r.materia}</span> ${labelSup}
-                                </div>
-                                <small style="color:var(--azul-sky)">${r.hora}</small>
+                    const isEntregue = r.status === 'ENTREGUE';
+                    const corBorda = r.registro === 'SUPORTE' ? `var(--nivel-${r.nivel})` : (isEntregue ? '#888' : 'var(--neon)');
+                    
+                    html = `
+                        <div class="monitor-card ${isEntregue ? 'entregue' : ''}" style="border-left-color: ${corBorda}">
+                            <div style="display:flex; justify-content:space-between">
+                                <b>${r.registro === 'SUPORTE' ? '🛠️ SUPORTE' : '📅 ' + r.equip}</b>
+                                <small>${r.data || r.hora}</small>
                             </div>
-                            <div style="margin-top:8px; font-size:10px">
-                                <b>Prof:</b> ${r.prof} (${r.prontuario || 'TI'})<br>
-                                <i>${r.motivo ? 'Problema: ' + r.motivo : 'Uso: ' + r.tipo}</i>
+                            <div style="font-size:10px; margin-top:5px">
+                                <b>Prof:</b> ${r.prof} ${this.isGestor ? '(RP: '+r.prontuario+')' : ''}<br>
+                                <i>${r.motivo || 'Status: ' + (r.status || 'Ativo')}</i>
                             </div>
+                            ${(!isEntregue && r.registro === 'RESERVA' && (r.prof === this.user.nome || this.isGestor)) ? 
+                                `<button class="btn-entrega" onclick="app.entregarEquip('${key}')">ENTREGAR</button>` : ''}
                         </div>
-                    `;
-                }).join('');
+                    ` + html;
+                });
+                container.innerHTML = html || "<p>Sem registros.</p>";
+                this.renderCal(datasReservadas);
             });
+        },
+
+        renderCal(datas) {
+            const cal = document.getElementById('calendario-mini');
+            cal.innerHTML = "";
+            const hoje = new Date();
+            for(let i = -2; i < 5; i++) {
+                const d = new Date();
+                d.setDate(hoje.getDate() + i);
+                const iso = d.toISOString().split('T')[0];
+                const tem = datas.includes(iso);
+                cal.innerHTML += `<div class="cal-day ${i===0?'cal-today':''} ${tem?'has-reserva':''}">
+                    ${d.getDate()}/${d.getMonth()+1}
+                </div>`;
+            }
         }
     };
 
