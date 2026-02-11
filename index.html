@@ -2,211 +2,268 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA NTi - KELVIN MASTER</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SISTEMA NTi - CHÁCARA DAS GARÇAS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Orbitron:wght@600&display=swap" rel="stylesheet">
+    
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
     <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #000 url('https://images.unsplash.com/photo-1510511459019-5dda7724fd87?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
-            background-size: cover;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+        :root {
+            --azul-pref: #004a99; --azul-sky: #00adef; --neon: #00ff9d;
+            --nivel-1: #2ed573; --nivel-2: #ffa502; --nivel-3: #ff4757;
         }
-        .container {
-            background: rgba(0, 0, 0, 0.85);
-            padding: 30px;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 450px;
-            text-align: center;
-            border: 2px solid #00adef;
-            box-shadow: 0 0 20px rgba(0, 173, 239, 0.5);
+        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: 0.3s; }
+        
+        body { 
+            margin: 0; background: #000b1a url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover; min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white; padding: 10px;
         }
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: none;
-            font-size: 16px;
-            font-weight: bold;
+
+        .balao-premium {
+            width: 100%; max-width: 480px; background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.25); border-radius: 35px;
+            padding: 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.7); text-align: center;
         }
-        button {
-            width: 100%;
-            padding: 12px;
-            background: #00adef;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-            text-transform: uppercase;
-        }
-        .btn-ti { background: #ff4757; }
+
+        .input-group-bolha { background: rgba(0, 0, 0, 0.25); border-radius: 20px; padding: 15px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); text-align: left; }
+
+        .clock-header { font-size: 11px; font-weight: 600; color: var(--azul-sky); margin-bottom: 10px; letter-spacing: 1px; }
+        h1 { font-size: 18px; font-weight: 700; text-transform: uppercase; margin-bottom: 2px; }
+        p.sub { font-size: 9px; opacity: 0.7; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+
+        label { display: block; font-size: 9px; font-weight: 700; color: var(--azul-sky); margin: 0 0 5px 5px; text-transform: uppercase; }
+        
+        .campo { width: 100%; height: 42px; background: white; border-radius: 10px; border: none; padding: 0 12px; font-size: 13px; color: #111; margin-bottom: 10px; font-weight: 600; }
+        
+        .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 15px; }
+        .btn-item { height: 40px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; cursor: pointer; font-size: 8px; font-weight: 700; }
+        .btn-item.active { background: var(--azul-sky); border-color: white; box-shadow: 0 5px 12px rgba(0, 173, 239, 0.4); }
+
+        .btn-acao { width: 100%; height: 50px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); color: white; font-weight: 700; text-transform: uppercase; cursor: pointer; margin-top: 5px; font-size: 12px;}
+        .btn-voltar { background: none; border: 1px solid rgba(255,255,255,0.2); color: white; font-size: 9px; margin-top: 8px; width: 100%; padding: 8px; cursor: pointer; border-radius: 10px; }
+
+        .monitor-card { background: rgba(0,0,0,0.4); padding: 12px; border-radius: 15px; margin-bottom: 8px; text-align: left; border-left: 4px solid var(--neon); font-size: 11px; }
         .hidden { display: none; }
-        .card-user {
-            background: #111;
-            padding: 15px;
-            margin-top: 10px;
-            border-radius: 8px;
-            text-align: left;
-            border-left: 5px solid #00adef;
-            font-size: 14px;
-        }
-        .ctrl-btns { margin-top: 10px; display: flex; gap: 5px; }
-        .ctrl-btns button { width: auto; padding: 8px; font-size: 11px; margin: 0; }
+        
+        .badge { padding: 2px 6px; border-radius: 4px; font-size: 8px; text-transform: uppercase; font-weight: bold; margin-right: 5px; }
+        .badge-materia { background: var(--azul-pref); color: white; }
+        .badge-emerg { color: white; }
     </style>
 </head>
-<body onload="app.init()">
+<body>
 
-<div class="container">
-    <div id="relogio" style="margin-bottom: 15px; font-weight: bold; color: #00adef; font-family: monospace;"></div>
+    <div class="balao-premium">
+        <div class="clock-header" id="relogio-top">--/--/---- 00:00:00</div>
 
-    <div id="tela-inicio">
-        <h1>SISTEMA NTi 2026</h1>
-        <p style="color: #aaa;">CONTROLE DE ACESSO</p>
-        <button onclick="app.abrir('PROF')">PORTAL PROFESSOR</button>
-        <button onclick="app.abrir('GESTOR')" style="background: #444;">PORTAL GESTÃO</button>
-        <button class="btn-ti" onclick="app.abrir('TI')">TI MASTER KELVIN</button>
-    </div>
-
-    <div id="tela-auth" class="hidden">
-        <h2 id="titulo-auth">ACESSO</h2>
-        <input type="number" id="id-pront" placeholder="Prontuário" oninput="app.checarID(this.value)">
-        
-        <div id="cadastro" class="hidden">
-            <input type="text" id="id-nome" placeholder="Nome Completo">
-            <input type="text" id="id-materia" class="hidden" placeholder="Matéria">
+        <div id="scr1">
+            <h1>SISTEMA ELITE</h1>
+            <p class="sub">Portal do Docente - NTi</p>
+            <input type="text" class="campo" id="p-nome" placeholder="Nome Completo">
+            <input type="text" class="campo" id="p-id" placeholder="RP / Prontuário">
+            <input type="text" class="campo" id="p-mat" placeholder="Matéria / Disciplina">
+            <button class="btn-acao" onclick="app.validarPerfil()">ENTRAR NO SISTEMA</button>
         </div>
 
-        <input type="password" id="id-senha" placeholder="Senha">
-        <button id="btn-entrar" onclick="app.entrar()">CONECTAR</button>
-        <button onclick="location.reload()" style="background:none; color: #777;">Voltar</button>
-    </div>
-
-    <div id="tela-master" class="hidden">
-        <h2 style="color: #ff4757;">PAINEL TI MASTER</h2>
-        <div id="lista-usuarios" style="max-height: 350px; overflow-y: auto; padding-right: 5px;"></div>
-        <button onclick="location.reload()" style="background:#444; margin-top: 20px;">FECHAR PAINEL</button>
-    </div>
-
-    <div id="tela-menu" class="hidden">
-        <h2 id="msg-bem-vindo">Olá</h2>
-        <div style="padding: 20px; border: 1px dashed #333; margin-bottom: 10px;">
-            <p>SISTEMA ONLINE</p>
+        <div id="scr2" class="hidden">
+            <h1>PAINEL DO DOCENTE</h1>
+            <div class="input-group-bolha" style="text-align: center; border: 1px solid var(--azul-sky);">
+                <div id="display-prof" style="font-weight: 700; font-size: 14px;"></div>
+                <div id="display-info" style="font-size: 10px; opacity: 0.8; color: var(--azul-sky);"></div>
+            </div>
+            
+            <div class="btn-grid" style="grid-template-columns: 1fr; gap: 10px;">
+                <button class="btn-item active" style="height: 50px; font-size: 11px;" onclick="app.nav(2, 3)">📅 NOVA RESERVA DE EQUIPAMENTO</button>
+                <button class="btn-item" style="height: 50px; font-size: 11px; background: rgba(0,173,239,0.2);" onclick="app.nav(2, 6)">🖥️ VER CRONOGRAMA GERAL</button>
+                <button class="btn-item" style="height: 50px; font-size: 11px; border-color: var(--nivel-3);" onclick="app.nav(2, 5)">🛠️ SUPORTE TI (CHAMADO)</button>
+            </div>
+            <button class="btn-voltar" onclick="location.reload()">SAIR DO SISTEMA</button>
         </div>
-        <button onclick="alert('Módulo de Reservas em breve')">RESERVAR EQUIPAMENTO</button>
-        <button onclick="location.reload()" style="background:none; color: #777;">SAIR</button>
+
+        <div id="scr3" class="hidden">
+            <h1>RESERVA DE ATIVOS</h1>
+            <label>Selecione o Equipamento</label>
+            <div class="btn-grid">
+                <button class="btn-item" id="e1" onclick="app.setEq('SALA INFO', 'e1')">SALA INFO</button>
+                <button class="btn-item" id="e2" onclick="app.setEq('CHROMEBOOKS', 'e2')">CHROMEBOOKS</button>
+                <button class="btn-item" id="e3" onclick="app.setEq('TV 01', 'e3')">TV 01</button>
+                <button class="btn-item" id="e4" onclick="app.setEq('TV 02', 'e4')">TV 02</button>
+                <button class="btn-item" id="e5" onclick="app.setEq('TV 03', 'e5')">TV 03</button>
+            </div>
+
+            <div class="input-group-bolha">
+                <label>Horário Limite de Uso</label>
+                <input type="time" class="campo" id="res-hora-fim">
+                
+                <label>Frequência</label>
+                <select class="campo" id="res-tipo">
+                    <option value="HOJE">Somente Hoje</option>
+                    <option value="RECORRENTE">Toda Semana (Fixo)</option>
+                </select>
+            </div>
+
+            <button class="btn-acao" onclick="app.confirmarReserva()">CONFIRMAR RESERVA</button>
+            <button class="btn-voltar" onclick="app.nav(3, 2)">VOLTAR</button>
+        </div>
+
+        <div id="scr5" class="hidden">
+            <h1>SUPORTE TÉCNICO</h1>
+            <div class="input-group-bolha">
+                <label>Local / Sala</label>
+                <input type="text" class="campo" id="sup-local" placeholder="Ex: Sala 05">
+                
+                <label>Nível de Emergência</label>
+                <select class="campo" id="sup-emergencia">
+                    <option value="1" style="color: green;">Nível 1 - Baixa (Dúvidas/Config)</option>
+                    <option value="2" style="color: orange;">Nível 2 - Média (Lento/Parcial)</option>
+                    <option value="3" style="color: red;">Nível 3 - Crítica (Parou tudo)</option>
+                </select>
+
+                <label>Descrição do Problema</label>
+                <textarea class="campo" id="sup-motivo" style="height:70px; padding:10px;" placeholder="Relate o ocorrido..."></textarea>
+            </div>
+            <button class="btn-acao" style="background: var(--nivel-3)" onclick="app.enviarSuporte()">ABRIR CHAMADO URGENTE</button>
+            <button class="btn-voltar" onclick="app.nav(5, 2)">CANCELAR</button>
+        </div>
+
+        <div id="scr6" class="hidden">
+            <h1>CRONOGRAMA & STATUS</h1>
+            <div id="admin-monitor" style="margin-top:10px; max-height: 380px; overflow-y: auto; padding-right:5px;">
+                <p>Carregando dados sincronizados...</p>
+            </div>
+            <button class="btn-voltar" onclick="app.nav(6, 2)">VOLTAR AO MENU</button>
+        </div>
     </div>
-</div>
 
 <script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyBoGfDKz-nBwKvczzGpxg-fHJYdVykcBUQ",
-        databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com",
-        projectId: "escala-chacara",
-        appId: "1:741259231706:web:27e2b60be100e6a34180e3"
-    };
-    firebase.initializeApp(firebaseConfig);
+    // Configuração do Firebase - SUBSTITUA PELOS SEUS DADOS DO CONSOLE
+   const firebaseConfig = {
+  apiKey: "AIzaSyBoGfDKz-nBwKvczzGpxg-fHJYdVykcBUQ",
+  authDomain: "escala-chacara.firebaseapp.com",
+  databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com",
+  projectId: "escala-chacara",
+  storageBucket: "escala-chacara.firebasestorage.app",
+  messagingSenderId: "741259231706",
+  appId: "1:741259231706:web:27e2b60be100e6a34180e3",
+  measurementId: "G-J1RMMKQCLG"
+};
+    // Inicializar Firebase (apenas se os dados acima forem preenchidos)
+    if(firebaseConfig.apiKey !== "SUA_API_KEY") {
+        firebase.initializeApp(firebaseConfig);
+    }
     const db = firebase.database();
 
     const app = {
-        cargo: '', existe: false,
-
-        init() {
-            setInterval(() => { document.getElementById('relogio').innerText = new Date().toLocaleString(); }, 1000);
+        equip: "",
+        user: { nome: "", id: "", mat: "" },
+        
+        nav(at, px) {
+            document.querySelectorAll('.balao-premium > div[id^="scr"]').forEach(d => d.classList.add('hidden'));
+            document.getElementById(`scr${px}`).classList.remove('hidden');
+            if(px === 6) this.ouvirDados();
         },
 
-        abrir(tipo) {
-            this.cargo = tipo;
-            if(tipo === 'TI') {
-                const p = prompt("SENHA MESTRE TI:");
-                if(p === 'nti2026') this.carregarTI();
-                else alert("ACESSO NEGADO");
-                return;
-            }
-            document.getElementById('titulo-auth').innerText = "PORTAL " + tipo;
-            this.irPara('auth');
+        validarPerfil() {
+            this.user.nome = document.getElementById('p-nome').value.toUpperCase();
+            this.user.id = document.getElementById('p-id').value;
+            this.user.mat = document.getElementById('p-mat').value.toUpperCase();
+            
+            if(!this.user.nome || !this.user.id || !this.user.mat) return alert("Preencha todos os campos!");
+            
+            document.getElementById('display-prof').innerText = this.user.nome;
+            document.getElementById('display-info').innerText = `ID: ${this.user.id} | DISCIPLINA: ${this.user.mat}`;
+            this.nav(1, 2);
         },
 
-        irPara(tela) {
-            document.querySelectorAll('.container > div').forEach(d => { if(d.id !== 'relogio') d.classList.add('hidden'); });
-            document.getElementById('tela-' + tela).classList.remove('hidden');
+        setEq(val, id) {
+            this.equip = val;
+            document.querySelectorAll('#scr3 .btn-item').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
         },
 
-        async checarID(p) {
-            if(p.length < 2) return;
-            const snap = await db.ref('usuarios/' + p).once('value');
-            this.existe = snap.exists();
-            document.getElementById('cadastro').classList.toggle('hidden', this.existe);
-            if(!this.existe && this.cargo === 'PROF') {
-                document.getElementById('id-materia').classList.remove('hidden');
-            } else {
-                document.getElementById('id-materia').classList.add('hidden');
-            }
+        confirmarReserva() {
+            const hora = document.getElementById('res-hora-fim').value;
+            if(!this.equip || !hora) return alert("Escolha o ativo e o horário!");
+
+            const novaReserva = {
+                prof: this.user.nome,
+                prontuario: this.user.id,
+                materia: this.user.mat,
+                equip: this.equip,
+                tipo: document.getElementById('res-tipo').value,
+                hora: hora,
+                registro: 'RESERVA',
+                timestamp: Date.now()
+            };
+
+            db.ref('atividades').push(novaReserva);
+            alert("Reserva registrada com sucesso!");
+            this.nav(3, 6);
         },
 
-        async entrar() {
-            const p = document.getElementById('id-pront').value;
-            const s = document.getElementById('id-senha').value;
-            if(!p || !s) return alert("Preencha os campos!");
+        enviarSuporte() {
+            const local = document.getElementById('sup-local').value;
+            const motivo = document.getElementById('sup-motivo').value;
+            const emerg = document.getElementById('sup-emergencia').value;
 
-            if(this.existe) {
-                const snap = await db.ref('usuarios/' + p).once('value');
-                const user = snap.val();
-                if(user.senha !== s) return alert("Senha Incorreta");
-                if(user.status === 'CONGELADO') return alert("SUA CONTA FOI BLOQUEADA PELO TI MASTER");
-                this.logado(user.nome);
-            } else {
-                const n = document.getElementById('id-nome').value;
-                const m = document.getElementById('id-materia').value || "N/A";
-                if(!n) return alert("Digite seu nome para o cadastro!");
-                const novo = { pront: p, nome: n, senha: s, cargo: this.cargo, materia: m, status: 'ATIVO' };
-                await db.ref('usuarios/' + p).set(novo);
-                this.logado(n);
-            }
+            if(!local || !motivo) return alert("Preencha o local e o problema!");
+
+            const chamado = {
+                prof: this.user.nome,
+                materia: this.user.mat,
+                local: local,
+                motivo: motivo,
+                nivel: emerg,
+                registro: 'SUPORTE',
+                hora: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                timestamp: Date.now()
+            };
+
+            db.ref('atividades').push(chamado);
+            alert("Chamado enviado ao técnico!");
+            this.nav(5, 2);
         },
 
-        logado(nome) {
-            document.getElementById('msg-bem-vindo').innerText = "Bem-vindo, " + nome;
-            this.irPara('menu');
-        },
+        ouvirDados() {
+            const container = document.getElementById('admin-monitor');
+            db.ref('atividades').orderByChild('timestamp').on('value', (snapshot) => {
+                const dados = [];
+                snapshot.forEach(item => { dados.push({key: item.key, ...item.val()}); });
+                
+                if(dados.length === 0) {
+                    container.innerHTML = "<p>Nenhum registro encontrado.</p>";
+                    return;
+                }
 
-        carregarTI() {
-            this.irPara('master');
-            const lista = document.getElementById('lista-usuarios');
-            db.ref('usuarios').on('value', snap => {
-                lista.innerHTML = "";
-                snap.forEach(u => {
-                    const d = u.val();
-                    lista.innerHTML += `
-                        <div class="card-user" style="border-left-color: ${d.status === 'CONGELADO' ? 'red' : '#00adef'}">
-                            <b>${d.nome}</b> [${d.cargo}]<br>
-                            ID: ${d.pront} | Senha: ${d.senha}<br>
-                            Status: ${d.status}<br>
-                            <div class="ctrl-btns">
-                                <button onclick="app.mudarStatus('${d.pront}', '${d.status}')" style="background:${d.status === 'ATIVO' ? '#ff9f43' : '#28c76f'}">
-                                    ${d.status === 'ATIVO' ? 'CONGELAR' : 'ATIVAR'}
-                                </button>
-                                <button onclick="app.mudarSenha('${d.pront}')" style="background:#555">SENHA</button>
-                                <button onclick="app.deletar('${d.pront}')" style="background:#ea5455">APAGAR</button>
+                container.innerHTML = dados.reverse().map(r => {
+                    const corBorda = r.registro === 'SUPORTE' ? `var(--nivel-${r.nivel})` : 'var(--neon)';
+                    const labelSup = r.registro === 'SUPORTE' ? `<span class="badge" style="background:${corBorda}">NÍVEL ${r.nivel}</span>` : '';
+
+                    return `
+                        <div class="monitor-card" style="border-left-color: ${corBorda}">
+                            <div style="display:flex; justify-content:space-between; align-items:start">
+                                <div>
+                                    <b>${r.registro === 'SUPORTE' ? '🛠️ SUPORTE: ' + r.local : '📅 ' + r.equip}</b><br>
+                                    <span class="badge badge-materia">${r.materia}</span> ${labelSup}
+                                </div>
+                                <small style="color:var(--azul-sky)">${r.hora}</small>
                             </div>
-                        </div>`;
-                });
+                            <div style="margin-top:8px; font-size:10px">
+                                <b>Prof:</b> ${r.prof} (${r.prontuario || 'TI'})<br>
+                                <i>${r.motivo ? 'Problema: ' + r.motivo : 'Uso: ' + r.tipo}</i>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
             });
-        },
-
-        mudarStatus(id, s) { db.ref('usuarios/'+id).update({status: s === 'ATIVO' ? 'CONGELADO' : 'ATIVO'}); },
-        mudarSenha(id) { const n = prompt("Nova senha:"); if(n) db.ref('usuarios/'+id).update({senha: n}); },
-        deletar(id) { if(confirm("Deseja apagar este usuário permanentemente?")) db.ref('usuarios/'+id).remove(); }
+        }
     };
+
+    setInterval(() => {
+        document.getElementById('relogio-top').innerText = new Date().toLocaleString('pt-BR');
+    }, 1000);
 </script>
 </body>
 </html>
+
