@@ -27,17 +27,13 @@
             padding: 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.7); text-align: center;
         }
 
-        .input-group-bolha { background: rgba(0, 0, 0, 0.25); border-radius: 20px; padding: 15px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); text-align: left; }
-        .clock-header { font-size: 11px; font-weight: 600; color: var(--azul-sky); margin-bottom: 10px; letter-spacing: 1px; }
-        h1 { font-size: 18px; font-weight: 700; text-transform: uppercase; margin-bottom: 2px; }
-        
         /* SELETOR DE DIAS */
-        .dia-selector { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; justify-content: center; }
+        .dia-selector { display: flex; flex-wrap: wrap; gap: 5px; margin: 10px 0; justify-content: center; }
         .dia-chip { 
-            padding: 8px 12px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 12px; font-size: 10px; cursor: pointer; color: white; font-weight: 600;
+            padding: 8px 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px; font-size: 10px; cursor: pointer; color: white;
         }
-        .dia-chip.selected { background: var(--azul-sky); border-color: white; box-shadow: 0 0 10px var(--azul-sky); }
+        .dia-chip.selected { background: var(--azul-sky); border-color: white; font-weight: bold; }
 
         .campo { width: 100%; height: 42px; background: white; border-radius: 10px; border: none; padding: 0 12px; font-size: 13px; color: #111; margin-bottom: 10px; font-weight: 600; }
         
@@ -49,16 +45,17 @@
         .btn-voltar { background: none; border: 1px solid rgba(255,255,255,0.2); color: white; font-size: 9px; margin-top: 8px; width: 100%; padding: 8px; cursor: pointer; border-radius: 10px; }
 
         /* CARD DE RESERVA COM BOTÃO DE BAIXA */
-        .monitor-card { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 20px; margin-bottom: 12px; text-align: left; border-left: 5px solid var(--neon); position: relative; }
-        .btn-baixa { 
-            position: absolute; top: 10px; right: 10px; background: var(--nivel-3); 
-            color: white; border: none; padding: 5px 10px; border-radius: 8px; 
-            font-size: 9px; font-weight: 700; cursor: pointer;
+        .monitor-card { background: rgba(0,0,0,0.6); padding: 15px; border-radius: 20px; margin-bottom: 12px; text-align: left; border-left: 5px solid var(--neon); position: relative; animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .btn-baixa-urgente { 
+            position: absolute; top: 12px; right: 12px; background: var(--nivel-3); 
+            color: white; border: none; padding: 6px 10px; border-radius: 8px; 
+            font-size: 10px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 10px rgba(255, 71, 87, 0.3);
         }
         
         .hidden { display: none; }
-        .badge { padding: 3px 8px; border-radius: 5px; font-size: 9px; font-weight: bold; margin-top: 5px; display: inline-block; }
-        .badge-azul { background: var(--azul-pref); color: white; }
+        .badge { padding: 3px 8px; border-radius: 5px; font-size: 9px; font-weight: bold; background: var(--azul-pref); color: white; }
     </style>
 </head>
 <body>
@@ -68,25 +65,23 @@
 
         <div id="scr1">
             <h1>SISTEMA NTi</h1>
-            <p style="font-size: 10px; opacity: 0.7;">Identifique-se para acessar</p>
             <input type="text" class="campo" id="p-nome" placeholder="Seu Nome">
             <input type="text" class="campo" id="p-id" placeholder="Seu Prontuário">
             <input type="text" class="campo" id="p-mat" placeholder="Sua Matéria">
-            <button class="btn-acao" onclick="app.validarPerfil()">ENTRAR</button>
+            <button class="btn-acao" onclick="app.validarPerfil()">ENTRAR NO SISTEMA</button>
         </div>
 
         <div id="scr2" class="hidden">
-            <h1 id="display-prof">PAINEL</h1>
-            <div class="btn-grid" style="grid-template-columns: 1fr; gap: 10px;">
-                <button class="btn-item active" style="height: 60px; font-size: 12px;" onclick="app.nav(2, 3)">📅 AGENDAR EQUIPAMENTO</button>
-                <button class="btn-item" style="height: 60px; font-size: 12px; background: rgba(0,173,239,0.2);" onclick="app.nav(2, 6)">🖥️ VER AGENDA / DAR BAIXA</button>
-                <button class="btn-item" style="height: 60px; font-size: 12px; border-color: var(--nivel-3);" onclick="app.nav(2, 5)">🛠️ SUPORTE TÉCNICO</button>
+            <h1 id="display-prof" style="font-size: 16px;">PAINEL</h1>
+            <div class="btn-grid" style="grid-template-columns: 1fr; gap: 12px;">
+                <button class="btn-item active" style="height: 60px; font-size: 13px;" onclick="app.nav(3)">📅 RESERVAR EQUIPAMENTO</button>
+                <button class="btn-item" style="height: 60px; font-size: 13px; background: rgba(0,173,239,0.2);" onclick="app.nav(6)">🖥️ VER CRONOGRAMA / DAR BAIXA</button>
             </div>
             <button class="btn-voltar" onclick="location.reload()">SAIR</button>
         </div>
 
         <div id="scr3" class="hidden">
-            <h1>RESERVAR</h1>
+            <h1>NOVO AGENDAMENTO</h1>
             <div class="btn-grid">
                 <button class="btn-item" id="e1" onclick="app.setEq('SALA INFO', 'e1')">SALA INFO</button>
                 <button class="btn-item" id="e2" onclick="app.setEq('CHROMEBOOKS', 'e2')">CHROMEBOOKS</button>
@@ -96,7 +91,7 @@
             </div>
 
             <div class="input-group-bolha">
-                <p style="font-size: 10px; margin: 0 0 10px 0; color: var(--azul-sky); font-weight: bold;">PARA QUAIS DIAS?</p>
+                <label style="font-size: 10px; color: var(--azul-sky);">SELECIONE OS DIAS:</label>
                 <div class="dia-selector">
                     <div class="dia-chip" onclick="app.toggleDia(this, 'Segunda')">SEG</div>
                     <div class="dia-chip" onclick="app.toggleDia(this, 'Terça')">TER</div>
@@ -104,31 +99,25 @@
                     <div class="dia-chip" onclick="app.toggleDia(this, 'Quinta')">QUI</div>
                     <div class="dia-chip" onclick="app.toggleDia(this, 'Sexta')">SEX</div>
                 </div>
-                <p style="font-size: 10px; margin: 10px 0 5px 0; color: var(--azul-sky); font-weight: bold;">HORÁRIO DE DEVOLUÇÃO:</p>
+                <label style="font-size: 10px; color: var(--azul-sky);">HORÁRIO LIMITE:</label>
                 <input type="time" class="campo" id="res-hora-fim">
             </div>
 
-            <button class="btn-acao" onclick="app.confirmarReserva()">SALVAR AGENDAMENTO</button>
-            <button class="btn-voltar" onclick="app.nav(3, 2)">VOLTAR</button>
+            <button class="btn-acao" onclick="app.confirmarReserva()">CONFIRMAR TUDO</button>
+            <button class="btn-voltar" onclick="app.nav(2)">VOLTAR</button>
         </div>
 
         <div id="scr6" class="hidden">
-            <h1>AGENDA ATIVA</h1>
-            <div id="admin-monitor" style="max-height: 400px; overflow-y: auto;">
+            <h1>CRONOGRAMA ATIVO</h1>
+            <p style="font-size: 9px; opacity: 0.6; margin-bottom: 10px;">Clique em "BAIXA" para liberar o item</p>
+            <div id="admin-monitor" style="max-height: 400px; overflow-y: auto; padding: 5px;">
                 </div>
-            <button class="btn-voltar" onclick="app.nav(6, 2)">VOLTAR AO MENU</button>
-        </div>
-
-        <div id="scr5" class="hidden">
-            <h1>SUPORTE</h1>
-            <input type="text" class="campo" id="sup-local" placeholder="Sala/Local">
-            <textarea class="campo" id="sup-motivo" style="height:80px; padding:10px" placeholder="Qual o problema?"></textarea>
-            <button class="btn-acao" style="background: var(--nivel-3)" onclick="app.enviarSuporte()">ENVIAR CHAMADO</button>
-            <button class="btn-voltar" onclick="app.nav(5, 2)">VOLTAR</button>
+            <button class="btn-voltar" onclick="app.nav(2)">VOLTAR AO MENU</button>
         </div>
     </div>
 
 <script>
+    // CONFIGURAÇÃO DO SEU FIREBASE
     const firebaseConfig = {
         apiKey: "AIzaSyBoGfDKz-nBwKvczGpxg-fHJYdVykcBUQ",
         authDomain: "escala-chacara.firebaseapp.com",
@@ -147,19 +136,19 @@
         user: { nome: "", id: "", mat: "" },
         dias: [],
         
-        nav(at, px) {
+        nav(px) {
             document.querySelectorAll('.balao-premium > div').forEach(d => { if(d.id.startsWith('scr')) d.classList.add('hidden') });
             document.getElementById(`scr${px}`).classList.remove('hidden');
-            if(px === 6) this.ouvirDados();
+            if(px === 6) this.ouvirDadosEmTempoReal();
         },
 
         validarPerfil() {
             this.user.nome = document.getElementById('p-nome').value.toUpperCase();
             this.user.id = document.getElementById('p-id').value;
             this.user.mat = document.getElementById('p-mat').value.toUpperCase();
-            if(!this.user.nome) return alert("Digite seu nome!");
-            document.getElementById('display-prof').innerText = "Olá, " + this.user.nome.split(' ')[0];
-            this.nav(1, 2);
+            if(!this.user.nome || !this.user.id) return alert("Preencha seu nome e prontuário!");
+            document.getElementById('display-prof').innerText = "PROF. " + this.user.nome.split(' ')[0];
+            this.nav(2);
         },
 
         setEq(val, id) {
@@ -179,71 +168,68 @@
 
         confirmarReserva() {
             const hora = document.getElementById('res-hora-fim').value;
-            if(!this.equip || this.dias.length === 0 || !hora) return alert("Preencha todos os campos!");
+            if(!this.equip || this.dias.length === 0 || !hora) return alert("Escolha o Equipamento, os Dias e a Hora!");
 
             const dados = {
                 prof: this.user.nome,
                 materia: this.user.mat,
                 equipamento: this.equip,
                 inicio: "📅 " + this.dias.join(', ') + " | 🕒 " + hora,
-                timestamp: Date.now(),
-                registro: 'RESERVA'
+                timestamp: Date.now()
             };
 
+            // Salva na pasta 'reservas' que seu ADM monitora
             db.ref('reservas').push(dados).then(() => {
-                alert("Agendamento salvo!");
+                alert("Reserva registrada!");
                 this.dias = [];
                 document.querySelectorAll('.dia-chip').forEach(c => c.classList.remove('selected'));
-                this.nav(3, 6);
+                this.nav(6); // Vai direto para o cronograma
             });
         },
 
         darBaixa(id) {
-            if(confirm("Deseja finalizar o uso e liberar este item?")) {
+            if(confirm("Deseja dar baixa e liberar o equipamento para outros professores?")) {
                 db.ref('reservas/' + id).remove().then(() => {
-                    alert("Item liberado!");
+                    // O tempo real vai cuidar de sumir com o card
                 });
             }
         },
 
-        enviarSuporte() {
-            const loc = document.getElementById('sup-local').value;
-            const mot = document.getElementById('sup-motivo').value;
-            db.ref('reservas').push({
-                prof: this.user.nome,
-                equipamento: "🛠️ SUPORTE: " + loc,
-                inicio: "Chamado em aberto",
-                motivo: mot,
-                registro: 'SUPORTE',
-                timestamp: Date.now()
-            }).then(() => { alert("Chamado enviado!"); this.nav(5, 2); });
-        },
-
-        ouvirDados() {
+        ouvirDadosEmTempoReal() {
             const container = document.getElementById('admin-monitor');
+            // 'on' faz o Firebase avisar o navegador SEMPRE que algo mudar
             db.ref('reservas').on('value', (snap) => {
-                let html = "";
-                snap.forEach(item => {
-                    const r = item.val();
-                    const cor = r.registro === 'SUPORTE' ? 'var(--nivel-3)' : 'var(--neon)';
-                    html = `
-                        <div class="monitor-card" style="border-left-color: ${cor}">
-                            <button class="btn-baixa" onclick="app.darBaixa('${item.key}')">BAIXA</button>
-                            <b style="color:var(--azul-sky)">${r.equipamento}</b><br>
-                            <span class="badge badge-azul">${r.materia || 'S/M'}</span><br>
-                            <small><b>Quem:</b> ${r.prof}</small><br>
-                            <small><b>Quando:</b> ${r.inicio}</small>
-                            ${r.motivo ? '<br><small style="color:var(--nivel-2)">' + r.motivo + '</small>' : ''}
+                container.innerHTML = ""; // Limpa a tela antes de atualizar
+                const dados = snap.val();
+                
+                if(!dados) {
+                    container.innerHTML = "<p style='opacity:0.5'>Nenhuma reserva ativa.</p>";
+                    return;
+                }
+
+                // Transforma o objeto em array e inverte para ver os mais novos primeiro
+                Object.keys(dados).reverse().forEach(key => {
+                    const r = dados[key];
+                    const card = document.createElement('div');
+                    card.className = "monitor-card";
+                    card.innerHTML = `
+                        <button class="btn-baixa-urgente" onclick="app.darBaixa('${key}')">DAR BAIXA</button>
+                        <b style="color:var(--azul-sky); font-size:14px;">${r.equipamento}</b><br>
+                        <span class="badge">${r.materia}</span><br>
+                        <div style="margin-top:8px; font-size:11px; line-height:1.4">
+                            <b>Docente:</b> ${r.prof}<br>
+                            <b>Cronograma:</b> ${r.inicio}
                         </div>
-                    ` + html;
+                    `;
+                    container.appendChild(card);
                 });
-                container.innerHTML = html || "<p style='font-size:12px;opacity:0.5'>Nenhuma reserva ativa no momento.</p>";
             });
         }
     };
 
     setInterval(() => {
-        document.getElementById('relogio-top').innerText = new Date().toLocaleString('pt-BR');
+        const agora = new Date();
+        document.getElementById('relogio-top').innerText = agora.toLocaleString('pt-BR');
     }, 1000);
 </script>
 </body>
