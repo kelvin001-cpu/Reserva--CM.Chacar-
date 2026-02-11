@@ -55,7 +55,7 @@
             <input type="text" class="campo" id="p-nome" placeholder="Nome Completo">
             <input type="text" class="campo" id="p-id" placeholder="RP / Prontuário">
             <input type="text" class="campo" id="p-mat" placeholder="Matéria / Disciplina">
-            <button class="btn-acao" onclick="app.validarPerfil()">ENTRAR NO SISTEMA</button>
+            <button class="btn-acao" id="btn-entrar" onclick="app.validarPerfil()">ENTRAR NO SISTEMA</button>
         </div>
 
         <div id="scr2" class="hidden">
@@ -66,7 +66,7 @@
             </div>
             
             <div class="btn-grid" style="grid-template-columns: 1fr; gap: 10px;">
-                <button class="btn-item active" style="height: 50px; font-size: 11px;" onclick="app.nav(2, 3)">📅 NOVA RESERVA DE EQUIPAMENTO</button>
+                <button class="btn-item active" id="btn-reserva-nav" style="height: 50px; font-size: 11px;" onclick="app.nav(2, 3)">📅 NOVA RESERVA DE EQUIPAMENTO</button>
                 <button class="btn-item" style="height: 50px; font-size: 11px; background: rgba(0,173,239,0.2);" onclick="app.nav(2, 6)">🖥️ VER CRONOGRAMA GERAL</button>
                 <button class="btn-item" style="height: 50px; font-size: 11px; border-color: var(--nivel-3);" onclick="app.nav(2, 5)">🛠️ SUPORTE TI (CHAMADO)</button>
             </div>
@@ -87,7 +87,6 @@
             <div class="input-group-bolha">
                 <label>Horário Limite de Uso</label>
                 <input type="time" class="campo" id="res-hora-fim">
-                
                 <label>Frequência</label>
                 <select class="campo" id="res-tipo">
                     <option value="HOJE">Somente Hoje</option>
@@ -95,7 +94,7 @@
                 </select>
             </div>
 
-            <button class="btn-acao" onclick="app.confirmarReserva()">CONFIRMAR RESERVA</button>
+            <button class="btn-acao" id="btn-confirmar-res" onclick="app.confirmarReserva()">CONFIRMAR RESERVA</button>
             <button class="btn-voltar" onclick="app.nav(3, 2)">VOLTAR</button>
         </div>
 
@@ -104,14 +103,12 @@
             <div class="input-group-bolha">
                 <label>Local / Sala</label>
                 <input type="text" class="campo" id="sup-local" placeholder="Ex: Sala 05">
-                
                 <label>Nível de Emergência</label>
                 <select class="campo" id="sup-emergencia">
                     <option value="1">Nível 1 - Baixa</option>
                     <option value="2">Nível 2 - Média</option>
                     <option value="3">Nível 3 - Crítica</option>
                 </select>
-
                 <label>Descrição do Problema</label>
                 <textarea class="campo" id="sup-motivo" style="height:70px; padding:10px;" placeholder="Relate o ocorrido..."></textarea>
             </div>
@@ -122,7 +119,7 @@
         <div id="scr6" class="hidden">
             <h1>CRONOGRAMA & STATUS</h1>
             <div id="admin-monitor" style="margin-top:10px; max-height: 380px; overflow-y: auto; padding-right:5px;">
-                <p>Carregando dados sincronizados...</p>
+                <p>Sincronizando com a nuvem...</p>
             </div>
             <button class="btn-voltar" onclick="app.nav(6, 2)">VOLTAR AO MENU</button>
         </div>
@@ -130,7 +127,7 @@
 
 <script>
     const firebaseConfig = {
-        apiKey: "AIzaSyBoGfDKz-nBwKvczzGpxg-fHJYdVykcBUQ",
+        apiKey: "AIzaSyBoGfDKz-nBwKvczGpxg-fHJYdVykcBUQ",
         authDomain: "escala-chacara.firebaseapp.com",
         databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com",
         projectId: "escala-chacara",
@@ -156,9 +153,7 @@
             this.user.nome = document.getElementById('p-nome').value.toUpperCase();
             this.user.id = document.getElementById('p-id').value;
             this.user.mat = document.getElementById('p-mat').value.toUpperCase();
-            
             if(!this.user.nome || !this.user.id || !this.user.mat) return alert("Preencha todos os campos!");
-            
             document.getElementById('display-prof').innerText = this.user.nome;
             document.getElementById('display-info').innerText = `ID: ${this.user.id} | DISCIPLINA: ${this.user.mat}`;
             this.nav(1, 2);
@@ -174,20 +169,20 @@
             const hora = document.getElementById('res-hora-fim').value;
             if(!this.equip || !hora) return alert("Escolha o ativo e o horário!");
 
-            // AJUSTADO PARA O CAMINHO 'reservas' QUE O SEU ADM USA
+            // Mapeado para os campos que seu ADM lê (inicio e equipamento)
             const novaReserva = {
                 prof: this.user.nome,
                 prontuario: this.user.id,
                 materia: this.user.mat,
-                equipamento: this.equip, // Nome igual ao do ADM
-                inicio: new Date().toLocaleDateString() + " " + hora, // Nome igual ao do ADM
-                termino: "---", 
+                equipamento: this.equip,
+                inicio: new Date().toLocaleDateString() + " " + hora,
+                entrega: "---",
                 registro: 'RESERVA',
                 timestamp: Date.now()
             };
 
             db.ref('reservas').push(novaReserva).then(() => {
-                alert("Reserva registrada com sucesso!");
+                alert("Reserva confirmada!");
                 this.nav(3, 6);
             });
         },
@@ -196,13 +191,13 @@
             const local = document.getElementById('sup-local').value;
             const motivo = document.getElementById('sup-motivo').value;
             const emerg = document.getElementById('sup-emergencia').value;
-
             if(!local || !motivo) return alert("Preencha o local e o problema!");
 
             const chamado = {
                 prof: this.user.nome,
                 materia: this.user.mat,
-                equipamento: "🛠️ SUPORTE: " + local, // Para aparecer na coluna certa do ADM
+                prontuario: this.user.id,
+                equipamento: "🛠️ SUPORTE: " + local,
                 inicio: new Date().toLocaleTimeString(),
                 motivo: motivo,
                 nivel: emerg,
@@ -211,19 +206,20 @@
             };
 
             db.ref('reservas').push(chamado).then(() => {
-                alert("Chamado enviado ao técnico!");
+                alert("Chamado enviado!");
                 this.nav(5, 2);
             });
         },
 
         ouvirDados() {
             const container = document.getElementById('admin-monitor');
+            // 'reservas' é o caminho que seu ADM vigia
             db.ref('reservas').orderByChild('timestamp').limitToLast(20).on('value', (snapshot) => {
                 const dados = [];
                 snapshot.forEach(item => { dados.push(item.val()); });
                 
                 if(dados.length === 0) {
-                    container.innerHTML = "<p>Nenhum registro encontrado.</p>";
+                    container.innerHTML = "<p>Sem atividades registradas.</p>";
                     return;
                 }
 
@@ -231,16 +227,44 @@
                     const corBorda = r.registro === 'SUPORTE' ? `var(--nivel-${r.nivel || 1})` : 'var(--neon)';
                     return `
                         <div class="monitor-card" style="border-left-color: ${corBorda}">
-                            <b>${r.equipamento}</b><br>
+                            <div style="display:flex; justify-content:space-between">
+                                <b>${r.equipamento}</b>
+                                <small style="color:var(--azul-sky)">${r.inicio.split(' ')[1] || r.inicio}</small>
+                            </div>
                             <span class="badge badge-materia">${r.materia}</span>
-                            <small>${r.inicio}</small><br>
-                            <small>Prof: ${r.prof} ${r.motivo ? '| Problem: ' + r.motivo : ''}</small>
+                            <div style="font-size:9px; margin-top:5px; opacity:0.8">
+                                Prof: ${r.prof} ${r.motivo ? '<br>⚠️ ' + r.motivo : ''}
+                            </div>
                         </div>
                     `;
                 }).join('');
             });
+        },
+
+        verificarPortal() {
+            // Escuta o botão que você tem no ADM (setPortal)
+            db.ref('ativo').on('value', (snap) => {
+                const ativo = snap.val();
+                const btnRes = document.getElementById('btn-reserva-nav');
+                const btnConf = document.getElementById('btn-confirmar-res');
+                
+                if(ativo === false) {
+                    btnRes.style.opacity = "0.5";
+                    btnRes.innerText = "SISTEMA BLOQUEADO PELO TI";
+                    btnRes.onclick = () => alert("O sistema está em manutenção ou bloqueado pelo técnico.");
+                    if(btnConf) btnConf.disabled = true;
+                } else {
+                    btnRes.style.opacity = "1";
+                    btnRes.innerText = "📅 NOVA RESERVA DE EQUIPAMENTO";
+                    btnRes.onclick = () => app.nav(2, 3);
+                    if(btnConf) btnConf.disabled = false;
+                }
+            });
         }
     };
+
+    // Inicia a verificação do portal assim que carregar
+    app.verificarPortal();
 
     setInterval(() => {
         document.getElementById('relogio-top').innerText = new Date().toLocaleString('pt-BR');
