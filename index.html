@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SISTEMA NTi - CHÁCARA DAS GARÇAS</title>
+    <title>SISTEMA NTi - GESTÃO TOTAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -13,7 +13,6 @@
         :root {
             --azul-pref: #004a99; --azul-sky: #00adef; --neon: #00ff9d;
             --nivel-1: #2ed573; --nivel-2: #ffa502; --nivel-3: #ff4757;
-            --glass: rgba(255, 255, 255, 0.1);
         }
         * { box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: 0.3s; }
         
@@ -23,32 +22,32 @@
         }
 
         .balao-premium {
-            width: 100%; max-width: 500px; background: var(--glass);
-            backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2); border-radius: 30px;
-            padding: 25px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); text-align: center;
+            width: 100%; max-width: 500px; background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.25); border-radius: 30px;
+            padding: 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.6); text-align: center;
         }
 
-        .hidden { display: none; }
-        .clock-header { font-size: 12px; font-weight: 600; color: var(--azul-sky); margin-bottom: 20px; }
+        .hidden { display: none !important; }
+        .clock-header { font-size: 12px; font-weight: 600; color: var(--azul-sky); margin-bottom: 15px; }
         
-        /* Formulários e Inputs */
-        .campo { width: 100%; height: 45px; background: white; border-radius: 12px; border: none; padding: 0 15px; font-size: 14px; color: #111; margin-bottom: 15px; font-weight: 600; }
-        .label-mini { display: block; text-align: left; font-size: 10px; font-weight: 700; color: var(--azul-sky); margin-left: 5px; text-transform: uppercase; }
+        .campo { width: 100%; height: 45px; background: white; border-radius: 12px; border: none; padding: 0 15px; font-size: 14px; color: #111; margin-bottom: 12px; font-weight: 600; }
+        .btn-acao { width: 100%; height: 50px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); color: white; font-weight: 700; cursor: pointer; margin-bottom: 10px; font-size: 13px; text-transform: uppercase; }
+        .btn-voltar { background: none; border: 1px solid rgba(255,255,255,0.3); color: white; padding: 10px; border-radius: 12px; width: 100%; cursor: pointer; font-size: 11px; margin-top: 10px;}
 
-        /* Botões */
-        .btn-acao { width: 100%; height: 50px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); color: white; font-weight: 700; cursor: pointer; margin-bottom: 10px; font-size: 13px; }
-        .btn-acao:hover { transform: scale(1.02); box-shadow: 0 5px 15px rgba(0,173,239,0.4); }
-        .btn-voltar { background: none; border: 1px solid rgba(255,255,255,0.3); color: white; padding: 10px; border-radius: 12px; width: 100%; cursor: pointer; font-size: 11px; }
-
-        /* Grid de Equipamentos */
-        .grid-eq { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
+        .grid-eq { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
         .btn-eq { height: 45px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; font-size: 9px; font-weight: 700; cursor: pointer; }
         .btn-eq.active { background: var(--azul-sky); border-color: white; }
 
-        /* Cards do Cronograma */
-        .card { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 15px; margin-bottom: 10px; text-align: left; border-left: 5px solid var(--neon); }
-        .card-entrega { border-left-color: #888; opacity: 0.6; }
-        .btn-entregar { background: var(--neon); color: #000; border: none; padding: 8px; border-radius: 8px; width: 100%; margin-top: 10px; font-weight: 800; cursor: pointer; font-size: 11px; }
+        .card { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 15px; margin-bottom: 10px; text-align: left; border-left: 5px solid var(--neon); position: relative;}
+        .card-entregue { border-left-color: #666 !important; opacity: 0.7; }
+        
+        .btn-baixa { background: var(--neon); color: #000; border: none; padding: 8px; border-radius: 8px; width: 100%; margin-top: 10px; font-weight: 800; cursor: pointer; font-size: 10px; }
+        .btn-delete { background: var(--nivel-3); color: white; border: none; padding: 5px 10px; border-radius: 5px; font-size: 9px; cursor: pointer; position: absolute; right: 10px; bottom: 10px;}
+        
+        .badge { font-size: 9px; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; display: inline-block; }
+        .badge-prof { background: var(--azul-pref); }
+        .badge-gestor { background: var(--nivel-2); color: black; }
+        .badge-ti { background: #000; border: 1px solid var(--nivel-3); color: var(--nivel-3); }
     </style>
 </head>
 <body>
@@ -56,81 +55,82 @@
     <div class="balao-premium">
         <div class="clock-header" id="relogio-top">00/00/0000 00:00:00</div>
 
-        <div id="tela-inicio">
+        <div id="tela-login-escolha">
             <h1>SISTEMA NTi</h1>
-            <p style="font-size: 12px; opacity: 0.8; margin-bottom: 25px;">Escolha o portal de acesso:</p>
-            <button class="btn-acao" onclick="app.irPara('login-prof')">SOU PROFESSOR</button>
-            <button class="btn-acao" style="background: #333;" onclick="app.irPara('login-gestor')">SOU GESTOR / SECRETARIA</button>
+            <p style="font-size: 11px; opacity: 0.7; margin-bottom: 20px;">CONTROLO DE ATIVOS</p>
+            <button class="btn-acao" onclick="app.irPara('login-prof')">Professor</button>
+            <button class="btn-acao" style="background: #333;" onclick="app.irPara('login-gestor')">Gestor / Secretaria</button>
+            <button class="btn-acao" style="background: #000; border: 1px solid #444;" onclick="app.irPara('login-ti')">Espaço TI</button>
+        </div>
+
+        <div id="tela-login-prof" class="hidden">
+            <h2>ACESSO PROFESSOR</h2>
+            <input type="text" class="campo" id="p-nome" placeholder="Nome Completo">
+            <input type="text" class="campo" id="p-id" placeholder="RP / Prontuário">
+            <input type="text" class="campo" id="p-mat" placeholder="Disciplina">
+            <button class="btn-acao" onclick="app.auth('PROF')">ENTRAR</button>
+            <button class="btn-voltar" onclick="app.irPara('login-escolha')">VOLTAR</button>
         </div>
 
         <div id="tela-login-gestor" class="hidden">
             <h2>ACESSO GESTOR</h2>
-            <input type="password" class="campo" id="pass-gestor" placeholder="Senha de Acesso">
-            <button class="btn-acao" onclick="app.authGestor()">ENTRAR NO PAINEL</button>
-            <button class="btn-voltar" onclick="app.irPara('inicio')">VOLTAR</button>
+            <input type="password" class="campo" id="pass-gestor" placeholder="Senha Gestor">
+            <button class="btn-acao" onclick="app.auth('GESTOR')">ENTRAR</button>
+            <button class="btn-voltar" onclick="app.irPara('login-escolha')">VOLTAR</button>
         </div>
 
-        <div id="tela-login-prof" class="hidden">
-            <h2>IDENTIFICAÇÃO</h2>
-            <input type="text" class="campo" id="p-nome" placeholder="Nome Completo">
-            <input type="text" class="campo" id="p-id" placeholder="RP / Prontuário">
-            <input type="text" class="campo" id="p-mat" placeholder="Disciplina">
-            <button class="btn-acao" onclick="app.authProf()">ACESSAR SISTEMA</button>
-            <button class="btn-voltar" onclick="app.irPara('inicio')">VOLTAR</button>
+        <div id="tela-login-ti" class="hidden">
+            <h2 style="color: var(--nivel-3);">ADMINISTRAÇÃO TI</h2>
+            <input type="password" class="campo" id="pass-ti" placeholder="Senha TI">
+            <button class="btn-acao" style="background: var(--nivel-3);" onclick="app.auth('TI')">ENTRAR NO PAINEL</button>
+            <button class="btn-voltar" onclick="app.irPara('login-escolha')">VOLTAR</button>
         </div>
 
         <div id="tela-menu" class="hidden">
-            <h3 id="boas-vindas" style="margin-bottom: 5px;">Olá!</h3>
-            <p id="sub-info" style="font-size: 10px; color: var(--azul-sky); margin-bottom: 20px;"></p>
+            <span id="badge-user" class="badge"></span>
+            <h3 id="txt-saudacao" style="margin-top: 5px;">Olá!</h3>
             
-            <div id="area-prof-only">
+            <div id="area-reserva">
                 <button class="btn-acao" onclick="app.irPara('reserva')">📅 NOVA RESERVA</button>
             </div>
             
             <button class="btn-acao" style="background: rgba(0,173,239,0.2);" onclick="app.abrirCronograma()">🖥️ CRONOGRAMA & CALENDÁRIO</button>
-            <button class="btn-acao" style="background: var(--nivel-3);" onclick="app.irPara('suporte')">🛠️ CHAMADO TÉCNICO</button>
+            <button class="btn-acao" style="background: var(--nivel-3);" onclick="app.irPara('suporte')">🛠️ SUPORTE TÉCNICO</button>
             <button class="btn-voltar" onclick="location.reload()">SAIR</button>
         </div>
 
         <div id="tela-reserva" class="hidden">
-            <h3>RESERVAR EQUIPAMENTO</h3>
+            <h3>RESERVAR</h3>
             <div class="grid-eq">
-                <button class="btn-eq" id="e1" onclick="app.selectEq('SALA INFO', 'e1')">SALA INFO</button>
-                <button class="btn-eq" id="e2" onclick="app.selectEq('CHROMEBOOKS', 'e2')">CHROMEBOOKS</button>
-                <button class="btn-eq" id="e3" onclick="app.selectEq('TV 01', 'e3')">TV 01</button>
-                <button class="btn-eq" id="e4" onclick="app.selectEq('TV 02', 'e4')">TV 02</button>
-                <button class="btn-eq" id="e5" onclick="app.selectEq('TV 03', 'e5')">TV 03</button>
+                <button class="btn-eq" id="eq1" onclick="app.setEq('SALA INFO', 'eq1')">SALA INFO</button>
+                <button class="btn-eq" id="eq2" onclick="app.setEq('CHROMEBOOKS', 'eq2')">CHROMEBOOKS</button>
+                <button class="btn-eq" id="eq3" onclick="app.setEq('TV 01', 'eq3')">TV 01</button>
+                <button class="btn-eq" id="eq4" onclick="app.setEq('TV 02', 'eq4')">TV 02</button>
+                <button class="btn-eq" id="eq5" onclick="app.setEq('TV 03', 'eq5')">TV 03</button>
             </div>
-            <span class="label-mini">Data de Uso:</span>
             <input type="date" class="campo" id="res-data">
-            <span class="label-mini">Hora de Devolução:</span>
-            <input type="time" class="campo" id="res-hora-fim">
-            <button class="btn-acao" onclick="app.confirmarReserva()">SALVAR AGENDAMENTO</button>
-            <button class="btn-voltar" onclick="app.irPara('menu')">CANCELAR</button>
+            <input type="time" class="campo" id="res-hora">
+            <button class="btn-acao" onclick="app.salvarReserva()">CONFIRMAR</button>
+            <button class="btn-voltar" onclick="app.irPara('menu')">VOLTAR</button>
         </div>
 
         <div id="tela-cronograma" class="hidden">
             <h3>CRONOGRAMA</h3>
-            <span class="label-mini">Filtrar por data:</span>
-            <input type="date" class="campo" id="filtro-data" onchange="app.renderizarLista()">
-            
-            <div id="lista-atividades" style="max-height: 300px; overflow-y: auto; margin-top: 10px;">
-                </div>
-            <button class="btn-voltar" style="margin-top: 15px;" onclick="app.irPara('menu')">VOLTAR</button>
+            <input type="date" class="campo" id="filtro-dia" onchange="app.renderLista()">
+            <div id="lista-container" style="max-height: 300px; overflow-y: auto;"></div>
+            <button class="btn-voltar" onclick="app.irPara('menu')">VOLTAR AO MENU</button>
         </div>
 
         <div id="tela-suporte" class="hidden">
-            <h3>ABRIR CHAMADO</h3>
-            <input type="text" class="campo" id="sup-local" placeholder="Local / Sala">
-            <textarea class="campo" id="sup-motivo" style="height: 80px; padding-top: 10px;" placeholder="Qual o problema técnico?"></textarea>
-            <button class="btn-acao" style="background: var(--nivel-3);" onclick="app.enviarSuporte()">ENVIAR URGÊNCIA</button>
+            <h3>SUPORTE</h3>
+            <input type="text" class="campo" id="sup-local" placeholder="Sala / Local">
+            <textarea class="campo" id="sup-obs" style="height: 70px; padding: 10px;" placeholder="Detalhes do problema..."></textarea>
+            <button class="btn-acao" style="background: var(--nivel-3);" onclick="app.enviarSuporte()">ENVIAR</button>
             <button class="btn-voltar" onclick="app.irPara('menu')">VOLTAR</button>
         </div>
-
     </div>
 
 <script>
-    // CONFIGURAÇÃO FIREBASE
     const firebaseConfig = {
         apiKey: "AIzaSyBoGfDKz-nBwKvczzGpxg-fHJYdVykcBUQ",
         authDomain: "escala-chacara.firebaseapp.com",
@@ -144,132 +144,132 @@
     const db = firebase.database();
 
     const app = {
-        user: { nome: "", id: "", mat: "", tipo: "" },
-        selectedEq: "",
+        user: { nome: "", tipo: "", rp: "" },
+        tempEq: "",
 
-        irPara(tela) {
-            document.querySelectorAll('.balao-premium > div').forEach(d => {
-                if(d.id !== 'relogio-top') d.classList.add('hidden');
-            });
-            document.getElementById('tela-' + tela).classList.remove('hidden');
+        irPara(id) {
+            document.querySelectorAll('.balao-premium > div').forEach(d => { if(d.id !== 'relogio-top') d.classList.add('hidden'); });
+            document.getElementById('tela-' + id).classList.remove('hidden');
         },
 
-        authGestor() {
-            const pass = document.getElementById('pass-gestor').value;
-            if(pass === "gestores2026") {
-                this.user = { nome: "GESTOR NTi", tipo: "gestor" };
-                document.getElementById('boas-vindas').innerText = "Painel de Gestão";
-                document.getElementById('sub-info').innerText = "Monitoramento Completo Ativado";
-                document.getElementById('area-prof-only').classList.add('hidden');
-                this.irPara('menu');
-            } else { alert("Senha incorreta!"); }
-        },
+        auth(tipo) {
+            if(tipo === 'PROF') {
+                const n = document.getElementById('p-nome').value;
+                const r = document.getElementById('p-id').value;
+                if(!n || !r) return alert("Preencha Nome e RP!");
+                this.user = { nome: n.toUpperCase(), rp: r, tipo: 'PROF' };
+            } else if(tipo === 'GESTOR') {
+                if(document.getElementById('pass-gestor').value !== "gestores2026") return alert("Senha incorreta!");
+                this.user = { nome: "GESTOR", tipo: 'GESTOR' };
+            } else if(tipo === 'TI') {
+                // SENHA DEFINIDA COMO nti2026
+                if(document.getElementById('pass-ti').value !== "nti2026") return alert("Senha TI incorreta!");
+                this.user = { nome: "TI MASTER", tipo: 'TI' };
+            }
 
-        authProf() {
-            this.user.nome = document.getElementById('p-nome').value.toUpperCase();
-            this.user.id = document.getElementById('p-id').value;
-            this.user.mat = document.getElementById('p-mat').value.toUpperCase();
-            this.user.tipo = "prof";
-            if(!this.user.nome || !this.user.id) return alert("Preencha seus dados!");
-            document.getElementById('boas-vindas').innerText = "Olá, Prof. " + this.user.nome.split(' ')[0];
-            document.getElementById('sub-info').innerText = "Disciplina: " + this.user.mat;
-            document.getElementById('area-prof-only').classList.remove('hidden');
+            document.getElementById('badge-user').innerText = this.user.tipo;
+            document.getElementById('badge-user').className = 'badge badge-' + this.user.tipo.toLowerCase();
+            document.getElementById('txt-saudacao').innerText = "Olá, " + this.user.nome;
+            
+            // Oculta área de reserva se for TI (opcional)
+            if(this.user.tipo === 'TI') document.getElementById('area-reserva').classList.add('hidden');
+            else document.getElementById('area-reserva').classList.remove('hidden');
+
             this.irPara('menu');
         },
 
-        selectEq(eq, btnId) {
-            this.selectedEq = eq;
+        setEq(n, id) {
+            this.tempEq = n;
             document.querySelectorAll('.btn-eq').forEach(b => b.classList.remove('active'));
-            document.getElementById(btnId).classList.add('active');
+            document.getElementById(id).classList.add('active');
         },
 
-        confirmarReserva() {
-            const data = document.getElementById('res-data').value;
-            const hora = document.getElementById('res-hora-fim').value;
-            if(!this.selectedEq || !data || !hora) return alert("Complete todos os campos da reserva!");
+        salvarReserva() {
+            const d = document.getElementById('res-data').value;
+            const h = document.getElementById('res-hora').value;
+            if(!this.tempEq || !d || !h) return alert("Preencha todos os campos!");
 
             db.ref('atividades').push({
                 prof: this.user.nome,
-                rp: this.user.id,
-                materia: this.user.mat,
-                equipamento: this.selectedEq,
-                dataUso: data,
-                horaEntrega: hora,
+                rp: this.user.rp || "N/A",
+                equip: this.tempEq,
+                data: d,
+                hora: h,
                 status: "EM USO",
-                timestamp: Date.now()
+                ts: Date.now()
             });
-
-            alert("Reserva confirmada!");
+            alert("Reserva concluída!");
             this.irPara('menu');
         },
 
-        entregar(key) {
-            if(confirm("Confirmar a entrega deste equipamento agora?")) {
-                db.ref('atividades/' + key).update({ status: "ENTREGUE" });
-            }
-        },
-
         abrirCronograma() {
-            document.getElementById('filtro-data').valueAsDate = new Date();
+            document.getElementById('filtro-dia').valueAsDate = new Date();
             this.irPara('cronograma');
-            this.renderizarLista();
+            this.renderLista();
         },
 
-        renderizarLista() {
-            const lista = document.getElementById('lista-atividades');
-            const dataFiltro = document.getElementById('filtro-data').value;
+        renderLista() {
+            const container = document.getElementById('lista-container');
+            const filtro = document.getElementById('filtro-dia').value;
             
             db.ref('atividades').on('value', (snap) => {
-                lista.innerHTML = "";
+                container.innerHTML = "";
                 snap.forEach(item => {
                     const r = item.val();
                     const key = item.key;
 
-                    if(r.dataUso === dataFiltro || !r.dataUso) { // Filtra por dia
-                        const entregue = r.status === "ENTREGUE";
-                        const infoRp = this.user.tipo === 'gestor' ? `<br><b>RP:</b> ${r.rp || 'N/A'}` : '';
+                    if(r.data === filtro) {
+                        const isEntregue = r.status === "ENTREGUE";
+                        const showDel = this.user.tipo === 'TI' ? `<button class="btn-delete" onclick="app.apagar('${key}')">APAGAR</button>` : '';
+                        const showBaixa = (!isEntregue && (r.prof === this.user.nome || this.user.tipo !== 'PROF')) ? 
+                            `<button class="btn-baixa" onclick="app.darBaixa('${key}')">DAR BAIXA / ENTREGAR</button>` : '';
 
-                        lista.innerHTML += `
-                            <div class="card ${entregue ? 'card-entrega' : ''}">
-                                <div style="display:flex; justify-content:space-between; align-items:start;">
-                                    <b>${r.equipamento || '🛠️ SUPORTE'}</b>
-                                    <small>${r.horaEntrega || ''}</small>
-                                </div>
-                                <div style="font-size:11px; margin-top:5px;">
-                                    <b>Prof:</b> ${r.prof} ${infoRp} <br>
-                                    <b>Status:</b> ${r.status}
-                                </div>
-                                ${(!entregue && (r.prof === this.user.nome || this.user.tipo === 'gestor')) ? 
-                                    `<button class="btn-entregar" onclick="app.entregar('${key}')">DAR BAIXA / ENTREGAR</button>` : ''}
+                        container.innerHTML += `
+                            <div class="card ${isEntregue ? 'card-entregue' : ''}">
+                                <b>${r.equip}</b> <small style="float:right">${r.hora}</small><br>
+                                <span style="font-size:10px">Prof: ${r.prof} | RP: ${r.rp}</span><br>
+                                <span style="font-size:10px">Status: <b>${r.status}</b></span>
+                                ${showBaixa}
+                                ${showDel}
                             </div>
                         `;
                     }
                 });
-                if(lista.innerHTML === "") lista.innerHTML = "<p style='font-size:12px; opacity:0.5;'>Nenhuma reserva para este dia.</p>";
+                if(!container.innerHTML) container.innerHTML = "<p style='font-size:12px; opacity:0.5'>Sem agendamentos para este dia.</p>";
             });
         },
 
-        enviarSuporte() {
-            const local = document.getElementById('sup-local').value;
-            const motivo = document.getElementById('sup-motivo').value;
-            if(!local || !motivo) return alert("Preencha os detalhes do problema!");
+        darBaixa(key) {
+            if(confirm("Confirmar devolução do ativo?")) {
+                db.ref('atividades/' + key).update({ status: "ENTREGUE" });
+            }
+        },
 
+        apagar(key) {
+            if(confirm("TI: Excluir este registro permanentemente do banco de dados?")) {
+                db.ref('atividades/' + key).remove();
+            }
+        },
+
+        enviarSuporte() {
+            const loc = document.getElementById('sup-local').value;
+            const obs = document.getElementById('sup-obs').value;
+            if(!loc || !obs) return alert("Descreva o problema!");
             db.ref('atividades').push({
                 prof: this.user.nome,
-                equipamento: "SUPORTE: " + local,
+                equip: "🛠️ SUPORTE: " + loc,
                 status: "CHAMADO ABERTO",
-                motivo: motivo,
-                timestamp: Date.now()
+                data: new Date().toISOString().split('T')[0],
+                hora: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                obs: obs,
+                ts: Date.now()
             });
-            alert("Suporte solicitado!");
+            alert("Chamado enviado ao TI!");
             this.irPara('menu');
         }
     };
 
-    // Relógio
-    setInterval(() => {
-        document.getElementById('relogio-top').innerText = new Date().toLocaleString('pt-BR');
-    }, 1000);
+    setInterval(() => { document.getElementById('relogio-top').innerText = new Date().toLocaleString('pt-BR'); }, 1000);
 </script>
 </body>
 </html>
