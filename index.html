@@ -3,135 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SISTEMA NTi - CONTROLE DE ATIVOS</title>
+    <title>SISTEMA NTi - GESTÃO & CHAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 
     <style>
-        :root {
-            --azul-pref: #004a99; --azul-sky: #00adef; --neon: #00ff9d;
-            --nivel-1: #2ed573; --nivel-2: #ffa502; --nivel-3: #ff4757;
-        }
-        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: 0.3s; }
-        
-        body { 
-            margin: 0; background: #000b1a url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed;
-            background-size: cover; min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white; padding: 10px;
-        }
-
-        .balao-premium {
-            width: 100%; max-width: 500px; background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.25); border-radius: 30px;
-            padding: 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.6); text-align: center;
-        }
-
+        :root { --azul-pref: #004a99; --azul-sky: #00adef; --neon: #00ff9d; --danger: #ff4757; }
+        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { margin: 0; background: #000b1a url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed; background-size: cover; min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white; padding: 10px; }
+        .balao-premium { width: 100%; max-width: 550px; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2); border-radius: 25px; padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
         .hidden { display: none !important; }
-        .clock-header { font-size: 12px; font-weight: 600; color: var(--azul-sky); margin-bottom: 15px; }
+        .campo { width: 100%; height: 45px; border-radius: 12px; border: none; padding: 0 15px; margin-bottom: 10px; font-weight: 600; }
+        .btn-acao { width: 100%; height: 50px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); color: white; font-weight: 700; cursor: pointer; margin-bottom: 10px; text-transform: uppercase; }
+        .btn-voltar { background: none; border: 1px solid white; color: white; padding: 8px; border-radius: 10px; cursor: pointer; font-size: 11px; width: 100%; }
         
-        .campo { width: 100%; height: 45px; background: white; border-radius: 12px; border: none; padding: 0 15px; font-size: 14px; color: #111; margin-bottom: 12px; font-weight: 600; }
-        .btn-acao { width: 100%; height: 50px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); color: white; font-weight: 700; cursor: pointer; margin-bottom: 10px; font-size: 13px; text-transform: uppercase; }
-        .btn-voltar { background: none; border: 1px solid rgba(255,255,255,0.3); color: white; padding: 10px; border-radius: 12px; width: 100%; cursor: pointer; font-size: 11px; margin-top: 10px;}
-
-        .grid-eq { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
-        .btn-eq { height: 45px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; font-size: 9px; font-weight: 700; cursor: pointer; }
-        .btn-eq.active { background: var(--azul-sky); border-color: white; }
-
-        .card { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 15px; margin-bottom: 10px; text-align: left; border-left: 5px solid var(--neon); position: relative;}
-        .card-entregue { border-left-color: #666 !important; opacity: 0.7; }
+        /* Cronograma e Cards */
+        .card { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 15px; margin-bottom: 10px; border-left: 5px solid var(--neon); position: relative; }
+        .card-baixa { border-left-color: #777; opacity: 0.6; }
+        .btn-mini { padding: 5px 10px; border-radius: 5px; border: none; font-size: 10px; font-weight: bold; cursor: pointer; margin-top: 5px; }
         
-        .btn-baixa { background: var(--neon); color: #000; border: none; padding: 8px; border-radius: 8px; width: 100%; margin-top: 10px; font-weight: 800; cursor: pointer; font-size: 10px; }
-        .btn-delete { background: var(--nivel-3); color: white; border: none; padding: 5px 10px; border-radius: 5px; font-size: 9px; cursor: pointer; position: absolute; right: 10px; bottom: 10px;}
-        
-        .badge { font-size: 9px; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; display: inline-block; }
-        .badge-prof { background: var(--azul-pref); }
-        .badge-gestor { background: var(--nivel-2); color: black; }
-        .badge-ti { background: #000; border: 1px solid var(--nivel-3); color: var(--nivel-3); }
+        /* Chat */
+        #chat-box { height: 150px; background: rgba(0,0,0,0.5); border-radius: 10px; overflow-y: auto; padding: 10px; margin-bottom: 10px; text-align: left; font-size: 12px; }
+        .msg { margin-bottom: 5px; padding: 5px 10px; border-radius: 8px; background: rgba(255,255,255,0.1); width: fit-content; max-width: 80%; }
+        .msg-ti { background: var(--azul-pref); margin-left: auto; }
     </style>
 </head>
 <body>
 
-    <div class="balao-premium">
-        <div class="clock-header" id="relogio-top">00/00/0000 00:00:00</div>
+<div class="balao-premium">
+    <div id="relogio" style="font-size: 12px; color: var(--azul-sky); margin-bottom: 15px; font-weight: bold;"></div>
 
-        <div id="tela-login-escolha">
-            <h1>SISTEMA NTi</h1>
-            <p style="font-size: 11px; opacity: 0.7; margin-bottom: 20px;">CONTROLE DE ACESSO</p>
-            <button class="btn-acao" onclick="app.irPara('login-prof')">Portal Professor</button>
-            <button class="btn-acao" style="background: #333;" onclick="app.irPara('login-gestor')">Portal Gestor (Monitoramento)</button>
-            <button class="btn-acao" style="background: #000; border: 1px solid var(--nivel-3);" onclick="app.irPara('login-ti')">Espaço TI (Master)</button>
-        </div>
-
-        <div id="tela-login-prof" class="hidden">
-            <h2>PROFESSOR</h2>
-            <input type="text" class="campo" id="p-nome" placeholder="Nome Completo">
-            <input type="text" class="campo" id="p-id" placeholder="RP / Prontuário">
-            <input type="text" class="campo" id="p-mat" placeholder="Disciplina">
-            <button class="btn-acao" onclick="app.auth('PROF')">ENTRAR</button>
-            <button class="btn-voltar" onclick="app.irPara('login-escolha')">VOLTAR</button>
-        </div>
-
-        <div id="tela-login-gestor" class="hidden">
-            <h2>GESTOR</h2>
-            <input type="password" class="campo" id="pass-gestor" placeholder="Senha Gestor">
-            <button class="btn-acao" onclick="app.auth('GESTOR')">ACESSAR MONITOR</button>
-            <button class="btn-voltar" onclick="app.irPara('login-escolha')">VOLTAR</button>
-        </div>
-
-        <div id="tela-login-ti" class="hidden">
-            <h2 style="color: var(--nivel-3);">ADMINISTRAÇÃO TI</h2>
-            <input type="password" class="campo" id="pass-ti" placeholder="Senha TI">
-            <button class="btn-acao" style="background: var(--nivel-3);" onclick="app.auth('TI')">ACESSO TOTAL</button>
-            <button class="btn-voltar" onclick="app.irPara('login-escolha')">VOLTAR</button>
-        </div>
-
-        <div id="tela-menu" class="hidden">
-            <span id="badge-user" class="badge"></span>
-            <h3 id="txt-saudacao" style="margin-top: 5px;">Olá!</h3>
-            
-            <div id="area-reserva">
-                <button class="btn-acao" onclick="app.irPara('reserva')">📅 NOVA RESERVA</button>
-            </div>
-            
-            <button class="btn-acao" style="background: rgba(0,173,239,0.2);" onclick="app.abrirCronograma()">🖥️ CRONOGRAMA DE USO</button>
-            <button class="btn-acao" style="background: var(--nivel-3);" onclick="app.irPara('suporte')">🛠️ CHAMADO SUPORTE</button>
-            <button class="btn-voltar" onclick="location.reload()">SAIR</button>
-        </div>
-
-        <div id="tela-reserva" class="hidden">
-            <h3>RESERVAR</h3>
-            <div class="grid-eq">
-                <button class="btn-eq" id="eq1" onclick="app.setEq('SALA INFO', 'eq1')">SALA INFO</button>
-                <button class="btn-eq" id="eq2" onclick="app.setEq('CHROMEBOOKS', 'eq2')">CHROMEBOOKS</button>
-                <button class="btn-eq" id="eq3" onclick="app.setEq('TV 01', 'eq3')">TV 01</button>
-                <button class="btn-eq" id="eq4" onclick="app.setEq('TV 02', 'eq4')">TV 02</button>
-                <button class="btn-eq" id="eq5" onclick="app.setEq('TV 03', 'eq5')">TV 03</button>
-            </div>
-            <input type="date" class="campo" id="res-data">
-            <input type="time" class="campo" id="res-hora">
-            <button class="btn-acao" onclick="app.salvarReserva()">CONFIRMAR</button>
-            <button class="btn-voltar" onclick="app.irPara('menu')">VOLTAR</button>
-        </div>
-
-        <div id="tela-cronograma" class="hidden">
-            <h3>CRONOGRAMA</h3>
-            <input type="date" class="campo" id="filtro-dia" onchange="app.renderLista()">
-            <div id="lista-container" style="max-height: 300px; overflow-y: auto;"></div>
-            <button class="btn-voltar" onclick="app.irPara('menu')">VOLTAR</button>
-        </div>
-
-        <div id="tela-suporte" class="hidden">
-            <h3>ABRIR SUPORTE</h3>
-            <input type="text" class="campo" id="sup-local" placeholder="Onde está o erro?">
-            <textarea class="campo" id="sup-obs" style="height: 70px; padding: 10px;" placeholder="Detalhes..."></textarea>
-            <button class="btn-acao" style="background: var(--nivel-3);" onclick="app.enviarSuporte()">ENVIAR TI</button>
-            <button class="btn-voltar" onclick="app.irPara('menu')">CANCELAR</button>
-        </div>
+    <div id="tela-inicio">
+        <h1>SISTEMA NTi</h1>
+        <button class="btn-acao" onclick="app.irPara('login-prof')">PROFESSOR</button>
+        <button class="btn-acao" style="background:#333" onclick="app.irPara('login-gestor')">GESTOR</button>
+        <button class="btn-acao" style="background:#000; border: 1px solid var(--danger)" onclick="app.irPara('login-ti')">ESPAÇO TI</button>
     </div>
 
+    <div id="tela-login-prof" class="hidden">
+        <h2>PROFESSOR</h2>
+        <input type="text" id="p-nome" class="campo" placeholder="Nome Completo">
+        <input type="text" id="p-id" class="campo" placeholder="RP / Prontuário">
+        <button class="btn-acao" onclick="app.auth('PROF')">ENTRAR</button>
+        <button class="btn-voltar" onclick="app.irPara('inicio')">VOLTAR</button>
+    </div>
+
+    <div id="tela-login-gestor" class="hidden">
+        <h2>GESTOR</h2>
+        <input type="password" id="senha-gestor" class="campo" placeholder="Senha Gestor">
+        <button class="btn-acao" onclick="app.auth('GESTOR')">ENTRAR</button>
+        <button class="btn-voltar" onclick="app.irPara('inicio')">VOLTAR</button>
+    </div>
+
+    <div id="tela-login-ti" class="hidden">
+        <h2 style="color:var(--danger)">TI MASTER</h2>
+        <input type="password" id="senha-ti" class="campo" placeholder="Senha TI">
+        <button class="btn-acao" style="background:var(--danger)" onclick="app.auth('TI')">ACESSO TOTAL</button>
+        <button class="btn-voltar" onclick="app.irPara('inicio')">VOLTAR</button>
+    </div>
+
+    <div id="tela-menu" class="hidden">
+        <h3 id="boas-vindas">Olá!</h3>
+        <div id="area-reserva">
+            <button class="btn-acao" onclick="app.irPara('reserva')">📅 RESERVAR EQUIPAMENTO</button>
+        </div>
+        <button class="btn-acao" style="background:rgba(0,173,239,0.2)" onclick="app.verCronograma()">🖥️ CRONOGRAMA & CALENDÁRIO</button>
+        
+        <div style="margin-top:20px; border-top: 1px solid #444; padding-top: 15px;">
+            <p style="font-size:12px; font-weight:bold;">💬 COMUNICADO / CHAT NTi</p>
+            <div id="chat-box"></div>
+            <div style="display:flex; gap:5px;">
+                <input type="text" id="chat-input" class="campo" style="margin:0;" placeholder="Digite uma mensagem...">
+                <button onclick="app.enviarMsg()" style="background:var(--neon); border:none; border-radius:10px; padding:0 15px; cursor:pointer;">➔</button>
+            </div>
+        </div>
+
+        <button class="btn-voltar" style="margin-top:15px;" onclick="location.reload()">SAIR</button>
+    </div>
+
+    <div id="tela-reserva" class="hidden">
+        <h3>RESERVAR</h3>
+        <select id="res-equip" class="campo">
+            <option value="SALA INFO">SALA INFO</option>
+            <option value="CHROMEBOOKS">CHROMEBOOKS</option>
+            <option value="TV 01">TV 01</option>
+            <option value="TV 02">TV 02</option>
+            <option value="TV 03">TV 03</option>
+        </select>
+        <input type="date" id="res-data" class="campo">
+        <input type="time" id="res-hora" class="campo">
+        <button class="btn-acao" onclick="app.salvarReserva()">CONFIRMAR</button>
+        <button class="btn-voltar" onclick="app.irPara('menu')">VOLTAR</button>
+    </div>
+
+    <div id="tela-cronograma" class="hidden">
+        <h3>CRONOGRAMA</h3>
+        <input type="date" id="filtro-data" class="campo" onchange="app.renderLista()">
+        <div id="lista-reservas" style="max-height: 300px; overflow-y: auto;"></div>
+        <button class="btn-voltar" onclick="app.irPara('menu')">VOLTAR</button>
+    </div>
+
+</div>
+
 <script>
-    // FIREBASE CONFIG
     const firebaseConfig = {
         apiKey: "AIzaSyBoGfDKz-nBwKvczzGpxg-fHJYdVykcBUQ",
         authDomain: "escala-chacara.firebaseapp.com",
@@ -146,135 +121,96 @@
 
     const app = {
         user: { nome: "", tipo: "", rp: "" },
-        tempEq: "",
 
-        irPara(id) {
-            document.querySelectorAll('.balao-premium > div').forEach(d => { if(d.id !== 'relogio-top') d.classList.add('hidden'); });
-            document.getElementById('tela-' + id).classList.remove('hidden');
+        irPara(tela) {
+            document.querySelectorAll('.balao-premium > div').forEach(d => { if(d.id !== 'relogio') d.classList.add('hidden'); });
+            document.getElementById('tela-' + tela).classList.remove('hidden');
         },
 
         auth(tipo) {
             if(tipo === 'PROF') {
-                const n = document.getElementById('p-nome').value;
-                const r = document.getElementById('p-id').value;
-                if(!n || !r) return alert("Identifique-se!");
-                this.user = { nome: n.toUpperCase(), rp: r, tipo: 'PROF' };
-                document.getElementById('area-reserva').classList.remove('hidden');
+                this.user = { nome: document.getElementById('p-nome').value.toUpperCase(), rp: document.getElementById('p-id').value, tipo: 'PROF' };
+                if(!this.user.nome) return alert("Nome obrigatório");
             } else if(tipo === 'GESTOR') {
-                if(document.getElementById('pass-gestor').value !== "gestores2026") return alert("Senha Gestor Inválida!");
-                this.user = { nome: "GESTOR (MONITOR)", tipo: 'GESTOR' };
-                document.getElementById('area-reserva').classList.add('hidden'); // Gestor não reserva
+                if(document.getElementById('senha-gestor').value !== "gestores2026") return alert("Senha errada");
+                this.user = { nome: "GESTOR", tipo: 'GESTOR' };
             } else if(tipo === 'TI') {
-                if(document.getElementById('pass-ti').value !== "nti2026") return alert("Senha TI Master Inválida!");
-                this.user = { nome: "ADMIN MASTER TI", tipo: 'TI' };
-                document.getElementById('area-reserva').classList.add('hidden'); // TI não reserva
+                if(document.getElementById('senha-ti').value !== "nti2026") return alert("Senha TI errada");
+                this.user = { nome: "TI MASTER", tipo: 'TI' };
             }
-
-            document.getElementById('badge-user').innerText = this.user.tipo;
-            document.getElementById('badge-user').className = 'badge badge-' + this.user.tipo.toLowerCase();
-            document.getElementById('txt-saudacao').innerText = "Olá, " + this.user.nome;
+            document.getElementById('boas-vindas').innerText = "Olá, " + this.user.nome;
+            if(this.user.tipo !== 'PROF') document.getElementById('area-reserva').classList.add('hidden');
             this.irPara('menu');
-        },
-
-        setEq(n, id) {
-            this.tempEq = n;
-            document.querySelectorAll('.btn-eq').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
+            this.ouvirChat();
         },
 
         salvarReserva() {
-            const d = document.getElementById('res-data').value;
-            const h = document.getElementById('res-hora').value;
-            if(!this.tempEq || !d || !h) return alert("Complete os dados!");
-
-            db.ref('atividades').push({
-                prof: this.user.nome,
-                rp: this.user.rp || "N/A",
-                equip: this.tempEq,
-                data: d,
-                hora: h,
-                status: "EM USO",
-                ts: Date.now()
+            const data = document.getElementById('res-data').value;
+            if(!data) return alert("Escolha a data!");
+            db.ref('reservas').push({
+                prof: this.user.nome, rp: this.user.rp,
+                equip: document.getElementById('res-equip').value,
+                data: data, hora: document.getElementById('res-hora').value,
+                status: "EM USO"
             });
             alert("Reservado!");
             this.irPara('menu');
         },
 
-        abrirCronograma() {
-            document.getElementById('filtro-dia').valueAsDate = new Date();
+        verCronograma() {
+            document.getElementById('filtro-data').valueAsDate = new Date();
             this.irPara('cronograma');
             this.renderLista();
         },
 
         renderLista() {
-            const container = document.getElementById('lista-container');
-            const filtro = document.getElementById('filtro-dia').value;
-            
-            db.ref('atividades').on('value', (snap) => {
-                container.innerHTML = "";
+            const lista = document.getElementById('lista-reservas');
+            const filtro = document.getElementById('filtro-data').value;
+            db.ref('reservas').on('value', snap => {
+                lista.innerHTML = "";
                 snap.forEach(item => {
                     const r = item.val();
-                    const key = item.key;
-
                     if(r.data === filtro) {
                         const isEntregue = r.status === "ENTREGUE";
-                        
-                        // Lógica de botões por nível:
-                        // TI vê tudo (Apagar e Baixa). Professor vê apenas o dele (Baixa). Gestor não vê nada.
-                        const showDel = (this.user.tipo === 'TI') ? `<button class="btn-delete" onclick="app.apagar('${key}')">APAGAR</button>` : '';
-                        
-                        let showBaixa = '';
-                        if(!isEntregue) {
-                            if(this.user.tipo === 'TI' || (this.user.tipo === 'PROF' && r.prof === this.user.nome)) {
-                                showBaixa = `<button class="btn-baixa" onclick="app.darBaixa('${key}')">DAR BAIXA / ENTREGAR</button>`;
-                            }
-                        }
+                        let btnTI = (this.user.tipo === 'TI') ? `<button class="btn-mini" style="background:red; color:white;" onclick="app.apagar('${item.key}')">APAGAR</button>` : '';
+                        let btnBaixa = (!isEntregue && (this.user.tipo === 'TI' || r.prof === this.user.nome)) ? 
+                            `<button class="btn-mini" style="background:var(--neon)" onclick="app.darBaixa('${item.key}')">DAR BAIXA</button>` : '';
 
-                        container.innerHTML += `
-                            <div class="card ${isEntregue ? 'card-entregue' : ''}">
-                                <b>${r.equip}</b> <small style="float:right">${r.hora}</small><br>
-                                <span style="font-size:10px">Prof: ${r.prof} | RP: ${r.rp}</span><br>
-                                <span style="font-size:10px">Status: <b>${r.status}</b></span>
-                                ${showBaixa}
-                                ${showDel}
-                            </div>
-                        `;
+                        lista.innerHTML += `
+                            <div class="card ${isEntregue ? 'card-baixa' : ''}">
+                                <b>${r.equip}</b> - ${r.hora}<br>
+                                <small>Prof: ${r.prof} | Status: ${r.status}</small><br>
+                                ${btnBaixa} ${btnTI}
+                            </div>`;
                     }
                 });
-                if(!container.innerHTML) container.innerHTML = "<p style='font-size:12px; opacity:0.5'>Nenhum ativo para este dia.</p>";
             });
         },
 
-        darBaixa(key) {
-            if(confirm("Confirmar devolução para o sistema?")) {
-                db.ref('atividades/' + key).update({ status: "ENTREGUE" });
-            }
+        darBaixa(id) { db.ref('reservas/'+id).update({ status: "ENTREGUE" }); },
+        apagar(id) { if(confirm("Apagar reserva?")) db.ref('reservas/'+id).remove(); },
+
+        enviarMsg() {
+            const txt = document.getElementById('chat-input').value;
+            if(!txt) return;
+            db.ref('chat').push({ nome: this.user.nome, msg: txt, tipo: this.user.tipo, ts: Date.now() });
+            document.getElementById('chat-input').value = "";
         },
 
-        apagar(key) {
-            if(confirm("TI: Excluir definitivamente este registro?")) {
-                db.ref('atividades/' + key).remove();
-            }
-        },
-
-        enviarSuporte() {
-            const loc = document.getElementById('sup-local').value;
-            const obs = document.getElementById('sup-obs').value;
-            db.ref('atividades').push({
-                prof: this.user.nome,
-                equip: "🛠️ SUPORTE: " + loc,
-                status: "CHAMADO ABERTO",
-                data: new Date().toISOString().split('T')[0],
-                hora: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-                obs: obs,
-                ts: Date.now()
+        ouvirChat() {
+            db.ref('chat').limitToLast(10).on('value', snap => {
+                const box = document.getElementById('chat-box');
+                box.innerHTML = "";
+                snap.forEach(m => {
+                    const d = m.val();
+                    box.innerHTML += `<div class="msg ${d.tipo==='TI'?'msg-ti':''}"><b>${d.nome}:</b> ${d.msg}</div>`;
+                });
+                box.scrollTop = box.scrollHeight;
             });
-            alert("Enviado ao suporte!");
-            this.irPara('menu');
         }
     };
 
-    setInterval(() => { document.getElementById('relogio-top').innerText = new Date().toLocaleString('pt-BR'); }, 1000);
+    setInterval(() => { document.getElementById('relogio').innerText = new Date().toLocaleString(); }, 1000);
 </script>
 </body>
 </html>
