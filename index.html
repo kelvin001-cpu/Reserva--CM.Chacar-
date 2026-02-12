@@ -3,111 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA DE RESERVAS NTI</title>
+    <title>NTI MASTER 2026</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        :root { --blue: #007bff; --dark: #0d1117; --glass: rgba(0,0,0,0.8); }
-        body { margin: 0; font-family: 'Poppins', sans-serif; background: #000 url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072') no-repeat center center fixed; background-size: cover; color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        :root {
+            --primary: #00adef;
+            --success: #00ff9d;
+            --danger: #ff4757;
+            --bg-glass: rgba(0, 0, 0, 0.85);
+        }
+
+        body { 
+            margin: 0; font-family: 'Poppins', sans-serif; 
+            background: #000 url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072') no-repeat center center fixed;
+            background-size: cover; color: white; height: 100vh; display: flex; align-items: center; justify-content: center;
+        }
+
+        .card {
+            width: 90%; max-width: 500px; background: var(--bg-glass);
+            backdrop-filter: blur(20px); border-radius: 25px; padding: 30px;
+            border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            max-height: 90vh; overflow-y: auto; position: relative;
+        }
+
+        h1 { font-size: 24px; text-align: center; margin-bottom: 5px; }
+        .sub { color: var(--primary); text-align: center; font-size: 12px; letter-spacing: 2px; margin-bottom: 25px; text-transform: uppercase; }
+
+        input, select, textarea {
+            width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3);
+            color: white; box-sizing: border-box; font-family: inherit;
+        }
+
+        .btn {
+            width: 100%; padding: 15px; border-radius: 12px; border: none;
+            font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s;
+        }
+        .btn-main { background: var(--primary); color: white; }
+        .btn-outline { background: transparent; border: 1px solid var(--primary); color: white; margin-top: 10px; }
         
-        .card { width: 90%; max-width: 400px; background: var(--glass); backdrop-filter: blur(15px); padding: 30px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); text-align: center; }
-        h2 { margin-bottom: 20px; font-size: 20px; color: #00adef; }
-        
-        input, select { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #444; background: rgba(0,0,0,0.3); color: white; box-sizing: border-box; }
-        
-        .btn { width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 10px; transition: 0.3s; }
-        .btn-blue { background: var(--blue); color: white; }
-        .btn-outline { background: transparent; border: 1px solid white; color: white; }
-        
-        /* Grid do Menu */
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .menu-item { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; }
-        .menu-item:hover { background: var(--blue); border-color: #00ff9d; }
-        
-        .hidden { display: none; }
-        #chat-box { height: 150px; background: rgba(0,0,0,0.2); border-radius: 10px; margin: 10px 0; overflow-y: auto; padding: 10px; font-size: 12px; text-align: left; }
+        /* Dashboard Grid */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .grid-item { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; text-align: center; cursor: pointer; border: 1px solid transparent; }
+        .grid-item:hover { border-color: var(--primary); background: rgba(0, 173, 239, 0.1); }
+
+        /* Chat Lateral */
+        #chat-sidebar {
+            position: fixed; right: 20px; bottom: 20px; width: 300px; height: 400px;
+            background: var(--bg-glass); border-radius: 20px; border: 1px solid var(--primary);
+            display: flex; flex-direction: column; z-index: 100;
+        }
+        .chat-msgs { flex: 1; overflow-y: auto; padding: 15px; font-size: 12px; }
+        .chat-input { display: flex; padding: 10px; border-top: 1px solid rgba(255,255,255,0.1); }
+
+        .hidden { display: none !important; }
+        .status-badge { padding: 4px 8px; border-radius: 5px; font-size: 10px; font-weight: bold; }
+        .reservado { background: #555; }
+        .retirado { background: var(--primary); }
+        .finalizado { background: var(--success); }
     </style>
 </head>
 <body>
 
-    <div class="card" id="app">
-        <div id="screen-start">
-            <h2>RESERVAS NTI</h2>
-            <button class="btn btn-blue" onclick="show('screen-login')">Entrar</button>
-            <button class="btn btn-outline" onclick="show('screen-register')">Novo Cadastro</button>
-        </div>
+    <div class="card">
+        <div id="auth-area">
+            <h1>NTI MASTER 2026</h1>
+            <div id="login-form">
+                <div class="sub">Acesso ao Sistema</div>
+                <input type="number" id="l-pront" placeholder="Prontuário">
+                <input type="password" id="l-pass" placeholder="Senha">
+                <button class="btn btn-main" onclick="app.login()">Entrar</button>
+                <button class="btn btn-outline" onclick="app.toggleAuth(true)">Novo Cadastro</button>
+            </div>
 
-        <div id="screen-login" class="hidden">
-            <h2>LOGIN</h2>
-            <input type="number" id="login-pront" placeholder="Prontuário">
-            <input type="password" id="login-pass" placeholder="Senha">
-            <button class="btn btn-blue" onclick="auth.login()">Acessar</button>
-            <p onclick="show('screen-start')" style="cursor:pointer; font-size:12px;">Voltar</p>
-        </div>
-
-        <div id="screen-register" class="hidden">
-            <h2>CADASTRO</h2>
-            <input type="text" id="reg-nome" placeholder="Nome Completo">
-            <input type="number" id="reg-pront" placeholder="Prontuário">
-            <input type="text" id="reg-materia" placeholder="Matéria">
-            <input type="password" id="reg-pass" value="pmsp2026" placeholder="Defina uma Senha">
-            <small style="display:block; margin-bottom:10px; font-size:10px;">Senha padrão: pmsp2026</small>
-            <button class="btn btn-blue" onclick="auth.register()">Finalizar Cadastro</button>
-            <p onclick="show('screen-start')" style="cursor:pointer; font-size:12px;">Cancelar</p>
-        </div>
-
-        <div id="screen-menu" class="hidden">
-            <h2 id="user-name">Olá, Professor</h2>
-            <div class="menu-grid">
-                <div class="menu-item" onclick="alert('Reservar')">📅<br>Reservas</div>
-                <div class="menu-item" onclick="alert('Cronograma')">🕒<br>Cronograma</div>
-                <div class="menu-item" style="grid-column: span 2;" onclick="alert('Chamado Suporte')">🛠️ Suporte NTI</div>
+            <div id="register-form" class="hidden">
+                <div class="sub">Cadastro de Professor</div>
+                <input type="text" id="r-nome" placeholder="Nome Completo">
+                <input type="number" id="r-pront" placeholder="Prontuário (Login Único)">
+                <input type="text" id="r-materia" placeholder="Matéria">
+                <p style="font-size: 10px; color: var(--primary);">Senha padrão: Pmsp2026</p>
+                <button class="btn btn-main" onclick="app.register()">Finalizar Cadastro</button>
+                <button class="btn btn-outline" onclick="app.toggleAuth(false)">Voltar</button>
             </div>
             
-            <div id="chat-area">
-                <div id="chat-box"></div>
-                <input type="text" id="chat-in" placeholder="Dúvida? Digite aqui..." style="margin-top:10px;">
+            <div id="force-pass" class="hidden">
+                <div class="sub" style="color: var(--danger);">Troca de Senha Obrigatória</div>
+                <input type="password" id="new-pass" placeholder="Nova Senha">
+                <button class="btn btn-main" onclick="app.changePassword()">Alterar e Entrar</button>
             </div>
-            <button onclick="location.reload()" style="background:none; border:none; color:gray; cursor:pointer; margin-top:15px;">Sair</button>
+        </div>
+
+        <div id="main-menu" class="hidden">
+            <h1 id="user-welcome">Portal do Professor</h1>
+            <div class="sub">Painel de Controle</div>
+            
+            <div class="grid">
+                <div class="grid-item" onclick="app.showSection('sec-reserva')"><i class="fa fa-box"></i><br>Reservar</div>
+                <div class="grid-item" onclick="app.showSection('sec-cronograma')"><i class="fa fa-calendar"></i><br>Cronograma</div>
+                <div class="grid-item" style="grid-column: span 2;" onclick="app.showSection('sec-ti')"><i class="fa fa-tools"></i><br>Abrir Chamado NTI</div>
+            </div>
+
+            <section id="sec-reserva" class="hidden" style="margin-top: 20px;">
+                <h3>Nova Reserva</h3>
+                <select id="res-equip">
+                    <option>TV 1</option><option>TV 2</option><option>TV 3</option>
+                    <option>Chromebook</option><option>Sala de Informática</option>
+                </select>
+                <label>Retirada:</label>
+                <div style="display:flex; gap:5px;"><input type="date" id="res-date-in"><input type="time" id="res-time-in"></div>
+                <label>Devolução:</label>
+                <div style="display:flex; gap:5px;"><input type="date" id="res-date-out"><input type="time" id="res-time-out"></div>
+                <button class="btn btn-main" onclick="app.makeReservation()">Confirmar Reserva</button>
+            </section>
+
+            <section id="sec-cronograma" class="hidden" style="margin-top: 20px;">
+                <h3>Cronograma em Tempo Real</h3>
+                <div id="cronograma-list"></div>
+            </section>
+
+            <section id="sec-ti" class="hidden" style="margin-top: 20px;">
+                <h3>Suporte Técnico</h3>
+                <select id="ti-cat">
+                    <option>Internet</option><option>Computador</option><option>TV</option><option>Outro</option>
+                </select>
+                <textarea id="ti-desc" placeholder="Descreva o problema..."></textarea>
+                <button class="btn btn-main" onclick="app.openTicket()">Enviar Chamado</button>
+            </section>
+
+            <button class="btn btn-outline" style="margin-top: 30px; border-color: rgba(255,255,255,0.2);" onclick="location.reload()">Sair do Sistema</button>
+        </div>
+    </div>
+
+    <div id="chat-sidebar" class="hidden">
+        <div style="background: var(--primary); padding: 10px; border-radius: 18px 18px 0 0; font-weight: bold; font-size: 14px; text-align: center;">CHAT PROFESSORES</div>
+        <div class="chat-msgs" id="chat-list"></div>
+        <div class="chat-input">
+            <input type="text" id="chat-msg" placeholder="Sua mensagem..." style="margin:0; border-radius: 10px 0 0 10px;">
+            <button onclick="app.sendChat()" style="background: var(--primary); border:none; width: 50px; border-radius: 0 10px 10px 0; color: white;">➔</button>
         </div>
     </div>
 
 <script>
-    // Configure com seus dados do Firebase
+    // CONFIGURAÇÃO FIREBASE (SUBSTITUA PELA SUA SE NECESSÁRIO)
     const firebaseConfig = { databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    function show(id) {
-        document.querySelectorAll('#app > div').forEach(div => div.classList.add('hidden'));
-        document.getElementById(id).classList.remove('hidden');
-    }
+    const app = {
+        user: null,
 
-    const auth = {
-        register() {
-            const nome = document.getElementById('reg-nome').value;
-            const pront = document.getElementById('reg-pront').value;
-            const materia = document.getElementById('reg-materia').value;
-            const pass = document.getElementById('reg-pass').value;
-
-            if(nome && pront && pass) {
-                db.ref('usuarios/professores/' + pront).set({ nome, pront, materia, pass })
-                .then(() => { alert("Cadastro realizado!"); show('screen-login'); });
-            } else { alert("Preencha tudo!"); }
+        toggleAuth(isReg) {
+            document.getElementById('login-form').classList.toggle('hidden', isReg);
+            document.getElementById('register-form').classList.toggle('hidden', !isReg);
         },
 
-        login() {
-            const pront = document.getElementById('login-pront').value;
-            const pass = document.getElementById('login-pass').value;
+        async register() {
+            const nome = document.getElementById('r-nome').value;
+            const pront = document.getElementById('r-pront').value;
+            const materia = document.getElementById('r-materia').value;
 
-            db.ref('usuarios/professores/' + pront).once('value', (snap) => {
-                if(snap.exists() && snap.val().pass === pass) {
-                    document.getElementById('user-name').innerText = "Prof. " + snap.val().nome;
-                    show('screen-menu');
-                } else { alert("Prontuário ou senha inválidos!"); }
+            if(!nome || !pront) return alert("Preencha os campos!");
+
+            const check = await db.ref('usuarios/professores/'+pront).once('value');
+            if(check.exists()) return alert("Prontuário já cadastrado!");
+
+            await db.ref('usuarios/professores/'+pront).set({
+                nome, pront, materia, senha: 'Pmsp2026', primAcesso: true
+            });
+            alert("Cadastrado com sucesso! Use a senha padrão.");
+            this.toggleAuth(false);
+        },
+
+        async login() {
+            const pront = document.getElementById('l-pront').value;
+            const pass = document.getElementById('l-pass').value;
+
+            const snap = await db.ref('usuarios/professores/'+pront).once('value');
+            if(!snap.exists() || snap.val().senha !== pass) return alert("Credenciais inválidas!");
+
+            const u = snap.val();
+            if(u.primAcesso) {
+                this.user = u;
+                document.getElementById('login-form').classList.add('hidden');
+                document.getElementById('force-pass').classList.remove('hidden');
+            } else {
+                this.initSystem(u);
+            }
+        },
+
+        async changePassword() {
+            const nova = document.getElementById('new-pass').value;
+            if(nova.length < 4 || nova === 'Pmsp2026') return alert("Escolha uma senha segura e diferente da padrão!");
+
+            await db.ref('usuarios/professores/'+this.user.pront).update({
+                senha: nova, primAcesso: false
+            });
+            
+            const snap = await db.ref('usuarios/professores/'+this.user.pront).once('value');
+            this.initSystem(snap.val());
+        },
+
+        initSystem(u) {
+            this.user = u;
+            document.getElementById('auth-area').classList.add('hidden');
+            document.getElementById('main-menu').classList.remove('hidden');
+            document.getElementById('chat-sidebar').classList.remove('hidden');
+            document.getElementById('user-welcome').innerText = "Olá, " + u.nome.split(' ')[0];
+            this.sync();
+        },
+
+        showSection(id) {
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+        },
+
+        async makeReservation() {
+            const equip = document.getElementById('res-equip').value;
+            const dIn = document.getElementById('res-date-in').value;
+            const tIn = document.getElementById('res-time-in').value;
+            const dOut = document.getElementById('res-date-out').value;
+            const tOut = document.getElementById('res-time-out').value;
+
+            if(!dIn || !tIn) return alert("Preencha as datas!");
+
+            // Lógica simples de conflito (pode ser aprimorada)
+            const snap = await db.ref('reservas').once('value');
+            let conflito = false;
+            snap.forEach(r => {
+                if(r.val().equip === equip && r.val().status !== 'Finalizado' && r.val().dIn === dIn) conflito = true;
+            });
+
+            if(conflito) return alert("Este equipamento já possui reserva para esta data!");
+
+            await db.ref('reservas').push({
+                prof: this.user.nome, equip, dIn, tIn, dOut, tOut, status: 'Reservado'
+            });
+            alert("Reserva concluída!");
+            this.showSection('sec-cronograma');
+        },
+
+        async updateStatus(id, novoStatus) {
+            let updates = { status: novoStatus };
+            if(novoStatus === 'Finalizado') updates.baixaTime = new Date().toLocaleString();
+            await db.ref('reservas/'+id).update(updates);
+        },
+
+        async openTicket() {
+            const cat = document.getElementById('ti-cat').value;
+            const desc = document.getElementById('ti-desc').value;
+            await db.ref('chamados').push({
+                prof: this.user.nome, cat, desc, data: new Date().toLocaleString(), status: 'Aberto'
+            });
+            alert("Chamado aberto!");
+            this.showSection('sec-cronograma');
+        },
+
+        sendChat() {
+            const msg = document.getElementById('chat-msg').value;
+            if(!msg) return;
+            db.ref('chat').push({ nome: this.user.nome, msg, time: new Date().toLocaleTimeString() });
+            document.getElementById('chat-msg').value = "";
+        },
+
+        sync() {
+            // Sync Cronograma
+            db.ref('reservas').on('value', snap => {
+                const list = document.getElementById('cronograma-list');
+                list.innerHTML = "";
+                snap.forEach(r => {
+                    const d = r.val();
+                    const isMe = d.prof === this.user.nome;
+                    list.innerHTML += `
+                        <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px; margin-bottom:10px; border-left: 4px solid var(--primary);">
+                            <small>${d.dIn} | ${d.tIn}</small><br>
+                            <b>${d.equip}</b> - ${d.prof} <br>
+                            <span class="status-badge ${d.status.toLowerCase()}">${d.status}</span>
+                            ${isMe && d.status === 'Reservado' ? `<button onclick="app.updateStatus('${r.key}', 'Retirado')" style="font-size:10px; padding:2px 5px; cursor:pointer;">Confirmar Retirada</button>` : ''}
+                            ${isMe && d.status === 'Retirado' ? `<button onclick="app.updateStatus('${r.key}', 'Finalizado')" style="font-size:10px; padding:2px 5px; cursor:pointer;">Confirmar Entrega</button>` : ''}
+                            ${d.baixaTime ? `<br><small style="color:var(--success)">Baixa: ${d.baixaTime}</small>` : ''}
+                        </div>`;
+                });
+            });
+
+            // Sync Chat
+            db.ref('chat').limitToLast(20).on('value', snap => {
+                const list = document.getElementById('chat-list');
+                list.innerHTML = "";
+                snap.forEach(m => {
+                    list.innerHTML += `<div style="margin-bottom:8px;"><b>${m.val().nome}:</b> ${m.val().msg} <small style="opacity:0.5; font-size:9px;">${m.val().time}</small></div>`;
+                });
+                list.scrollTop = list.scrollHeight;
             });
         }
     };
