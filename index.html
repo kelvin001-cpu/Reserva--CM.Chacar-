@@ -3,108 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PORTAL PROFESSOR | NTI 2026</title>
+    <title>SISTEMA NTI | Portal Professor</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --azul: #00adef; --neon: #00ff9d; --dark: #020617; --glass: rgba(15, 23, 42, 0.9); }
+        :root { --blue: #00adef; --green: #00ff9d; --red: #ff4757; --dark-bg: #010409; --card-bg: rgba(13, 17, 23, 0.95); }
+        
         body { 
             margin: 0; font-family: 'Poppins', sans-serif; 
-            background: var(--dark) url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072') no-repeat center center fixed; 
-            background-size: cover; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px;
+            background: var(--dark-bg) url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072') no-repeat center center fixed; 
+            background-size: cover; color: white; min-height: 100vh; padding: 20px;
         }
 
-        /* Identidade NTI */
-        .header { width: 100%; max-width: 900px; display: flex; justify-content: space-between; margin-bottom: 20px; }
-        .header h1 { font-size: 16px; letter-spacing: 3px; color: var(--azul); text-shadow: 0 0 10px var(--azul); margin:0; }
-        
-        .main-container { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; width: 100%; max-width: 1000px; }
-        .card { background: var(--glass); backdrop-filter: blur(15px); border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
-        
-        /* Menu de Equipamentos */
-        .grid-equip { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .btn-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; color: white; cursor: pointer; text-align: left; transition: 0.3s; }
-        .btn-item:hover { border-color: var(--azul); background: rgba(0, 173, 239, 0.1); }
-        .btn-item b { display: block; color: var(--azul); font-size: 14px; }
+        /* Topo */
+        .header-main { width: 100%; max-width: 1200px; margin: 0 auto 20px auto; display: flex; justify-content: space-between; align-items: center; }
+        .header-main h1 { font-size: 18px; letter-spacing: 2px; color: var(--blue); margin:0; }
 
-        /* Cronograma e Chamado */
-        .status-scroll { height: 250px; overflow-y: auto; margin-top: 10px; font-size: 13px; }
-        .item-reserva { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid var(--neon); }
-        
-        /* Chat e Chamado */
-        input, select, textarea { width: 100%; padding: 10px; margin-top: 5px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; outline: none; box-sizing: border-box; }
-        .btn-send { background: var(--azul); border: none; padding: 10px; width: 100%; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        /* Grid Principal */
+        .container { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 25px; 
+            max-width: 1200px; 
+            margin: 0 auto;
+        }
 
-        .chat-box { height: 150px; overflow-y: auto; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 12px; }
-        .footer { position: fixed; bottom: 10px; right: 20px; font-size: 10px; color: rgba(255,255,255,0.4); }
+        .card-box { 
+            background: var(--card-bg); 
+            border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 24px; 
+            padding: 25px; 
+            backdrop-filter: blur(10px);
+        }
+
+        h3 { margin-top: 0; font-weight: 600; font-size: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; color: var(--blue); }
+
+        /* --- SEÇÃO RESERVAS --- */
+        .list-equip { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
+        .row-equip { 
+            display: flex; justify-content: space-between; align-items: center; 
+            background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);
+        }
+        .row-equip b { font-size: 14px; }
+        .btn-reserva { background: var(--blue); color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 12px; }
+
+        /* --- SEÇÃO CHAMADOS --- */
+        .flex-form { display: flex; flex-direction: column; gap: 10px; }
+        select, textarea, input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3); color: white; font-family: inherit; }
+        .btn-chamado { background: var(--red); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+
+        /* --- SEÇÃO CRONOGRAMA & CHAT --- */
+        .live-feed { height: 180px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 12px; padding: 10px; font-size: 13px; margin-bottom: 15px; }
+        .log-item { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .log-item b { color: var(--green); }
+
+        .chat-area { height: 120px; overflow-y: auto; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 12px; margin-bottom: 10px; font-size: 12px; }
+        
+        .footer-nti { position: fixed; bottom: 15px; right: 25px; font-size: 11px; color: rgba(255,255,255,0.3); text-align: right; }
         .hidden { display: none !important; }
+
+        /* Layout Responsivo */
+        @media (max-width: 800px) { .container { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body onload="app.init()">
 
-    <div class="header">
+    <div class="header-main">
         <h1>SISTEMA NTI</h1>
-        <div id="user-info" style="font-size: 12px;">Conectado</div>
+        <div id="prof-tag" style="font-weight: bold; font-size: 13px;">Acesso Restrito</div>
     </div>
 
-    <div id="auth-screen" class="card" style="max-width: 400px; margin-top: 50px;">
-        <h3>Portal do Professor</h3>
-        <input type="number" id="in-pront" placeholder="Prontuário" oninput="app.checar(this.value)">
-        <div id="cad-extra" class="hidden">
-            <input type="text" id="in-nome" placeholder="Nome Completo">
-            <input type="text" id="in-materia" placeholder="Sua Matéria">
+    <div id="auth-screen" style="max-width: 400px; margin: 100px auto;" class="card-box">
+        <h3>Identificação do Professor</h3>
+        <input type="number" id="in-pront" placeholder="Digite seu Prontuário" oninput="app.verificar(this.value)">
+        <div id="cad-box" class="hidden">
+            <input type="text" id="in-nome" placeholder="Seu Nome Completo">
+            <input type="text" id="in-materia" placeholder="Sua Disciplina">
         </div>
-        <input type="password" id="in-pass" placeholder="Senha">
-        <button class="btn-send" onclick="app.entrar()">Acessar</button>
+        <input type="password" id="in-pass" placeholder="Sua Senha" style="margin-top: 10px;">
+        <button class="btn-reserva" style="width:100%; margin-top:15px; padding:15px;" onclick="app.logar()">ENTRAR</button>
     </div>
 
-    <div id="dash-screen" class="main-container hidden">
+    <div id="dash-screen" class="container hidden">
         
-        <div class="left-col">
-            <div class="card">
-                <h3>Reserva de Equipamentos</h3>
-                <div class="grid-equip">
-                    <button class="btn-item" onclick="app.fazerReserva('TV 01')"><b>📺 TV 01</b> Smart 55"</button>
-                    <button class="btn-item" onclick="app.fazerReserva('TV 02')"><b>📺 TV 02</b> Smart 55"</button>
-                    <button class="btn-item" onclick="app.fazerReserva('TV 03')"><b>📺 TV 03</b> Smart 55"</button>
-                    <button class="btn-item" onclick="app.fazerReserva('Chromebooks')"><b>💻 Chromebooks</b> Carrinho</button>
-                    <button class="btn-item" style="grid-column: span 2;" onclick="app.fazerReserva('Sala de Informática')"><b>🖥️ SALA DE INFORMÁTICA</b> Completa</button>
+        <div class="card-box">
+            <h3>📅 RESERVA DE EQUIPAMENTOS</h3>
+            <div class="list-equip">
+                <div class="row-equip">
+                    <span>📺 <b>TV SMART 01</b></span>
+                    <button class="btn-reserva" onclick="app.reservar('TV 01')">Agendar</button>
+                </div>
+                <div class="row-equip">
+                    <span>📺 <b>TV SMART 02</b></span>
+                    <button class="btn-reserva" onclick="app.reservar('TV 02')">Agendar</button>
+                </div>
+                <div class="row-equip">
+                    <span>📺 <b>TV SMART 03</b></span>
+                    <button class="btn-reserva" onclick="app.reservar('TV 03')">Agendar</button>
+                </div>
+                <div class="row-equip">
+                    <span>💻 <b>CARRINHO CHROMEBOOK</b></span>
+                    <button class="btn-reserva" onclick="app.reservar('Chromebooks')">Agendar</button>
+                </div>
+                <div class="row-equip">
+                    <span>🖥️ <b>SALA DE INFORMÁTICA</b></span>
+                    <button class="btn-reserva" onclick="app.reservar('Sala Info')">Agendar</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="column-right">
+            
+            <div class="card-box" style="margin-bottom: 25px;">
+                <h3>🆘 CHAMADO TÉCNICO NTI</h3>
+                <div class="flex-form">
+                    <select id="gravidade">
+                        <option value="Baixa">🟢 Gravidade: Baixa (Dúvida/Ajuste)</option>
+                        <option value="Média">🟡 Gravidade: Média (Lento/Travando)</option>
+                        <option value="Alta">🔴 Gravidade: Alta (Não liga/Parado)</option>
+                    </select>
+                    <textarea id="relato" rows="2" placeholder="O que aconteceu?"></textarea>
+                    <button class="btn-chamado" onclick="app.enviarChamado()">ABRIR CHAMADO</button>
                 </div>
             </div>
 
-            <div class="card" style="margin-top: 20px;">
-                <h3>🆘 Chamado NTI</h3>
-                <select id="chamado-gravidade">
-                    <option value="Baixa">🟢 Gravidade: Baixa</option>
-                    <option value="Média">🟡 Gravidade: Média</option>
-                    <option value="Alta">🔴 Gravidade: Alta (Urgente)</option>
-                </select>
-                <textarea id="chamado-relato" rows="3" placeholder="Conte o que houve..."></textarea>
-                <button class="btn-send" onclick="app.enviarChamado()">Abrir Chamado</button>
-            </div>
-        </div>
-
-        <div class="right-col">
-            <div class="card">
-                <h3 style="color: var(--neon);">🕒 Cronograma Live</h3>
-                <div id="feed-cronograma" class="status-scroll">
+            <div class="card-box">
+                <h3>🕒 CRONOGRAMA LIVE & CHAT</h3>
+                <div id="live-feed" class="live-feed">
                     </div>
+                <div class="chat-area" id="chat-msg"></div>
+                <div style="display: flex; gap: 5px;">
+                    <input type="text" id="chat-in" placeholder="Dúvida rápida...">
+                    <button class="btn-reserva" onclick="app.sendChat()">OK</button>
+                </div>
             </div>
 
-            <div class="card" style="margin-top: 20px;">
-                <h3>💬 Chat Conect NTI</h3>
-                <div id="chat-mensagens" class="chat-box"></div>
-                <input type="text" id="chat-input" placeholder="Conversar com Gestão/TI...">
-                <button class="btn-send" style="background: #222;" onclick="app.enviarChat()">Enviar</button>
-            </div>
         </div>
 
     </div>
 
-    <div class="footer">Feito pelo estagiário <b>Kelvin</b> | Programa <b>Conect NTI</b></div>
+    <div class="footer-nti">
+        Feito pelo estagiário <b>Kelvin</b><br>
+        Programa <b>Conect NTI</b>
+    </div>
 
 <script>
     const firebaseConfig = { databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com" };
@@ -114,14 +158,14 @@
     const app = {
         user: null, existe: false,
 
-        async checar(p) {
+        async verificar(p) {
             if(p.length < 3) return;
             const snap = await db.ref(`usuarios/professores/${p}`).once('value');
             this.existe = snap.exists();
-            document.getElementById('cad-extra').classList.toggle('hidden', this.existe);
+            document.getElementById('cad-box').classList.toggle('hidden', this.existe);
         },
 
-        async entrar() {
+        async logar() {
             const p = document.getElementById('in-pront').value;
             const s = document.getElementById('in-pass').value;
             if(this.existe) {
@@ -130,10 +174,10 @@
             } else {
                 const n = document.getElementById('in-nome').value;
                 const m = document.getElementById('in-materia').value;
-                if(!n || !s) return alert("Preencha tudo");
-                const user = { nome: n, materia: m, pront: p, pass: s };
-                await db.ref(`usuarios/professores/${p}`).set(user);
-                this.iniciar(user);
+                if(!n || !s) return alert("Complete o cadastro");
+                const u = { nome: n, materia: m, pront: p, pass: s };
+                await db.ref(`usuarios/professores/${p}`).set(u);
+                this.iniciar(u);
             }
         },
 
@@ -141,64 +185,48 @@
             this.user = user;
             document.getElementById('auth-screen').classList.add('hidden');
             document.getElementById('dash-screen').classList.remove('hidden');
-            document.getElementById('user-info').innerText = "Prof. " + user.nome;
-            this.carregarCronograma();
-            this.carregarChat();
+            document.getElementById('prof-tag').innerText = "PROF. " + user.nome.toUpperCase();
+            this.carregarDados();
         },
 
-        fazerReserva(item) {
-            const aula = prompt(`Para qual aula/horário deseja reservar o(a) ${item}?`);
-            if(aula) {
-                db.ref('reservas').push({
-                    prof: this.user.nome,
-                    item: item,
-                    aula: aula,
-                    timestamp: Date.now()
-                });
-            }
+        reservar(item) {
+            const aula = prompt(`Para qual aula você quer a ${item}?`);
+            if(aula) db.ref('reservas').push({ prof: this.user.nome, item, aula });
         },
 
         enviarChamado() {
-            const grav = document.getElementById('chamado-gravidade').value;
-            const relato = document.getElementById('chamado-relato').value;
-            if(relato) {
-                db.ref('chamados').push({
-                    prof: this.user.nome,
-                    gravidade: grav,
-                    relato: relato,
-                    status: 'Pendente'
-                });
-                alert("Chamado enviado ao TI Kelvin!");
-                document.getElementById('chamado-relato').value = "";
+            const g = document.getElementById('gravidade').value;
+            const r = document.getElementById('relato').value;
+            if(r) {
+                db.ref('chamados').push({ prof: this.user.nome, g, r, status: 'Aberto' });
+                alert("Chamado enviado ao NTI!");
+                document.getElementById('relato').value = "";
             }
         },
 
-        carregarCronograma() {
-            db.ref('reservas').limitToLast(10).on('value', snap => {
-                const feed = document.getElementById('feed-cronograma');
+        sendChat() {
+            const m = document.getElementById('chat-in').value;
+            if(m) {
+                db.ref('chat').push({ nome: this.user.nome, m });
+                document.getElementById('chat-in').value = "";
+            }
+        },
+
+        carregarDados() {
+            db.ref('reservas').on('value', snap => {
+                const feed = document.getElementById('live-feed');
                 feed.innerHTML = "";
                 snap.forEach(d => {
-                    const r = d.val();
-                    feed.innerHTML += `<div class="item-reserva"><b>${r.item}</b> reservado por <b>Prof. ${r.prof}</b> para <b>${r.aula}</b></div>`;
+                    feed.innerHTML += `<div class="log-item"><b>${d.val().prof}</b> reservou <b>${d.val().item}</b> (${d.val().aula})</div>`;
                 });
+                feed.scrollTop = feed.scrollHeight;
             });
-        },
 
-        enviarChat() {
-            const msg = document.getElementById('chat-input').value;
-            if(msg) {
-                db.ref('chat_geral').push({ prof: this.user.nome, msg: msg });
-                document.getElementById('chat-input').value = "";
-            }
-        },
-
-        carregarChat() {
-            db.ref('chat_geral').limitToLast(15).on('value', snap => {
-                const box = document.getElementById('chat-mensagens');
+            db.ref('chat').on('value', snap => {
+                const box = document.getElementById('chat-msg');
                 box.innerHTML = "";
                 snap.forEach(d => {
-                    const c = d.val();
-                    box.innerHTML += `<div><b>${c.prof}:</b> ${c.msg}</div>`;
+                    box.innerHTML += `<div><b>${d.val().nome}:</b> ${d.val().m}</div>`;
                 });
                 box.scrollTop = box.scrollHeight;
             });
