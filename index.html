@@ -1,262 +1,192 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NTI MASTER | Dashboard</title>
+    <title>SISTEMA NTI 2026 - CONTROLE TOTAL</title>
     
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-
     <style>
         :root {
-            --primary: #00adef;     /* Azul Neon */
-            --secondary: #004a99;   /* Azul Pref */
-            --success: #00ff9d;     /* Verde Neon */
-            --danger: #ff4757;      /* Vermelho Alerta */
-            --bg-glass: rgba(13, 17, 23, 0.85); /* Fundo vidro escuro */
-            --border: rgba(255, 255, 255, 0.1);
+            --azul-pref: #004a99;
+            --azul-sky: #00adef;
+            --neon: #00ff9d;
+            --danger: #ff4757;
+            --glass: rgba(0, 0, 0, 0.85);
         }
 
-        body { 
-            margin: 0; font-family: 'Poppins', sans-serif; 
-            background: #000 url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072') no-repeat center center fixed; 
-            background-size: cover; color: #fff; height: 100vh;
-            display: flex; align-items: center; justify-content: center;
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #000 url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
-        .container {
-            width: 90%; max-width: 500px;
-            background: var(--bg-glass);
-            backdrop-filter: blur(16px);
-            border-radius: 20px;
-            padding: 30px;
-            border: 1px solid var(--border);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-            animation: fadeIn 0.5s ease-out;
+        /* --- MENU SUPERIOR (O QUE VOCÊ PEDIU) --- */
+        header {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            z-index: 100;
         }
 
-        /* --- Header: "SISTEMA NTI" --- */
-        .brand { text-align: center; margin-bottom: 25px; }
-        .brand h1 { font-family: 'Orbitron', sans-serif; margin: 0; font-size: 24px; color: var(--primary); letter-spacing: 2px; text-shadow: 0 0 10px rgba(0, 173, 239, 0.3); }
-        .brand h2 { font-size: 12px; margin: 5px 0 0; opacity: 0.6; text-transform: uppercase; letter-spacing: 3px; }
-
-        /* --- Login Inputs --- */
-        .input-group { position: relative; margin-bottom: 15px; }
-        .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.4); }
-        
-        input {
-            width: 100%; padding: 16px 16px 16px 45px;
-            border-radius: 12px; border: 1px solid rgba(255,255,255,0.15);
-            background: rgba(0,0,0,0.3); color: white;
-            font-size: 14px; box-sizing: border-box; transition: 0.3s;
-        }
-        input:focus { border-color: var(--primary); outline: none; background: rgba(0, 173, 239, 0.1); }
-
-        /* --- Grid Menu: A Mudança Principal --- */
-        .menu-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr; /* 2 colunas */
-            gap: 15px;
-            margin-top: 20px;
+        .nav-links {
+            display: flex;
+            gap: 20px;
         }
 
-        .menu-card {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border);
-            border-radius: 15px;
-            padding: 20px 10px;
-            text-align: center;
+        .nav-item {
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: 0.3s;
         }
 
-        .menu-card:hover {
-            background: rgba(0, 173, 239, 0.1);
-            border-color: var(--primary);
-            transform: translateY(-5px);
+        .nav-item:hover, .nav-item.active {
+            color: var(--azul-sky);
         }
 
-        .menu-card i { font-size: 24px; color: var(--primary); margin-bottom: 10px; }
-        .menu-card b { font-size: 13px; font-weight: 600; text-transform: uppercase; }
-
-        /* Botão largo (para Chamado) */
-        .menu-wide { grid-column: span 2; border-color: rgba(255, 71, 87, 0.3); }
-        .menu-wide:hover { background: rgba(255, 71, 87, 0.1); border-color: var(--danger); }
-        .menu-wide i { color: var(--danger); }
-
-        /* --- Chat Integrado (Design Clean) --- */
-        #chat-area {
-            margin-top: 25px;
-            border-top: 1px solid var(--border);
-            padding-top: 15px;
+        /* --- CONTEÚDO CENTRALIZADO --- */
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
-        .chat-box {
-            height: 180px; overflow-y: auto;
-            background: rgba(0,0,0,0.2);
-            border-radius: 12px; padding: 15px; margin-bottom: 10px;
+
+        .main-card {
+            width: 100%;
+            max-width: 450px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 35px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9);
         }
-        .msg { padding: 8px 12px; border-radius: 15px; margin-bottom: 8px; font-size: 12px; max-width: 85%; width: fit-content; line-height: 1.4; }
-        .me { background: var(--secondary); align-self: flex-end; border-bottom-right-radius: 2px; margin-left: auto; }
-        .other { background: #333; border-bottom-left-radius: 2px; }
+
+        .btn-action {
+            width: 100%;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-action:hover {
+            background: var(--azul-sky);
+            border-color: var(--neon);
+        }
+
+        .btn-azul { background: var(--azul-pref); border: none; }
+
+        /* --- CHAT PÍLULA (ESTILO FOTO) --- */
+        .chat-area {
+            height: 250px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            text-align: left;
+        }
+
+        .balao {
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            max-width: 85%;
+            line-height: 1.4;
+        }
+
+        .me { background: var(--azul-pref); align-self: flex-end; border-bottom-right-radius: 2px; }
+        .other { background: #333; align-self: flex-start; border-bottom-left-radius: 2px; }
 
         .hidden { display: none !important; }
-        .btn-main { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
-        .btn-main:hover { background: #0096ce; transform: scale(1.02); }
 
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        footer {
+            padding: 15px;
+            font-size: 10px;
+            text-align: center;
+            opacity: 0.4;
+        }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div id="view-login">
-            <div class="brand">
-                <h1>SISTEMA NTI</h1>
-                <h2>Acesso Docente</h2>
-            </div>
-            
-            <div class="input-group">
-                <i class="fas fa-id-card"></i>
-                <input type="number" id="in-pront" placeholder="Prontuário" oninput="app.checar(this.value)">
-            </div>
-            
-            <div id="cad-extra" class="hidden input-group">
-                <i class="fas fa-user"></i>
-                <input type="text" id="in-nome" placeholder="Nome Completo">
-            </div>
-            
-            <div class="input-group">
-                <i class="fas fa-lock"></i>
-                <input type="password" id="in-pass" placeholder="Senha">
-            </div>
-
-            <button class="btn-main" onclick="app.logar()">ACESSAR SISTEMA</button>
+    <header>
+        <div style="font-weight: 700; color: var(--azul-sky); font-size: 14px;">NTI MASTER</div>
+        <div class="nav-links">
+            <a class="nav-item active" onclick="tab('home')">Início</a>
+            <a class="nav-item" onclick="tab('professor')">Professor</a>
+            <a class="nav-item" onclick="tab('ti')">TI</a>
+            <a class="nav-item" style="color: var(--danger);" onclick="location.reload()">Sair</a>
         </div>
+    </header>
 
-        <div id="view-portal" class="hidden">
-            <div class="brand">
-                <h1>NTI MASTER</h1>
-                <h2 id="welcome-msg">Bem-vindo, Professor</h2>
-            </div>
+    <main>
+        <div class="main-card">
+            <h1 id="title-portal" style="font-size: 22px; margin-bottom: 5px;">Portal: TI MASTER</h1>
+            <p id="date-now" style="font-size: 11px; color: var(--azul-sky); margin-bottom: 30px;">12/02/2026, 11:46:46</p>
 
-            <div class="menu-grid">
-                <div class="menu-card" onclick="app.reservar()">
-                    <i class="fas fa-calendar-check"></i>
-                    <b>Reservar</b>
-                </div>
-                
-                <div class="menu-card" onclick="alert('Em Breve')">
-                    <i class="fas fa-clock"></i>
-                    <b>Cronograma</b>
+            <div id="content-portal">
+                <button class="btn-action" style="border-color: var(--neon);">🛡️ Central de Chamados</button>
+                <button class="btn-action">🕒 Cronograma de Uso</button>
+
+                <div class="chat-area">
+                    <div class="balao other"><b>Suporte:</b> Testando sistema...</div>
+                    <div class="balao me">Tudo ok por aqui!</div>
                 </div>
 
-                <div class="menu-card menu-wide" onclick="app.chamado()">
-                    <i class="fas fa-tools"></i>
-                    <b>Central de Chamados TI</b>
-                </div>
-            </div>
-
-            <div id="chat-area">
-                <div class="chat-box" id="chat-msg"></div>
                 <div style="display:flex; gap:10px;">
-                    <input type="text" id="chat-in" placeholder="Dúvida rápida..." style="margin:0; padding:12px;">
-                    <button onclick="app.send()" style="width:50px; background:var(--success); border:none; border-radius:10px; cursor:pointer;"><i class="fas fa-paper-plane" style="color:#000;"></i></button>
+                    <input type="text" placeholder="Conversar..." style="flex:1; padding:12px; border-radius:10px; background:#111; border:1px solid #444; color:white;">
+                    <button style="background:var(--neon); border:none; border-radius:10px; width:45px; cursor:pointer; color:#000; font-weight:bold;">➔</button>
                 </div>
             </div>
-
-            <button onclick="location.reload()" style="background:none; border:none; color:#666; margin-top:15px; width:100%; cursor:pointer; font-size:11px;">DESCONECTAR</button>
         </div>
-    </div>
+    </main>
 
-<script>
-    const firebaseConfig = { databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com" };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    <footer>DESENVOLVIDO POR KELVIN | PROGRAMA CONECT NTI</footer>
 
-    const app = {
-        user: null, existe: false,
-
-        async checar(p) {
-            if(p.length < 3) return;
-            const snap = await db.ref('usuarios/professores/'+p).once('value');
-            this.existe = snap.exists();
-            document.getElementById('cad-extra').classList.toggle('hidden', this.existe);
-        },
-
-        async logar() {
-            const p = document.getElementById('in-pront').value;
-            const s = document.getElementById('in-pass').value;
+    <script>
+        function tab(t) {
+            const title = document.getElementById('title-portal');
+            if(t === 'home') title.innerText = "SISTEMA NTI 2026";
+            if(t === 'professor') title.innerText = "Portal: PROFESSOR";
+            if(t === 'ti') title.innerText = "Portal: TI MASTER";
             
-            if(this.existe) {
-                const snap = await db.ref('usuarios/professores/'+p).once('value');
-                if(snap.val().pass === s) this.init(snap.val()); else alert("Senha incorreta");
-            } else {
-                const n = document.getElementById('in-nome').value;
-                if(!n) return alert("Preencha o nome");
-                const u = { nome: n, pront: p, pass: s };
-                await db.ref('usuarios/professores/'+p).set(u);
-                this.init(u);
-            }
-        },
-
-        init(u) {
-            this.user = u;
-            document.getElementById('view-login').classList.add('hidden');
-            document.getElementById('view-portal').classList.remove('hidden');
-            document.getElementById('welcome-msg').innerText = "Olá, Prof. " + u.nome.split(' ')[0];
-            this.loadChat();
-        },
-
-        reservar() {
-            const item = prompt("O que deseja reservar? (TV, Chromebook, Sala)");
-            const hora = prompt("Qual horário/aula?");
-            if(item && hora) {
-                db.ref('atividades').push({ 
-                    prof: this.user.nome, equip: item, hora: hora, 
-                    tipo: 'RESERVA', timestamp: Date.now() 
-                });
-                alert("Reserva registrada!");
-            }
-        },
-
-        chamado() {
-            const prob = prompt("Descreva o problema técnico:");
-            if(prob) {
-                db.ref('atividades').push({ 
-                    prof: this.user.nome, motivo: prob, 
-                    nivel: '1', registro: 'SUPORTE', timestamp: Date.now() 
-                });
-                alert("Chamado aberto para o TI!");
-            }
-        },
-
-        send() {
-            const txt = document.getElementById('chat-in').value;
-            if(txt) {
-                db.ref('chat_geral').push({ nome: this.user.nome, msg: txt });
-                document.getElementById('chat-in').value = "";
-            }
-        },
-
-        loadChat() {
-            db.ref('chat_geral').limitToLast(15).on('value', snap => {
-                const box = document.getElementById('chat-msg');
-                box.innerHTML = "";
-                snap.forEach(d => {
-                    const isMe = d.val().nome === this.user.nome;
-                    box.innerHTML += `<div class="msg ${isMe ? 'me' : 'other'}">
-                        <b>${isMe ? 'Eu' : d.val().nome}:</b> ${d.val().msg}
-                    </div>`;
-                });
-                box.scrollTop = box.scrollHeight;
-            });
+            // Lógica para mudar os links ativos
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            event.target.classList.add('active');
         }
-    };
-</script>
+    </script>
 </body>
 </html>
