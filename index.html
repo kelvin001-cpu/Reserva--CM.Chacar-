@@ -2,205 +2,230 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NTI MASTER - ELITE PARNAÍBA</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISTEMA NTI 2026 - PORTAL PROFESSOR</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --neon-blue: #00d2ff;
-            --neon-green: #00ff9d;
-            --neon-red: #ff4757;
-            --glass: rgba(255, 255, 255, 0.1);
+            --azul-pref: #004a99;
+            --azul-sky: #00adef;
+            --neon: #00ff9d;
+            --danger: #ff4757;
         }
 
-        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        
         body { 
-            margin: 0; background: #000 url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072') no-repeat center center fixed;
-            background-size: cover; min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white; overflow: hidden;
+            margin: 0; 
+            font-family: 'Poppins', sans-serif; 
+            background: #000 url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072') no-repeat center center fixed; 
+            background-size: cover; 
+            color: white; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh;
         }
 
-        .master-panel {
-            width: 95%; max-width: 500px; background: rgba(0, 10, 20, 0.85);
-            backdrop-filter: blur(20px); border: 1px solid rgba(0, 210, 255, 0.3); border-radius: 30px;
-            padding: 20px; box-shadow: 0 0 50px rgba(0, 210, 255, 0.2); position: relative;
+        /* --- MENU CENTRALIZADO (ESTILO SUA FOTO) --- */
+        .container {
+            width: 100%;
+            max-width: 500px;
+            margin-top: 50px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 40px 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
-        .header { text-align: center; margin-bottom: 20px; border-bottom: 1px solid var(--glass); padding-bottom: 10px; }
-        .header h1 { font-family: 'Orbitron', sans-serif; font-size: 18px; color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); margin: 0; }
-        
-        /* CHAT TECH */
-        .chat-box {
-            background: rgba(0,0,0,0.5); border-radius: 15px; height: 150px; 
-            overflow-y: auto; padding: 15px; margin-bottom: 15px; border: 1px solid var(--glass);
-            font-size: 11px; font-family: 'Courier New', Courier, monospace;
-        }
-        .msg { margin-bottom: 8px; border-left: 2px solid var(--neon-blue); padding-left: 8px; }
-        .msg b { color: var(--neon-blue); }
+        h1 { font-size: 22px; letter-spacing: 2px; margin-bottom: 30px; }
+        h2 { font-size: 14px; opacity: 0.8; margin-bottom: 20px; color: var(--azul-sky); }
 
-        /* INPUTS */
-        .campo { 
-            width: 100%; height: 40px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass); 
-            border-radius: 10px; padding: 0 15px; color: white; font-size: 12px; margin-bottom: 10px;
-        }
-        .campo:focus { border-color: var(--neon-green); outline: none; }
-
-        /* GRID DE BOTÕES MASTER */
-        .grid-master { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .btn-master {
-            background: var(--glass); border: 1px solid rgba(255,255,255,0.1); padding: 15px;
-            border-radius: 15px; color: white; font-size: 11px; font-weight: 700; cursor: pointer;
-            display: flex; flex-direction: column; align-items: center; gap: 5px;
-        }
-        .btn-master:hover { background: rgba(0, 210, 255, 0.2); border-color: var(--neon-blue); }
-        .btn-reserva { border-left: 4px solid var(--neon-green); }
-        .btn-suporte { border-left: 4px solid var(--neon-red); }
-
-        .btn-send {
-            width: 100%; background: linear-gradient(90deg, #00d2ff, #3a7bd5);
-            border: none; height: 45px; border-radius: 12px; color: white; font-weight: 800;
-            cursor: pointer; text-transform: uppercase; margin-top: 5px;
+        .btn-menu {
+            width: 100%;
+            padding: 18px;
+            margin-bottom: 12px;
+            border-radius: 12px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            text-transform: uppercase;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* CRONOGRAMA */
-        .cron-list { max-height: 200px; overflow-y: auto; margin-top: 15px; }
-        .item-cron {
-            background: rgba(255,255,255,0.03); padding: 10px; border-radius: 10px; margin-bottom: 8px;
-            font-size: 10px; border-right: 3px solid var(--neon-blue);
+        .btn-menu:hover {
+            background: var(--azul-sky);
+            transform: scale(1.02);
         }
 
-        .hidden { display: none; }
-        .relogio { font-family: 'Orbitron', sans-serif; font-size: 10px; color: var(--neon-green); text-align: center; margin-top: 10px; }
+        .btn-reservar { background: var(--azul-pref); }
+        .btn-ti { border: 1px solid var(--danger); background: rgba(255, 71, 87, 0.1); }
+        .btn-ti:hover { background: var(--danger); }
+
+        /* --- CHAT ESTILO SUA FOTO (BALÕES LISOS) --- */
+        #chat-container {
+            width: 100%;
+            height: 250px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 15px;
+            margin-top: 20px;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .balao {
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            max-width: 80%;
+            line-height: 1.4;
+        }
+
+        .balao-me {
+            background: var(--azul-pref);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .balao-other {
+            background: #333;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .input-chat {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 10px;
+            border: 1px solid #444;
+            background: #111;
+            color: white;
+        }
+
+        .hidden { display: none !important; }
+        .footer { margin-top: auto; padding: 20px; font-size: 11px; opacity: 0.5; }
+
     </style>
 </head>
 <body>
 
-    <div class="master-panel">
-        <div class="header">
-            <h1>NTI MASTER CORE</h1>
-            <small style="font-size: 9px; opacity: 0.6; letter-spacing: 2px;">SANTANA DE PARNAÍBA - SP</small>
+    <div class="container">
+        <div id="login-area">
+            <h1>NTI MASTER 2026</h1>
+            <h2>ACESSO PROFESSOR</h2>
+            <input type="number" id="prontuario" class="input-chat" placeholder="Seu Prontuário" oninput="app.checar(this.value)">
+            <div id="cad-nome" class="hidden">
+                <input type="text" id="nome" class="input-chat" placeholder="Seu Nome">
+            </div>
+            <input type="password" id="senha" class="input-chat" placeholder="Sua Senha">
+            <button class="btn-menu btn-reservar" style="margin-top:15px" onclick="app.logar()">Entrar</button>
         </div>
 
-        <div id="scr-init">
-            <div class="chat-box" id="main-chat">
-                <div class="msg"><b>SISTEMA:</b> Aguardando identificação do terminal...</div>
+        <div id="portal-area" class="hidden">
+            <h1 id="boas-vindas">PORTAL PROFESSOR</h1>
+            
+            <button class="btn-menu btn-reservar" onclick="app.abrir('reservas')">📦 Reservar Equipamento</button>
+            <button class="btn-menu" onclick="app.abrir('cronograma')">🕒 Cronograma de Uso</button>
+            <button class="btn-menu btn-ti" onclick="app.abrir('chamado')">🆘 Central de Chamados</button>
+
+            <div id="chat-container"></div>
+            <div style="display:flex; gap:5px">
+                <input type="text" id="msg" class="input-chat" placeholder="Conversar...">
+                <button class="btn-menu" style="width:60px; margin-top:10px" onclick="app.enviar()">></button>
             </div>
             
-            <input type="text" class="campo" id="u-nome" placeholder="NOME DO DOCENTE">
-            <input type="text" class="campo" id="u-rp" placeholder="RP / PRONTUÁRIO">
-            <input type="text" class="campo" id="u-mat" placeholder="MATÉRIA">
-            
-            <button class="btn-send" onclick="app.login()">INICIALIZAR TERMINAL</button>
+            <button onclick="location.reload()" style="background:none; border:none; color:grey; margin-top:20px; cursor:pointer">DESCONECTAR</button>
         </div>
-
-        <div id="scr-main" class="hidden">
-            <div class="chat-box" id="user-chat"></div>
-            
-            <div class="grid-master">
-                <button class="btn-master btn-reserva" onclick="app.nav('res')">📅 RESERVAR<br>ATIVOS</button>
-                <button class="btn-master btn-suporte" onclick="app.nav('sup')">🛠️ CHAMADO<br>SUPORTE</button>
-            </div>
-            
-            <div class="cron-list" id="mini-cron"></div>
-            
-            <button class="btn-send" style="background: var(--neon-red); margin-top:15px; height: 35px; font-size:10px" onclick="location.reload()">LOGOUT</button>
-        </div>
-
-        <div id="scr-res" class="hidden">
-            <h3 style="font-size:14px; color:var(--neon-green)">AGENDAR EQUIPAMENTO</h3>
-            <select class="campo" id="res-eq">
-                <option>SALA DE INFORMÁTICA</option>
-                <option>CARRINHO CHROMEBOOKS</option>
-                <option>TV MÓVEL 01</option>
-            </select>
-            <input type="date" class="campo" id="res-data">
-            <input type="time" class="campo" id="res-hora">
-            <button class="btn-send" onclick="app.save('RESERVA')">CONFIRMAR</button>
-            <button onclick="app.nav('main')" style="background:none; border:none; color:white; cursor:pointer; width:100%; margin-top:10px; font-size:11px"><u>VOLTAR</u></button>
-        </div>
-
-        <div id="scr-sup" class="hidden">
-            <h3 style="font-size:14px; color:var(--neon-red)">SOLICITAR TÉCNICO</h3>
-            <input type="text" class="campo" id="sup-local" placeholder="LOCAL (EX: SALA 10)">
-            <textarea class="campo" id="sup-motivo" style="height:60px" placeholder="DESCREVA O PROBLEMA"></textarea>
-            <button class="btn-send" style="background:var(--neon-red)" onclick="app.save('SUPORTE')">ENVIAR URGENTE</button>
-            <button onclick="app.nav('main')" style="background:none; border:none; color:white; cursor:pointer; width:100%; margin-top:10px; font-size:11px"><u>VOLTAR</u></button>
-        </div>
-
-        <div class="relogio" id="timer">00/00/0000 00:00:00</div>
     </div>
 
+    <div class="footer">Desenvolvido por Kelvin | Programa Conect NTI</div>
+
 <script>
+    // Link do seu banco que vi na foto
+    const firebaseConfig = { databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
     const app = {
-        user: {},
-        chatLog: [],
+        user: null, existe: false,
 
-        login() {
-            this.user.nome = document.getElementById('u-nome').value.toUpperCase();
-            this.user.rp = document.getElementById('u-rp').value;
-            this.user.mat = document.getElementById('u-mat').value.toUpperCase();
-            
-            if(!this.user.nome || !this.user.rp) return alert("Identifique-se!");
-            
-            this.addMsg(`Usuário ${this.user.nome} conectado.`);
-            this.addMsg(`Acesso liberado para ${this.user.mat}.`);
-            this.nav('main');
+        async checar(p) {
+            if(p.length < 3) return;
+            const snap = await db.ref('usuarios/professores/'+p).once('value');
+            this.existe = snap.exists();
+            document.getElementById('cad-nome').classList.toggle('hidden', this.existe);
         },
 
-        nav(s) {
-            document.querySelectorAll('.master-panel > div[id^="scr"]').forEach(d => d.classList.add('hidden'));
-            document.getElementById('scr-'+s).classList.remove('hidden');
-            if(s === 'main') this.renderCron();
-        },
-
-        addMsg(t) {
-            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            this.chatLog.push(`[${time}] ${t}`);
-            this.updateChat();
-        },
-
-        updateChat() {
-            const boxes = [document.getElementById('main-chat'), document.getElementById('user-chat')];
-            boxes.forEach(box => {
-                if(box) box.innerHTML = this.chatLog.map(m => `<div class="msg"><b>LOG:</b> ${m}</div>`).join('');
-                box.scrollTop = box.scrollHeight;
-            });
-        },
-
-        save(tipo) {
-            let item = { tipo, prof: this.user.nome, mat: this.user.mat };
-            
-            if(tipo === 'RESERVA') {
-                item.desc = document.getElementById('res-eq').value;
-                item.info = document.getElementById('res-data').value + " às " + document.getElementById('res-hora').value;
+        async logar() {
+            const p = document.getElementById('prontuario').value;
+            const s = document.getElementById('senha').value;
+            if(this.existe) {
+                const snap = await db.ref('usuarios/professores/'+p).once('value');
+                if(snap.val().pass === s) this.init(snap.val()); else alert("Erro!");
             } else {
-                item.desc = "SUPORTE: " + document.getElementById('sup-local').value;
-                item.info = document.getElementById('sup-motivo').value;
+                const n = document.getElementById('nome').value;
+                const u = { nome: n, pront: p, pass: s };
+                await db.ref('usuarios/professores/'+p).set(u);
+                this.init(u);
             }
-
-            let db = JSON.parse(localStorage.getItem('nti_master_db') || '[]');
-            db.push(item);
-            localStorage.setItem('nti_master_db', JSON.stringify(db));
-            
-            this.addMsg(`${tipo} realizada com sucesso.`);
-            this.nav('main');
         },
 
-        renderCron() {
-            const list = document.getElementById('mini-cron');
-            let db = JSON.parse(localStorage.getItem('nti_master_db') || '[]');
-            list.innerHTML = db.reverse().slice(0, 5).map(r => `
-                <div class="item-cron">
-                    <b style="color:var(--neon-blue)">${r.tipo}: ${r.desc}</b><br>
-                    <span>${r.prof} | ${r.info}</span>
-                </div>
-            `).join('');
-        }
-    };
+        init(u) {
+            this.user = u;
+            document.getElementById('login-area').classList.add('hidden');
+            document.getElementById('portal-area').classList.remove('hidden');
+            document.getElementById('boas-vindas').innerText = "OLÁ, PROF. " + u.nome.toUpperCase();
+            this.ouvirChat();
+        },
 
-    setInterval(() => {
-        document.getElementById('timer').innerText = new Date().toLocaleString('pt-BR');
-    }, 1000);
+        abrir(tipo) {
+            if(tipo === 'reservas') {
+                const item = prompt("O que deseja reservar? (TV 01, TV 02, Chromebooks, Sala Info)");
+                const hora = prompt("Qual o horário/aula?");
+                if(item && hora) db.ref('atividades').push({ prof: this.user.nome, equip: item, hora: hora, tipo: 'RESERVA', timestamp: Date.now() });
+            }
+            if(tipo === 'chamado') {
+                const problema = prompt("Qual o problema técnico?");
+                if(problema) db.ref('atividades').push({ prof: this.user.nome, motivo: problema, nivel: '1', registro: 'SUPORTE', timestamp: Date.now() });
+            }
+            if(tipo === 'cronograma') { alert("Verificando banco de dados..."); }
+        },
+
+        enviar() {
+            const m = document.getElementById('msg').value;
+            if(m) {
+                db.ref('chat_geral').push({ nome: this.user.nome, msg: m });
+                document.getElementById('msg').value = "";
+            }
+        },
+
+        ouvirChat() {
+            db.ref('chat_geral').limitToLast(10).on('value', snap => {
+                const cont = document.getElementById('chat-container');
+                cont.innerHTML = "";
+                snap.forEach(d => {
+                    const isMe = d.val().nome === this.user.nome;
+                    cont.innerHTML += `<div class="balao ${isMe ? 'balao-me' : 'balao-other'}">
+                        <small style="display:block; font-size:9px; opacity:0.7">${d.val().nome}</small>
+                        ${d.val().msg}
+                    </div>`;
+                });
+                cont.scrollTop = cont.scrollHeight;
+            });
+        }
+    }
 </script>
 </body>
 </html>
