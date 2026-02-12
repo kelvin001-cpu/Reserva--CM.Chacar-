@@ -3,141 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NTI - Núcleo de Tecnologia e Inovação</title>
+    <title>SISTEMA NTI - Portal do Professor</title>
+    
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-
     <style>
-        :root { --primary: #00adef; --dark: #0a0a0a; --glass: rgba(255, 255, 255, 0.1); }
-        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        
+        :root { --accent: #00adef; --bg: #e0e5ec; --text: #444; }
         body { 
-            margin: 0; background: #000 url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072') no-repeat center center fixed; 
-            background-size: cover; min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white;
+            margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); 
+            color: var(--text); display: flex; flex-direction: column; align-items: center; 
+            min-height: 100vh; padding: 20px; box-sizing: border-box;
         }
 
-        .container-master {
-            width: 95%; max-width: 500px; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px);
-            padding: 30px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1); text-align: center;
+        /* Nome do Sistema no Topo */
+        .header-top { width: 100%; max-width: 450px; text-align: left; margin-bottom: 10px; }
+        .header-top h1 { font-size: 14px; letter-spacing: 2px; color: #888; margin: 0; }
+
+        .glass-card { 
+            width: 100%; max-width: 450px; background: var(--bg); 
+            padding: 40px 30px; border-radius: 30px; 
+            box-shadow: 20px 20px 60px #bec3c9, -20px -20px 60px #ffffff;
+            text-align: center; position: relative;
         }
+
+        h2 { color: var(--accent); margin: 0 0 10px 0; font-weight: 700; }
+        
+        input {
+            width: 100%; padding: 15px; margin: 12px 0; border: none; 
+            border-radius: 12px; background: var(--bg);
+            box-shadow: inset 6px 6px 12px #bec3c9, inset -6px -6px 12px #ffffff;
+            outline: none; font-weight: 600; color: var(--text);
+        }
+
+        .btn-prof {
+            width: 100%; padding: 15px; margin-top: 20px; border: none; 
+            border-radius: 12px; background: var(--accent); color: white;
+            font-weight: 700; cursor: pointer; box-shadow: 6px 6px 12px #bec3c9;
+            transition: 0.2s; text-transform: uppercase;
+        }
+        .btn-prof:hover { opacity: 0.9; }
+
+        /* Rodapé de Créditos no Cantinho */
+        .footer-credits {
+            position: fixed; bottom: 15px; right: 20px; font-size: 10px;
+            color: #999; text-align: right; line-height: 1.4;
+        }
+        .footer-credits b { color: var(--accent); }
 
         .hidden { display: none !important; }
-        input, select { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: none; font-weight: 600; }
-        
-        .btn-nti { 
-            width: 100%; padding: 15px; border-radius: 12px; border: none; 
-            background: var(--primary); color: white; font-weight: 700; cursor: pointer; text-transform: uppercase;
-        }
 
-        /* Estilo dos Cards das Funções */
-        .card-funcao {
-            background: var(--glass); padding: 15px; border-radius: 15px; margin-top: 15px;
-            text-align: left; border-left: 4px solid var(--primary);
+        /* Estilo das Ações Internas */
+        .grid-acoes { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; }
+        .card-acao { 
+            background: var(--bg); padding: 20px; border-radius: 20px; 
+            box-shadow: 6px 6px 12px #bec3c9, -6px -6px 12px #ffffff;
+            cursor: pointer; font-size: 12px; font-weight: 700; color: var(--text);
         }
+        .card-acao:active { box-shadow: inset 4px 4px 8px #bec3c9; }
     </style>
 </head>
-<body onload="app.init()">
+<body>
 
-    <div class="container-master">
-        <h2 id="cabecalho">NTI - NÚCLEO DE TECNOLOGIA</h2>
-        
-        <div id="section-auth">
-            <p id="msg-instrucao">Informe seu prontuário para acessar</p>
+    <div class="header-top">
+        <h1>SISTEMA NTI</h1>
+    </div>
+
+    <div class="glass-card">
+        <div id="auth-box">
+            <h2>PORTAL PROFESSOR</h2>
+            <p style="font-size: 12px; margin-bottom: 20px;">Identifique-se para gerenciar seus recursos.</p>
             
-            <input type="number" id="in-prontuario" placeholder="Prontuário" oninput="app.verificarUser(this.value)">
+            <input type="number" id="prontuario" placeholder="Seu Prontuário" oninput="checarProfessor(this.value)">
             
-            <div id="campos-cadastro" class="hidden">
-                <input type="text" id="in-nome" placeholder="Seu Nome Completo">
-                <input type="text" id="in-materia" placeholder="Sua Matéria/Área">
+            <div id="primeiro-acesso" class="hidden">
+                <input type="text" id="nome" placeholder="Nome Completo">
+                <input type="text" id="materia" placeholder="Sua Matéria">
             </div>
 
-            <div id="sessao-senha" class="hidden">
-                <input type="password" id="in-senha" placeholder="Sua Senha">
-                <button class="btn-nti" id="btn-acao" onclick="app.autenticar()">Entrar</button>
+            <div id="senha-box" class="hidden">
+                <input type="password" id="senha" placeholder="Senha">
+                <button class="btn-prof" onclick="entrar()">Acessar</button>
             </div>
         </div>
 
-        <div id="section-portal" class="hidden">
-            <h3 id="boas-vindas">Olá, Professor</h3>
-            
-            <div class="card-funcao">
-                <strong>📋 Membros do Núcleo</strong>
-                <p style="font-size: 12px; color: #ccc;">Veja quem são os professores e técnicos ativos.</p>
+        <div id="portal-box" class="hidden">
+            <h2 id="boas-vindas">Olá!</h2>
+            <div class="grid-acoes">
+                <div class="card-acao" onclick="abrirReserva()">📅 RESERVAR<br>EQUIPAMENTO</div>
+                <div class="card-acao" onclick="abrirChamado()">🆘 CHAMADO<br>TÉCNICO</div>
             </div>
 
-            <div class="card-funcao">
-                <strong>🛠️ Chamados Técnicos</strong>
-                <p style="font-size: 12px; color: #ccc;">Solicite reparos ou suporte de informática.</p>
+            <div style="margin-top: 35px; text-align: left;">
+                <small style="text-transform: uppercase; letter-spacing: 1px; color: #999;"><b>Cronograma Ativo:</b></small>
+                <div id="minhas-reservas" style="font-size: 13px; color: var(--accent); margin-top: 10px; font-weight: 600;">
+                    Sem agendamentos.
+                </div>
             </div>
 
-            <div class="card-funcao">
-                <strong>📅 Reserva de Equipamentos</strong>
-                <p style="font-size: 12px; color: #ccc;">Agende notebooks, projetores e kits de robótica.</p>
-            </div>
-
-            <button class="btn-nti" style="background: #333; margin-top: 20px;" onclick="location.reload()">Sair do Sistema</button>
+            <button onclick="location.reload()" style="background:none; border:none; color:#bbb; margin-top:40px; cursor:pointer; font-size: 11px; font-weight: bold;">DESCONECTAR</button>
         </div>
     </div>
 
+    <div class="footer-credits">
+        Feito pelo estagiário <b>Kelvin</b><br>
+        do programa <b>Conect NTI</b>
+    </div>
+
 <script>
-    // Config do seu Firebase
+    // Link do seu Firebase
     const firebaseConfig = { databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    const app = {
-        existe: false,
+    let profExistente = false;
 
-        init() { console.log("Sistema NTI Pronto"); },
+    async function checarProfessor(p) {
+        if(p.length < 3) return;
+        const snap = await db.ref('usuarios/professores/' + p).once('value');
+        profExistente = snap.exists();
 
-        // Função que checa se é usuário novo ou antigo
-        async verificarUser(pront) {
-            if(pront.length < 3) return;
+        document.getElementById('senha-box').classList.remove('hidden');
+        document.getElementById('primeiro-acesso').classList.toggle('hidden', profExistente);
+    }
+
+    async function entrar() {
+        const p = document.getElementById('prontuario').value;
+        const s = document.getElementById('senha').value;
+
+        if(profExistente) {
+            const snap = await db.ref('usuarios/professores/' + p).once('value');
+            if(snap.val().senha === s) carregarPortal(snap.val());
+            else alert("Senha incorreta!");
+        } else {
+            const n = document.getElementById('nome').value;
+            const m = document.getElementById('materia').value;
+            if(!n || !m || !s) return alert("Preencha todos os campos!");
             
-            const snap = await db.ref('usuarios/professores/' + pront).once('value');
-            this.existe = snap.exists();
-
-            const cad = document.getElementById('campos-cadastro');
-            const sen = document.getElementById('sessao-senha');
-            const btn = document.getElementById('btn-acao');
-
-            if(this.existe) {
-                cad.classList.add('hidden');
-                btn.innerText = "Entrar no Portal";
-            } else {
-                cad.classList.remove('hidden');
-                btn.innerText = "Finalizar Cadastro";
-            }
-            sen.classList.remove('hidden');
-        },
-
-        async autenticar() {
-            const p = document.getElementById('in-prontuario').value;
-            const s = document.getElementById('in-senha').value;
-            const n = document.getElementById('in-nome').value;
-            const m = document.getElementById('in-materia').value;
-
-            if(this.existe) {
-                // LOGIN
-                const snap = await db.ref('usuarios/professores/' + p).once('value');
-                if(snap.val().senha === s) this.abrirPortal(snap.val());
-                else alert("Senha Incorreta!");
-            } else {
-                // CADASTRO
-                if(!n || !s) return alert("Preencha Nome e Senha!");
-                const novo = { nome: n, prontuario: p, materia: m, senha: s };
-                await db.ref('usuarios/professores/' + p).set(novo);
-                this.abrirPortal(novo);
-            }
-        },
-
-        abrirPortal(user) {
-            document.getElementById('section-auth').classList.add('hidden');
-            document.getElementById('section-portal').classList.remove('hidden');
-            document.getElementById('boas-vindas').innerText = "Olá, " + user.nome;
-            document.getElementById('cabecalho').innerText = "NTI - PORTAL MASTER";
+            const novo = { nome: n, materia: m, prontuario: p, senha: s };
+            await db.ref('usuarios/professores/' + p).set(novo);
+            carregarPortal(novo);
         }
+    }
+
+    function carregarPortal(user) {
+        document.getElementById('auth-box').classList.add('hidden');
+        document.getElementById('portal-box').classList.remove('hidden');
+        document.getElementById('boas-vindas').innerText = "Olá, Prof. " + user.nome;
+        monitorar(user.nome);
+    }
+
+    function abrirReserva() {
+        const item = prompt("Equipamento:");
+        const hora = prompt("Horário/Aula:");
+        if(item && hora) {
+            db.ref('reservas').push({ prof: document.getElementById('boas-vindas').innerText, item, hora });
+        }
+    }
+
+    function abrirChamado() {
+        const desc = prompt("Descreva o problema para o TI:");
+        if(desc) {
+            db.ref('chamados').push({ prof: document.getElementById('boas-vindas').innerText, desc, status: 'Pendente' });
+        }
+    }
+
+    function monitorar(nome) {
+        db.ref('reservas').on('value', snap => {
+            const div = document.getElementById('minhas-reservas');
+            div.innerHTML = "";
+            snap.forEach(r => {
+                if(r.val().prof.includes(nome)) div.innerHTML += `• ${r.val().item} (${r.val().hora})<br>`;
+            });
+        });
     }
 </script>
 </body>
