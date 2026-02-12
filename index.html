@@ -2,178 +2,178 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SISTEMA NTI - MASTER</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Orbitron:wght@600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISTEMA NTI 2026 - REPLICA</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        :root { --azul-pref: #004a99; --azul-sky: #00adef; --neon: #00ff9d; --danger: #ff4757; }
-        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: 0.3s; }
-        body { 
-            margin: 0; background: #000b1a url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072') no-repeat center center fixed;
-            background-size: cover; min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white; padding: 15px;
-        }
-        .balao-vidro {
-            width: 100%; max-width: 500px; background: rgba(0, 10, 25, 0.8);
-            backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 30px;
-            padding: 25px; box-shadow: 0 25px 50px rgba(0,0,0,0.8); text-align: center;
-        }
-        h1 { font-family: 'Orbitron', sans-serif; font-size: 20px; color: var(--azul-sky); text-shadow: 0 0 10px rgba(0, 173, 239, 0.5); }
-        .campo { width: 100%; height: 45px; background: white; border-radius: 10px; border: none; margin-bottom: 10px; padding: 0 15px; font-weight: 600; color: #333; }
-        
-        /* Menu Principal em Grade */
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
-        .btn-menu { 
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); 
-            padding: 20px 10px; border-radius: 15px; color: white; cursor: pointer; font-size: 11px; font-weight: 700;
-        }
-        .btn-menu:hover { background: var(--azul-sky); color: #000; border-color: white; }
-        .btn-full { grid-column: span 2; }
-
-        /* Cronograma Estilo Terminal */
-        .cronograma-box { 
-            background: rgba(0,0,0,0.4); border-radius: 15px; padding: 15px; 
-            max-height: 250px; overflow-y: auto; text-align: left; border: 1px solid var(--azul-pref);
-        }
-        .card-reserva { 
-            background: rgba(255,255,255,0.05); border-left: 4px solid var(--neon); 
-            padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 11px;
-        }
-        .badge-baixa { 
-            background: var(--danger); color: white; border: none; padding: 4px 8px; 
-            border-radius: 5px; cursor: pointer; float: right; font-size: 9px; 
+        :root {
+            --azul-botao: #007bff;
+            --azul-texto: #00adef;
+            --verde-borda: #00ff9d;
+            --bg-card: rgba(0, 0, 0, 0.85);
         }
 
-        .hidden { display: none; }
-        .label-foco { color: var(--azul-sky); font-size: 10px; font-weight: 700; display: block; text-align: left; margin: 5px; }
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #000 url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        /* O Card Principal das Fotos */
+        .card-nti {
+            width: 90%;
+            max-width: 440px;
+            background: var(--bg-card);
+            backdrop-filter: blur(15px);
+            border-radius: 28px;
+            padding: 40px 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+        }
+
+        .data-hora {
+            color: var(--azul-texto);
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        h1 { font-size: 22px; margin: 0 0 5px 0; font-weight: 700; }
+        .sub-acesso { color: var(--azul-texto); font-size: 13px; font-weight: 600; text-transform: uppercase; margin-bottom: 30px; }
+
+        /* Estilo dos Inputs da Foto 3 */
+        input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            background: transparent;
+            color: white;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        /* Botão ENTRAR Azul Sólido */
+        .btn-entrar {
+            width: 100%;
+            padding: 16px;
+            background: var(--azul-botao);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+
+        /* Botões do Portal com Borda (Foto 2) */
+        .btn-portal {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--verde-borda);
+            color: white;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* Chat Estilo Pílula */
+        .chat-box {
+            background: rgba(0,0,0,0.4);
+            height: 180px;
+            border-radius: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .balao {
+            padding: 8px 15px;
+            border-radius: 15px;
+            font-size: 12px;
+            max-width: 85%;
+        }
+
+        .me { background: #004a99; align-self: flex-end; }
+        .other { background: #333; align-self: flex-start; }
+
+        .hidden { display: none !important; }
+        .footer-text { position: fixed; bottom: 20px; font-size: 10px; opacity: 0.5; }
     </style>
 </head>
 <body>
 
-    <div class="balao-vidro">
-        <div id="relogio" style="font-size: 10px; opacity: 0.6; margin-bottom: 10px;"></div>
-        <h1>SISTEMA NTI</h1>
+    <div class="card-nti">
+        <div id="login-section">
+            <h1>NTI MASTER 2026</h1>
+            <div class="sub-acesso">Acesso Professor</div>
+            
+            <input type="number" placeholder="Seu Prontuário">
+            <input type="password" placeholder="Sua Senha">
+            
+            <button class="btn-entrar" onclick="irParaPortal()">ENTRAR</button>
+        </div>
 
-        <div id="scr-auth">
-            <div id="box-cad">
-                <input type="text" class="campo" id="c-nome" placeholder="Nome Completo">
-                <input type="text" class="campo" id="c-rp" placeholder="Prontuário">
-                <input type="text" class="campo" id="c-mat" placeholder="Matéria (Ex: Matemática)">
-                <button class="btn-menu btn-full" style="background: var(--azul-sky); color: #000;" onclick="app.cadastrar()">CADASTRAR E ENTRAR</button>
+        <div id="portal-section" class="hidden">
+            <div class="data-hora" id="clock">12/02/2026, 11:51:00</div>
+            <h1>Portal: TI MASTER</h1>
+            
+            <div style="margin-top: 25px;">
+                <button class="btn-portal">🛡️ Central de Chamados</button>
+                <button class="btn-portal" style="border-color: #555;">🕒 Cronograma de Uso</button>
             </div>
-        </div>
 
-        <div id="scr-home" class="hidden">
-            <p id="welcome" style="font-size: 12px; font-weight: 600;"></p>
-            <div class="menu-grid">
-                <button class="btn-menu" onclick="app.nav('reserva')">📅 NOVA<br>RESERVA</button>
-                <button class="btn-menu" onclick="app.nav('ti')">🛠️ NTI CHAMADO<br>NP</button>
-                <button class="btn-menu btn-full" onclick="app.nav('cronograma')">🖥️ VER CRONOGRAMA EM TEMPO REAL</button>
+            <div class="chat-box">
+                <div class="balao other"><b>K:</b> test</div>
+                <div class="balao me"><b>TI MASTER:</b> testando</div>
             </div>
-        </div>
 
-        <div id="scr-reserva" class="hidden">
-            <h3>RESERVAR EQUIPAMENTO</h3>
-            <select class="campo" id="res-equip">
-                <option>TV 01</option>
-                <option>TV 02</option>
-                <option>TV 03</option>
-                <option>CARRINHO CHROMEBOOK</option>
-                <option>SALA DE INFORMÁTICA</option>
-            </select>
-            <span class="label-foco">RETIRADA (DATA E HORA)</span>
-            <input type="datetime-local" class="campo" id="res-saida">
-            <span class="label-foco">ENTREGA (DATA E HORA)</span>
-            <input type="datetime-local" class="campo" id="res-volta">
-            <button class="btn-menu btn-full" style="background: var(--neon); color:#000" onclick="app.salvarReserva()">CONFIRMAR RESERVA</button>
-            <button class="btn-menu btn-full" onclick="app.nav('home')">VOLTAR</button>
-        </div>
-
-        <div id="scr-cronograma" class="hidden">
-            <h3>CRONOGRAMA REAL</h3>
-            <div class="cronograma-box" id="lista-cronograma"></div>
-            <button class="btn-menu btn-full" style="margin-top:15px" onclick="app.nav('home')">VOLTAR AO MENU</button>
-        </div>
-
-        <div id="scr-ti" class="hidden">
-            <h3>CHAMADO NTI NP</h3>
-            <input type="text" class="campo" id="ti-local" placeholder="Local/Sala">
-            <textarea class="campo" id="ti-problema" style="height: 80px; padding: 10px;" placeholder="Descreva o problema..."></textarea>
-            <button class="btn-menu btn-full" style="background: var(--danger)" onclick="app.salvarChamado()">ABRIR CHAMADO</button>
-            <button class="btn-menu btn-full" onclick="app.nav('home')">VOLTAR</button>
+            <div style="display:flex; gap:8px;">
+                <input type="text" placeholder="Conversar..." style="margin:0; border-color: #444;">
+                <button style="background:var(--verde-borda); border:none; border-radius:10px; width:45px; cursor:pointer;">➔</button>
+            </div>
+            
+            <button onclick="location.reload()" style="background:none; border:none; color:#666; margin-top:15px; cursor:pointer; font-size:10px; text-transform:uppercase;">Desconectar</button>
         </div>
     </div>
 
-<script>
-    const app = {
-        user: null,
-        reservas: JSON.parse(localStorage.getItem('nti_db_v3') || '[]'),
+    <div class="footer-text">Desenvolvido por Kelvin | Programa Conect NTI</div>
 
-        cadastrar() {
-            const nome = document.getElementById('c-nome').value;
-            const rp = document.getElementById('c-rp').value;
-            const mat = document.getElementById('c-mat').value;
-            if(!nome || !rp || !mat) return alert("Preencha tudo!");
-            
-            this.user = { nome, rp, mat };
-            document.getElementById('welcome').innerText = `PROF: ${nome.toUpperCase()} (${mat})`;
-            this.nav('home');
-        },
-
-        nav(tela) {
-            document.querySelectorAll('.balao-vidro > div[id^="scr"]').forEach(s => s.classList.add('hidden'));
-            document.getElementById('scr-' + tela).classList.remove('hidden');
-            if(tela === 'cronograma') this.renderCron();
-        },
-
-        salvarReserva() {
-            const res = {
-                id: Date.now(),
-                prof: this.user.nome,
-                materia: this.user.mat,
-                equip: document.getElementById('res-equip').value,
-                inicio: document.getElementById('res-saida').value.replace('T', ' '),
-                fim: document.getElementById('res-volta').value.replace('T', ' '),
-                status: 'EM USO'
-            };
-            this.reservas.push(res);
-            this.sync();
-            alert("Reserva confirmada no Cronograma!");
-            this.nav('cronograma');
-        },
-
-        renderCron() {
-            const container = document.getElementById('lista-cronograma');
-            if(this.reservas.length === 0) { container.innerHTML = "<p style='font-size:10px; opacity:0.5'>Nenhuma atividade no momento.</p>"; return; }
-            
-            container.innerHTML = this.reservas.slice().reverse().map(r => `
-                <div class="card-reserva" style="border-left-color: ${r.status === 'DEVOLVIDO' ? '#666' : 'var(--neon)'}">
-                    ${r.status === 'EM USO' ? `<button class="badge-baixa" onclick="app.darBaixa(${r.id})">DAR BAIXA</button>` : `<span style="float:right; color:#666">ENTREGUE</span>`}
-                    <b>${r.equip}</b><br>
-                    <small>PROF: ${r.prof.toUpperCase()} | ${r.materia}</small><br>
-                    <small style="color:var(--azul-sky)">Período: ${r.inicio} até ${r.fim}</small>
-                </div>
-            `).join('');
-        },
-
-        darBaixa(id) {
-            this.reservas = this.reservas.map(r => r.id === id ? {...r, status: 'DEVOLVIDO'} : r);
-            this.sync();
-            this.renderCron();
-        },
-
-        salvarChamado() {
-            alert("Chamado NTI enviado com sucesso!");
-            this.nav('home');
-        },
-
-        sync() {
-            localStorage.setItem('nti_db_v3', JSON.stringify(this.reservas));
+    <script>
+        function irParaPortal() {
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('portal-section').classList.remove('hidden');
         }
-    };
 
-    setInterval(() => {
-        document.getElementById('relogio').innerText = new Date().toLocaleString('pt-BR');
-    }, 1000);
-</script>
+        // Relógio igual ao seu
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleString('pt-BR');
+        }, 1000);
+    </script>
 </body>
 </html>
