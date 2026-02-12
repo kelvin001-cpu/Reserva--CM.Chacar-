@@ -24,11 +24,12 @@
         }
 
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(15px); }
-        .modal-card { background: var(--glass); padding: 40px; border-radius: 30px; border: 1px solid var(--border); width: 450px; text-align: center; }
+        .modal-card { background: var(--glass); padding: 30px; border-radius: 30px; border: 1px solid var(--border); width: 480px; text-align: center; }
 
-        .footer-credit { position: fixed; bottom: 15px; right: 20px; font-size: 10px; opacity: 0.8; text-align: right; color: var(--primary); z-index: 999; }
+        /* CRÉDITOS NO CANTO */
+        .footer-credit { position: fixed; bottom: 15px; right: 20px; font-size: 11px; text-align: right; color: var(--primary); z-index: 999; line-height: 1.4; text-shadow: 1px 1px 2px black; }
 
-        nav { width: 300px; background: rgba(0, 0, 0, 0.9); border-right: 1px solid var(--border); padding: 25px; display: flex; flex-direction: column; gap: 8px; }
+        nav { width: 280px; background: rgba(0, 0, 0, 0.9); border-right: 1px solid var(--border); padding: 25px; display: flex; flex-direction: column; gap: 8px; }
         main { flex: 1; padding: 30px; overflow-y: auto; background: rgba(0,0,0,0.4); }
 
         .prof-profile { background: rgba(0, 173, 239, 0.1); border: 1px solid var(--primary); padding: 15px; border-radius: 15px; margin-bottom: 20px; }
@@ -37,10 +38,12 @@
 
         .card { background: var(--glass); padding: 20px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 15px; position: relative; }
         .grid-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
-        .grid-equip { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
+        .grid-equip { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
+
+        input, select, textarea { width: 100%; padding: 12px; border-radius: 10px; background: rgba(0,0,0,0.5); border: 1px solid #444; color: white; margin-top: 10px; box-sizing: border-box; }
+        .btn-main { width: 100%; padding: 14px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 15px; background: var(--primary); color: white; }
+        .btn-baixa { background: var(--danger); padding: 6px; font-size: 11px; margin-top: 8px; border-radius: 8px; border: none; color: white; cursor: pointer; }
         
-        input, select, textarea { width: 100%; padding: 12px; border-radius: 10px; background: rgba(0,0,0,0.5); border: 1px solid #333; color: white; margin-top: 10px; box-sizing: border-box; }
-        .btn-main { width: 100%; padding: 14px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 15px; background: var(--primary); color: white; transition: 0.3s; }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -49,46 +52,52 @@
     <div class="footer-credit">
         Desenvolvido por <b>Kelvin Almeida</b><br>
         Estagiário do Programa Conect NTI<br>
-        Núcleo de Tecnologia e Educação
+        Núcleo de Tecnologia e Inovação
     </div>
 
     <div id="screen-auth" class="overlay">
         <div class="modal-card">
-            <h2 style="color:var(--primary);">NTI MASTER</h2>
-            <p style="font-size: 11px; opacity: 0.8;">Facilitando a gestão e o progresso tecnológico escolar.</p>
+            <h1 style="color:var(--primary); margin:0;">NTI MASTER</h1>
+            <p style="font-size: 13px; margin: 15px 0; line-height: 1.6; opacity: 0.9;">
+                Sistema desenvolvido para facilitar o trabalho de gestores e professores, otimizando a gestão escolar e promovendo o progresso tecnológico através da educação e inovação.
+            </p>
+            
             <div id="login-box">
-                <input type="number" id="l-pront" placeholder="Prontuário">
-                <input type="password" id="l-pass" placeholder="Senha">
-                <button class="btn-main" onclick="app.login()">ENTRAR</button>
-                <p style="font-size: 10px; margin-top: 10px; color: var(--danger); cursor: pointer;" onclick="alert('Procure o Kelvin no NTI para resetar sua senha.')">Esqueci minha senha (Reset pelo TI)</p>
-                <p onclick="app.toggleAuth(true)" style="font-size: 11px; margin-top: 15px; cursor:pointer;">Novo aqui? <u>Cadastre-se</u></p>
+                <input type="number" id="l-pront" placeholder="Seu Prontuário">
+                <input type="password" id="l-pass" placeholder="Sua Senha">
+                <button class="btn-main" onclick="app.login()">ENTRAR NO PAINEL</button>
+                <p style="font-size: 11px; margin-top: 10px; color: var(--danger); cursor: pointer;" onclick="alert('Entre em contato com o Kelvin no NTI para resetar sua senha.')">Esqueceu a senha? Solicite Reset ao TI</p>
+                <p onclick="app.toggleAuth(true)" style="font-size: 11px; margin-top: 15px; cursor:pointer;">Primeiro acesso? <u>Cadastre-se</u></p>
             </div>
+
             <div id="cad-box" class="hidden">
                 <input type="text" id="c-nome" placeholder="Nome Completo">
                 <input type="number" id="c-pront" placeholder="Prontuário">
-                <input type="text" id="c-mat" placeholder="Matéria">
-                <button class="btn-main" style="background:var(--accent); color:black;" onclick="app.cadastrar()">CADASTRAR</button>
-                <p onclick="app.toggleAuth(false)" style="font-size: 11px; margin-top: 15px; cursor:pointer;">Voltar</p>
+                <input type="text" id="c-mat" placeholder="Matéria/Cargo">
+                <button class="btn-main" style="background:var(--accent); color:black;" onclick="app.cadastrar()">CRIAR CONTA</button>
+                <p onclick="app.toggleAuth(false)" style="font-size: 11px; margin-top: 15px; cursor:pointer;">Já sou cadastrado</p>
             </div>
         </div>
     </div>
 
     <div id="screen-password" class="overlay hidden">
         <div class="modal-card">
-            <h3>🔒 Nova Senha</h3>
-            <input type="password" id="new-p" placeholder="Crie sua senha pessoal">
-            <button class="btn-main" onclick="app.changePass()">SALVAR</button>
+            <i class="fa fa-lock" style="font-size: 30px; color: var(--accent);"></i>
+            <h3>Nova Senha Obrigatória</h3>
+            <p style="font-size: 12px;">Detectamos a senha padrão <b>Pmsp2026</b>. Defina sua senha pessoal:</p>
+            <input type="password" id="new-p" placeholder="Nova Senha">
+            <button class="btn-main" onclick="app.changePass()">ATUALIZAR SENHA</button>
         </div>
     </div>
 
     <nav id="sidebar" class="hidden">
         <div class="prof-profile">
-            <div id="p-nome" style="font-weight:600;"></div>
+            <div id="p-nome" style="font-weight:600; font-size: 14px;"></div>
             <small id="p-mat" style="opacity:0.6; font-size:10px;"></small>
         </div>
-        <div class="nav-item active" onclick="app.view('v-dash')"><i class="fa fa-chart-pie"></i> Dashboard</div>
-        <div class="nav-item" onclick="app.view('v-reserva')"><i class="fa fa-plus-circle"></i> Reservar</div>
-        <div class="nav-item" onclick="app.view('v-chat')"><i class="fa fa-comments"></i> Chat</div>
+        <div class="nav-item active" onclick="app.view('v-dash')"><i class="fa fa-chart-line"></i> Dashboard</div>
+        <div class="nav-item" onclick="app.view('v-reserva')"><i class="fa fa-calendar-check"></i> Reservar</div>
+        <div class="nav-item" onclick="app.view('v-chat')"><i class="fa fa-comments"></i> Chat Escola</div>
         <div class="nav-item" onclick="app.view('v-nti')"><i class="fa fa-headset"></i> Chamado NTI</div>
         <div class="nav-item" style="color:var(--danger); margin-top:auto;" onclick="location.reload()"><i class="fa fa-power-off"></i> Sair</div>
     </nav>
@@ -96,30 +105,36 @@
     <main id="main-content" class="hidden">
         <div id="v-dash" class="content-view">
             <div class="grid-charts">
-                <div class="card" style="height: 300px;"><canvas id="barChart"></canvas></div>
-                <div class="card" style="height: 300px;"><canvas id="pieChart"></canvas></div>
+                <div class="card" style="height: 280px;"><canvas id="barChart"></canvas></div>
+                <div class="card" style="height: 280px;"><canvas id="pieChart"></canvas></div>
             </div>
-            <h3>Cronograma / Baixa de Equipamento</h3>
+            <h3>Cronograma Ativo / Dar Baixa</h3>
             <div id="cron-list"></div>
         </div>
 
         <div id="v-reserva" class="content-view hidden">
+            <h2>Equipamentos Disponíveis</h2>
             <div class="grid-equip" id="equip-render"></div>
         </div>
 
         <div id="v-nti" class="content-view hidden">
-            <h2>Suporte NTI</h2>
+            <h2>Suporte Técnico NTI</h2>
             <div class="card" style="max-width: 500px;">
-                <select id="nti-grav"><option value="Baixa">🟢 Baixa</option><option value="Média">🟡 Média</option><option value="Alta">🔴 Alta</option></select>
-                <textarea id="nti-txt" placeholder="Descreva o problema para o Kelvin..." rows="4"></textarea>
+                <label>Gravidade do Problema</label>
+                <select id="nti-grav">
+                    <option value="Baixa">🟢 Baixa (Apenas dúvida/ajuste)</option>
+                    <option value="Média">🟡 Média (Prejudica a aula)</option>
+                    <option value="Alta">🔴 Alta (Urgente / Equipamento parado)</option>
+                </select>
+                <textarea id="nti-txt" placeholder="Descreva o que está acontecendo..." rows="4"></textarea>
                 <button class="btn-main" onclick="app.sendNTI()">ABRIR CHAMADO</button>
             </div>
         </div>
 
         <div id="v-chat" class="content-view hidden">
-            <div id="chat-box" style="height:350px; background:rgba(0,0,0,0.2); border-radius:15px; padding:15px; overflow-y:auto;"></div>
+            <div id="chat-box" style="height:350px; background:rgba(0,0,0,0.2); border-radius:20px; padding:20px; overflow-y:auto; border: 1px solid var(--border);"></div>
             <div style="display:flex; gap:10px; margin-top:10px;">
-                <input type="text" id="chat-in" placeholder="Sua mensagem...">
+                <input type="text" id="chat-in" placeholder="Digite sua mensagem...">
                 <button class="btn-main" style="margin:0; width:100px;" onclick="app.sendChat()">OK</button>
             </div>
         </div>
@@ -127,12 +142,12 @@
 
     <div id="modal-res" class="overlay hidden">
         <div class="modal-card" style="text-align:left;">
-            <h3 id="res-title"></h3>
-            <input type="text" id="r-sala" placeholder="Sala">
-            <label>Retirada</label><input type="datetime-local" id="r-ini">
-            <label>Entrega</label><input type="datetime-local" id="r-fim">
-            <button class="btn-main" onclick="app.confirmRes()">RESERVAR</button>
-            <button class="btn-main" style="background:#444" onclick="document.getElementById('modal-res').classList.add('hidden')">SAIR</button>
+            <h3 id="res-title" style="color:var(--primary);"></h3>
+            <label>Sala da Atividade</label><input type="text" id="r-sala" placeholder="Ex: Sala 02, Auditório...">
+            <label>Data/Hora da Retirada</label><input type="datetime-local" id="r-ini">
+            <label>Data/Hora da Entrega</label><input type="datetime-local" id="r-fim">
+            <button class="btn-main" onclick="app.confirmRes()">CONFIRMAR RESERVA</button>
+            <button class="btn-main" style="background:#333" onclick="document.getElementById('modal-res').classList.add('hidden')">VOLTAR</button>
         </div>
     </div>
 
@@ -140,7 +155,7 @@
     const firebaseConfig = { databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    let chartBar, chartPie;
+    let chartB, chartP;
 
     const app = {
         user: null, currentEq: null,
@@ -148,8 +163,9 @@
 
         async cadastrar() {
             const n = document.getElementById('c-nome').value, p = document.getElementById('c-pront').value, m = document.getElementById('c-mat').value;
+            if(!n || !p) return alert("Preencha os dados!");
             await db.ref('usuarios/'+p).set({ nome: n, pront: p, materia: m, pass: 'Pmsp2026' });
-            alert("Sucesso! Senha: Pmsp2026"); this.toggleAuth(false);
+            alert("Cadastrado! Use a senha padrão: Pmsp2026"); this.toggleAuth(false);
         },
 
         async login() {
@@ -159,11 +175,12 @@
                 this.user = snap.val();
                 if(s === 'Pmsp2026') document.getElementById('screen-password').classList.remove('hidden');
                 else this.start();
-            } else alert("Dados incorretos!");
+            } else alert("Prontuário ou senha incorretos!");
         },
 
         async changePass() {
             const np = document.getElementById('new-p').value;
+            if(np.length < 4) return alert("Senha muito curta!");
             await db.ref('usuarios/'+this.user.pront).update({ pass: np });
             this.user.pass = np; document.getElementById('screen-password').classList.add('hidden'); this.start();
         },
@@ -190,39 +207,62 @@
                     const d = a.val();
                     if(d.status === 'ativo') {
                         counts[d.equip]++; ocupados[d.equip] = true;
-                        list.innerHTML += `<div class="card"><b>${d.equip}</b> - Prof. ${d.prof} (${d.sala})<br><button class="btn-main" style="padding:5px; background:var(--danger)" onclick="app.baixa('${a.key}')">DAR BAIXA</button></div>`;
+                        list.innerHTML += `<div class="card" style="border-left: 5px solid var(--primary)">
+                            <b>${d.equip}</b> - Prof. ${d.prof} (${d.sala})<br>
+                            <small>Retirada: ${d.ini.replace('T',' ')} | Entrega: ${d.fim.replace('T',' ')}</small><br>
+                            <button class="btn-baixa" onclick="app.baixa('${a.key}')">DAR BAIXA (LIBERAR)</button>
+                        </div>`;
                     }
                 });
 
                 eqs.forEach(e => {
-                    grid.innerHTML += `<div class="card"><h4>${e}</h4><p>${ocupados[e]?'EM USO':'LIVRE'}</p>${!ocupados[e]?`<button class="btn-main" onclick="app.openRes('${e}')">AGENDAR</button>`:''}</div>`;
+                    grid.innerHTML += `<div class="card" style="text-align:center;">
+                        <h4 style="margin:0">${e}</h4>
+                        <p style="font-size:11px; color:${ocupados[e]? 'var(--danger)':'var(--accent)'}">${ocupados[e]?'EM USO':'LIVRE'}</p>
+                        ${!ocupados[e]?`<button class="btn-main" style="padding:8px; font-size:12px;" onclick="app.openRes('${e}')">AGENDAR</button>`:''}
+                    </div>`;
                 });
                 this.updateCharts(counts);
             });
 
             db.ref('chat').on('value', s => {
                 const b = document.getElementById('chat-box'); b.innerHTML = "";
-                s.forEach(m => { b.innerHTML += `<div style="font-size:12px; margin-bottom:5px;"><b>${m.val().user}:</b> ${m.val().txt}</div>`; });
+                s.forEach(m => { b.innerHTML += `<div style="font-size:12px; margin-bottom:10px; padding:8px; background:rgba(255,255,255,0.05); border-radius:10px;"><b>${m.val().user}:</b> ${m.val().txt}</div>`; });
                 b.scrollTop = b.scrollHeight;
             });
         },
 
         updateCharts(data) {
             const ctxB = document.getElementById('barChart'), ctxP = document.getElementById('pieChart');
-            if(chartBar) chartBar.destroy(); if(chartPie) chartPie.destroy();
-            chartBar = new Chart(ctxB, { type: 'bar', data: { labels: Object.keys(data), datasets: [{ label: 'Uso', data: Object.values(data), backgroundColor: '#00adef' }] }, options: { maintainAspectRatio: false } });
-            chartPie = new Chart(ctxP, { type: 'pie', data: { labels: Object.keys(data), datasets: [{ data: Object.values(data), backgroundColor: ['#00adef','#00ff9d','#ff4757','#ffa502','#2f3542'] }] }, options: { maintainAspectRatio: false } });
+            if(chartB) chartB.destroy(); if(chartP) chartP.destroy();
+            chartB = new Chart(ctxB, { type: 'bar', data: { labels: Object.keys(data), datasets: [{ label: 'Uso Atual', data: Object.values(data), backgroundColor: '#00adef' }] }, options: { maintainAspectRatio: false } });
+            chartP = new Chart(ctxP, { type: 'pie', data: { labels: Object.keys(data), datasets: [{ data: Object.values(data), backgroundColor: ['#00adef','#00ff9d','#ff4757','#ffa502','#9b59b6'] }] }, options: { maintainAspectRatio: false } });
         },
 
-        openRes(e) { this.currentEq = e; document.getElementById('res-title').innerText = e; document.getElementById('modal-res').classList.remove('hidden'); },
+        openRes(e) { this.currentEq = e; document.getElementById('res-title').innerText = "Reservar " + e; document.getElementById('modal-res').classList.remove('hidden'); },
+        
         async confirmRes() {
             const s = document.getElementById('r-sala').value, i = document.getElementById('r-ini').value, f = document.getElementById('r-fim').value;
+            if(!s || !i || !f) return alert("Preencha todos os campos da reserva!");
             await db.ref('atividades').push({ equip: this.currentEq, prof: this.user.nome, sala: s, ini: i, fim: f, status: 'ativo' });
             document.getElementById('modal-res').classList.add('hidden');
         },
-        async baixa(k) { if(confirm("Liberar?")) await db.ref('atividades/'+k).update({ status: 'off' }); },
-        sendChat() { const t = document.getElementById('chat-in').value; if(t) db.ref('chat').push({ user: this.user.nome, txt: t }); document.getElementById('chat-in').value=""; },
-        async sendNTI() { const g = document.getElementById('nti-grav').value, t = document.getElementById('nti-txt').value; await db.ref('chamados').push({ prof: this.user.nome, grav: g, problema: t }); alert("Kelvin recebeu seu chamado!"); }
+
+        async baixa(k) { if(confirm("Confirmar que o equipamento foi devolvido?")) await db.ref('atividades/'+k).update({ status: 'concluido' }); },
+        
+        sendChat() { 
+            const t = document.getElementById('chat-in').value; 
+            if(t) db.ref('chat').push({ user: "Prof. "+this.user.nome + " ("+this.user.materia+")", txt: t }); 
+            document.getElementById('chat-in').value=""; 
+        },
+
+        async sendNTI() { 
+            const g = document.getElementById('nti-grav').value, t = document.getElementById('nti-txt').value; 
+            if(!t) return alert("Descreva o problema!");
+            await db.ref('chamados').push({ prof: this.user.nome, grav: g, problema: t, data: new Date().toLocaleString() }); 
+            alert("Chamado enviado! O Kelvin analisará o problema.");
+            this.view('v-dash');
+        }
     };
 </script>
 </body>
