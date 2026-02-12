@@ -3,106 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA NTI - Portal do Professor</title>
+    <title>SISTEMA NTI - Educação & Inovação</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --accent: #00adef; --bg: #e0e5ec; --text: #444; }
+        :root {
+            --edu-blue: #2c3e50;
+            --edu-accent: #3498db;
+            --edu-green: #27ae60;
+            --white: #ffffff;
+            --bg-light: #f0f2f5;
+        }
+
         body { 
-            margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); 
-            color: var(--text); display: flex; flex-direction: column; align-items: center; 
-            min-height: 100vh; padding: 20px; box-sizing: border-box;
+            margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg-light); 
+            color: var(--edu-blue); display: flex; flex-direction: column; align-items: center; 
+            min-height: 100vh; padding: 20px;
         }
 
-        /* Nome do Sistema no Topo */
-        .header-top { width: 100%; max-width: 450px; text-align: left; margin-bottom: 10px; }
-        .header-top h1 { font-size: 14px; letter-spacing: 2px; color: #888; margin: 0; }
+        .header-top { width: 100%; max-width: 600px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .header-top h1 { font-size: 18px; color: var(--edu-blue); margin: 0; font-weight: 700; border-left: 4px solid var(--edu-accent); padding-left: 10px; }
 
-        .glass-card { 
-            width: 100%; max-width: 450px; background: var(--bg); 
-            padding: 40px 30px; border-radius: 30px; 
-            box-shadow: 20px 20px 60px #bec3c9, -20px -20px 60px #ffffff;
-            text-align: center; position: relative;
+        .main-card { 
+            width: 100%; max-width: 600px; background: var(--white); 
+            padding: 40px; border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            text-align: center;
         }
 
-        h2 { color: var(--accent); margin: 0 0 10px 0; font-weight: 700; }
-        
+        /* Inputs Organizados */
+        .form-group { text-align: left; margin-bottom: 15px; }
+        label { font-size: 12px; font-weight: 600; color: #7f8c8d; }
         input {
-            width: 100%; padding: 15px; margin: 12px 0; border: none; 
-            border-radius: 12px; background: var(--bg);
-            box-shadow: inset 6px 6px 12px #bec3c9, inset -6px -6px 12px #ffffff;
-            outline: none; font-weight: 600; color: var(--text);
+            width: 100%; padding: 12px; border: 2px solid #eee; 
+            border-radius: 10px; outline: none; font-size: 15px;
+            transition: 0.3s;
+        }
+        input:focus { border-color: var(--edu-accent); }
+
+        .btn-entrar {
+            width: 100%; padding: 15px; background: var(--edu-accent); color: white;
+            border: none; border-radius: 10px; font-weight: 700; cursor: pointer;
+            font-size: 16px; margin-top: 10px;
         }
 
-        .btn-prof {
-            width: 100%; padding: 15px; margin-top: 20px; border: none; 
-            border-radius: 12px; background: var(--accent); color: white;
-            font-weight: 700; cursor: pointer; box-shadow: 6px 6px 12px #bec3c9;
-            transition: 0.2s; text-transform: uppercase;
+        /* Menu Pic Educação - Separadinho */
+        .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; }
+        
+        .menu-item {
+            padding: 25px; border-radius: 15px; border: 1px solid #eee;
+            cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; align-items: center;
         }
-        .btn-prof:hover { opacity: 0.9; }
+        .menu-item:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-color: var(--edu-accent); }
+        .menu-item span { font-size: 30px; margin-bottom: 10px; }
+        .menu-item b { font-size: 14px; color: var(--edu-blue); }
 
-        /* Rodapé de Créditos no Cantinho */
-        .footer-credits {
-            position: fixed; bottom: 15px; right: 20px; font-size: 10px;
-            color: #999; text-align: right; line-height: 1.4;
-        }
-        .footer-credits b { color: var(--accent); }
+        /* Cronograma Estilizado */
+        .cronograma-box { margin-top: 30px; text-align: left; background: #f9f9f9; padding: 20px; border-radius: 12px; }
+        .reserva-tag { background: white; padding: 10px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid var(--edu-green); font-size: 13px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
 
+        .footer-credits { position: fixed; bottom: 15px; right: 20px; font-size: 11px; color: #bdc3c7; text-align: right; }
+        .footer-credits b { color: var(--edu-accent); }
         .hidden { display: none !important; }
-
-        /* Estilo das Ações Internas */
-        .grid-acoes { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; }
-        .card-acao { 
-            background: var(--bg); padding: 20px; border-radius: 20px; 
-            box-shadow: 6px 6px 12px #bec3c9, -6px -6px 12px #ffffff;
-            cursor: pointer; font-size: 12px; font-weight: 700; color: var(--text);
-        }
-        .card-acao:active { box-shadow: inset 4px 4px 8px #bec3c9; }
     </style>
 </head>
 <body>
 
     <div class="header-top">
         <h1>SISTEMA NTI</h1>
+        <div id="relogio" style="font-size: 12px; font-weight: 600;">00:00:00</div>
     </div>
 
-    <div class="glass-card">
+    <div class="main-card">
         <div id="auth-box">
-            <h2>PORTAL PROFESSOR</h2>
-            <p style="font-size: 12px; margin-bottom: 20px;">Identifique-se para gerenciar seus recursos.</p>
+            <h2 style="margin-top:0;">Bem-vindo, Professor</h2>
+            <p style="color: #7f8c8d; font-size: 14px;">Acesse as ferramentas tecnológicas do núcleo.</p>
             
-            <input type="number" id="prontuario" placeholder="Seu Prontuário" oninput="checarProfessor(this.value)">
+            <div class="form-group">
+                <label>Nº DO PRONTUÁRIO</label>
+                <input type="number" id="prontuario" placeholder="Ex: 123456" oninput="checarUser(this.value)">
+            </div>
             
-            <div id="primeiro-acesso" class="hidden">
-                <input type="text" id="nome" placeholder="Nome Completo">
-                <input type="text" id="materia" placeholder="Sua Matéria">
+            <div id="campos-novos" class="hidden">
+                <div class="form-group">
+                    <label>NOME COMPLETO</label>
+                    <input type="text" id="nome" placeholder="Como quer ser chamado?">
+                </div>
+                <div class="form-group">
+                    <label>DISCIPLINA / MATÉRIA</label>
+                    <input type="text" id="materia" placeholder="Ex: Matemática, Robótica...">
+                </div>
             </div>
 
             <div id="senha-box" class="hidden">
-                <input type="password" id="senha" placeholder="Senha">
-                <button class="btn-prof" onclick="entrar()">Acessar</button>
+                <div class="form-group">
+                    <label>SENHA DE ACESSO</label>
+                    <input type="password" id="senha" placeholder="••••••••">
+                </div>
+                <button class="btn-entrar" onclick="entrar()">ENTRAR NO PORTAL</button>
             </div>
         </div>
 
         <div id="portal-box" class="hidden">
-            <h2 id="boas-vindas">Olá!</h2>
-            <div class="grid-acoes">
-                <div class="card-acao" onclick="abrirReserva()">📅 RESERVAR<br>EQUIPAMENTO</div>
-                <div class="card-acao" onclick="abrirChamado()">🆘 CHAMADO<br>TÉCNICO</div>
-            </div>
+            <h3 id="boas-vindas" style="margin:0;">Olá, Prof. Nome</h3>
+            <p style="font-size: 13px;">Selecione o serviço que deseja utilizar hoje:</p>
 
-            <div style="margin-top: 35px; text-align: left;">
-                <small style="text-transform: uppercase; letter-spacing: 1px; color: #999;"><b>Cronograma Ativo:</b></small>
-                <div id="minhas-reservas" style="font-size: 13px; color: var(--accent); margin-top: 10px; font-weight: 600;">
-                    Sem agendamentos.
+            <div class="grid-menu">
+                <div class="menu-item" onclick="fazerReserva()">
+                    <span>📅</span>
+                    <b>Reservar Material</b>
+                </div>
+                <div class="menu-item" onclick="abrirChamado()">
+                    <span>🆘</span>
+                    <b>Suporte Técnico</b>
+                </div>
+                <div class="menu-item" onclick="verMembros()">
+                    <span>👥</span>
+                    <b>Ver Membros</b>
+                </div>
+                <div class="menu-item" onclick="verCursos()">
+                    <span>💡</span>
+                    <b>Inovações</b>
                 </div>
             </div>
 
-            <button onclick="location.reload()" style="background:none; border:none; color:#bbb; margin-top:40px; cursor:pointer; font-size: 11px; font-weight: bold;">DESCONECTAR</button>
+            <div class="cronograma-box">
+                <h4 style="margin:0 0 15px 0; font-size: 14px;">📅 Meu Cronograma de Hoje</h4>
+                <div id="lista-reservas">
+                    <div style="font-size: 12px; color: #999;">Nenhum equipamento agendado.</div>
+                </div>
+            </div>
+
+            <button onclick="location.reload()" style="background:none; border:none; color:#e74c3c; font-weight:700; margin-top:30px; cursor:pointer;">Sair do Sistema</button>
         </div>
     </div>
 
@@ -112,35 +147,36 @@
     </div>
 
 <script>
-    // Link do seu Firebase
     const firebaseConfig = { databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    let profExistente = false;
+    let userExiste = false;
 
-    async function checarProfessor(p) {
+    // Atualiza relógio
+    setInterval(() => { document.getElementById('relogio').innerText = new Date().toLocaleTimeString(); }, 1000);
+
+    async function checarUser(p) {
         if(p.length < 3) return;
         const snap = await db.ref('usuarios/professores/' + p).once('value');
-        profExistente = snap.exists();
-
+        userExiste = snap.exists();
+        
         document.getElementById('senha-box').classList.remove('hidden');
-        document.getElementById('primeiro-acesso').classList.toggle('hidden', profExistente);
+        document.getElementById('campos-novos').classList.toggle('hidden', userExiste);
     }
 
     async function entrar() {
         const p = document.getElementById('prontuario').value;
         const s = document.getElementById('senha').value;
 
-        if(profExistente) {
+        if(userExiste) {
             const snap = await db.ref('usuarios/professores/' + p).once('value');
             if(snap.val().senha === s) carregarPortal(snap.val());
-            else alert("Senha incorreta!");
+            else alert("Senha inválida!");
         } else {
             const n = document.getElementById('nome').value;
             const m = document.getElementById('materia').value;
-            if(!n || !m || !s) return alert("Preencha todos os campos!");
-            
+            if(!n || !s) return alert("Preencha os campos obrigatórios!");
             const novo = { nome: n, materia: m, prontuario: p, senha: s };
             await db.ref('usuarios/professores/' + p).set(novo);
             carregarPortal(novo);
@@ -154,30 +190,31 @@
         monitorar(user.nome);
     }
 
-    function abrirReserva() {
-        const item = prompt("Equipamento:");
-        const hora = prompt("Horário/Aula:");
-        if(item && hora) {
-            db.ref('reservas').push({ prof: document.getElementById('boas-vindas').innerText, item, hora });
-        }
+    function fazerReserva() {
+        const eq = prompt("Equipamento (Ex: Notebooks, Tablet):");
+        const hr = prompt("Horário/Aula:");
+        if(eq && hr) db.ref('reservas').push({ prof: document.getElementById('boas-vindas').innerText, eq, hr });
     }
 
     function abrirChamado() {
-        const desc = prompt("Descreva o problema para o TI:");
-        if(desc) {
-            db.ref('chamados').push({ prof: document.getElementById('boas-vindas').innerText, desc, status: 'Pendente' });
-        }
+        const msg = prompt("Descreva o problema para o TI:");
+        if(msg) db.ref('chamados').push({ prof: document.getElementById('boas-vindas').innerText, msg, status: 'Aberto' });
     }
 
     function monitorar(nome) {
         db.ref('reservas').on('value', snap => {
-            const div = document.getElementById('minhas-reservas');
+            const div = document.getElementById('lista-reservas');
             div.innerHTML = "";
             snap.forEach(r => {
-                if(r.val().prof.includes(nome)) div.innerHTML += `• ${r.val().item} (${r.val().hora})<br>`;
+                if(r.val().prof.includes(nome)) {
+                    div.innerHTML += `<div class="reserva-tag"><b>${r.val().eq}</b> - ${r.val().hr}</div>`;
+                }
             });
         });
     }
+
+    function verMembros() { alert("Funcionalidade em desenvolvimento pelo Kelvin!"); }
+    function verCursos() { alert("Novidades do Conect NTI em breve!"); }
 </script>
 </body>
 </html>
