@@ -2,312 +2,224 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NTi - Santana de Parnaíba</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SISTEMA NTi - ELITE PARNAÍBA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --pref-azul: #003366;
-            --pref-dourado: #c5a059;
-            --bg-body: #f4f7f6;
-            --card-white: #ffffff;
-            --danger: #d9534f;
-            --warning: #f0ad4e;
-            --success: #5cb85c;
+            --azul-pref: #004a99; --azul-sky: #00adef; --neon: #00ff9d;
+            --nivel-3: #ff4757; --glass: rgba(255, 255, 255, 0.1);
         }
 
-        * { box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: 0.3s; }
         
         body { 
-            margin: 0; 
-            background: var(--bg-body) url('https://www.santanadeparnaiba.sp.gov.br/assets/img/brasao_parnaiba_header.png') no-repeat center bottom fixed;
-            background-size: 200px;
-            min-height: 100vh;
-            display: flex; align-items: center; justify-content: center;
+            margin: 0; background: #000b1a url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover; min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white; padding: 10px;
         }
 
-        .main-container {
-            width: 95%; max-width: 600px;
-            background: var(--card-white);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            border-top: 8px solid var(--pref-azul);
-            padding: 30px;
-            margin: 20px;
+        .balao-premium {
+            width: 100%; max-width: 480px; background: rgba(0, 20, 40, 0.7);
+            backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2); border-radius: 35px;
+            padding: 25px; box-shadow: 0 30px 60px rgba(0,0,0,0.8); text-align: center;
         }
 
-        /* Cabeçalho */
-        header { text-align: center; margin-bottom: 30px; }
-        header h1 { color: var(--pref-azul); font-size: 22px; margin: 5px 0; font-weight: 800; }
-        header p { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 1px; }
+        .clock-header { font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--azul-sky); margin-bottom: 15px; letter-spacing: 2px; }
+        h1 { font-family: 'Orbitron', sans-serif; font-size: 18px; letter-spacing: 2px; margin-bottom: 5px; }
+        p.sub { font-size: 9px; opacity: 0.7; text-transform: uppercase; margin-bottom: 20px; }
 
-        /* Estilo de Formulários */
-        .form-group { margin-bottom: 15px; text-align: left; }
-        label { display: block; font-weight: 700; font-size: 13px; color: var(--pref-azul); margin-bottom: 5px; }
-        input, select, textarea {
-            width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; outline: none;
+        /* Estilo dos Campos Tech */
+        .campo { 
+            width: 100%; height: 45px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); 
+            border-radius: 12px; padding: 0 15px; font-size: 13px; color: white; margin-bottom: 10px;
         }
-        input:focus { border-color: var(--pref-azul); }
+        .campo:focus { border-color: var(--azul-sky); background: rgba(255,255,255,0.15); outline: none; }
 
-        /* Botões */
-        .btn-primary { 
-            width: 100%; padding: 15px; border: none; border-radius: 8px; background: var(--pref-azul);
-            color: white; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.3s;
+        /* Abas Login/Cad */
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { flex: 1; padding: 10px; background: none; border: none; color: #999; cursor: pointer; font-size: 11px; font-weight: 700; border-bottom: 2px solid transparent; }
+        .tab-btn.active { color: var(--azul-sky); border-bottom-color: var(--azul-sky); }
+
+        /* Botões de Ação */
+        .btn-acao { 
+            width: 100%; height: 50px; border-radius: 15px; border: none; 
+            background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); 
+            color: white; font-weight: 700; text-transform: uppercase; cursor: pointer; font-size: 12px;
         }
-        .btn-primary:hover { background: #002244; }
-        
-        .btn-nav {
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            padding: 20px; border: 1px solid #eee; border-radius: 12px; background: #fff;
-            cursor: pointer; font-weight: 700; color: var(--pref-azul); transition: 0.2s;
+        .btn-acao:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(0, 173, 239, 0.5); }
+
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .btn-nav { height: 60px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; color: white; cursor: pointer; font-weight: 600; font-size: 11px; }
+        .btn-nav:hover { background: rgba(255,255,255,0.1); border-color: var(--azul-sky); }
+
+        /* Cronograma Real */
+        .monitor-card { 
+            background: rgba(0,0,0,0.4); padding: 15px; border-radius: 20px; 
+            margin-bottom: 10px; text-align: left; border-left: 4px solid var(--neon);
+            font-size: 11px; border: 1px solid rgba(255,255,255,0.05);
         }
-        .btn-nav:hover { background: #f0f7ff; border-color: var(--pref-azul); }
-
-        /* Menu Grid */
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-
-        /* Status Badges */
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; color: white; font-weight: 700; }
-        .bg-urgente { background: var(--danger); }
-        .bg-normal { background: var(--pref-azul); }
-
-        /* Cards do Cronograma */
-        .cron-card {
-            background: #f9f9f9; border-left: 5px solid var(--pref-azul);
-            padding: 15px; border-radius: 8px; margin-bottom: 10px; text-align: left;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
+        .badge { background: var(--azul-sky); color: #000; padding: 2px 6px; border-radius: 5px; font-weight: 800; font-size: 9px; margin-bottom: 5px; display: inline-block; }
 
         .hidden { display: none; }
-        .tab-btn { padding: 10px; border: none; background: none; cursor: pointer; font-weight: 700; color: #999; }
-        .tab-btn.active { color: var(--pref-azul); border-bottom: 2px solid var(--pref-azul); }
+        .btn-voltar { background: none; border: 1px solid rgba(255,255,255,0.2); color: white; font-size: 9px; margin-top: 15px; width: 100%; padding: 8px; border-radius: 10px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="main-container">
-        <header>
-            <img src="https://www.santanadeparnaiba.sp.gov.br/assets/img/brasao_parnaiba_header.png" height="50" alt="Brasão">
-            <h1>SISTEMA NTi</h1>
-            <p>Prefeitura de Santana de Parnaíba</p>
-        </header>
+    <div class="balao-premium">
+        <div class="clock-header" id="relogio">00/00/0000 00:00:00</div>
 
         <div id="scr-auth">
-            <div style="display: flex; justify-content: space-around; margin-bottom: 20px;">
-                <button class="tab-btn active" id="tab-login" onclick="app.toggleAuth('login')">ENTRAR</button>
-                <button class="tab-btn" id="tab-cad" onclick="app.toggleAuth('cad')">CADASTRAR</button>
+            <h1>PORTAL NTi</h1>
+            <p class="sub">Santana de Parnaíba</p>
+            
+            <div class="tabs">
+                <button class="tab-btn active" id="t-login" onclick="app.setAuth('login')">ENTRAR</button>
+                <button class="tab-btn" id="t-cad" onclick="app.setAuth('cad')">CADASTRAR</button>
             </div>
 
-            <div id="auth-fields">
-                <div class="form-group" id="group-nome" style="display:none">
-                    <label>Nome Completo</label>
-                    <input type="text" id="user-nome" placeholder="Seu nome">
-                </div>
-                <div class="form-group">
-                    <label>Prontuário / RP</label>
-                    <input type="text" id="user-rp" placeholder="00.000">
-                </div>
-                <div class="form-group" id="group-mat" style="display:none">
-                    <label>Matéria / Disciplina</label>
-                    <input type="text" id="user-mat" placeholder="Sua disciplina">
-                </div>
-                <div class="form-group">
-                    <label>Senha</label>
-                    <input type="password" id="user-pass" placeholder="******">
-                </div>
-                <button class="btn-primary" id="btn-auth-action" onclick="app.authAction()">ENTRAR NO SISTEMA</button>
+            <div id="fields">
+                <input type="text" class="campo hidden" id="f-nome" placeholder="Nome Completo">
+                <input type="text" class="campo" id="f-rp" placeholder="RP / Prontuário">
+                <input type="text" class="campo hidden" id="f-mat" placeholder="Sua Matéria">
+                <input type="password" class="campo" id="f-pass" placeholder="Senha">
+                <button class="btn-acao" onclick="app.authAction()" id="btn-auth">ACESSAR SISTEMA</button>
             </div>
         </div>
 
         <div id="scr-menu" class="hidden">
-            <div style="text-align: left; border-bottom: 1px solid #eee; padding-bottom: 10px;">
-                <span style="font-size: 12px; color: #666;">Bem-vindo(a),</span>
-                <div id="prof-nome" style="font-weight: 800; color: var(--pref-azul);">NOME PROFESSOR</div>
-            </div>
-
-            <div class="menu-grid">
-                <button class="btn-nav" onclick="app.nav('reserva')">📅 RESERVAS</button>
-                <button class="btn-nav" onclick="app.nav('ti')">🛠️ TI / SUPORTE</button>
+            <h1>MENU ELITE</h1>
+            <p class="sub" id="user-info"></p>
+            
+            <div class="btn-grid">
+                <button class="btn-nav" onclick="app.nav('reserva')">📅 RESERVAS<br><small style="opacity:0.5">Equipamentos</small></button>
+                <button class="btn-nav" onclick="app.nav('ti')">🛠️ TI SUPORTE<br><small style="opacity:0.5">Chamados</small></button>
                 <button class="btn-nav" style="grid-column: span 2;" onclick="app.nav('cron')">🖥️ CRONOGRAMA EM TEMPO REAL</button>
             </div>
-            <button class="btn-primary" style="margin-top:20px; background:#666" onclick="location.reload()">SAIR</button>
-        </div>
-
-        <div id="scr-ti" class="hidden">
-            <h3>Chamado Técnico</h3>
-            <div class="form-group">
-                <label>Gravidade do Problema</label>
-                <select id="ti-grau">
-                    <option value="Baixa">Baixa (Dúvida / Ajuste)</option>
-                    <option value="Média">Média (Equipamento Lento)</option>
-                    <option value="Alta">Alta (Parada Total)</option>
-                    <option value="Crítica">Crítica (Rede Fora / Laboratório parado)</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Descrição</label>
-                <textarea id="ti-desc" rows="3" placeholder="O que está acontecendo?"></textarea>
-            </div>
-            <button class="btn-primary" onclick="app.salvarTI()">ABRIR CHAMADO</button>
-            <button class="tab-btn" style="margin-top:10px" onclick="app.nav('menu')">VOLTAR</button>
+            <button class="btn-voltar" onclick="location.reload()">DESCONECTAR</button>
         </div>
 
         <div id="scr-reserva" class="hidden">
-            <h3>Nova Reserva</h3>
-            <div class="form-group">
-                <label>Equipamento / Espaço</label>
-                <select id="res-eq">
-                    <option>SALA DE INFORMÁTICA</option>
-                    <option>CARRINHO CHROMEBOOKS</option>
-                    <option>TV MÓVEL 01</option>
-                    <option>TV MÓVEL 02</option>
-                    <option>PROJETOR MULTIMÍDIA</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Data da Reserva</label>
-                <input type="date" id="res-data">
-            </div>
-            <div class="form-group">
-                <label>Horário (Início - Fim)</label>
-                <div style="display:flex; gap:10px">
-                    <input type="time" id="res-hora-ini">
-                    <input type="time" id="res-hora-fim">
-                </div>
-            </div>
-            <button class="btn-primary" onclick="app.salvarReserva()">RESERVAR AGORA</button>
-            <button class="tab-btn" style="margin-top:10px" onclick="app.nav('menu')">VOLTAR</button>
+            <h1>RESERVAS</h1>
+            <input type="text" class="campo" id="res-eq" placeholder="Equipamento (Ex: Sala Info)">
+            <label style="font-size: 10px; color: var(--azul-sky); display: block; text-align: left;">Data da Reserva:</label>
+            <input type="date" class="campo" id="res-data">
+            <label style="font-size: 10px; color: var(--azul-sky); display: block; text-align: left;">Horário de Entrega:</label>
+            <input type="time" class="campo" id="res-hora">
+            <button class="btn-acao" onclick="app.saveReserva()">CONFIRMAR RESERVA</button>
+            <button class="btn-voltar" onclick="app.nav('menu')">VOLTAR</button>
+        </div>
+
+        <div id="scr-ti" class="hidden">
+            <h1>SUPORTE TI</h1>
+            <select class="campo" id="ti-grau">
+                <option value="NORMAL">GRAVIDADE: BAIXA</option>
+                <option value="MÉDIA">GRAVIDADE: MÉDIA</option>
+                <option value="URGENTE">GRAVIDADE: ALTA</option>
+            </select>
+            <textarea class="campo" id="ti-desc" style="height: 80px; padding-top:10px" placeholder="Descreva o problema..."></textarea>
+            <button class="btn-acao" style="background: var(--nivel-3)" onclick="app.saveTI()">ABRIR CHAMADO</button>
+            <button class="btn-voltar" onclick="app.nav('menu')">VOLTAR</button>
         </div>
 
         <div id="scr-cron" class="hidden">
-            <h3>Cronograma Ativo</h3>
-            <div id="cron-lista" style="max-height: 400px; overflow-y: auto;"></div>
-            <button class="tab-btn" style="margin-top:10px" onclick="app.nav('menu')">VOLTAR AO MENU</button>
+            <h1>CRONOGRAMA</h1>
+            <div id="monitor" style="max-height: 350px; overflow-y: auto;"></div>
+            <button class="btn-voltar" onclick="app.nav('menu')">VOLTAR AO MENU</button>
         </div>
-
     </div>
 
-    <script>
-        const app = {
-            mode: 'login',
-            currentUser: null,
+<script>
+    const app = {
+        mode: 'login',
+        user: null,
 
-            toggleAuth(m) {
-                this.mode = m;
-                document.getElementById('tab-login').classList.toggle('active', m === 'login');
-                document.getElementById('tab-cad').classList.toggle('active', m === 'cad');
-                document.getElementById('group-nome').style.display = m === 'cad' ? 'block' : 'none';
-                document.getElementById('group-mat').style.display = m === 'cad' ? 'block' : 'none';
-                document.getElementById('btn-auth-action').innerText = m === 'login' ? 'ENTRAR NO SISTEMA' : 'CONCLUIR CADASTRO';
-            },
+        setAuth(m) {
+            this.mode = m;
+            document.getElementById('t-login').classList.toggle('active', m==='login');
+            document.getElementById('t-cad').classList.toggle('active', m==='cad');
+            document.getElementById('f-nome').classList.toggle('hidden', m==='login');
+            document.getElementById('f-mat').classList.toggle('hidden', m==='login');
+            document.getElementById('btn-auth').innerText = m==='login' ? 'ACESSAR SISTEMA' : 'FINALIZAR CADASTRO';
+        },
 
-            authAction() {
-                const rp = document.getElementById('user-rp').value;
-                const pass = document.getElementById('user-pass').value;
-                let users = JSON.parse(localStorage.getItem('nti_users') || '[]');
+        authAction() {
+            const rp = document.getElementById('f-rp').value;
+            const pass = document.getElementById('f-pass').value;
+            let users = JSON.parse(localStorage.getItem('users_elite') || '[]');
 
-                if(this.mode === 'cad') {
-                    const nome = document.getElementById('user-nome').value;
-                    const mat = document.getElementById('user-mat').value;
-                    if(!nome || !rp || !pass) return alert("Preencha todos os campos!");
-                    
-                    users.push({nome, rp, mat, pass});
-                    localStorage.setItem('nti_users', JSON.stringify(users));
-                    alert("Cadastro realizado com sucesso! Faça login.");
-                    this.toggleAuth('login');
-                } else {
-                    const user = users.find(u => u.rp === rp && u.pass === pass);
-                    if(user) {
-                        this.currentUser = user;
-                        document.getElementById('prof-nome').innerText = user.nome.toUpperCase();
-                        this.nav('menu');
-                    } else {
-                        alert("Usuário ou senha incorretos!");
-                    }
-                }
-            },
-
-            nav(p) {
-                document.querySelectorAll('[id^="scr-"]').forEach(s => s.classList.add('hidden'));
-                document.getElementById('scr-' + p).classList.remove('hidden');
-                if(p === 'cron') this.renderCron();
-            },
-
-            salvarTI() {
-                const grau = document.getElementById('ti-grau').value;
-                const desc = document.getElementById('ti-desc').value;
-                if(!desc) return alert("Descreva o problema!");
-
-                const chamado = {
-                    tipo: 'CHAMADO TI',
-                    prof: this.currentUser.nome,
-                    materia: this.currentUser.mat,
-                    detalhe: `GRAVIDADE: ${grau} - ${desc}`,
-                    data: new Date().toLocaleDateString(),
-                    hora: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-                };
-                this.dbSave(chamado);
-            },
-
-            salvarReserva() {
-                const eq = document.getElementById('res-eq').value;
-                const data = document.getElementById('res-data').value;
-                const ini = document.getElementById('res-hora-ini').value;
-                const fim = document.getElementById('res-hora-fim').value;
-
-                if(!data || !ini || !fim) return alert("Preencha os horários!");
-
-                const reserva = {
-                    tipo: 'RESERVA',
-                    prof: this.currentUser.nome,
-                    materia: this.currentUser.mat,
-                    detalhe: `${eq}`,
-                    data: data.split('-').reverse().join('/'),
-                    hora: `${ini} às ${fim}`
-                };
-                this.dbSave(reserva);
-            },
-
-            dbSave(obj) {
-                let db = JSON.parse(localStorage.getItem('nti_db_parnaiba') || '[]');
-                db.push(obj);
-                localStorage.setItem('nti_db_parnaiba', JSON.stringify(db));
-                alert("Registrado com sucesso!");
-                this.nav('cron');
-            },
-
-            renderCron() {
-                const container = document.getElementById('cron-lista');
-                let db = JSON.parse(localStorage.getItem('nti_db_parnaiba') || '[]');
-                
-                if(db.length === 0) {
-                    container.innerHTML = "<p style='text-align:center; color:#999'>Nenhuma atividade hoje.</p>";
-                    return;
-                }
-
-                container.innerHTML = db.reverse().map((it, i) => `
-                    <div class="cron-card" style="border-left-color: ${it.tipo === 'RESERVA' ? '#003366' : '#d9534f'}">
-                        <div style="display:flex; justify-content:space-between; align-items:start">
-                            <span class="badge ${it.tipo === 'RESERVA' ? 'bg-normal' : 'bg-urgente'}">${it.tipo}</span>
-                            <small style="font-weight:700">${it.data} às ${it.hora}</small>
-                        </div>
-                        <div style="margin-top:10px">
-                            <strong style="color:var(--pref-azul)">${it.detalhe}</strong><br>
-                            <span style="font-size:12px"><b>Solicitante:</b> ${it.prof}</span><br>
-                            <span style="font-size:11px; color:#666"><b>Departamento/Matéria:</b> ${it.materia}</span>
-                        </div>
-                        <button onclick="app.remover(${i})" style="margin-top:10px; border:none; background:none; color:red; cursor:pointer; font-size:10px">[ EXCLUIR ]</button>
-                    </div>
-                `).join('');
-            },
-
-            remover(i) {
-                let db = JSON.parse(localStorage.getItem('nti_db_parnaiba') || '[]').reverse();
-                db.splice(i, 1);
-                localStorage.setItem('nti_db_parnaiba', JSON.stringify(db.reverse()));
-                this.renderCron();
+            if(this.mode === 'cad') {
+                const nome = document.getElementById('f-nome').value;
+                const mat = document.getElementById('f-mat').value;
+                if(!nome || !rp || !pass) return alert("Preencha tudo!");
+                users.push({nome, rp, mat, pass});
+                localStorage.setItem('users_elite', JSON.stringify(users));
+                alert("Cadastrado! Agora faça login.");
+                this.setAuth('login');
+            } else {
+                const u = users.find(x => x.rp === rp && x.pass === pass);
+                if(u) {
+                    this.user = u;
+                    document.getElementById('user-info').innerText = `${u.nome} | ${u.mat}`;
+                    this.nav('menu');
+                } else { alert("Acesso negado!"); }
             }
-        };
-    </script>
+        },
+
+        nav(p) {
+            document.querySelectorAll('.balao-premium > div[id^="scr"]').forEach(s => s.classList.add('hidden'));
+            document.getElementById('scr-'+p).classList.remove('hidden');
+            if(p === 'cron') this.renderCron();
+        },
+
+        saveReserva() {
+            const eq = document.getElementById('res-eq').value;
+            const data = document.getElementById('res-data').value;
+            const hora = document.getElementById('res-hora').value;
+            if(!eq || !data || !hora) return alert("Preencha os dados!");
+            this.dbPush({tipo: 'RESERVA', info: eq, data, hora});
+        },
+
+        saveTI() {
+            const grau = document.getElementById('ti-grau').value;
+            const desc = document.getElementById('ti-desc').value;
+            if(!desc) return alert("Descreva o erro!");
+            this.dbPush({tipo: 'SUPORTE', info: desc, data: grau, hora: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})});
+        },
+
+        dbPush(obj) {
+            let db = JSON.parse(localStorage.getItem('db_elite') || '[]');
+            db.push({...obj, prof: this.user.nome, mat: this.user.mat});
+            localStorage.setItem('db_elite', JSON.stringify(db));
+            alert("Sucesso!");
+            this.nav('cron');
+        },
+
+        renderCron() {
+            const mon = document.getElementById('monitor');
+            let db = JSON.parse(localStorage.getItem('db_elite') || '[]');
+            mon.innerHTML = db.reverse().map((r, i) => `
+                <div class="monitor-card" style="border-left-color: ${r.tipo === 'RESERVA' ? 'var(--azul-sky)' : 'var(--nivel-3)'}">
+                    <span class="badge">${r.tipo}</span>
+                    <div style="float:right; opacity:0.6">${r.data}</div>
+                    <div style="font-weight:700; font-size:13px; margin:5px 0">${r.info}</div>
+                    <div style="font-size:10px; opacity:0.8"><b>Prof:</b> ${r.prof} | <b>Horário:</b> ${r.hora}</div>
+                    <button onclick="app.del(${i})" style="background:none; border:none; color:var(--nivel-3); font-size:8px; cursor:pointer; margin-top:8px">[ REMOVER ]</button>
+                </div>
+            `).join('');
+        },
+
+        del(i) {
+            let db = JSON.parse(localStorage.getItem('db_elite') || '[]').reverse();
+            db.splice(i, 1);
+            localStorage.setItem('db_elite', JSON.stringify(db.reverse()));
+            this.renderCron();
+        }
+    };
+
+    setInterval(() => {
+        document.getElementById('relogio').innerText = new Date().toLocaleString('pt-BR');
+    }, 1000);
+</script>
 </body>
 </html>
