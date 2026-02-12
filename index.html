@@ -2,321 +2,312 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SISTEMA NTi - CHÁCARA</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NTi - Santana de Parnaíba</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #000d1a;
-            --card-bg: #001a33;
-            --azul-sky: #00adef;
-            --azul-forte: #0056b3;
-            --neon: #00ff9d;
-            --erro: #ff4757;
-            --texto: #ffffff;
+            --pref-azul: #003366;
+            --pref-dourado: #c5a059;
+            --bg-body: #f4f7f6;
+            --card-white: #ffffff;
+            --danger: #d9534f;
+            --warning: #f0ad4e;
+            --success: #5cb85c;
         }
 
-        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        * { box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
         
         body { 
             margin: 0; 
-            background: var(--bg-dark);
-            background-image: radial-gradient(circle at top right, #00264d, #000d1a);
-            min-height: 100vh; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            color: var(--texto); 
-            padding: 15px;
+            background: var(--bg-body) url('https://www.santanadeparnaiba.sp.gov.br/assets/img/brasao_parnaiba_header.png') no-repeat center bottom fixed;
+            background-size: 200px;
+            min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
         }
 
-        .container {
-            width: 100%; 
-            max-width: 500px; 
-            background: var(--card-bg);
-            border: 3px solid var(--azul-sky); /* Borda forte para definir o limite do sistema */
-            border-radius: 25px;
-            padding: 30px; 
-            box-shadow: 0 0 40px rgba(0, 173, 239, 0.3);
-            text-align: center;
+        .main-container {
+            width: 95%; max-width: 600px;
+            background: var(--card-white);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border-top: 8px solid var(--pref-azul);
+            padding: 30px;
+            margin: 20px;
         }
 
-        .relogio {
-            background: rgba(0,0,0,0.4);
-            padding: 8px;
-            border-radius: 10px;
-            color: var(--neon);
-            font-weight: 700;
-            font-size: 14px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(0, 255, 157, 0.3);
+        /* Cabeçalho */
+        header { text-align: center; margin-bottom: 30px; }
+        header h1 { color: var(--pref-azul); font-size: 22px; margin: 5px 0; font-weight: 800; }
+        header p { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Estilo de Formulários */
+        .form-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; font-weight: 700; font-size: 13px; color: var(--pref-azul); margin-bottom: 5px; }
+        input, select, textarea {
+            width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; outline: none;
         }
+        input:focus { border-color: var(--pref-azul); }
 
-        h1 { 
-            font-size: 24px; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-            margin: 0; 
-            color: white;
-            letter-spacing: 1px;
+        /* Botões */
+        .btn-primary { 
+            width: 100%; padding: 15px; border: none; border-radius: 8px; background: var(--pref-azul);
+            color: white; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.3s;
         }
-
-        p.sub { font-size: 12px; color: var(--azul-sky); margin-bottom: 25px; font-weight: 600; text-transform: uppercase; }
-
-        /* CAMPOS DE ENTRADA - Foco em Leitura */
-        .grupo-input { text-align: left; margin-bottom: 15px; }
+        .btn-primary:hover { background: #002244; }
         
-        label { 
-            display: block; 
-            font-size: 12px; 
-            font-weight: 700; 
-            color: white; 
-            margin-bottom: 8px;
-            text-transform: uppercase;
+        .btn-nav {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            padding: 20px; border: 1px solid #eee; border-radius: 12px; background: #fff;
+            cursor: pointer; font-weight: 700; color: var(--pref-azul); transition: 0.2s;
         }
+        .btn-nav:hover { background: #f0f7ff; border-color: var(--pref-azul); }
 
-        .campo { 
-            width: 100%; 
-            height: 55px; /* Mais alto para facilitar o toque */
-            background: #ffffff; 
-            border: 4px solid transparent;
-            border-radius: 12px; 
-            padding: 0 15px; 
-            font-size: 16px; /* Fonte maior */
-            color: #000; 
-            font-weight: 700;
-        }
+        /* Menu Grid */
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
 
-        .campo:focus {
-            border-color: var(--neon);
-            outline: none;
-        }
+        /* Status Badges */
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; color: white; font-weight: 700; }
+        .bg-urgente { background: var(--danger); }
+        .bg-normal { background: var(--pref-azul); }
 
-        /* BOTÕES GRANDES E CHAMATIVOS */
-        .btn-acao { 
-            width: 100%; 
-            height: 65px; 
-            border-radius: 15px; 
-            border: none; 
-            background: var(--azul-sky); 
-            color: #000; /* Texto preto no botão azul dá mais contraste */
-            font-weight: 800; 
-            text-transform: uppercase; 
-            cursor: pointer; 
-            font-size: 16px;
-            margin-top: 10px;
-            box-shadow: 0 6px 0 var(--azul-forte); /* Efeito 3D */
-            position: relative;
-        }
-
-        .btn-acao:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 var(--azul-forte);
-        }
-
-        .btn-suporte {
-            background: var(--erro);
-            color: white;
-            box-shadow: 0 6px 0 #881111;
-        }
-
-        .btn-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
-        .btn-item {
-            height: 60px;
-            background: #1a3a5a;
-            border: 2px solid var(--azul-sky);
-            border-radius: 12px;
-            color: white;
-            font-weight: 700;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        .btn-item.active {
-            background: var(--neon);
-            color: #000;
-            border-color: white;
-        }
-
-        /* CARDS DO CRONOGRAMA - Legibilidade Máxima */
-        .monitor-card { 
-            background: #ffffff; 
-            padding: 15px; 
-            border-radius: 15px; 
-            margin-bottom: 15px; 
-            text-align: left; 
-            color: #000;
-            border-left: 10px solid var(--azul-sky);
-        }
-
-        .monitor-card.suporte { border-left-color: var(--erro); }
-
-        .badge {
-            background: #000;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 5px;
-            font-size: 11px;
-            font-weight: 700;
+        /* Cards do Cronograma */
+        .cron-card {
+            background: #f9f9f9; border-left: 5px solid var(--pref-azul);
+            padding: 15px; border-radius: 8px; margin-bottom: 10px; text-align: left;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
         .hidden { display: none; }
-        .btn-voltar { background: none; border: 2px solid white; color: white; padding: 10px; width: 100%; border-radius: 12px; margin-top: 20px; font-weight: 700; cursor: pointer;}
+        .tab-btn { padding: 10px; border: none; background: none; cursor: pointer; font-weight: 700; color: #999; }
+        .tab-btn.active { color: var(--pref-azul); border-bottom: 2px solid var(--pref-azul); }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="relogio" id="relogio">00/00/0000 00:00:00</div>
-
-        <div id="scr1">
+    <div class="main-container">
+        <header>
+            <img src="https://www.santanadeparnaiba.sp.gov.br/assets/img/brasao_parnaiba_header.png" height="50" alt="Brasão">
             <h1>SISTEMA NTi</h1>
-            <p class="sub">Acesso do Professor</p>
-            
-            <div class="grupo-input">
-                <label>Nome Completo:</label>
-                <input type="text" class="campo" id="p-nome" placeholder="Ex: JOÃO SILVA">
+            <p>Prefeitura de Santana de Parnaíba</p>
+        </header>
+
+        <div id="scr-auth">
+            <div style="display: flex; justify-content: space-around; margin-bottom: 20px;">
+                <button class="tab-btn active" id="tab-login" onclick="app.toggleAuth('login')">ENTRAR</button>
+                <button class="tab-btn" id="tab-cad" onclick="app.toggleAuth('cad')">CADASTRAR</button>
             </div>
 
-            <div class="grupo-input">
-                <label>Matéria / Disciplina:</label>
-                <input type="text" class="campo" id="p-mat" placeholder="Ex: MATEMÁTICA">
+            <div id="auth-fields">
+                <div class="form-group" id="group-nome" style="display:none">
+                    <label>Nome Completo</label>
+                    <input type="text" id="user-nome" placeholder="Seu nome">
+                </div>
+                <div class="form-group">
+                    <label>Prontuário / RP</label>
+                    <input type="text" id="user-rp" placeholder="00.000">
+                </div>
+                <div class="form-group" id="group-mat" style="display:none">
+                    <label>Matéria / Disciplina</label>
+                    <input type="text" id="user-mat" placeholder="Sua disciplina">
+                </div>
+                <div class="form-group">
+                    <label>Senha</label>
+                    <input type="password" id="user-pass" placeholder="******">
+                </div>
+                <button class="btn-primary" id="btn-auth-action" onclick="app.authAction()">ENTRAR NO SISTEMA</button>
+            </div>
+        </div>
+
+        <div id="scr-menu" class="hidden">
+            <div style="text-align: left; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                <span style="font-size: 12px; color: #666;">Bem-vindo(a),</span>
+                <div id="prof-nome" style="font-weight: 800; color: var(--pref-azul);">NOME PROFESSOR</div>
             </div>
 
-            <div class="grupo-input">
-                <label>RP / Prontuário:</label>
-                <input type="text" class="campo" id="p-id" placeholder="Digite seu RP">
+            <div class="menu-grid">
+                <button class="btn-nav" onclick="app.nav('reserva')">📅 RESERVAS</button>
+                <button class="btn-nav" onclick="app.nav('ti')">🛠️ TI / SUPORTE</button>
+                <button class="btn-nav" style="grid-column: span 2;" onclick="app.nav('cron')">🖥️ CRONOGRAMA EM TEMPO REAL</button>
             </div>
-
-            <button class="btn-acao" onclick="app.entrar()">ENTRAR NO SISTEMA</button>
+            <button class="btn-primary" style="margin-top:20px; background:#666" onclick="location.reload()">SAIR</button>
         </div>
 
-        <div id="scr2" class="hidden">
-            <h1>MENU PRINCIPAL</h1>
-            <p id="info-prof" style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px; font-weight: 700;"></p>
-            
-            <button class="btn-acao" onclick="app.nav(3)">📅 NOVA RESERVA</button>
-            <button class="btn-acao" onclick="app.nav(6)">🖥️ VER CRONOGRAMA</button>
-            <button class="btn-acao btn-suporte" onclick="app.nav(5)">🛠️ CHAMADO TÉCNICO</button>
-            
-            <button class="btn-voltar" onclick="location.reload()">SAIR</button>
-        </div>
-
-        <div id="scr3" class="hidden">
-            <h1>RESERVA</h1>
-            <label>Selecione o Equipamento:</label>
-            <div class="btn-grid">
-                <button class="btn-item" id="e1" onclick="app.setEq('SALA INFO', 'e1')">SALA INFO</button>
-                <button class="btn-item" id="e2" onclick="app.setEq('CHROMEBOOKS', 'e2')">CHROMEBOOKS</button>
-                <button class="btn-item" id="e3" onclick="app.setEq('TV 01', 'e3')">TV 01</button>
-                <button class="btn-item" id="e4" onclick="app.setEq('TV 02', 'e4')">TV 02</button>
-                <button class="btn-item" id="e5" onclick="app.setEq('TV 03', 'e5')">TV 03</button>
+        <div id="scr-ti" class="hidden">
+            <h3>Chamado Técnico</h3>
+            <div class="form-group">
+                <label>Gravidade do Problema</label>
+                <select id="ti-grau">
+                    <option value="Baixa">Baixa (Dúvida / Ajuste)</option>
+                    <option value="Média">Média (Equipamento Lento)</option>
+                    <option value="Alta">Alta (Parada Total)</option>
+                    <option value="Crítica">Crítica (Rede Fora / Laboratório parado)</option>
+                </select>
             </div>
-
-            <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px;">
-                <label>Horário de Devolução:</label>
-                <input type="time" class="campo" id="res-hora">
+            <div class="form-group">
+                <label>Descrição</label>
+                <textarea id="ti-desc" rows="3" placeholder="O que está acontecendo?"></textarea>
             </div>
-
-            <button class="btn-acao" onclick="app.salvarReserva()">CONFIRMAR AGORA</button>
-            <button class="btn-voltar" onclick="app.nav(2)">VOLTAR</button>
+            <button class="btn-primary" onclick="app.salvarTI()">ABRIR CHAMADO</button>
+            <button class="tab-btn" style="margin-top:10px" onclick="app.nav('menu')">VOLTAR</button>
         </div>
 
-        <div id="scr5" class="hidden">
-            <h1 style="color: var(--erro)">SUPORTE</h1>
-            <label>Onde é o problema?</label>
-            <input type="text" class="campo" id="sup-local" placeholder="Ex: Sala 05">
-            <label>O que aconteceu?</label>
-            <textarea class="campo" id="sup-motivo" style="height: 100px; padding: 10px;"></textarea>
-            
-            <button class="btn-acao btn-suporte" onclick="app.salvarSuporte()">ENVIAR URGENTE</button>
-            <button class="btn-voltar" onclick="app.nav(2)">CANCELAR</button>
+        <div id="scr-reserva" class="hidden">
+            <h3>Nova Reserva</h3>
+            <div class="form-group">
+                <label>Equipamento / Espaço</label>
+                <select id="res-eq">
+                    <option>SALA DE INFORMÁTICA</option>
+                    <option>CARRINHO CHROMEBOOKS</option>
+                    <option>TV MÓVEL 01</option>
+                    <option>TV MÓVEL 02</option>
+                    <option>PROJETOR MULTIMÍDIA</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Data da Reserva</label>
+                <input type="date" id="res-data">
+            </div>
+            <div class="form-group">
+                <label>Horário (Início - Fim)</label>
+                <div style="display:flex; gap:10px">
+                    <input type="time" id="res-hora-ini">
+                    <input type="time" id="res-hora-fim">
+                </div>
+            </div>
+            <button class="btn-primary" onclick="app.salvarReserva()">RESERVAR AGORA</button>
+            <button class="tab-btn" style="margin-top:10px" onclick="app.nav('menu')">VOLTAR</button>
         </div>
 
-        <div id="scr6" class="hidden">
-            <h1>CRONOGRAMA</h1>
-            <div id="lista" style="margin-top: 20px; max-height: 400px; overflow-y: auto;"></div>
-            <button class="btn-voltar" onclick="app.nav(2)">VOLTAR AO MENU</button>
+        <div id="scr-cron" class="hidden">
+            <h3>Cronograma Ativo</h3>
+            <div id="cron-lista" style="max-height: 400px; overflow-y: auto;"></div>
+            <button class="tab-btn" style="margin-top:10px" onclick="app.nav('menu')">VOLTAR AO MENU</button>
         </div>
+
     </div>
 
-<script>
-    const app = {
-        equip: "",
-        entrar() {
-            if(!document.getElementById('p-nome').value || !document.getElementById('p-id').value) return alert("Preencha os dados!");
-            this.nav(2);
-        },
-        nav(p) {
-            document.querySelectorAll('[id^="scr"]').forEach(s => s.classList.add('hidden'));
-            document.getElementById('scr'+p).classList.remove('hidden');
-            if(p===2) {
-                document.getElementById('info-prof').innerText = `PROF: ${document.getElementById('p-nome').value} \n RP: ${document.getElementById('p-id').value}`;
-            }
-            if(p===6) this.atualizar();
-        },
-        setEq(n, id) {
-            this.equip = n;
-            document.querySelectorAll('.btn-item').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        },
-        salvarReserva() {
-            if(!this.equip || !document.getElementById('res-hora').value) return alert("Falta dados!");
-            const dados = {
-                tipo: 'RESERVA',
-                nome: document.getElementById('p-nome').value,
-                mat: document.getElementById('p-mat').value,
-                rp: document.getElementById('p-id').value,
-                eq: this.equip,
-                hora: document.getElementById('res-hora').value
-            };
-            this.guardar(dados);
-        },
-        salvarSuporte() {
-            const dados = {
-                tipo: 'SUPORTE',
-                nome: document.getElementById('p-nome').value,
-                rp: document.getElementById('p-id').value,
-                local: document.getElementById('sup-local').value,
-                motivo: document.getElementById('sup-motivo').value,
-                hora: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-            };
-            this.guardar(dados);
-        },
-        guardar(obj) {
-            let banco = JSON.parse(localStorage.getItem('banco_nti') || '[]');
-            banco.push(obj);
-            localStorage.setItem('banco_nti', JSON.stringify(banco));
-            alert("Sucesso!");
-            this.nav(6);
-        },
-        atualizar() {
-            const lista = document.getElementById('lista');
-            let banco = JSON.parse(localStorage.getItem('banco_nti') || '[]');
-            lista.innerHTML = banco.reverse().map((r, i) => `
-                <div class="monitor-card ${r.tipo === 'SUPORTE' ? 'suporte' : ''}">
-                    <div style="display:flex; justify-content:space-between">
-                        <b>${r.tipo === 'SUPORTE' ? '⚠️ SUPORTE: '+r.local : '📌 '+r.eq}</b>
-                        <span class="badge">${r.hora}h</span>
-                    </div>
-                    <div style="margin-top:10px; font-size:13px">
-                        <b>PROF:</b> ${r.nome} (${r.rp})<br>
-                        ${r.mat ? '<b>MATÉRIA:</b> '+r.mat : '<b>RELATO:</b> '+r.motivo}
-                    </div>
-                    <button onclick="app.deletar(${i})" style="margin-top:10px; color:red; border:none; background:none; cursor:pointer; font-weight:700; font-size:11px;">[ APAGAR REGISTRO ]</button>
-                </div>
-            `).join('');
-        },
-        deletar(i) {
-            let banco = JSON.parse(localStorage.getItem('banco_nti') || '[]').reverse();
-            banco.splice(i, 1);
-            localStorage.setItem('banco_nti', JSON.stringify(banco.reverse()));
-            this.atualizar();
-        }
-    };
+    <script>
+        const app = {
+            mode: 'login',
+            currentUser: null,
 
-    setInterval(() => {
-        document.getElementById('relogio').innerText = new Date().toLocaleString('pt-BR');
-    }, 1000);
-</script>
+            toggleAuth(m) {
+                this.mode = m;
+                document.getElementById('tab-login').classList.toggle('active', m === 'login');
+                document.getElementById('tab-cad').classList.toggle('active', m === 'cad');
+                document.getElementById('group-nome').style.display = m === 'cad' ? 'block' : 'none';
+                document.getElementById('group-mat').style.display = m === 'cad' ? 'block' : 'none';
+                document.getElementById('btn-auth-action').innerText = m === 'login' ? 'ENTRAR NO SISTEMA' : 'CONCLUIR CADASTRO';
+            },
+
+            authAction() {
+                const rp = document.getElementById('user-rp').value;
+                const pass = document.getElementById('user-pass').value;
+                let users = JSON.parse(localStorage.getItem('nti_users') || '[]');
+
+                if(this.mode === 'cad') {
+                    const nome = document.getElementById('user-nome').value;
+                    const mat = document.getElementById('user-mat').value;
+                    if(!nome || !rp || !pass) return alert("Preencha todos os campos!");
+                    
+                    users.push({nome, rp, mat, pass});
+                    localStorage.setItem('nti_users', JSON.stringify(users));
+                    alert("Cadastro realizado com sucesso! Faça login.");
+                    this.toggleAuth('login');
+                } else {
+                    const user = users.find(u => u.rp === rp && u.pass === pass);
+                    if(user) {
+                        this.currentUser = user;
+                        document.getElementById('prof-nome').innerText = user.nome.toUpperCase();
+                        this.nav('menu');
+                    } else {
+                        alert("Usuário ou senha incorretos!");
+                    }
+                }
+            },
+
+            nav(p) {
+                document.querySelectorAll('[id^="scr-"]').forEach(s => s.classList.add('hidden'));
+                document.getElementById('scr-' + p).classList.remove('hidden');
+                if(p === 'cron') this.renderCron();
+            },
+
+            salvarTI() {
+                const grau = document.getElementById('ti-grau').value;
+                const desc = document.getElementById('ti-desc').value;
+                if(!desc) return alert("Descreva o problema!");
+
+                const chamado = {
+                    tipo: 'CHAMADO TI',
+                    prof: this.currentUser.nome,
+                    materia: this.currentUser.mat,
+                    detalhe: `GRAVIDADE: ${grau} - ${desc}`,
+                    data: new Date().toLocaleDateString(),
+                    hora: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+                };
+                this.dbSave(chamado);
+            },
+
+            salvarReserva() {
+                const eq = document.getElementById('res-eq').value;
+                const data = document.getElementById('res-data').value;
+                const ini = document.getElementById('res-hora-ini').value;
+                const fim = document.getElementById('res-hora-fim').value;
+
+                if(!data || !ini || !fim) return alert("Preencha os horários!");
+
+                const reserva = {
+                    tipo: 'RESERVA',
+                    prof: this.currentUser.nome,
+                    materia: this.currentUser.mat,
+                    detalhe: `${eq}`,
+                    data: data.split('-').reverse().join('/'),
+                    hora: `${ini} às ${fim}`
+                };
+                this.dbSave(reserva);
+            },
+
+            dbSave(obj) {
+                let db = JSON.parse(localStorage.getItem('nti_db_parnaiba') || '[]');
+                db.push(obj);
+                localStorage.setItem('nti_db_parnaiba', JSON.stringify(db));
+                alert("Registrado com sucesso!");
+                this.nav('cron');
+            },
+
+            renderCron() {
+                const container = document.getElementById('cron-lista');
+                let db = JSON.parse(localStorage.getItem('nti_db_parnaiba') || '[]');
+                
+                if(db.length === 0) {
+                    container.innerHTML = "<p style='text-align:center; color:#999'>Nenhuma atividade hoje.</p>";
+                    return;
+                }
+
+                container.innerHTML = db.reverse().map((it, i) => `
+                    <div class="cron-card" style="border-left-color: ${it.tipo === 'RESERVA' ? '#003366' : '#d9534f'}">
+                        <div style="display:flex; justify-content:space-between; align-items:start">
+                            <span class="badge ${it.tipo === 'RESERVA' ? 'bg-normal' : 'bg-urgente'}">${it.tipo}</span>
+                            <small style="font-weight:700">${it.data} às ${it.hora}</small>
+                        </div>
+                        <div style="margin-top:10px">
+                            <strong style="color:var(--pref-azul)">${it.detalhe}</strong><br>
+                            <span style="font-size:12px"><b>Solicitante:</b> ${it.prof}</span><br>
+                            <span style="font-size:11px; color:#666"><b>Departamento/Matéria:</b> ${it.materia}</span>
+                        </div>
+                        <button onclick="app.remover(${i})" style="margin-top:10px; border:none; background:none; color:red; cursor:pointer; font-size:10px">[ EXCLUIR ]</button>
+                    </div>
+                `).join('');
+            },
+
+            remover(i) {
+                let db = JSON.parse(localStorage.getItem('nti_db_parnaiba') || '[]').reverse();
+                db.splice(i, 1);
+                localStorage.setItem('nti_db_parnaiba', JSON.stringify(db.reverse()));
+                this.renderCron();
+            }
+        };
+    </script>
 </body>
 </html>
