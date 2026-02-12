@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA NTI | Cronograma Real-Time</title>
+    <title>SISTEMA NTI | Kelvin Almeida</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -18,50 +18,38 @@
 
         body { 
             margin: 0; font-family: 'Poppins', sans-serif; 
-            /* O FUNDO DA TERRA QUE VOCÊ PEDIU */
             background: #000 url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072') no-repeat center center fixed;
-            background-size: cover; 
-            color: white; 
-            height: 100vh; 
-            display: flex; 
-            overflow: hidden;
+            background-size: cover; color: white; height: 100vh; display: flex; overflow: hidden;
         }
 
         /* --- CRÉDITOS --- */
         .footer-credit { position: fixed; bottom: 15px; right: 20px; font-size: 11px; text-align: right; color: var(--primary); z-index: 999; line-height: 1.4; opacity: 0.9; }
 
         nav { width: 260px; background: rgba(0, 0, 0, 0.9); border-right: 1px solid var(--border); padding: 25px; display: flex; flex-direction: column; gap: 8px; z-index: 10; }
-        main { flex: 1; padding: 30px; overflow-y: auto; background: rgba(0,0,0,0.5); position: relative; }
+        main { flex: 1; padding: 30px; overflow-y: auto; background: rgba(0,0,0,0.4); position: relative; backdrop-filter: blur(2px); }
 
         .nav-item { padding: 12px 15px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.6); transition: 0.3s; }
         .nav-item:hover, .nav-item.active { background: var(--primary); color: white; }
 
-        /* --- ESTILO DO CRONOGRAMA EM TEMPO REAL --- */
+        /* --- MONITORAMENTO --- */
         .monitor-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
-        
         .monitor-card { 
             background: var(--glass); padding: 20px; border-radius: 20px; border-left: 6px solid var(--primary);
-            animation: pulse 2s infinite alternate; transition: 0.3s;
-            backdrop-filter: blur(10px);
+            transition: 0.3s; backdrop-filter: blur(10px);
         }
-
-        @keyframes pulse {
-            from { box-shadow: 0 0 10px rgba(0,173,239,0.1); }
-            to { box-shadow: 0 0 20px rgba(0,173,239,0.3); }
-        }
-
         .monitor-card h3 { margin: 0 0 10px 0; color: var(--primary); display: flex; justify-content: space-between; align-items: center; }
         .info-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 14px; }
         .info-row i { color: var(--accent); width: 20px; text-align: center; }
-
-        .badge-timer { background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 10px; font-size: 12px; font-weight: bold; }
 
         /* --- EQUIPAMENTOS --- */
         .card-detalhado { background: var(--glass); padding: 20px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 15px; backdrop-filter: blur(10px); }
         .loc-tag { font-size: 10px; background: var(--primary); color: white; padding: 2px 8px; border-radius: 5px; margin-bottom: 5px; display: inline-block; }
 
         .hidden { display: none !important; }
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(15px); }
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        
+        button { cursor: pointer; transition: 0.3s; }
+        button:hover { opacity: 0.8; }
     </style>
 </head>
 <body>
@@ -78,7 +66,7 @@
             <p style="font-size: 12px; margin-bottom: 20px; opacity: 0.7;">Controle de Tecnologia e Inovação</p>
             <input type="number" id="l-pront" placeholder="Prontuário" style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:1px solid #444; background:rgba(0,0,0,0.5); color:white;">
             <input type="password" id="l-pass" placeholder="Senha" style="width:100%; padding:12px; margin-bottom:15px; border-radius:10px; border:1px solid #444; background:rgba(0,0,0,0.5); color:white;">
-            <button onclick="app.login()" style="width:100%; padding:14px; border:none; border-radius:12px; background:var(--primary); color:white; font-weight:bold; cursor:pointer;">ACESSAR PAINEL</button>
+            <button onclick="app.login()" style="width:100%; padding:14px; border:none; border-radius:12px; background:var(--primary); color:white; font-weight:bold;">ACESSAR PAINEL</button>
         </div>
     </div>
 
@@ -96,13 +84,9 @@
     <main id="main-content" class="hidden">
         
         <div id="v-monitor" class="content-view">
-            <h2 style="margin-top:0; display:flex; align-items:center; gap:15px;">
-                <i class="fa fa-satellite-dish" style="color:var(--accent);"></i> 
-                Monitoramento de Uso - Hoje
-            </h2>
+            <h2 style="margin-top:0;"><i class="fa fa-satellite-dish" style="color:var(--accent);"></i> Monitoramento de Uso</h2>
             <div id="monitor-list" class="monitor-container"></div>
             <div id="empty-msg" class="hidden" style="text-align:center; margin-top:50px; opacity:0.5;">
-                <i class="fa fa-calendar-day" style="font-size:40px;"></i>
                 <p>Nenhum equipamento em uso no momento.</p>
             </div>
         </div>
@@ -113,10 +97,10 @@
         </div>
 
         <div id="v-nti" class="content-view hidden">
-            <h2>Abrir Chamado ao NTI</h2>
+            <h2>Suporte NTI</h2>
             <div class="card-detalhado" style="max-width:500px;">
-                <textarea id="nti-msg" placeholder="Descreva o problema para o Kelvin..." rows="5" style="width:100%; background:rgba(0,0,0,0.4); color:white; border:1px solid #444; border-radius:10px; padding:10px;"></textarea>
-                <button onclick="app.sendNTI()" style="width:100%; background:var(--primary); border:none; color:white; padding:12px; border-radius:10px; margin-top:10px; cursor:pointer;">ENVIAR AO KELVIN</button>
+                <textarea id="nti-msg" placeholder="Descreva o problema..." rows="5" style="width:100%; background:rgba(0,0,0,0.4); color:white; border:1px solid #444; border-radius:10px; padding:10px;"></textarea>
+                <button onclick="app.sendNTI()" style="width:100%; background:var(--primary); border:none; color:white; padding:12px; border-radius:10px; margin-top:10px; font-weight:bold;">ENVIAR AO KELVIN</button>
             </div>
         </div>
 
@@ -125,12 +109,10 @@
     <div id="modal-res" class="overlay hidden">
         <div style="background:var(--glass); padding:30px; border-radius:20px; width:400px; border:1px solid var(--border);">
             <h3 id="res-name" style="color:var(--primary); margin-top:0;"></h3>
-            <label style="font-size:12px;">Qual a sala?</label>
-            <input type="text" id="res-sala" placeholder="Ex: Sala 05 - Bloco A" style="width:100%; padding:10px; margin-bottom:15px; background:rgba(0,0,0,0.3); border:1px solid #444; color:white; border-radius:8px;">
-            <label style="font-size:12px;">Até que horas?</label>
+            <input type="text" id="res-sala" placeholder="Qual a sala?" style="width:100%; padding:10px; margin-bottom:15px; background:rgba(0,0,0,0.3); border:1px solid #444; color:white; border-radius:8px;">
             <input type="time" id="res-hora" style="width:100%; padding:10px; margin-bottom:20px; background:rgba(0,0,0,0.3); border:1px solid #444; color:white; border-radius:8px;">
-            <button onclick="app.confirmRes()" style="width:100%; padding:12px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">CONFIRMAR AGENDAMENTO</button>
-            <button onclick="document.getElementById('modal-res').classList.add('hidden')" style="width:100%; padding:10px; background:transparent; color:white; border:none; margin-top:10px; cursor:pointer; font-size:12px;">CANCELAR</button>
+            <button onclick="app.confirmRes()" style="width:100%; padding:12px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold;">CONFIRMAR AGENDAMENTO</button>
+            <button onclick="document.getElementById('modal-res').classList.add('hidden')" style="width:100%; padding:10px; background:transparent; color:white; border:none; margin-top:10px; cursor:pointer;">CANCELAR</button>
         </div>
     </div>
 
@@ -185,11 +167,11 @@
                         countAtivos++;
                         mon.innerHTML += `
                             <div class="monitor-card">
-                                <h3>${d.equip} <span class="badge-timer">${d.fim}</span></h3>
-                                <div class="info-row"><i class="fa fa-user"></i> <b>Responsável:</b> Prof. ${d.prof}</div>
-                                <div class="info-row"><i class="fa fa-map-marker-alt"></i> <b>Local:</b> ${d.sala}</div>
-                                <div class="info-row"><i class="fa fa-tag"></i> <b>Uso:</b> Progressivo</div>
-                                <button onclick="app.baixa('${a.key}')" style="margin-top:10px; background:var(--danger); border:none; color:white; padding:5px 12px; border-radius:5px; font-size:11px; cursor:pointer;">DAR BAIXA</button>
+                                <h3>${d.equip}</h3>
+                                <div class="info-row"><i class="fa fa-user"></i> Prof. ${d.prof}</div>
+                                <div class="info-row"><i class="fa fa-map-marker-alt"></i> ${d.sala}</div>
+                                <div class="info-row"><i class="fa fa-clock"></i> Até ${d.fim}</div>
+                                <button onclick="app.baixa('${a.key}')" style="margin-top:10px; background:var(--danger); border:none; color:white; padding:8px; border-radius:5px; width:100%; font-weight:bold;">DAR BAIXA</button>
                             </div>
                         `;
                     }
@@ -201,9 +183,9 @@
                     grid.innerHTML += `
                         <div class="card-detalhado">
                             <span class="loc-tag">${e.loc}</span>
-                            <h3 style="margin:5px 0;">${e.id}</h3>
+                            <h3>${e.id}</h3>
                             <p style="font-size:11px; opacity:0.7;">${e.desc}</p>
-                            ${!emUso[e.id] ? `<button onclick="app.openRes('${e.id}')" style="width:100%; padding:8px; background:var(--accent); border:none; color:black; font-weight:bold; border-radius:8px; cursor:pointer; margin-top:10px;">RESERVAR AGORA</button>` : `<p style="color:var(--danger); font-size:11px; font-weight:bold; text-align:center;">INDISPONÍVEL</p>`}
+                            ${!emUso[e.id] ? `<button onclick="app.openRes('${e.id}')" style="width:100%; padding:10px; background:var(--accent); border:none; color:black; font-weight:bold; border-radius:8px;">RESERVAR</button>` : `<p style="color:var(--danger); font-size:12px; font-weight:bold;">EM USO</p>`}
                         </div>
                     `;
                 });
@@ -214,13 +196,13 @@
         
         async confirmRes() {
             const sala = document.getElementById('res-sala').value, hora = document.getElementById('res-hora').value;
-            if(!sala || !hora) return alert("Preencha o local e o horário!");
+            if(!sala || !hora) return alert("Preencha tudo!");
             await db.ref('atividades').push({ equip: this.currentItem, prof: this.user.nome, sala: sala, fim: hora, status: 'ativo' });
             document.getElementById('modal-res').classList.add('hidden');
         },
 
-        async baixa(k) { if(confirm("O equipamento foi devolvido ao NTI?")) await db.ref('atividades/'+k).update({ status: 'off' }); },
-        async sendNTI() { const m = document.getElementById('nti-msg').value; await db.ref('chamados').push({ prof: this.user.nome, msg: m }); alert("Kelvin recebeu seu chamado!"); }
+        async baixa(k) { if(confirm("Confirmar devolução?")) await db.ref('atividades/'+k).update({ status: 'off' }); },
+        async sendNTI() { const m = document.getElementById('nti-msg').value; await db.ref('chamados').push({ prof: this.user.nome, msg: m }); alert("Enviado ao Kelvin!"); }
     };
 </script>
 </body>
