@@ -3,152 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA NTI | Portal Professor</title>
+    <title>NTI MASTER | Portal Modular</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --blue: #00adef; --green: #00ff9d; --red: #ff4757; --dark-bg: #010409; --card-bg: rgba(13, 17, 23, 0.95); }
-        
+        :root { --azul: #00adef; --dark: #020617; --glass: rgba(15, 23, 42, 0.95); }
         body { 
-            margin: 0; font-family: 'Poppins', sans-serif; 
-            background: var(--dark-bg) url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072') no-repeat center center fixed; 
-            background-size: cover; color: white; min-height: 100vh; padding: 20px;
+            margin: 0; font-family: 'Poppins', sans-serif; background: var(--dark) url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072') no-repeat center center fixed; 
+            background-size: cover; color: white; min-height: 100vh; overflow-x: hidden;
         }
 
-        /* Topo */
-        .header-main { width: 100%; max-width: 1200px; margin: 0 auto 20px auto; display: flex; justify-content: space-between; align-items: center; }
-        .header-main h1 { font-size: 18px; letter-spacing: 2px; color: var(--blue); margin:0; }
-
-        /* Grid Principal */
-        .container { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 25px; 
-            max-width: 1200px; 
-            margin: 0 auto;
-        }
-
-        .card-box { 
-            background: var(--card-bg); 
-            border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 24px; 
-            padding: 25px; 
-            backdrop-filter: blur(10px);
-        }
-
-        h3 { margin-top: 0; font-weight: 600; font-size: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; color: var(--blue); }
-
-        /* --- SEÇÃO RESERVAS --- */
-        .list-equip { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
-        .row-equip { 
-            display: flex; justify-content: space-between; align-items: center; 
-            background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);
-        }
-        .row-equip b { font-size: 14px; }
-        .btn-reserva { background: var(--blue); color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 12px; }
-
-        /* --- SEÇÃO CHAMADOS --- */
-        .flex-form { display: flex; flex-direction: column; gap: 10px; }
-        select, textarea, input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3); color: white; font-family: inherit; }
-        .btn-chamado { background: var(--red); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; }
-
-        /* --- SEÇÃO CRONOGRAMA & CHAT --- */
-        .live-feed { height: 180px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 12px; padding: 10px; font-size: 13px; margin-bottom: 15px; }
-        .log-item { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .log-item b { color: var(--green); }
-
-        .chat-area { height: 120px; overflow-y: auto; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 12px; margin-bottom: 10px; font-size: 12px; }
-        
-        .footer-nti { position: fixed; bottom: 15px; right: 25px; font-size: 11px; color: rgba(255,255,255,0.3); text-align: right; }
         .hidden { display: none !important; }
 
-        /* Layout Responsivo */
-        @media (max-width: 800px) { .container { grid-template-columns: 1fr; } }
+        /* HEADER FIXO */
+        header { width: 100%; padding: 20px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; position: fixed; top: 0; z-index: 100; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.1); }
+        header h1 { font-size: 16px; color: var(--azul); letter-spacing: 2px; margin: 0; }
+        .btn-voltar { background: #333; color: white; border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer; font-size: 12px; }
+
+        /* CONTAINER CENTRAL */
+        .wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding-top: 80px; }
+
+        /* MENU PRINCIPAL (HUB) */
+        .hub-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; max-width: 500px; padding: 20px; }
+        .hub-item { 
+            background: var(--glass); border: 1px solid rgba(255,255,255,0.1); padding: 40px 20px; 
+            border-radius: 20px; cursor: pointer; text-align: center; transition: 0.3s;
+        }
+        .hub-item:hover { border-color: var(--azul); transform: scale(1.05); background: rgba(0, 173, 239, 0.1); }
+        .hub-item i { font-size: 40px; display: block; margin-bottom: 10px; }
+        .hub-item b { font-size: 14px; letter-spacing: 1px; color: var(--azul); }
+
+        /* ÁREAS ESPECÍFICAS */
+        .section-box { width: 90%; max-width: 800px; background: var(--glass); padding: 30px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); }
+        
+        /* Estilo da Lista de Equipamentos */
+        .equip-row { display: flex; justify-content: space-between; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 10px; align-items: center; }
+        .btn-action { background: var(--azul); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+
+        /* Estilo do Chamado */
+        .gravidade-btn { display: flex; gap: 10px; margin-bottom: 15px; }
+        .gravidade-btn button { flex: 1; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; opacity: 0.5; }
+        .gravidade-btn .active { opacity: 1; transform: scale(1.05); }
+
+        /* FOOTER */
+        footer { position: fixed; bottom: 10px; right: 20px; font-size: 10px; color: rgba(255,255,255,0.4); text-align: right; }
     </style>
 </head>
 <body onload="app.init()">
 
-    <div class="header-main">
-        <h1>SISTEMA NTI</h1>
-        <div id="prof-tag" style="font-weight: bold; font-size: 13px;">Acesso Restrito</div>
-    </div>
-
-    <div id="auth-screen" style="max-width: 400px; margin: 100px auto;" class="card-box">
-        <h3>Identificação do Professor</h3>
-        <input type="number" id="in-pront" placeholder="Digite seu Prontuário" oninput="app.verificar(this.value)">
-        <div id="cad-box" class="hidden">
-            <input type="text" id="in-nome" placeholder="Seu Nome Completo">
-            <input type="text" id="in-materia" placeholder="Sua Disciplina">
+    <header>
+        <h1 id="app-title">SISTEMA NTI</h1>
+        <div id="nav-btns" class="hidden">
+            <button class="btn-voltar" onclick="app.showMenu()">MENU PRINCIPAL</button>
+            <button class="btn-voltar" style="background: #c0392b;" onclick="location.reload()">SAIR</button>
         </div>
-        <input type="password" id="in-pass" placeholder="Sua Senha" style="margin-top: 10px;">
-        <button class="btn-reserva" style="width:100%; margin-top:15px; padding:15px;" onclick="app.logar()">ENTRAR</button>
-    </div>
+    </header>
 
-    <div id="dash-screen" class="container hidden">
+    <div class="wrapper">
         
-        <div class="card-box">
-            <h3>📅 RESERVA DE EQUIPAMENTOS</h3>
-            <div class="list-equip">
-                <div class="row-equip">
-                    <span>📺 <b>TV SMART 01</b></span>
-                    <button class="btn-reserva" onclick="app.reservar('TV 01')">Agendar</button>
-                </div>
-                <div class="row-equip">
-                    <span>📺 <b>TV SMART 02</b></span>
-                    <button class="btn-reserva" onclick="app.reservar('TV 02')">Agendar</button>
-                </div>
-                <div class="row-equip">
-                    <span>📺 <b>TV SMART 03</b></span>
-                    <button class="btn-reserva" onclick="app.reservar('TV 03')">Agendar</button>
-                </div>
-                <div class="row-equip">
-                    <span>💻 <b>CARRINHO CHROMEBOOK</b></span>
-                    <button class="btn-reserva" onclick="app.reservar('Chromebooks')">Agendar</button>
-                </div>
-                <div class="row-equip">
-                    <span>🖥️ <b>SALA DE INFORMÁTICA</b></span>
-                    <button class="btn-reserva" onclick="app.reservar('Sala Info')">Agendar</button>
-                </div>
+        <div id="view-login" class="section-box" style="max-width: 400px;">
+            <h2 style="text-align: center;">Acesso Professor</h2>
+            <input type="number" id="in-pront" placeholder="Prontuário" style="width:100%; padding:12px; border-radius:8px; border:none; margin-bottom:10px;" oninput="app.checar(this.value)">
+            <div id="cad-extra" class="hidden">
+                <input type="text" id="in-nome" placeholder="Nome Completo" style="width:100%; padding:12px; border-radius:8px; border:none; margin-bottom:10px;">
+            </div>
+            <input type="password" id="in-pass" placeholder="Senha" style="width:100%; padding:12px; border-radius:8px; border:none;">
+            <button class="btn-action" style="width:100%; margin-top:20px;" onclick="app.logar()">ACESSAR</button>
+        </div>
+
+        <div id="view-hub" class="hub-menu hidden">
+            <div class="hub-item" onclick="app.showSection('reserva')">
+                <i>📅</i>
+                <b>ÁREA DE RESERVA</b>
+            </div>
+            <div class="hub-item" onclick="app.showSection('ti')">
+                <i>🛠️</i>
+                <b>SUPORTE TÉCNICO</b>
+            </div>
+            <div class="hub-item" onclick="app.showSection('cronograma')">
+                <i>🕒</i>
+                <b>CRONOGRAMA LIVE</b>
+            </div>
+            <div class="hub-item" onclick="app.showSection('chat')">
+                <i>💬</i>
+                <b>CHAT CONECT</b>
             </div>
         </div>
 
-        <div class="column-right">
-            
-            <div class="card-box" style="margin-bottom: 25px;">
-                <h3>🆘 CHAMADO TÉCNICO NTI</h3>
-                <div class="flex-form">
-                    <select id="gravidade">
-                        <option value="Baixa">🟢 Gravidade: Baixa (Dúvida/Ajuste)</option>
-                        <option value="Média">🟡 Gravidade: Média (Lento/Travando)</option>
-                        <option value="Alta">🔴 Gravidade: Alta (Não liga/Parado)</option>
-                    </select>
-                    <textarea id="relato" rows="2" placeholder="O que aconteceu?"></textarea>
-                    <button class="btn-chamado" onclick="app.enviarChamado()">ABRIR CHAMADO</button>
-                </div>
-            </div>
+        <div id="view-reserva" class="section-box hidden">
+            <h3>📅 Gerenciar Reservas</h3>
+            <div class="equip-row"><span>📺 Smart TV 01</span> <button class="btn-action" onclick="app.reservar('TV 01')">Agendar</button></div>
+            <div class="equip-row"><span>📺 Smart TV 02</span> <button class="btn-action" onclick="app.reservar('TV 02')">Agendar</button></div>
+            <div class="equip-row"><span>📺 Smart TV 03</span> <button class="btn-action" onclick="app.reservar('TV 03')">Agendar</button></div>
+            <div class="equip-row"><span>💻 Carrinho Chromebooks</span> <button class="btn-action" onclick="app.reservar('Chromebooks')">Agendar</button></div>
+            <div class="equip-row"><span>🖥️ Sala de Informática</span> <button class="btn-action" onclick="app.reservar('Sala Info')">Agendar</button></div>
+        </div>
 
-            <div class="card-box">
-                <h3>🕒 CRONOGRAMA LIVE & CHAT</h3>
-                <div id="live-feed" class="live-feed">
-                    </div>
-                <div class="chat-area" id="chat-msg"></div>
-                <div style="display: flex; gap: 5px;">
-                    <input type="text" id="chat-in" placeholder="Dúvida rápida...">
-                    <button class="btn-reserva" onclick="app.sendChat()">OK</button>
-                </div>
+        <div id="view-ti" class="section-box hidden">
+            <h3>🛠️ Abrir Chamado Técnico</h3>
+            <p style="font-size: 12px; color: #aaa;">Selecione a gravidade e descreva o ocorrido.</p>
+            <div class="gravidade-btn">
+                <button id="g-baixa" style="background:#2ecc71;" onclick="app.setGrav('Baixa')">BAIXA</button>
+                <button id="g-media" style="background:#f1c40f;" onclick="app.setGrav('Média')">MÉDIA</button>
+                <button id="g-alta" style="background:#e74c3c;" onclick="app.setGrav('ALTA')">ALTA</button>
             </div>
+            <textarea id="relato" rows="5" placeholder="Descreva o problema aqui..." style="width:100%; border-radius:10px; background:rgba(0,0,0,0.3); color:white; padding:15px; border:1px solid #444;"></textarea>
+            <button class="btn-action" style="width:100%; margin-top:20px; background:#e74c3c;" onclick="app.enviarChamado()">ENVIAR AO TI</button>
+        </div>
 
+        <div id="view-cronograma" class="section-box hidden">
+            <h3>🕒 Cronograma em Tempo Real</h3>
+            <div id="lista-reservas" style="font-size: 14px;"></div>
+        </div>
+
+        <div id="view-chat" class="section-box hidden">
+            <h3>💬 Chat Conect NTI</h3>
+            <div id="chat-box" style="height: 300px; overflow-y:auto; background:rgba(0,0,0,0.2); padding:15px; border-radius:10px; margin-bottom:10px;"></div>
+            <div style="display:flex; gap:10px;">
+                <input type="text" id="chat-in" placeholder="Sua mensagem..." style="flex:1; padding:10px; border-radius:8px; border:none;">
+                <button class="btn-action" onclick="app.sendChat()">ENVIAR</button>
+            </div>
         </div>
 
     </div>
 
-    <div class="footer-nti">
-        Feito pelo estagiário <b>Kelvin</b><br>
-        Programa <b>Conect NTI</b>
-    </div>
+    <footer>Feito pelo estagiário <b>Kelvin</b> | Programa <b>Conect NTI</b></footer>
 
 <script>
     const firebaseConfig = { databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com" };
@@ -156,13 +138,13 @@
     const db = firebase.database();
 
     const app = {
-        user: null, existe: false,
+        user: null, existe: false, gravidade: 'Baixa',
 
-        async verificar(p) {
+        async checar(p) {
             if(p.length < 3) return;
             const snap = await db.ref(`usuarios/professores/${p}`).once('value');
             this.existe = snap.exists();
-            document.getElementById('cad-box').classList.toggle('hidden', this.existe);
+            document.getElementById('cad-extra').classList.toggle('hidden', this.existe);
         },
 
         async logar() {
@@ -170,64 +152,79 @@
             const s = document.getElementById('in-pass').value;
             if(this.existe) {
                 const snap = await db.ref(`usuarios/professores/${p}`).once('value');
-                if(snap.val().pass === s) this.iniciar(snap.val()); else alert("Senha incorreta");
+                if(snap.val().pass === s) this.initUser(snap.val()); else alert("Senha incorreta");
             } else {
                 const n = document.getElementById('in-nome').value;
-                const m = document.getElementById('in-materia').value;
-                if(!n || !s) return alert("Complete o cadastro");
-                const u = { nome: n, materia: m, pront: p, pass: s };
+                if(!n || !s) return alert("Complete os dados");
+                const u = { nome: n, pront: p, pass: s };
                 await db.ref(`usuarios/professores/${p}`).set(u);
-                this.iniciar(u);
+                this.initUser(u);
             }
         },
 
-        iniciar(user) {
-            this.user = user;
-            document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('dash-screen').classList.remove('hidden');
-            document.getElementById('prof-tag').innerText = "PROF. " + user.nome.toUpperCase();
-            this.carregarDados();
+        initUser(u) {
+            this.user = u;
+            document.getElementById('view-login').classList.add('hidden');
+            this.showMenu();
+            this.ouvirDados();
         },
 
+        showMenu() {
+            this.hideAll();
+            document.getElementById('view-hub').classList.remove('hidden');
+            document.getElementById('nav-btns').classList.add('hidden');
+            document.getElementById('app-title').innerText = "SISTEMA NTI | HUB";
+        },
+
+        showSection(id) {
+            this.hideAll();
+            document.getElementById('view-' + id).classList.remove('hidden');
+            document.getElementById('nav-btns').classList.remove('hidden');
+            document.getElementById('app-title').innerText = "NTI | " + id.toUpperCase();
+        },
+
+        hideAll() {
+            ['view-login', 'view-hub', 'view-reserva', 'view-ti', 'view-cronograma', 'view-chat'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+        },
+
+        // LOGICA DE RESERVA
         reservar(item) {
-            const aula = prompt(`Para qual aula você quer a ${item}?`);
+            const aula = prompt(`Qual aula para ${item}?`);
             if(aula) db.ref('reservas').push({ prof: this.user.nome, item, aula });
         },
 
+        // LOGICA TI
+        setGrav(g) {
+            this.gravidade = g;
+            ['g-baixa', 'g-media', 'g-alta'].forEach(id => document.getElementById(id).classList.remove('active'));
+            document.getElementById('g-' + g.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")).classList.add('active');
+        },
+
         enviarChamado() {
-            const g = document.getElementById('gravidade').value;
             const r = document.getElementById('relato').value;
             if(r) {
-                db.ref('chamados').push({ prof: this.user.nome, g, r, status: 'Aberto' });
-                alert("Chamado enviado ao NTI!");
-                document.getElementById('relato').value = "";
+                db.ref('chamados').push({ prof: this.user.nome, g: this.gravidade, r });
+                alert("Chamado enviado!");
+                this.showMenu();
             }
         },
 
+        // CHAT E MONITOR
         sendChat() {
             const m = document.getElementById('chat-in').value;
-            if(m) {
-                db.ref('chat').push({ nome: this.user.nome, m });
-                document.getElementById('chat-in').value = "";
-            }
+            if(m) { db.ref('chat').push({ nome: this.user.nome, m }); document.getElementById('chat-in').value = ""; }
         },
 
-        carregarDados() {
+        ouvirDados() {
             db.ref('reservas').on('value', snap => {
-                const feed = document.getElementById('live-feed');
-                feed.innerHTML = "";
-                snap.forEach(d => {
-                    feed.innerHTML += `<div class="log-item"><b>${d.val().prof}</b> reservou <b>${d.val().item}</b> (${d.val().aula})</div>`;
-                });
-                feed.scrollTop = feed.scrollHeight;
+                const box = document.getElementById('lista-reservas'); box.innerHTML = "";
+                snap.forEach(d => { box.innerHTML += `<div class="equip-row">${d.val().prof} reserva ${d.val().item} (${d.val().aula})</div>`; });
             });
-
             db.ref('chat').on('value', snap => {
-                const box = document.getElementById('chat-msg');
-                box.innerHTML = "";
-                snap.forEach(d => {
-                    box.innerHTML += `<div><b>${d.val().nome}:</b> ${d.val().m}</div>`;
-                });
+                const box = document.getElementById('chat-box'); box.innerHTML = "";
+                snap.forEach(d => { box.innerHTML += `<div><b>${d.val().nome}:</b> ${d.val().m}</div>`; });
                 box.scrollTop = box.scrollHeight;
             });
         }
