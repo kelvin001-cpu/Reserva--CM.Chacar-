@@ -7,6 +7,7 @@
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -22,34 +23,37 @@
             background-size: cover; color: white; height: 100vh; display: flex; overflow: hidden;
         }
 
-        /* --- CRÉDITOS --- */
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 1000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(15px); }
+        .modal-card { background: var(--glass); padding: 35px; border-radius: 30px; border: 1px solid var(--border); width: 450px; text-align: center; }
+
         .footer-credit { position: fixed; bottom: 15px; right: 20px; font-size: 11px; text-align: right; color: var(--primary); z-index: 999; line-height: 1.4; opacity: 0.9; }
 
-        nav { width: 260px; background: rgba(0, 0, 0, 0.9); border-right: 1px solid var(--border); padding: 25px; display: flex; flex-direction: column; gap: 8px; z-index: 10; }
-        main { flex: 1; padding: 30px; overflow-y: auto; background: rgba(0,0,0,0.4); position: relative; backdrop-filter: blur(2px); }
+        nav { width: 280px; background: rgba(0, 0, 0, 0.85); border-right: 1px solid var(--border); padding: 25px; display: flex; flex-direction: column; gap: 8px; backdrop-filter: blur(10px); }
+        main { flex: 1; padding: 30px; overflow-y: auto; background: rgba(0,0,0,0.4); }
 
+        .prof-profile { background: rgba(0, 173, 239, 0.1); border: 1px solid var(--primary); padding: 15px; border-radius: 15px; margin-bottom: 20px; text-align: center; }
         .nav-item { padding: 12px 15px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.6); transition: 0.3s; }
-        .nav-item:hover, .nav-item.active { background: var(--primary); color: white; }
+        .nav-item:hover, .nav-item.active { background: var(--primary); color: white; transform: scale(1.02); }
 
-        /* --- MONITORAMENTO --- */
-        .monitor-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
-        .monitor-card { 
-            background: var(--glass); padding: 20px; border-radius: 20px; border-left: 6px solid var(--primary);
-            transition: 0.3s; backdrop-filter: blur(10px);
-        }
-        .monitor-card h3 { margin: 0 0 10px 0; color: var(--primary); display: flex; justify-content: space-between; align-items: center; }
-        .info-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 14px; }
-        .info-row i { color: var(--accent); width: 20px; text-align: center; }
+        .card { background: var(--glass); padding: 20px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 15px; }
+        .grid-equip { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+        
+        .equip-card { transition: 0.4s; border-top: 4px solid var(--primary); }
+        .equip-card.ocupado { border-top-color: var(--danger); }
+        
+        .badge-status { font-size: 10px; padding: 4px 10px; border-radius: 20px; font-weight: bold; text-transform: uppercase; display: inline-block; margin-bottom: 10px; }
+        .bg-livre { background: rgba(0, 255, 157, 0.2); color: var(--accent); border: 1px solid var(--accent); }
+        .bg-uso { background: rgba(255, 71, 87, 0.2); color: var(--danger); border: 1px solid var(--danger); }
 
-        /* --- EQUIPAMENTOS --- */
-        .card-detalhado { background: var(--glass); padding: 20px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 15px; backdrop-filter: blur(10px); }
-        .loc-tag { font-size: 10px; background: var(--primary); color: white; padding: 2px 8px; border-radius: 5px; margin-bottom: 5px; display: inline-block; }
+        .equip-info-list { font-size: 11px; text-align: left; margin: 10px 0; padding: 0; list-style: none; color: #ccc; }
+        .equip-info-list li { margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+
+        input, select, textarea { width: 100%; padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid #333; color: white; margin-top: 10px; box-sizing: border-box; }
+        .btn-main { width: 100%; padding: 14px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 15px; background: var(--primary); color: white; }
+
+        .cron-item { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; margin-bottom: 10px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
 
         .hidden { display: none !important; }
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-        
-        button { cursor: pointer; transition: 0.3s; }
-        button:hover { opacity: 0.8; }
     </style>
 </head>
 <body>
@@ -61,58 +65,90 @@
     </div>
 
     <div id="screen-auth" class="overlay">
-        <div style="background: var(--glass); padding: 40px; border-radius: 30px; border: 1px solid var(--border); width: 400px; text-align: center;">
+        <div class="modal-card">
             <h1 style="color:var(--primary); margin:0;">SISTEMA NTI</h1>
-            <p style="font-size: 12px; margin-bottom: 20px; opacity: 0.7;">Controle de Tecnologia e Inovação</p>
-            <input type="number" id="l-pront" placeholder="Prontuário" style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:1px solid #444; background:rgba(0,0,0,0.5); color:white;">
-            <input type="password" id="l-pass" placeholder="Senha" style="width:100%; padding:12px; margin-bottom:15px; border-radius:10px; border:1px solid #444; background:rgba(0,0,0,0.5); color:white;">
-            <button onclick="app.login()" style="width:100%; padding:14px; border:none; border-radius:12px; background:var(--primary); color:white; font-weight:bold;">ACESSAR PAINEL</button>
+            <div id="login-box">
+                <input type="number" id="l-pront" placeholder="Prontuário">
+                <input type="password" id="l-pass" placeholder="Senha">
+                <button class="btn-main" onclick="app.login()">ACESSAR CONTA</button>
+                <div style="margin-top: 15px; font-size: 11px;">
+                    <span onclick="app.toggleReset(true)" style="cursor:pointer; color:var(--primary)">Esqueci minha senha</span> | 
+                    <span onclick="app.toggleAuth(true)" style="cursor:pointer;">Novo Cadastro</span>
+                </div>
+            </div>
+
+            <div id="reset-box" class="hidden">
+                <h3>Recuperar Acesso</h3>
+                <input type="number" id="r-pront-reset" placeholder="Prontuário">
+                <button class="btn-main" onclick="app.requestReset()">SOLICITAR RESET</button>
+                <p onclick="app.toggleReset(false)" style="font-size: 11px; margin-top: 15px; cursor:pointer;">Voltar</p>
+            </div>
+
+            <div id="cad-box" class="hidden">
+                <input type="text" id="c-nome" placeholder="Nome Completo">
+                <input type="number" id="c-pront" placeholder="Prontuário">
+                <input type="text" id="c-mat" placeholder="Matéria/Cargo">
+                <button class="btn-main" onclick="app.cadastrar()">CRIAR CONTA</button>
+                <p onclick="app.toggleAuth(false)" style="font-size: 11px; margin-top: 15px; cursor:pointer;">Voltar</p>
+            </div>
         </div>
     </div>
 
     <nav id="sidebar" class="hidden">
-        <div style="text-align:center; padding-bottom:20px; border-bottom:1px solid var(--border); margin-bottom:20px;">
-            <div id="p-nome" style="font-weight:bold; color:var(--primary);"></div>
-            <small id="p-mat" style="font-size:10px; opacity:0.6;"></small>
+        <div class="prof-profile">
+            <div id="p-nome" style="font-weight:600;"></div>
+            <small id="p-mat" style="opacity:0.6; font-size:10px;"></small>
         </div>
-        <div class="nav-item active" onclick="app.view('v-monitor')"><i class="fa fa-tv"></i> Cronograma Real-Time</div>
-        <div class="nav-item" onclick="app.view('v-reserva')"><i class="fa fa-plus-circle"></i> Reservar Item</div>
+        <div class="nav-item active" onclick="app.view('v-dash')"><i class="fa fa-chart-line"></i> Dashboard</div>
+        <div class="nav-item" onclick="app.view('v-reserva')"><i class="fa fa-laptop-code"></i> Equipamentos</div>
+        <div class="nav-item" onclick="app.view('v-chat')"><i class="fa fa-comments"></i> Mural Escola</div>
         <div class="nav-item" onclick="app.view('v-nti')"><i class="fa fa-headset"></i> Suporte NTI</div>
-        <div class="nav-item" style="margin-top:auto; color:var(--danger);" onclick="location.reload()"><i class="fa fa-sign-out-alt"></i> Sair</div>
+        <div class="nav-item" style="color:var(--danger); margin-top:auto;" onclick="location.reload()"><i class="fa fa-power-off"></i> Sair</div>
     </nav>
 
     <main id="main-content" class="hidden">
-        
-        <div id="v-monitor" class="content-view">
-            <h2 style="margin-top:0;"><i class="fa fa-satellite-dish" style="color:var(--accent);"></i> Monitoramento de Uso</h2>
-            <div id="monitor-list" class="monitor-container"></div>
-            <div id="empty-msg" class="hidden" style="text-align:center; margin-top:50px; opacity:0.5;">
-                <p>Nenhum equipamento em uso no momento.</p>
+        <div id="v-dash" class="content-view">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+                <h2 style="margin:0;">Dashboard NTI</h2>
+                <div id="relogio" style="font-weight: bold; color: var(--primary);"></div>
             </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; height: 250px; margin-bottom: 30px;">
+                <div class="card"><canvas id="barChart"></canvas></div>
+                <div class="card"><canvas id="pieChart"></canvas></div>
+            </div>
+            <h3>Cronograma Ativo</h3>
+            <div id="cron-list"></div>
         </div>
 
         <div id="v-reserva" class="content-view hidden">
-            <h2>Inventário de Equipamentos</h2>
-            <div id="equip-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:20px;"></div>
+            <div class="grid-equip" id="equip-render"></div>
         </div>
 
-        <div id="v-nti" class="content-view hidden">
-            <h2>Suporte NTI</h2>
-            <div class="card-detalhado" style="max-width:500px;">
-                <textarea id="nti-msg" placeholder="Descreva o problema..." rows="5" style="width:100%; background:rgba(0,0,0,0.4); color:white; border:1px solid #444; border-radius:10px; padding:10px;"></textarea>
-                <button onclick="app.sendNTI()" style="width:100%; background:var(--primary); border:none; color:white; padding:12px; border-radius:10px; margin-top:10px; font-weight:bold;">ENVIAR AO KELVIN</button>
+        <div id="v-chat" class="content-view hidden">
+            <div id="chat-box" style="height:400px; background:rgba(0,0,0,0.3); border-radius:20px; padding:20px; overflow-y:auto;"></div>
+            <div style="display:flex; gap:10px; margin-top:15px;">
+                <input type="text" id="chat-in" placeholder="Escrever no mural...">
+                <button class="btn-main" style="margin:0; width:100px;" onclick="app.sendChat()">POSTAR</button>
             </div>
         </div>
 
+        <div id="v-nti" class="content-view hidden">
+            <div class="card" style="max-width: 500px;">
+                <h3>Suporte Técnico</h3>
+                <textarea id="nti-txt" placeholder="Descreva o problema..." rows="4"></textarea>
+                <button class="btn-main" onclick="app.sendNTI()">ABRIR CHAMADO</button>
+            </div>
+        </div>
     </main>
 
     <div id="modal-res" class="overlay hidden">
-        <div style="background:var(--glass); padding:30px; border-radius:20px; width:400px; border:1px solid var(--border);">
-            <h3 id="res-name" style="color:var(--primary); margin-top:0;"></h3>
-            <input type="text" id="res-sala" placeholder="Qual a sala?" style="width:100%; padding:10px; margin-bottom:15px; background:rgba(0,0,0,0.3); border:1px solid #444; color:white; border-radius:8px;">
-            <input type="time" id="res-hora" style="width:100%; padding:10px; margin-bottom:20px; background:rgba(0,0,0,0.3); border:1px solid #444; color:white; border-radius:8px;">
-            <button onclick="app.confirmRes()" style="width:100%; padding:12px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold;">CONFIRMAR AGENDAMENTO</button>
-            <button onclick="document.getElementById('modal-res').classList.add('hidden')" style="width:100%; padding:10px; background:transparent; color:white; border:none; margin-top:10px; cursor:pointer;">CANCELAR</button>
+        <div class="modal-card">
+            <h3 id="res-title"></h3>
+            <input type="text" id="r-sala" placeholder="Sala">
+            <input type="datetime-local" id="r-ini">
+            <input type="datetime-local" id="r-fim">
+            <button class="btn-main" onclick="app.confirmRes()">CONFIRMAR</button>
+            <button class="btn-main" style="background:#333" onclick="document.getElementById('modal-res').classList.add('hidden')">CANCELAR</button>
         </div>
     </div>
 
@@ -120,89 +156,95 @@
     const firebaseConfig = { databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+    let chartB, chartP;
 
     const app = {
-        user: null, currentItem: null,
+        user: null, currentEq: null,
+        toggleAuth(s) { document.getElementById('login-box').classList.toggle('hidden', s); document.getElementById('cad-box').classList.toggle('hidden', !s); },
+        toggleReset(s) { document.getElementById('login-box').classList.toggle('hidden', s); document.getElementById('reset-box').classList.toggle('hidden', !s); },
 
         async login() {
             const p = document.getElementById('l-pront').value, s = document.getElementById('l-pass').value;
             const snap = await db.ref('usuarios/'+p).once('value');
-            if(snap.exists() && snap.val().pass === s) {
-                this.user = snap.val();
-                document.getElementById('screen-auth').classList.add('hidden');
-                document.getElementById('sidebar').classList.remove('hidden');
-                document.getElementById('main-content').classList.remove('hidden');
-                document.getElementById('p-nome').innerText = "Prof. " + this.user.nome;
-                document.getElementById('p-mat').innerText = this.user.materia;
-                this.init();
-            } else alert("Dados incorretos!");
+            if(snap.exists() && snap.val().pass === s) { this.user = snap.val(); this.start(); }
+            else alert("Dados inválidos!");
         },
 
-        view(id) {
-            document.querySelectorAll('.content-view').forEach(v => v.classList.add('hidden'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(id).classList.remove('hidden');
-            event.currentTarget.classList.add('active');
+        async cadastrar() {
+            const n = document.getElementById('c-nome').value, p = document.getElementById('c-pront').value, m = document.getElementById('c-mat').value;
+            await db.ref('usuarios/'+p).set({ nome: n, pront: p, materia: m, pass: 'Pmsp2026' });
+            alert("Criado! Senha: Pmsp2026"); this.toggleAuth(false);
         },
 
-        init() {
-            const eqs = [
-                { id: 'TV 01', loc: 'Piso 1', desc: 'Suporte móvel + Cabo HDMI' },
-                { id: 'TV 02', loc: 'Segundo Andar', desc: 'Smart TV fixa' },
-                { id: 'TV 03', loc: 'Segundo Andar', desc: 'Suporte móvel + Adaptador' },
-                { id: 'SALA INFORMÁTICA', loc: 'Piso 1', desc: '20 máquinas + Projetor' },
-                { id: 'CARRINHO CHROMEBOOKS', loc: 'Núcleo NTI', desc: '30 Chromebooks + Carregador' }
+        start() {
+            document.getElementById('screen-auth').classList.add('hidden');
+            document.querySelectorAll('nav, main').forEach(e => e.classList.remove('hidden'));
+            document.getElementById('p-nome').innerText = "Prof. " + this.user.nome;
+            document.getElementById('p-mat').innerText = this.user.materia;
+            this.initData();
+            setInterval(() => { document.getElementById('relogio').innerText = new Date().toLocaleTimeString(); }, 1000);
+        },
+
+        view(id) { document.querySelectorAll('.content-view').forEach(v => v.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); },
+
+        initData() {
+            const eqData = [
+                { id: 'TV 01', icon: 'fa-tv', detalhes: ['Cabo HDMI', 'Controle Remoto', 'Suporte Móvel'] },
+                { id: 'TV 02', icon: 'fa-tv', detalhes: ['Cabo HDMI', 'Controle Remoto', 'Cabo Óptico'] },
+                { id: 'TV 03', icon: 'fa-tv', detalhes: ['Cabo HDMI', 'Suporte de Parede', 'Chromecast'] },
+                { id: 'SALA INFORMÁTICA', icon: 'fa-desktop', detalhes: ['20 Computadores', 'Ar-condicionado', 'Projetor'] },
+                { id: 'CARRINHO TABLETS', icon: 'fa-tablet-screen-button', detalhes: ['30 Tablets Samsung', 'Carregador Coletivo', 'Chave do Carrinho'] }
             ];
 
             db.ref('atividades').on('value', snap => {
-                const mon = document.getElementById('monitor-list'), grid = document.getElementById('equip-grid');
-                mon.innerHTML = ""; grid.innerHTML = "";
-                let emUso = {};
-                let countAtivos = 0;
+                const list = document.getElementById('cron-list'), grid = document.getElementById('equip-render');
+                list.innerHTML = ""; grid.innerHTML = "";
+                let counts = { 'TV 01':0, 'TV 02':0, 'TV 03':0, 'SALA INFORMÁTICA':0, 'CARRINHO TABLETS':0 };
+                let ocupados = {};
 
                 snap.forEach(a => {
                     const d = a.val();
                     if(d.status === 'ativo') {
-                        emUso[d.equip] = true;
-                        countAtivos++;
-                        mon.innerHTML += `
-                            <div class="monitor-card">
-                                <h3>${d.equip}</h3>
-                                <div class="info-row"><i class="fa fa-user"></i> Prof. ${d.prof}</div>
-                                <div class="info-row"><i class="fa fa-map-marker-alt"></i> ${d.sala}</div>
-                                <div class="info-row"><i class="fa fa-clock"></i> Até ${d.fim}</div>
-                                <button onclick="app.baixa('${a.key}')" style="margin-top:10px; background:var(--danger); border:none; color:white; padding:8px; border-radius:5px; width:100%; font-weight:bold;">DAR BAIXA</button>
-                            </div>
-                        `;
+                        counts[d.equip]++; ocupados[d.equip] = true;
+                        list.innerHTML += `<div class="cron-item"><div><b>${d.equip}</b> - ${d.sala}</div><button onclick="app.baixa('${a.key}')">BAIXA</button></div>`;
                     }
                 });
 
-                document.getElementById('empty-msg').classList.toggle('hidden', countAtivos > 0);
-
-                eqs.forEach(e => {
-                    grid.innerHTML += `
-                        <div class="card-detalhado">
-                            <span class="loc-tag">${e.loc}</span>
-                            <h3>${e.id}</h3>
-                            <p style="font-size:11px; opacity:0.7;">${e.desc}</p>
-                            ${!emUso[e.id] ? `<button onclick="app.openRes('${e.id}')" style="width:100%; padding:10px; background:var(--accent); border:none; color:black; font-weight:bold; border-radius:8px;">RESERVAR</button>` : `<p style="color:var(--danger); font-size:12px; font-weight:bold;">EM USO</p>`}
-                        </div>
-                    `;
+                eqData.forEach(e => {
+                    const sits = ocupados[e.id];
+                    grid.innerHTML += `<div class="card equip-card ${sits?'ocupado':''}">
+                        <span class="badge-status ${sits?'bg-uso':'bg-livre'}">${sits?'Em Uso':'Livre'}</span>
+                        <h4>${e.id}</h4>
+                        <ul class="equip-info-list">${e.detalhes.map(d => `<li><i class="fa fa-check"></i> ${d}</li>`).join('')}</ul>
+                        ${!sits ? `<button class="btn-main" onclick="app.openRes('${e.id}')">RESERVAR</button>` : ''}
+                    </div>`;
                 });
+                this.updateCharts(counts);
+            });
+
+            db.ref('chat').on('value', s => {
+                const b = document.getElementById('chat-box'); b.innerHTML = "";
+                s.forEach(m => { b.innerHTML += `<div style="margin-bottom:10px;"><b>${m.val().user}:</b> ${m.val().txt}</div>`; });
+                b.scrollTop = b.scrollHeight;
             });
         },
 
-        openRes(e) { this.currentItem = e; document.getElementById('res-name').innerText = "Reservar " + e; document.getElementById('modal-res').classList.remove('hidden'); },
-        
-        async confirmRes() {
-            const sala = document.getElementById('res-sala').value, hora = document.getElementById('res-hora').value;
-            if(!sala || !hora) return alert("Preencha tudo!");
-            await db.ref('atividades').push({ equip: this.currentItem, prof: this.user.nome, sala: sala, fim: hora, status: 'ativo' });
-            document.getElementById('modal-res').classList.add('hidden');
+        updateCharts(data) {
+            const ctxB = document.getElementById('barChart'), ctxP = document.getElementById('pieChart');
+            if(chartB) chartB.destroy(); if(chartP) chartP.destroy();
+            chartB = new Chart(ctxB, { type: 'bar', data: { labels: Object.keys(data), datasets: [{ data: Object.values(data), backgroundColor: '#00adef' }] }, options: { maintainAspectRatio: false } });
+            chartP = new Chart(ctxP, { type: 'pie', data: { labels: Object.keys(data), datasets: [{ data: Object.values(data), backgroundColor: ['#00adef','#00ff9d','#ff4757','#ffa502','#9b59b6'] }] }, options: { maintainAspectRatio: false } });
         },
 
-        async baixa(k) { if(confirm("Confirmar devolução?")) await db.ref('atividades/'+k).update({ status: 'off' }); },
-        async sendNTI() { const m = document.getElementById('nti-msg').value; await db.ref('chamados').push({ prof: this.user.nome, msg: m }); alert("Enviado ao Kelvin!"); }
+        openRes(e) { this.currentEq = e; document.getElementById('res-title').innerText = e; document.getElementById('modal-res').classList.remove('hidden'); },
+        async confirmRes() {
+            const s = document.getElementById('r-sala').value, i = document.getElementById('r-ini').value, f = document.getElementById('r-fim').value;
+            await db.ref('atividades').push({ equip: this.currentEq, prof: this.user.nome, sala: s, ini: i, fim: f, status: 'ativo' });
+            document.getElementById('modal-res').classList.add('hidden');
+        },
+        async baixa(k) { await db.ref('atividades/'+k).update({ status: 'off' }); },
+        sendChat() { const t = document.getElementById('chat-in').value; if(t) db.ref('chat').push({ user: this.user.nome, txt: t }); document.getElementById('chat-in').value=""; },
+        async sendNTI() { const t = document.getElementById('nti-txt').value; await db.ref('chamados').push({ prof: this.user.nome, erro: t }); alert("Enviado!"); }
     };
 </script>
 </body>
