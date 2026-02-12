@@ -2,178 +2,231 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA NTI 2026 - REPLICA</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SISTEMA NTi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Orbitron:wght@600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --azul-botao: #007bff;
-            --azul-texto: #00adef;
-            --verde-borda: #00ff9d;
-            --bg-card: rgba(0, 0, 0, 0.85);
+            --azul-pref: #004a99;
+            --azul-sky: #00adef;
+            --glass: rgba(255, 255, 255, 0.1);
         }
 
-        body {
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
-            background: #000 url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072') no-repeat center center fixed;
-            background-size: cover;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: 0.3s; }
+        
+        body { 
+            margin: 0; 
+            background: #000b1a url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072') no-repeat center center fixed;
+            background-size: cover; 
+            min-height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
             color: white;
-        }
-
-        /* O Card Principal das Fotos */
-        .card-nti {
-            width: 90%;
-            max-width: 440px;
-            background: var(--bg-card);
-            backdrop-filter: blur(15px);
-            border-radius: 28px;
-            padding: 40px 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-        }
-
-        .data-hora {
-            color: var(--azul-texto);
-            font-size: 11px;
-            font-weight: 600;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-        }
-
-        h1 { font-size: 22px; margin: 0 0 5px 0; font-weight: 700; }
-        .sub-acesso { color: var(--azul-texto); font-size: 13px; font-weight: 600; text-transform: uppercase; margin-bottom: 30px; }
-
-        /* Estilo dos Inputs da Foto 3 */
-        input {
-            width: 100%;
             padding: 15px;
-            margin-bottom: 12px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            background: transparent;
-            color: white;
-            box-sizing: border-box;
-            font-family: inherit;
         }
 
-        /* Botão ENTRAR Azul Sólido */
-        .btn-entrar {
+        .balao-vidro {
             width: 100%;
-            padding: 16px;
-            background: var(--azul-botao);
-            color: white;
+            max-width: 450px;
+            background: rgba(0, 15, 30, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 35px;
+            padding: 35px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+            text-align: center;
+        }
+
+        h1 { font-family: 'Orbitron', sans-serif; font-size: 22px; margin-bottom: 5px; color: var(--azul-sky); }
+        .sub { font-size: 10px; opacity: 0.6; letter-spacing: 2px; margin-bottom: 25px; }
+
+        /* Campos de Input */
+        .campo {
+            width: 100%;
+            height: 48px;
+            background: white;
             border: none;
             border-radius: 12px;
-            font-weight: 700;
+            margin-bottom: 12px;
+            padding: 0 15px;
             font-size: 14px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .btn-acao {
+            width: 100%;
+            height: 52px;
+            background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 700;
             cursor: pointer;
             text-transform: uppercase;
             margin-top: 10px;
         }
 
-        /* Botões do Portal com Borda (Foto 2) */
-        .btn-portal {
-            width: 100%;
-            padding: 14px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--verde-borda);
+        .btn-secundario {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.3);
             color: white;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 12px;
-            text-transform: uppercase;
-            margin-bottom: 10px;
+            margin-top: 15px;
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            font-size: 11px;
         }
 
-        /* Chat Estilo Pílula */
-        .chat-box {
-            background: rgba(0,0,0,0.4);
-            height: 180px;
-            border-radius: 15px;
-            margin: 20px 0;
-            padding: 15px;
-            overflow-y: auto;
+        /* Menu de Reservas (Estilo Cards Tech) */
+        .menu-reserva {
             display: flex;
             flex-direction: column;
             gap: 10px;
+            margin-top: 20px;
         }
 
-        .balao {
-            padding: 8px 15px;
+        .item-equip {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 15px;
             border-radius: 15px;
-            font-size: 12px;
-            max-width: 85%;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .me { background: #004a99; align-self: flex-end; }
-        .other { background: #333; align-self: flex-start; }
+        .item-equip:hover { background: rgba(0, 173, 239, 0.2); border-color: var(--azul-sky); }
 
-        .hidden { display: none !important; }
-        .footer-text { position: fixed; bottom: 20px; font-size: 10px; opacity: 0.5; }
+        .hidden { display: none; }
+        
+        .label-tech {
+            font-size: 10px;
+            color: var(--azul-sky);
+            display: block;
+            text-align: left;
+            margin: 0 0 5px 5px;
+            font-weight: 700;
+        }
     </style>
 </head>
 <body>
 
-    <div class="card-nti">
-        <div id="login-section">
-            <h1>NTI MASTER 2026</h1>
-            <div class="sub-acesso">Acesso Professor</div>
-            
-            <input type="number" placeholder="Seu Prontuário">
-            <input type="password" placeholder="Sua Senha">
-            
-            <button class="btn-entrar" onclick="irParaPortal()">ENTRAR</button>
+    <div class="balao-vidro">
+        <h1>SISTEMA NTi</h1>
+        <p class="sub">CONTROLE DOCENTE</p>
+
+        <div id="scr-auth">
+            <div id="box-login">
+                <input type="text" class="campo" id="l-rp" placeholder="Seu Prontuário">
+                <input type="password" class="campo" id="l-pass" placeholder="Senha (Padrão: pmsp2026)">
+                <button class="btn-acao" onclick="app.login()">ACESSAR CONTA</button>
+                <button class="btn-secundario" onclick="app.show('cad')">Não tem conta? Cadastre-se</button>
+            </div>
+
+            <div id="box-cad" class="hidden">
+                <input type="text" class="campo" id="c-nome" placeholder="Nome Completo">
+                <input type="text" class="campo" id="c-rp" placeholder="Prontuário">
+                <input type="text" class="campo" id="c-mat" placeholder="Sua Matéria">
+                <button class="btn-acao" onclick="app.cadastrar()">FINALIZAR CADASTRO</button>
+                <button class="btn-secundario" onclick="app.show('login')">Voltar para Login</button>
+            </div>
         </div>
 
-        <div id="portal-section" class="hidden">
-            <div class="data-hora" id="clock">12/02/2026, 11:51:00</div>
-            <h1>Portal: TI MASTER</h1>
+        <div id="scr-menu" class="hidden">
+            <p id="msg-welcome" style="font-size: 12px; margin-bottom: 20px;"></p>
             
-            <div style="margin-top: 25px;">
-                <button class="btn-portal">🛡️ Central de Chamados</button>
-                <button class="btn-portal" style="border-color: #555;">🕒 Cronograma de Uso</button>
-            </div>
-
-            <div class="chat-box">
-                <div class="balao other"><b>K:</b> test</div>
-                <div class="balao me"><b>TI MASTER:</b> testando</div>
-            </div>
-
-            <div style="display:flex; gap:8px;">
-                <input type="text" placeholder="Conversar..." style="margin:0; border-color: #444;">
-                <button style="background:var(--verde-borda); border:none; border-radius:10px; width:45px; cursor:pointer;">➔</button>
+            <div class="menu-reserva">
+                <div class="item-equip" onclick="app.openReserva('TV 01')">📺 TV 1 <span>RESERVAR</span></div>
+                <div class="item-equip" onclick="app.openReserva('TV 02')">📺 TV 2 <span>RESERVAR</span></div>
+                <div class="item-equip" onclick="app.openReserva('TV 03')">📺 TV 3 <span>RESERVAR</span></div>
+                <div class="item-equip" onclick="app.openReserva('CARRINHO CHROMEBOOK')">💻 CARRINHO <span>RESERVAR</span></div>
+                <div class="item-equip" onclick="app.openReserva('SALA INFORMÁTICA')">🖥️ SALA INFO <span>RESERVAR</span></div>
             </div>
             
-            <button onclick="location.reload()" style="background:none; border:none; color:#666; margin-top:15px; cursor:pointer; font-size:10px; text-transform:uppercase;">Desconectar</button>
+            <button class="btn-secundario" onclick="location.reload()">SAIR</button>
+        </div>
+
+        <div id="scr-data" class="hidden">
+            <h3 id="res-title" style="font-size: 16px;"></h3>
+            
+            <span class="label-tech">DATA E HORA DA RETIRADA</span>
+            <input type="datetime-local" class="campo" id="data-retirada">
+
+            <span class="label-tech">DATA E HORA DA ENTREGA</span>
+            <input type="datetime-local" class="campo" id="data-entrega">
+
+            <button class="btn-acao" onclick="app.finalizar()">CONFIRMAR AGENDAMENTO</button>
+            <button class="btn-secundario" onclick="app.showMenu()">CANCELAR</button>
         </div>
     </div>
 
-    <div class="footer-text">Desenvolvido por Kelvin | Programa Conect NTI</div>
+<script>
+    const app = {
+        user: null,
+        equipSelecionado: "",
 
-    <script>
-        function irParaPortal() {
-            document.getElementById('login-section').classList.add('hidden');
-            document.getElementById('portal-section').classList.remove('hidden');
+        show(box) {
+            document.getElementById('box-login').classList.toggle('hidden', box === 'cad');
+            document.getElementById('box-cad').classList.toggle('hidden', box === 'login');
+        },
+
+        cadastrar() {
+            const nome = document.getElementById('c-nome').value;
+            const rp = document.getElementById('c-rp').value;
+            const mat = document.getElementById('c-mat').value;
+
+            if(!nome || !rp || !mat) return alert("Preencha todos os dados!");
+            
+            let users = JSON.parse(localStorage.getItem('users_nti') || '[]');
+            users.push({ nome, rp, mat, pass: 'pmsp2026' });
+            localStorage.setItem('users_nti', JSON.stringify(users));
+            
+            alert("Cadastrado! Use seu RP e a senha pmsp2026 para entrar.");
+            this.show('login');
+        },
+
+        login() {
+            const rp = document.getElementById('l-rp').value;
+            const pass = document.getElementById('l-pass').value;
+            let users = JSON.parse(localStorage.getItem('users_nti') || '[]');
+
+            const u = users.find(x => x.rp === rp && x.pass === pass);
+            if(u) {
+                this.user = u;
+                document.getElementById('scr-auth').classList.add('hidden');
+                document.getElementById('scr-menu').classList.remove('hidden');
+                document.getElementById('msg-welcome').innerText = `Bem-vindo, Prof. ${u.nome}`;
+            } else {
+                alert("Prontuário ou senha incorretos!");
+            }
+        },
+
+        openReserva(equip) {
+            this.equipSelecionado = equip;
+            document.getElementById('res-title').innerText = "RESERVANDO: " + equip;
+            document.getElementById('scr-menu').classList.add('hidden');
+            document.getElementById('scr-data').classList.remove('hidden');
+        },
+
+        showMenu() {
+            document.getElementById('scr-data').classList.add('hidden');
+            document.getElementById('scr-menu').classList.remove('hidden');
+        },
+
+        finalizar() {
+            const d1 = document.getElementById('data-retirada').value;
+            const d2 = document.getElementById('data-entrega').value;
+
+            if(!d1 || !d2) return alert("Defina os horários!");
+
+            alert(`Sucesso! ${this.equipSelecionado} reservado para ${this.user.nome}.`);
+            this.showMenu();
         }
-
-        // Relógio igual ao seu
-        setInterval(() => {
-            const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleString('pt-BR');
-        }, 1000);
-    </script>
+    };
+</script>
 </body>
 </html>
