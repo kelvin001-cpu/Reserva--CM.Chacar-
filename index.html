@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA NTI | Kelvin Almeida</title>
+    <title>SISTEMA NTI | Cronograma Real-Time</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -26,25 +25,34 @@
         /* --- CRÉDITOS --- */
         .footer-credit { position: fixed; bottom: 15px; right: 20px; font-size: 11px; text-align: right; color: var(--primary); z-index: 999; line-height: 1.4; opacity: 0.9; }
 
-        nav { width: 280px; background: rgba(0, 0, 0, 0.9); border-right: 1px solid var(--border); padding: 25px; display: flex; flex-direction: column; gap: 8px; }
-        main { flex: 1; padding: 30px; overflow-y: auto; background: rgba(0,0,0,0.5); }
+        nav { width: 260px; background: rgba(0, 0, 0, 0.9); border-right: 1px solid var(--border); padding: 25px; display: flex; flex-direction: column; gap: 8px; z-index: 10; }
+        main { flex: 1; padding: 30px; overflow-y: auto; background: rgba(0,0,0,0.5); position: relative; }
 
         .nav-item { padding: 12px 15px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.6); transition: 0.3s; }
         .nav-item:hover, .nav-item.active { background: var(--primary); color: white; }
 
-        /* --- CARDS E GRÁFICOS --- */
-        .card { background: var(--glass); padding: 20px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 15px; }
-        .grid-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
-
-        /* --- NOVO ESPAÇO: CRONOGRAMA EM TEMPO REAL --- */
-        .monitor-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        /* --- ESTILO DO CRONOGRAMA EM TEMPO REAL --- */
+        .monitor-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+        
         .monitor-card { 
-            background: rgba(0, 173, 239, 0.05); border: 1px solid var(--primary); padding: 20px; border-radius: 20px;
-            position: relative; overflow: hidden; border-left: 8px solid var(--primary);
+            background: var(--glass); padding: 20px; border-radius: 20px; border-left: 6px solid var(--primary);
+            animation: pulse 2s infinite alternate; transition: 0.3s;
         }
-        .monitor-card::before { content: 'ATIVO AGORA'; position: absolute; top: 10px; right: -25px; background: var(--accent); color: black; font-size: 8px; font-weight: bold; padding: 2px 30px; transform: rotate(45deg); }
 
-        .btn-baixa { background: var(--danger); border: none; color: white; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 15px; width: 100%; }
+        @keyframes pulse {
+            from { box-shadow: 0 0 10px rgba(0,173,239,0.1); }
+            to { box-shadow: 0 0 20px rgba(0,173,239,0.3); }
+        }
+
+        .monitor-card h3 { margin: 0 0 10px 0; color: var(--primary); display: flex; justify-content: space-between; align-items: center; }
+        .info-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 14px; }
+        .info-row i { color: var(--accent); width: 20px; text-align: center; }
+
+        .badge-timer { background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 10px; font-size: 12px; font-weight: bold; }
+
+        /* --- EQUIPAMENTOS --- */
+        .card-detalhado { background: var(--glass); padding: 20px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 15px; }
+        .loc-tag { font-size: 10px; background: var(--primary); color: white; padding: 2px 8px; border-radius: 5px; margin-bottom: 5px; display: inline-block; }
 
         .hidden { display: none !important; }
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(15px); }
@@ -59,16 +67,12 @@
     </div>
 
     <div id="screen-auth" class="overlay">
-        <div style="background: var(--glass); padding: 40px; border-radius: 30px; border: 1px solid var(--border); width: 480px; text-align: center;">
+        <div style="background: var(--glass); padding: 40px; border-radius: 30px; border: 1px solid var(--border); width: 400px; text-align: center;">
             <h1 style="color:var(--primary); margin:0;">SISTEMA NTI</h1>
-            <p style="font-size: 13px; margin: 20px 0; line-height: 1.6; color: #ccc;">
-                Este sistema foi desenvolvido para facilitar a gestão de professores e gestores, 
-                otimizando o controle de equipamentos e elevando o progresso da tecnologia na educação, 
-                preparando nossas escolas para o futuro da inovação.
-            </p>
-            <input type="number" id="l-pront" placeholder="Seu Prontuário" style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:1px solid #444; background:rgba(0,0,0,0.5); color:white;">
-            <input type="password" id="l-pass" placeholder="Sua Senha" style="width:100%; padding:12px; margin-bottom:15px; border-radius:10px; border:1px solid #444; background:rgba(0,0,0,0.5); color:white;">
-            <button onclick="app.login()" style="width:100%; padding:14px; border:none; border-radius:12px; background:var(--primary); color:white; font-weight:bold; cursor:pointer;">ACESSAR SISTEMA</button>
+            <p style="font-size: 12px; margin-bottom: 20px; opacity: 0.7;">Controle de Tecnologia e Inovação</p>
+            <input type="number" id="l-pront" placeholder="Prontuário" style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:1px solid #444; background:rgba(0,0,0,0.5); color:white;">
+            <input type="password" id="l-pass" placeholder="Senha" style="width:100%; padding:12px; margin-bottom:15px; border-radius:10px; border:1px solid #444; background:rgba(0,0,0,0.5); color:white;">
+            <button onclick="app.login()" style="width:100%; padding:14px; border:none; border-radius:12px; background:var(--primary); color:white; font-weight:bold; cursor:pointer;">ACESSAR PAINEL</button>
         </div>
     </div>
 
@@ -77,40 +81,37 @@
             <div id="p-nome" style="font-weight:bold; color:var(--primary);"></div>
             <small id="p-mat" style="font-size:10px; opacity:0.6;"></small>
         </div>
-        <div class="nav-item active" onclick="app.view('v-dash')"><i class="fa fa-chart-pie"></i> Dashboard Gestão</div>
-        <div class="nav-item" onclick="app.view('v-cronograma')"><i class="fa fa-clock"></i> Cronograma Real-Time</div>
-        <div class="nav-item" onclick="app.view('v-reserva')"><i class="fa fa-laptop-medical"></i> Reservar Item</div>
-        <div class="nav-item" onclick="app.view('v-nti')"><i class="fa fa-headset"></i> Chamado NTI</div>
-        <div class="nav-item" style="margin-top:auto; color:var(--danger);" onclick="location.reload()"><i class="fa fa-power-off"></i> Sair</div>
+        <div class="nav-item active" onclick="app.view('v-monitor')"><i class="fa fa-tv"></i> Cronograma Real-Time</div>
+        <div class="nav-item" onclick="app.view('v-reserva')"><i class="fa fa-plus-circle"></i> Reservar Item</div>
+        <div class="nav-item" onclick="app.view('v-nti')"><i class="fa fa-headset"></i> Suporte NTI</div>
+        <div class="nav-item" style="margin-top:auto; color:var(--danger);" onclick="location.reload()"><i class="fa fa-sign-out-alt"></i> Sair</div>
     </nav>
 
     <main id="main-content" class="hidden">
         
-        <div id="v-dash" class="content-view">
-            <h2 style="margin-top:0;">Dashboard de Uso</h2>
-            <div class="grid-charts">
-                <div class="card" style="height: 300px;"><canvas id="barChart"></canvas></div>
-                <div class="card" style="height: 300px;"><canvas id="pieChart"></canvas></div>
+        <div id="v-monitor" class="content-view">
+            <h2 style="margin-top:0; display:flex; align-items:center; gap:15px;">
+                <i class="fa fa-satellite-dish" style="color:var(--accent);"></i> 
+                Monitoramento de Uso - Hoje
+            </h2>
+            <div id="monitor-list" class="monitor-container">
+                </div>
+            <div id="empty-msg" class="hidden" style="text-align:center; margin-top:50px; opacity:0.5;">
+                <i class="fa fa-calendar-day" style="font-size:40px;"></i>
+                <p>Nenhum equipamento em uso no momento.</p>
             </div>
         </div>
 
-        <div id="v-cronograma" class="content-view hidden">
-            <h2 style="margin-top:0;"><i class="fa fa-satellite-dish" style="color:var(--accent);"></i> Monitoramento de Atividades</h2>
-            <p style="font-size:12px; opacity:0.7; margin-bottom:20px;">Visualize quem está utilizando os equipamentos nas salas agora.</p>
-            <div id="monitor-list" class="monitor-grid">
-                </div>
-        </div>
-
         <div id="v-reserva" class="content-view hidden">
-            <h2>Equipamentos e Localização</h2>
+            <h2>Inventário de Equipamentos</h2>
             <div id="equip-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:20px;"></div>
         </div>
 
         <div id="v-nti" class="content-view hidden">
-            <h2>Suporte NTI - Kelvin</h2>
-            <div class="card" style="max-width:500px;">
-                <textarea id="nti-msg" placeholder="Descreva o problema técnico..." rows="5" style="width:100%; background:rgba(0,0,0,0.3); color:white; border:1px solid #444; padding:10px; border-radius:10px;"></textarea>
-                <button onclick="app.sendNTI()" style="width:100%; background:var(--primary); border:none; color:white; padding:12px; border-radius:10px; margin-top:10px; cursor:pointer;">ABRIR CHAMADO</button>
+            <h2>Abrir Chamado ao NTI</h2>
+            <div class="card-detalhado" style="max-width:500px;">
+                <textarea id="nti-msg" placeholder="Descreva o problema para o Kelvin..." rows="5" style="width:100%; background:rgba(0,0,0,0.4); color:white; border:1px solid #444; border-radius:10px; padding:10px;"></textarea>
+                <button onclick="app.sendNTI()" style="width:100%; background:var(--primary); border:none; color:white; padding:12px; border-radius:10px; margin-top:10px; cursor:pointer;">ENVIAR AO KELVIN</button>
             </div>
         </div>
 
@@ -118,20 +119,21 @@
 
     <div id="modal-res" class="overlay hidden">
         <div style="background:var(--glass); padding:30px; border-radius:20px; width:400px; border:1px solid var(--border);">
-            <h3 id="res-name" style="color:var(--primary);"></h3>
-            <label style="font-size:12px;">Local (Sala):</label>
-            <input type="text" id="res-sala" style="width:100%; padding:10px; margin-bottom:15px; background:rgba(0,0,0,0.3); border:1px solid #444; color:white; border-radius:8px;">
-            <label style="font-size:12px;">Devolução Prevista:</label>
+            <h3 id="res-name" style="color:var(--primary); margin-top:0;"></h3>
+            <label style="font-size:12px;">Qual a sala?</label>
+            <input type="text" id="res-sala" placeholder="Ex: Sala 05 - Bloco A" style="width:100%; padding:10px; margin-bottom:15px; background:rgba(0,0,0,0.3); border:1px solid #444; color:white; border-radius:8px;">
+            <label style="font-size:12px;">Até que horas?</label>
             <input type="time" id="res-hora" style="width:100%; padding:10px; margin-bottom:20px; background:rgba(0,0,0,0.3); border:1px solid #444; color:white; border-radius:8px;">
-            <button onclick="app.confirmRes()" style="width:100%; padding:12px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold;">CONFIRMAR</button>
+            <button onclick="app.confirmRes()" style="width:100%; padding:12px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">CONFIRMAR AGENDAMENTO</button>
+            <button onclick="document.getElementById('modal-res').classList.add('hidden')" style="width:100%; padding:10px; background:transparent; color:white; border:none; margin-top:10px; cursor:pointer; font-size:12px;">CANCELAR</button>
         </div>
     </div>
 
 <script>
+    // FIREBASE KELVIN
     const firebaseConfig = { databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    let chartB, chartP;
 
     const app = {
         user: null, currentItem: null,
@@ -142,11 +144,12 @@
             if(snap.exists() && snap.val().pass === s) {
                 this.user = snap.val();
                 document.getElementById('screen-auth').classList.add('hidden');
-                document.querySelectorAll('nav, main').forEach(e => e.classList.remove('hidden'));
+                document.getElementById('sidebar').classList.remove('hidden');
+                document.getElementById('main-content').classList.remove('hidden');
                 document.getElementById('p-nome').innerText = "Prof. " + this.user.nome;
                 document.getElementById('p-mat').innerText = this.user.materia;
                 this.init();
-            } else alert("Acesso Negado!");
+            } else alert("Dados incorretos!");
         },
 
         view(id) {
@@ -158,70 +161,61 @@
 
         init() {
             const eqs = [
-                { id: 'TV 01', loc: 'Piso 1', desc: 'Móvel + HDMI' },
-                { id: 'TV 02', loc: 'Segundo Andar', desc: 'Fixa' },
-                { id: 'TV 03', loc: 'Segundo Andar', desc: 'Móvel' },
-                { id: 'SALA INFORMÁTICA', loc: 'Piso 1', desc: '20 PCs' },
-                { id: 'CARRINHO CHROMEBOOKS', loc: 'NTI', desc: '30 Unidades' }
+                { id: 'TV 01', loc: 'Piso 1', desc: 'Suporte móvel + Cabo HDMI' },
+                { id: 'TV 02', loc: 'Segundo Andar', desc: 'Smart TV fixa' },
+                { id: 'TV 03', loc: 'Segundo Andar', desc: 'Suporte móvel + Adaptador' },
+                { id: 'SALA INFORMÁTICA', loc: 'Piso 1', desc: '20 máquinas + Projetor' },
+                { id: 'CARRINHO CHROMEBOOKS', loc: 'Núcleo NTI', desc: '30 Chromebooks + Carregador' }
             ];
 
             db.ref('atividades').on('value', snap => {
-                const monitor = document.getElementById('monitor-list'), grid = document.getElementById('equip-grid');
-                monitor.innerHTML = ""; grid.innerHTML = "";
+                const mon = document.getElementById('monitor-list'), grid = document.getElementById('equip-grid');
+                mon.innerHTML = ""; grid.innerHTML = "";
                 let emUso = {};
-                let counts = { 'TV 01':0, 'TV 02':0, 'TV 03':0, 'SALA INFORMÁTICA':0, 'CARRINHO CHROMEBOOKS':0 };
+                let countAtivos = 0;
 
                 snap.forEach(a => {
                     const d = a.val();
                     if(d.status === 'ativo') {
                         emUso[d.equip] = true;
-                        counts[d.equip]++;
-                        // INSERE NO ESPAÇO DE CRONOGRAMA
-                        monitor.innerHTML += `
+                        countAtivos++;
+                        mon.innerHTML += `
                             <div class="monitor-card">
-                                <h3 style="margin:0; color:var(--primary)">${d.equip}</h3>
-                                <div style="font-size:14px; margin-top:10px;">
-                                    <b>Prof:</b> ${d.prof}<br>
-                                    <b>Sala:</b> ${d.sala}<br>
-                                    <b>Devolução:</b> ${d.fim}
-                                </div>
-                                <button class="btn-baixa" onclick="app.baixa('${a.key}')">DAR BAIXA (LIBERAR)</button>
+                                <h3>${d.equip} <span class="badge-timer">${d.fim}</span></h3>
+                                <div class="info-row"><i class="fa fa-user"></i> <b>Responsável:</b> Prof. ${d.prof}</div>
+                                <div class="info-row"><i class="fa fa-map-marker-alt"></i> <b>Local:</b> ${d.sala}</div>
+                                <div class="info-row"><i class="fa fa-tag"></i> <b>Uso:</b> Progressivo</div>
+                                <button onclick="app.baixa('${a.key}')" style="margin-top:10px; background:var(--danger); border:none; color:white; padding:5px 12px; border-radius:5px; font-size:11px; cursor:pointer;">DAR BAIXA</button>
                             </div>
                         `;
                     }
                 });
 
+                document.getElementById('empty-msg').classList.toggle('hidden', countAtivos > 0);
+
                 eqs.forEach(e => {
                     grid.innerHTML += `
-                        <div class="card">
-                            <small style="color:var(--primary)">${e.loc}</small>
+                        <div class="card-detalhado">
+                            <span class="loc-tag">${e.loc}</span>
                             <h3 style="margin:5px 0;">${e.id}</h3>
-                            ${!emUso[e.id] ? `<button onclick="app.openRes('${e.id}')" style="width:100%; padding:8px; background:var(--accent); border:none; color:black; font-weight:bold; border-radius:8px; cursor:pointer;">RESERVAR</button>` : `<p style="color:var(--danger); font-size:11px; font-weight:bold;">EM USO</p>`}
+                            <p style="font-size:11px; opacity:0.7;">${e.desc}</p>
+                            ${!emUso[e.id] ? `<button onclick="app.openRes('${e.id}')" style="width:100%; padding:8px; background:var(--accent); border:none; color:black; font-weight:bold; border-radius:8px; cursor:pointer; margin-top:10px;">RESERVAR AGORA</button>` : `<p style="color:var(--danger); font-size:11px; font-weight:bold; text-align:center;">INDISPONÍVEL</p>`}
                         </div>
                     `;
                 });
-                this.updateCharts(counts);
             });
         },
 
-        updateCharts(data) {
-            const ctxB = document.getElementById('barChart'), ctxP = document.getElementById('pieChart');
-            if(chartB) chartB.destroy(); if(chartP) chartP.destroy();
-            chartB = new Chart(ctxB, { type: 'bar', data: { labels: Object.keys(data), datasets: [{ data: Object.values(data), backgroundColor: '#00adef' }] }, options: { maintainAspectRatio: false, plugins: { legend: { display: false } } } });
-            chartP = new Chart(ctxP, { type: 'pie', data: { labels: Object.keys(data), datasets: [{ data: Object.values(data), backgroundColor: ['#00adef','#00ff9d','#ff4757','#ffa502','#9b59b6'] }] }, options: { maintainAspectRatio: false } });
-        },
-
-        openRes(e) { this.currentItem = e; document.getElementById('res-name').innerText = e; document.getElementById('modal-res').classList.remove('hidden'); },
+        openRes(e) { this.currentItem = e; document.getElementById('res-name').innerText = "Reservar " + e; document.getElementById('modal-res').classList.remove('hidden'); },
         
         async confirmRes() {
             const sala = document.getElementById('res-sala').value, hora = document.getElementById('res-hora').value;
-            if(!sala || !hora) return alert("Preencha os campos!");
+            if(!sala || !hora) return alert("Preencha o local e o horário!");
             await db.ref('atividades').push({ equip: this.currentItem, prof: this.user.nome, sala: sala, fim: hora, status: 'ativo' });
             document.getElementById('modal-res').classList.add('hidden');
-            this.view('v-cronograma'); // Muda para o cronograma para ver a reserva
         },
 
-        async baixa(k) { if(confirm("Confirmar devolução?")) await db.ref('atividades/'+k).update({ status: 'off' }); },
+        async baixa(k) { if(confirm("O equipamento foi devolvido ao NTI?")) await db.ref('atividades/'+k).update({ status: 'off' }); },
         async sendNTI() { const m = document.getElementById('nti-msg').value; await db.ref('chamados').push({ prof: this.user.nome, msg: m }); alert("Kelvin recebeu seu chamado!"); }
     };
 </script>
