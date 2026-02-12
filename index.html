@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA NTI 2026 - CONTROLE TOTAL</title>
+    <title>SISTEMA NTI 2026 - REPLICA</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --azul-pref: #004a99;
-            --azul-sky: #00adef;
-            --neon: #00ff9d;
-            --danger: #ff4757;
-            --glass: rgba(0, 0, 0, 0.85);
+            --azul-botao: #007bff;
+            --azul-texto: #00adef;
+            --verde-borda: #00ff9d;
+            --bg-card: rgba(0, 0, 0, 0.85);
         }
 
         body {
@@ -21,93 +20,88 @@
             font-family: 'Poppins', sans-serif;
             background: #000 url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072') no-repeat center center fixed;
             background-size: cover;
-            color: white;
             height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* --- MENU SUPERIOR (O QUE VOCÊ PEDIU) --- */
-        header {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-sizing: border-box;
-            z-index: 100;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 20px;
-        }
-
-        .nav-item {
-            font-size: 12px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.6);
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .nav-item:hover, .nav-item.active {
-            color: var(--azul-sky);
-        }
-
-        /* --- CONTEÚDO CENTRALIZADO --- */
-        main {
-            flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            color: white;
         }
 
-        .main-card {
-            width: 100%;
-            max-width: 450px;
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border-radius: 25px;
-            padding: 35px;
+        /* O Card Principal das Fotos */
+        .card-nti {
+            width: 90%;
+            max-width: 440px;
+            background: var(--bg-card);
+            backdrop-filter: blur(15px);
+            border-radius: 28px;
+            padding: 40px 30px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
         }
 
-        .btn-action {
+        .data-hora {
+            color: var(--azul-texto);
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        h1 { font-size: 22px; margin: 0 0 5px 0; font-weight: 700; }
+        .sub-acesso { color: var(--azul-texto); font-size: 13px; font-weight: 600; text-transform: uppercase; margin-bottom: 30px; }
+
+        /* Estilo dos Inputs da Foto 3 */
+        input {
             width: 100%;
-            padding: 16px;
+            padding: 15px;
             margin-bottom: 12px;
             border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            background: transparent;
             color: white;
-            font-weight: 600;
-            text-transform: uppercase;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        /* Botão ENTRAR Azul Sólido */
+        .btn-entrar {
+            width: 100%;
+            padding: 16px;
+            background: var(--azul-botao);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
             cursor: pointer;
-            transition: 0.3s;
+            text-transform: uppercase;
+            margin-top: 10px;
         }
 
-        .btn-action:hover {
-            background: var(--azul-sky);
-            border-color: var(--neon);
+        /* Botões do Portal com Borda (Foto 2) */
+        .btn-portal {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--verde-borda);
+            color: white;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
-        .btn-azul { background: var(--azul-pref); border: none; }
-
-        /* --- CHAT PÍLULA (ESTILO FOTO) --- */
-        .chat-area {
-            height: 250px;
-            background: rgba(0,0,0,0.3);
+        /* Chat Estilo Pílula */
+        .chat-box {
+            background: rgba(0,0,0,0.4);
+            height: 180px;
             border-radius: 15px;
             margin: 20px 0;
             padding: 15px;
@@ -115,77 +109,71 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            text-align: left;
         }
 
         .balao {
-            padding: 10px 15px;
-            border-radius: 20px;
-            font-size: 13px;
+            padding: 8px 15px;
+            border-radius: 15px;
+            font-size: 12px;
             max-width: 85%;
-            line-height: 1.4;
         }
 
-        .me { background: var(--azul-pref); align-self: flex-end; border-bottom-right-radius: 2px; }
-        .other { background: #333; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .me { background: #004a99; align-self: flex-end; }
+        .other { background: #333; align-self: flex-start; }
 
         .hidden { display: none !important; }
-
-        footer {
-            padding: 15px;
-            font-size: 10px;
-            text-align: center;
-            opacity: 0.4;
-        }
+        .footer-text { position: fixed; bottom: 20px; font-size: 10px; opacity: 0.5; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div style="font-weight: 700; color: var(--azul-sky); font-size: 14px;">NTI MASTER</div>
-        <div class="nav-links">
-            <a class="nav-item active" onclick="tab('home')">Início</a>
-            <a class="nav-item" onclick="tab('professor')">Professor</a>
-            <a class="nav-item" onclick="tab('ti')">TI</a>
-            <a class="nav-item" style="color: var(--danger);" onclick="location.reload()">Sair</a>
+    <div class="card-nti">
+        <div id="login-section">
+            <h1>NTI MASTER 2026</h1>
+            <div class="sub-acesso">Acesso Professor</div>
+            
+            <input type="number" placeholder="Seu Prontuário">
+            <input type="password" placeholder="Sua Senha">
+            
+            <button class="btn-entrar" onclick="irParaPortal()">ENTRAR</button>
         </div>
-    </header>
 
-    <main>
-        <div class="main-card">
-            <h1 id="title-portal" style="font-size: 22px; margin-bottom: 5px;">Portal: TI MASTER</h1>
-            <p id="date-now" style="font-size: 11px; color: var(--azul-sky); margin-bottom: 30px;">12/02/2026, 11:46:46</p>
-
-            <div id="content-portal">
-                <button class="btn-action" style="border-color: var(--neon);">🛡️ Central de Chamados</button>
-                <button class="btn-action">🕒 Cronograma de Uso</button>
-
-                <div class="chat-area">
-                    <div class="balao other"><b>Suporte:</b> Testando sistema...</div>
-                    <div class="balao me">Tudo ok por aqui!</div>
-                </div>
-
-                <div style="display:flex; gap:10px;">
-                    <input type="text" placeholder="Conversar..." style="flex:1; padding:12px; border-radius:10px; background:#111; border:1px solid #444; color:white;">
-                    <button style="background:var(--neon); border:none; border-radius:10px; width:45px; cursor:pointer; color:#000; font-weight:bold;">➔</button>
-                </div>
+        <div id="portal-section" class="hidden">
+            <div class="data-hora" id="clock">12/02/2026, 11:51:00</div>
+            <h1>Portal: TI MASTER</h1>
+            
+            <div style="margin-top: 25px;">
+                <button class="btn-portal">🛡️ Central de Chamados</button>
+                <button class="btn-portal" style="border-color: #555;">🕒 Cronograma de Uso</button>
             </div>
-        </div>
-    </main>
 
-    <footer>DESENVOLVIDO POR KELVIN | PROGRAMA CONECT NTI</footer>
+            <div class="chat-box">
+                <div class="balao other"><b>K:</b> test</div>
+                <div class="balao me"><b>TI MASTER:</b> testando</div>
+            </div>
+
+            <div style="display:flex; gap:8px;">
+                <input type="text" placeholder="Conversar..." style="margin:0; border-color: #444;">
+                <button style="background:var(--verde-borda); border:none; border-radius:10px; width:45px; cursor:pointer;">➔</button>
+            </div>
+            
+            <button onclick="location.reload()" style="background:none; border:none; color:#666; margin-top:15px; cursor:pointer; font-size:10px; text-transform:uppercase;">Desconectar</button>
+        </div>
+    </div>
+
+    <div class="footer-text">Desenvolvido por Kelvin | Programa Conect NTI</div>
 
     <script>
-        function tab(t) {
-            const title = document.getElementById('title-portal');
-            if(t === 'home') title.innerText = "SISTEMA NTI 2026";
-            if(t === 'professor') title.innerText = "Portal: PROFESSOR";
-            if(t === 'ti') title.innerText = "Portal: TI MASTER";
-            
-            // Lógica para mudar os links ativos
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            event.target.classList.add('active');
+        function irParaPortal() {
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('portal-section').classList.remove('hidden');
         }
+
+        // Relógio igual ao seu
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleString('pt-BR');
+        }, 1000);
     </script>
 </body>
 </html>
