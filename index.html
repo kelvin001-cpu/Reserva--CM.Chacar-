@@ -3,247 +3,204 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SISTEMA NTi - SANTANA DE PARNAÍBA</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Orbitron:wght@600&display=swap" rel="stylesheet">
-    
+    <title>NTI MASTER - ELITE PARNAÍBA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --azul-pref: #004a99; --azul-sky: #00adef; --neon: #00ff9d;
-            --nivel-1: #2ed573; --nivel-2: #ffa502; --nivel-3: #ff4757;
+            --neon-blue: #00d2ff;
+            --neon-green: #00ff9d;
+            --neon-red: #ff4757;
+            --glass: rgba(255, 255, 255, 0.1);
         }
-        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: 0.3s; }
+
+        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         
         body { 
-            margin: 0; background: #000b1a url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed;
-            background-size: cover; min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white; padding: 10px;
+            margin: 0; background: #000 url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072') no-repeat center center fixed;
+            background-size: cover; min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white; overflow: hidden;
         }
 
-        /* O Balão de Vidro que você gosta */
-        .balao-premium {
-            width: 100%; max-width: 480px; background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.25); border-radius: 35px;
-            padding: 25px; box-shadow: 0 30px 60px rgba(0,0,0,0.7); text-align: center;
+        .master-panel {
+            width: 95%; max-width: 500px; background: rgba(0, 10, 20, 0.85);
+            backdrop-filter: blur(20px); border: 1px solid rgba(0, 210, 255, 0.3); border-radius: 30px;
+            padding: 20px; box-shadow: 0 0 50px rgba(0, 210, 255, 0.2); position: relative;
         }
 
-        .clock-header { font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--azul-sky); margin-bottom: 15px; letter-spacing: 1px; }
-        h1 { font-size: 20px; font-weight: 700; text-transform: uppercase; margin-bottom: 2px; letter-spacing: 1px; }
-        p.sub { font-size: 9px; opacity: 0.7; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
-
-        /* Campos Estilo Elite */
-        .campo { width: 100%; height: 45px; background: white; border-radius: 12px; border: none; padding: 0 15px; font-size: 13px; color: #111; margin-bottom: 12px; font-weight: 600; }
-        .campo:focus { outline: 3px solid var(--azul-sky); }
-
-        .input-group-bolha { background: rgba(0, 0, 0, 0.3); border-radius: 20px; padding: 15px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); text-align: left; }
-        label { display: block; font-size: 9px; font-weight: 700; color: var(--azul-sky); margin: 0 0 5px 5px; text-transform: uppercase; }
-
-        /* Botões */
-        .btn-acao { width: 100%; height: 55px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--azul-pref), var(--azul-sky)); color: white; font-weight: 700; text-transform: uppercase; cursor: pointer; font-size: 13px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        .btn-acao:hover { transform: translateY(-2px); filter: brightness(1.1); }
+        .header { text-align: center; margin-bottom: 20px; border-bottom: 1px solid var(--glass); padding-bottom: 10px; }
+        .header h1 { font-family: 'Orbitron', sans-serif; font-size: 18px; color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); margin: 0; }
         
-        .btn-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
-        .btn-nav { height: 70px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: 18px; color: white; cursor: pointer; font-size: 11px; font-weight: 700; }
-        .btn-nav:hover { background: var(--azul-sky); color: #000; border-color: white; }
+        /* CHAT TECH */
+        .chat-box {
+            background: rgba(0,0,0,0.5); border-radius: 15px; height: 150px; 
+            overflow-y: auto; padding: 15px; margin-bottom: 15px; border: 1px solid var(--glass);
+            font-size: 11px; font-family: 'Courier New', Courier, monospace;
+        }
+        .msg { margin-bottom: 8px; border-left: 2px solid var(--neon-blue); padding-left: 8px; }
+        .msg b { color: var(--neon-blue); }
 
-        /* Cronograma */
-        .monitor-card { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 20px; margin-bottom: 10px; text-align: left; border-left: 5px solid var(--neon); border: 1px solid rgba(255,255,255,0.1); }
-        .badge { padding: 3px 8px; border-radius: 5px; font-size: 9px; font-weight: 800; text-transform: uppercase; }
+        /* INPUTS */
+        .campo { 
+            width: 100%; height: 40px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass); 
+            border-radius: 10px; padding: 0 15px; color: white; font-size: 12px; margin-bottom: 10px;
+        }
+        .campo:focus { border-color: var(--neon-green); outline: none; }
+
+        /* GRID DE BOTÕES MASTER */
+        .grid-master { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .btn-master {
+            background: var(--glass); border: 1px solid rgba(255,255,255,0.1); padding: 15px;
+            border-radius: 15px; color: white; font-size: 11px; font-weight: 700; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
+        }
+        .btn-master:hover { background: rgba(0, 210, 255, 0.2); border-color: var(--neon-blue); }
+        .btn-reserva { border-left: 4px solid var(--neon-green); }
+        .btn-suporte { border-left: 4px solid var(--neon-red); }
+
+        .btn-send {
+            width: 100%; background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            border: none; height: 45px; border-radius: 12px; color: white; font-weight: 800;
+            cursor: pointer; text-transform: uppercase; margin-top: 5px;
+        }
+
+        /* CRONOGRAMA */
+        .cron-list { max-height: 200px; overflow-y: auto; margin-top: 15px; }
+        .item-cron {
+            background: rgba(255,255,255,0.03); padding: 10px; border-radius: 10px; margin-bottom: 8px;
+            font-size: 10px; border-right: 3px solid var(--neon-blue);
+        }
 
         .hidden { display: none; }
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab-btn { flex: 1; padding: 10px; background: none; border: none; color: rgba(255,255,255,0.5); cursor: pointer; font-weight: 700; font-size: 12px; border-bottom: 2px solid transparent; }
-        .tab-btn.active { color: var(--azul-sky); border-bottom-color: var(--azul-sky); }
-        .btn-voltar { background: none; border: 1px solid rgba(255,255,255,0.2); color: white; font-size: 10px; margin-top: 15px; width: 100%; padding: 10px; border-radius: 12px; cursor: pointer; }
+        .relogio { font-family: 'Orbitron', sans-serif; font-size: 10px; color: var(--neon-green); text-align: center; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="balao-premium">
-        <div class="clock-header" id="relogio">00/00/0000 00:00:00</div>
-
-        <div id="scr-auth">
-            <h1>PORTAL NTi</h1>
-            <p class="sub">Santana de Parnaíba</p>
-            
-            <div class="tabs">
-                <button class="tab-btn active" id="t-login" onclick="app.setTab('login')">LOGIN</button>
-                <button class="tab-btn" id="t-cad" onclick="app.setTab('cad')">NOVO CADASTRO</button>
-            </div>
-
-            <input type="text" class="campo hidden" id="f-nome" placeholder="NOME COMPLETO">
-            <input type="text" class="campo" id="f-rp" placeholder="PRONTUÁRIO / RP">
-            <input type="text" class="campo hidden" id="f-mat" placeholder="MATÉRIA / DISCIPLINA">
-            <input type="password" class="campo" id="f-pass" placeholder="SENHA">
-            
-            <button class="btn-acao" id="btn-main" onclick="app.execAuth()">ACESSAR SISTEMA</button>
+    <div class="master-panel">
+        <div class="header">
+            <h1>NTI MASTER CORE</h1>
+            <small style="font-size: 9px; opacity: 0.6; letter-spacing: 2px;">SANTANA DE PARNAÍBA - SP</small>
         </div>
 
-        <div id="scr-menu" class="hidden">
-            <h1>MENU PRINCIPAL</h1>
-            <p class="sub" id="welcome-text">BEM-VINDO PROFESSOR</p>
-
-            <div class="btn-grid">
-                <button class="btn-nav" onclick="app.nav('reserva')">📅 RESERVAR<br>EQUIPAMENTO</button>
-                <button class="btn-nav" onclick="app.nav('ti')">🛠️ CHAMADO<br>TÉCNICO TI</button>
-                <button class="btn-nav" style="grid-column: span 2; height: 50px;" onclick="app.nav('cron')">🖥️ CRONOGRAMA EM TEMPO REAL</button>
+        <div id="scr-init">
+            <div class="chat-box" id="main-chat">
+                <div class="msg"><b>SISTEMA:</b> Aguardando identificação do terminal...</div>
             </div>
             
-            <button class="btn-voltar" onclick="location.reload()">SAIR</button>
+            <input type="text" class="campo" id="u-nome" placeholder="NOME DO DOCENTE">
+            <input type="text" class="campo" id="u-rp" placeholder="RP / PRONTUÁRIO">
+            <input type="text" class="campo" id="u-mat" placeholder="MATÉRIA">
+            
+            <button class="btn-send" onclick="app.login()">INICIALIZAR TERMINAL</button>
         </div>
 
-        <div id="scr-reserva" class="hidden">
-            <h1>RESERVAS</h1>
-            <div class="input-group-bolha">
-                <label>O que deseja reservar?</label>
-                <select class="campo" id="res-eq">
-                    <option>SALA DE INFORMÁTICA</option>
-                    <option>CHROMEBOOKS (CARRINHO)</option>
-                    <option>TV MÓVEL 01</option>
-                    <option>TV MÓVEL 02</option>
-                </select>
-                <label>Data da Reserva</label>
-                <input type="date" class="campo" id="res-data">
-                <label>Horário (Início às Fim)</label>
-                <input type="text" class="campo" id="res-hora" placeholder="Ex: 07:00 às 08:40">
+        <div id="scr-main" class="hidden">
+            <div class="chat-box" id="user-chat"></div>
+            
+            <div class="grid-master">
+                <button class="btn-master btn-reserva" onclick="app.nav('res')">📅 RESERVAR<br>ATIVOS</button>
+                <button class="btn-master btn-suporte" onclick="app.nav('sup')">🛠️ CHAMADO<br>SUPORTE</button>
             </div>
-            <button class="btn-acao" onclick="app.saveReserva()">CONFIRMAR AGENDAMENTO</button>
-            <button class="btn-voltar" onclick="app.nav('menu')">VOLTAR</button>
+            
+            <div class="cron-list" id="mini-cron"></div>
+            
+            <button class="btn-send" style="background: var(--neon-red); margin-top:15px; height: 35px; font-size:10px" onclick="location.reload()">LOGOUT</button>
         </div>
 
-        <div id="scr-ti" class="hidden">
-            <h1>CHAMADO TI</h1>
-            <div class="input-group-bolha">
-                <label>Gravidade do Problema</label>
-                <select class="campo" id="ti-grau">
-                    <option value="1">NÍVEL 1: BAIXA (Dúvidas)</option>
-                    <option value="2">NÍVEL 2: MÉDIA (Lento)</option>
-                    <option value="3">NÍVEL 3: ALTA (Urgente)</option>
-                </select>
-                <label>Descrição</label>
-                <textarea class="campo" id="ti-desc" style="height: 80px; padding-top:10px" placeholder="Relate o problema..."></textarea>
-            </div>
-            <button class="btn-acao" style="background: var(--nivel-3)" onclick="app.saveTI()">ABRIR CHAMADO</button>
-            <button class="btn-voltar" onclick="app.nav('menu')">VOLTAR</button>
+        <div id="scr-res" class="hidden">
+            <h3 style="font-size:14px; color:var(--neon-green)">AGENDAR EQUIPAMENTO</h3>
+            <select class="campo" id="res-eq">
+                <option>SALA DE INFORMÁTICA</option>
+                <option>CARRINHO CHROMEBOOKS</option>
+                <option>TV MÓVEL 01</option>
+            </select>
+            <input type="date" class="campo" id="res-data">
+            <input type="time" class="campo" id="res-hora">
+            <button class="btn-send" onclick="app.save('RESERVA')">CONFIRMAR</button>
+            <button onclick="app.nav('main')" style="background:none; border:none; color:white; cursor:pointer; width:100%; margin-top:10px; font-size:11px"><u>VOLTAR</u></button>
         </div>
 
-        <div id="scr-cron" class="hidden">
-            <h1>CRONOGRAMA</h1>
-            <div id="monitor-list" style="max-height: 350px; overflow-y: auto; margin-top:10px;"></div>
-            <button class="btn-voltar" onclick="app.nav('menu')">VOLTAR AO MENU</button>
+        <div id="scr-sup" class="hidden">
+            <h3 style="font-size:14px; color:var(--neon-red)">SOLICITAR TÉCNICO</h3>
+            <input type="text" class="campo" id="sup-local" placeholder="LOCAL (EX: SALA 10)">
+            <textarea class="campo" id="sup-motivo" style="height:60px" placeholder="DESCREVA O PROBLEMA"></textarea>
+            <button class="btn-send" style="background:var(--neon-red)" onclick="app.save('SUPORTE')">ENVIAR URGENTE</button>
+            <button onclick="app.nav('main')" style="background:none; border:none; color:white; cursor:pointer; width:100%; margin-top:10px; font-size:11px"><u>VOLTAR</u></button>
         </div>
+
+        <div class="relogio" id="timer">00/00/0000 00:00:00</div>
     </div>
 
-    <script>
-        const app = {
-            mode: 'login',
-            user: null,
+<script>
+    const app = {
+        user: {},
+        chatLog: [],
 
-            setTab(m) {
-                this.mode = m;
-                document.getElementById('t-login').classList.toggle('active', m === 'login');
-                document.getElementById('t-cad').classList.toggle('active', m === 'cad');
-                document.getElementById('f-nome').classList.toggle('hidden', m === 'login');
-                document.getElementById('f-mat').classList.toggle('hidden', m === 'login');
-                document.getElementById('btn-main').innerText = m === 'login' ? 'ACESSAR SISTEMA' : 'FINALIZAR CADASTRO';
-            },
+        login() {
+            this.user.nome = document.getElementById('u-nome').value.toUpperCase();
+            this.user.rp = document.getElementById('u-rp').value;
+            this.user.mat = document.getElementById('u-mat').value.toUpperCase();
+            
+            if(!this.user.nome || !this.user.rp) return alert("Identifique-se!");
+            
+            this.addMsg(`Usuário ${this.user.nome} conectado.`);
+            this.addMsg(`Acesso liberado para ${this.user.mat}.`);
+            this.nav('main');
+        },
 
-            execAuth() {
-                const rp = document.getElementById('f-rp').value;
-                const pass = document.getElementById('f-pass').value;
-                let users = JSON.parse(localStorage.getItem('nti_users') || '[]');
+        nav(s) {
+            document.querySelectorAll('.master-panel > div[id^="scr"]').forEach(d => d.classList.add('hidden'));
+            document.getElementById('scr-'+s).classList.remove('hidden');
+            if(s === 'main') this.renderCron();
+        },
 
-                if (this.mode === 'cad') {
-                    const nome = document.getElementById('f-nome').value.toUpperCase();
-                    const mat = document.getElementById('f-mat').value.toUpperCase();
-                    if(!nome || !rp || !pass) return alert("Preencha todos os campos!");
-                    users.push({nome, rp, mat, pass});
-                    localStorage.setItem('nti_users', JSON.stringify(users));
-                    alert("Cadastro realizado! Agora faça o Login.");
-                    this.setTab('login');
-                } else {
-                    const found = users.find(u => u.rp === rp && u.pass === pass);
-                    if (found) {
-                        this.user = found;
-                        document.getElementById('welcome-text').innerText = found.nome;
-                        this.nav('menu');
-                    } else { alert("Usuário ou Senha incorretos!"); }
-                }
-            },
+        addMsg(t) {
+            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            this.chatLog.push(`[${time}] ${t}`);
+            this.updateChat();
+        },
 
-            nav(p) {
-                document.querySelectorAll('.balao-premium > div[id^="scr"]').forEach(s => s.classList.add('hidden'));
-                document.getElementById('scr-' + p).classList.remove('hidden');
-                if(p === 'cron') this.renderCron();
-            },
+        updateChat() {
+            const boxes = [document.getElementById('main-chat'), document.getElementById('user-chat')];
+            boxes.forEach(box => {
+                if(box) box.innerHTML = this.chatLog.map(m => `<div class="msg"><b>LOG:</b> ${m}</div>`).join('');
+                box.scrollTop = box.scrollHeight;
+            });
+        },
 
-            saveReserva() {
-                const eq = document.getElementById('res-eq').value;
-                const data = document.getElementById('res-data').value;
-                const hora = document.getElementById('res-hora').value;
-                if(!data || !hora) return alert("Preencha data e hora!");
-                
-                this.pushDB({
-                    tipo: 'RESERVA',
-                    titulo: eq,
-                    detalhe: `Uso em: ${data.split('-').reverse().join('/')}`,
-                    hora: hora,
-                    cor: 'var(--neon)'
-                });
-            },
-
-            saveTI() {
-                const grau = document.getElementById('ti-grau').value;
-                const desc = document.getElementById('ti-desc').value;
-                if(!desc) return alert("Descreva o problema!");
-                
-                this.pushDB({
-                    tipo: 'SUPORTE TI',
-                    titulo: `GRAVIDADE NÍVEL ${grau}`,
-                    detalhe: desc,
-                    hora: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
-                    cor: grau == '3' ? 'var(--nivel-3)' : 'var(--nivel-2)'
-                });
-            },
-
-            pushDB(obj) {
-                let db = JSON.parse(localStorage.getItem('nti_cron') || '[]');
-                db.push({...obj, prof: this.user.nome, mat: this.user.mat});
-                localStorage.setItem('nti_cron', JSON.stringify(db));
-                alert("Registrado com sucesso!");
-                this.nav('cron');
-            },
-
-            renderCron() {
-                const list = document.getElementById('monitor-list');
-                let db = JSON.parse(localStorage.getItem('nti_cron') || '[]');
-                if(db.length === 0) return list.innerHTML = "<p style='font-size:11px; opacity:0.5'>Nenhum registro.</p>";
-
-                list.innerHTML = db.reverse().map((r, i) => `
-                    <div class="monitor-card" style="border-left-color: ${r.cor}">
-                        <div style="display:flex; justify-content:space-between">
-                            <span class="badge" style="background:${r.cor}; color:#000">${r.tipo}</span>
-                            <small>${r.hora}</small>
-                        </div>
-                        <div style="margin-top:8px">
-                            <b style="font-size:13px; color:var(--azul-sky)">${r.titulo}</b><br>
-                            <span style="font-size:10px">PROF: ${r.prof} | MATÉRIA: ${r.mat}</span><br>
-                            <i style="font-size:10px; opacity:0.8">${r.detalhe}</i>
-                        </div>
-                        <button onclick="app.del(${i})" style="background:none; border:none; color:red; font-size:9px; cursor:pointer; margin-top:10px">[ REMOVER ]</button>
-                    </div>
-                `).join('');
-            },
-
-            del(i) {
-                let db = JSON.parse(localStorage.getItem('nti_cron') || '[]').reverse();
-                db.splice(i, 1);
-                localStorage.setItem('nti_cron', JSON.stringify(db.reverse()));
-                this.renderCron();
+        save(tipo) {
+            let item = { tipo, prof: this.user.nome, mat: this.user.mat };
+            
+            if(tipo === 'RESERVA') {
+                item.desc = document.getElementById('res-eq').value;
+                item.info = document.getElementById('res-data').value + " às " + document.getElementById('res-hora').value;
+            } else {
+                item.desc = "SUPORTE: " + document.getElementById('sup-local').value;
+                item.info = document.getElementById('sup-motivo').value;
             }
-        };
 
-        setInterval(() => {
-            document.getElementById('relogio').innerText = new Date().toLocaleString('pt-BR');
-        }, 1000);
-    </script>
+            let db = JSON.parse(localStorage.getItem('nti_master_db') || '[]');
+            db.push(item);
+            localStorage.setItem('nti_master_db', JSON.stringify(db));
+            
+            this.addMsg(`${tipo} realizada com sucesso.`);
+            this.nav('main');
+        },
+
+        renderCron() {
+            const list = document.getElementById('mini-cron');
+            let db = JSON.parse(localStorage.getItem('nti_master_db') || '[]');
+            list.innerHTML = db.reverse().slice(0, 5).map(r => `
+                <div class="item-cron">
+                    <b style="color:var(--neon-blue)">${r.tipo}: ${r.desc}</b><br>
+                    <span>${r.prof} | ${r.info}</span>
+                </div>
+            `).join('');
+        }
+    };
+
+    setInterval(() => {
+        document.getElementById('timer').innerText = new Date().toLocaleString('pt-BR');
+    }, 1000);
+</script>
 </body>
 </html>
