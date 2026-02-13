@@ -50,7 +50,7 @@
             border: 1px solid rgba(255,255,255,0.1); text-align: center;
         }
 
-        /* APP */
+        /* LAYOUT INTERNO */
         .main-layout { display: flex; flex: 1; overflow: hidden; }
         nav { width: 250px; background: #000; border-right: 1px solid #1e293b; padding: 20px; display: flex; flex-direction: column; gap: 8px; }
         .nav-link { padding: 12px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px; color: #94a3b8; transition: 0.3s; }
@@ -142,7 +142,14 @@
     </div>
 
     <div id="modal-cad" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:6000; display:flex; align-items:center; justify-content:center;">
-        <div class="card-login" style="width:340px"><h2 id="cad-nome-portal">Cadastro</h2><input type="text" id="c-nome" placeholder="Nome Completo"><input type="number" id="c-pront-new" placeholder="Prontuário"><button class="btn btn-blue" onclick="app.confirmarCad()">CRIAR CONTA</button><button class="btn" onclick="document.getElementById('modal-cad').classList.add('hidden')">VOLTAR</button></div>
+        <div class="card-login" style="width:340px">
+            <h2 id="cad-nome-portal">Cadastro</h2>
+            <input type="text" id="c-nome" placeholder="Nome Completo">
+            <input type="number" id="c-pront-new" placeholder="Prontuário">
+            <p id="info-senha" style="font-size: 11px; color: var(--primary);"></p>
+            <button class="btn btn-blue" onclick="app.confirmarCad()">CRIAR CONTA</button>
+            <button class="btn" onclick="document.getElementById('modal-cad').classList.add('hidden')">VOLTAR</button>
+        </div>
     </div>
 
     <div class="footer-credits">Kelvin Almeida estagiário do programa conect desenvolveu sistema NTI</div>
@@ -154,38 +161,81 @@
 
     const app = {
         user: null, tempPortal: '',
-        abrirCad(p) { this.tempPortal = p; document.getElementById('cad-nome-portal').innerText = "Novo " + p; document.getElementById('modal-cad').classList.remove('hidden'); },
-        async confirmarCad() {
-            const n = document.getElementById('c-nome').value, p = document.getElementById('c-pront-new').value;
-            if(!n || !p) return alert("Preencha tudo!");
-            await db.ref('usuarios/'+p).set({ nome: n, pront: p, cargo: this.tempPortal, pass: 'pmsp2026', status: 'ativo' });
-            alert("Sucesso! Senha: pmsp2026"); document.getElementById('modal-cad').classList.add('hidden');
+
+        abrirCad(p) { 
+            this.tempPortal = p; 
+            document.getElementById('cad-nome-portal').innerText = "Novo " + p;
+            let senhaP = (p === 'Professor') ? 'pmsp2026' : (p === 'Gestão') ? 'gestao2026' : 'secretaria2026';
+            document.getElementById('info-senha').innerText = "A senha padrão será: " + senhaP;
+            document.getElementById('modal-cad').classList.remove('hidden'); 
         },
+
+        async confirmarCad() {
+            const n = document.getElementById('c-nome').value;
+            const p = document.getElementById('c-pront-new').value;
+            if(!n || !p) return alert("Preencha Nome e Prontuário!");
+            
+            // Define senha com base no portal
+            let senhaDefinida = 'pmsp2026'; // padrão prof
+            if(this.tempPortal === 'Gestão') senhaDefinida = 'gestao2026';
+            if(this.tempPortal === 'Secretaria') senhaDefinida = 'secretaria2026';
+
+            try {
+                await db.ref('usuarios/' + p).set({
+                    nome: n, pront: p, cargo: this.tempPortal,
+                    pass: senhaDefinida, status: 'ativo'
+                });
+                alert("Cadastrado! Senha de acesso: " + senhaDefinida);
+                document.getElementById('modal-cad').classList.add('hidden');
+                document.getElementById('c-nome').value = ""; document.getElementById('c-pront-new').value = "";
+            } catch (e) { alert("Erro ao salvar."); }
+        },
+
         async login(portal) {
             let p, s;
             if(portal === 'Professor') { p = document.getElementById('p-pront').value; s = document.getElementById('p-pass').value; }
             if(portal === 'Secretaria') { p = document.getElementById('s-pront').value; s = document.getElementById('s-pass').value; }
             if(portal === 'Gestão') { p = document.getElementById('g-pront').value; s = document.getElementById('g-pass').value; }
             if(portal === 'TI') { p = document.getElementById('t-pront').value; s = document.getElementById('t-pass').value; }
-            if(portal === 'TI' && p === '123' && s === 'nti2026') { this.user = { nome: 'Kelvin Almeida', cargo: 'TI', pront: '123' }; return this.iniciar(); }
+
+            // LOGIN KELVIN TI
+            if(portal === 'TI' && p === '123' && s === 'nti2026') { 
+                this.user = { nome: 'Kelvin Almeida', cargo: 'TI', pront: '123' }; 
+                return this.iniciar(); 
+            }
+
             const snap = await db.ref('usuarios/'+p).once('value');
-            if(snap.exists() && snap.val().pass === s && snap.val().cargo === portal) { this.user = snap.val(); this.iniciar(); } else alert("Dados incorretos!");
+            if(snap.exists() && snap.val().pass === s && snap.val().cargo === portal) { 
+                this.user = snap.val(); 
+                this.iniciar(); 
+            } else {
+                alert("Acesso negado. Verifique o Prontuário e a Senha padrão para o portal " + portal);
+            }
         },
+
         iniciar() {
             document.getElementById('screen-auth').classList.add('hidden');
             document.getElementById('sidebar').classList.remove('hidden');
             document.getElementById('app-main').classList.remove('hidden');
             document.getElementById('user-display').innerText = this.user.nome;
             document.getElementById('cargo-display').innerText = this.user.cargo;
+
             if(this.user.cargo === 'Professor' || this.user.cargo === 'Secretaria' || this.user.cargo === 'TI') document.getElementById('m-servicos').classList.remove('hidden');
             if(this.user.cargo === 'Gestão' || this.user.cargo === 'TI') document.getElementById('m-gestao').classList.remove('hidden');
             if(this.user.cargo === 'TI') document.getElementById('m-ti').classList.remove('hidden');
+
             this.sync();
         },
-        view(id) { document.querySelectorAll('.view').forEach(v => v.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); },
+
+        view(id) { 
+            document.querySelectorAll('.view').forEach(v => v.classList.add('hidden')); 
+            document.getElementById(id).classList.remove('hidden'); 
+        },
+
         sync() {
-            db.ref('config/lock').on('value', s => { if(s.val() && this.user.cargo !== 'TI') document.body.innerHTML = "<h1>SISTEMA EM MANUTENÇÃO PELO TI</h1>"; });
+            db.ref('config/lock').on('value', s => { if(s.val() && this.user.cargo !== 'TI') document.body.innerHTML = "<h1 style='color:white; text-align:center; margin-top:100px;'>SISTEMA EM MANUTENÇÃO PELO TI</h1>"; });
             db.ref('config/banner').on('value', s => { const b = document.getElementById('ti-alert'); if(s.val() && s.val().ativo) { b.style.display = 'block'; document.getElementById('ti-alert-msg').innerText = s.val().msg; } else b.style.display = 'none'; });
+            
             const itens = ['TV 01', 'TV 02', 'TV 03', 'CROME 01', 'CROME 02', 'TABLETS'];
             db.ref('atividades').on('value', snap => {
                 const list = document.getElementById('lista-atividades'), grid = document.getElementById('grid-itens'), tab = document.getElementById('tab-monitor');
@@ -193,28 +243,35 @@
                 snap.forEach(a => { const d = a.val(); if(d.status === 'ativo') { ocupados[d.item] = true; list.innerHTML += `<div class="content-card"><b>${d.item}</b> - ${d.user} na ${d.sala}</div>`; tab.innerHTML += `<tr><td>${d.user}</td><td>${d.item}</td><td>${d.sala}</td><td>${d.hora}</td></tr>`; } });
                 itens.forEach(i => { grid.innerHTML += `<div class="card-login" style="padding:10px"><b>${i}</b><br><small style="color:${ocupados[i]?'red':'green'}">${ocupados[i]?'EM USO':'LIVRE'}</small>${!ocupados[i]?`<button class="btn btn-blue" style="font-size:10px" onclick="app.reservar('${i}')">PEGAR</button>`:''}</div>`; });
             });
+
             db.ref('chamados').on('value', snap => {
                 const tiList = document.getElementById('ti-chamados-list');
                 if(tiList) { tiList.innerHTML = ""; snap.forEach(c => { const d = c.val(); tiList.innerHTML += `<div class="content-card"><b>${d.tipo}</b> de ${d.user} (${d.cargo})<br><p>${d.desc}</p><button class="btn btn-danger" onclick="app.removerChamado('${c.key}')">CONCLUIR</button></div>`; }); }
             });
+
             db.ref('chat').limitToLast(20).on('value', snap => {
                 const chatBox = document.getElementById('chat-messages'); chatBox.innerHTML = "";
                 snap.forEach(m => { const d = m.val(); chatBox.innerHTML += `<div class="msg"><b>${d.user}:</b> ${d.text}</div>`; });
                 chatBox.scrollTop = chatBox.scrollHeight;
             });
         },
+
         async reservar(item) { const sala = prompt("Para qual sala?"); if(!sala) return; await db.ref('atividades').push({ item, user: this.user.nome, sala, hora: new Date().toLocaleTimeString(), status: 'ativo' }); },
+        
         async enviarChamado() {
             const t = document.getElementById('ch-tipo').value, d = document.getElementById('ch-desc').value;
             if(!d) return alert("Descreva o problema!");
             await db.ref('chamados').push({ tipo: t, desc: d, user: this.user.nome, cargo: this.user.cargo, status: 'pendente' });
-            alert("Chamado enviado!"); document.getElementById('ch-desc').value = ""; this.view('v-dash');
+            alert("Chamado enviado ao Kelvin!"); document.getElementById('ch-desc').value = ""; this.view('v-dash');
         },
+
         removerChamado(key) { db.ref('chamados/'+key).remove(); },
+
         sendChat() {
             const input = document.getElementById('chat-input');
             if(input.value) { db.ref('chat').push({ user: this.user.nome, text: input.value }); input.value = ""; }
         },
+
         tiCmd(cmd, val) {
             if(cmd === 'lock') db.ref('config/lock').set(val);
             if(cmd === 'banner') db.ref('config/banner').set({ ativo: val, msg: document.getElementById('ti-msg').value });
