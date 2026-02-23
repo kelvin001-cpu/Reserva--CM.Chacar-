@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA NTI | KELVIN ALMEIDA</title>
+    <title>PORTAL NTI | CHÁCARA DAS GARÇAS</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -12,30 +12,26 @@
         :root { --blue: #00adef; --green: #00ff9d; --red: #ff4757; --dark: #0f172a; --card: #1e293b; }
         body { margin: 0; font-family: 'Inter', sans-serif; background: var(--dark); color: white; display: flex; height: 100vh; overflow: hidden; }
         
-        /* TELA DE LOGIN - BALÕES MAIS PRÓXIMOS */
+        /* TELA DE LOGIN - BALÕES PRÓXIMOS */
         #auth-screen { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; overflow-y: auto; }
         .grid-login { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; width: 100%; max-width: 1050px; }
         .login-box { background: var(--card); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #334155; transition: 0.3s; }
         .login-box:hover { border-color: var(--blue); }
         
-        /* ESTILO ESPECÍFICO PARA NOVO ACESSO */
         .box-cadastro { border: 1px solid rgba(0, 173, 239, 0.3); background: rgba(0, 173, 239, 0.02); }
         .box-cadastro h3 { color: var(--blue); margin-top: 0; }
 
-        /* NAVEGAÇÃO E CONTEÚDO */
         nav { width: 230px; background: #000; padding: 20px; display: flex; flex-direction: column; border-right: 1px solid #334155; }
         main { flex: 1; padding: 25px; overflow-y: auto; }
         .view { display: none; } .view.active { display: block; }
         
         input, select { width: 100%; padding: 9px; margin: 5px 0; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; font-size: 13px; outline: none; }
-        input:focus { border-color: var(--blue); }
-
+        
         .btn { padding: 10px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.2s; font-size: 12px; text-transform: uppercase; }
         .btn-blue { background: var(--blue); color: white; }
         .btn-green { background: var(--green); color: #000; }
         .btn-red { background: var(--red); color: white; }
         .btn-outline { background: transparent; border: 1px solid var(--blue); color: var(--blue); margin-top: 5px; }
-        .btn-outline:hover { background: var(--blue); color: white; }
         
         .grid-equip { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
         .equip-card { background: #0f172a; padding: 15px; border-radius: 8px; text-align: center; border: 1px solid #334155; }
@@ -52,7 +48,9 @@
 <body>
 
 <div id="auth-screen">
-    <h1 style="color: var(--blue); margin-bottom: 25px; font-size: 20px; font-weight: 700; letter-spacing: 1px;">SANTANA TECH | PORTAL NTI</h1>
+    <h1 style="color: var(--blue); margin-bottom: 25px; font-size: 20px; font-weight: 700; letter-spacing: 1px; text-align: center;">
+        PORTAL NTI | CHÁCARA DAS GARÇAS
+    </h1>
     
     <div class="grid-login">
         <div class="login-box">
@@ -125,7 +123,7 @@
 
 <main id="main-content" class="hidden">
     <div id="v-reserva" class="view active">
-        <h2 style="font-size: 18px;">Painel de Equipamentos</h2>
+        <h2 style="font-size: 18px;">NTI | Painel de Equipamentos</h2>
         <div class="grid-equip" id="equip-list"></div>
         
         <h2 style="margin-top: 30px; font-size: 18px;">Registros em Uso</h2>
@@ -138,7 +136,7 @@
     </div>
 
     <div id="v-ti" class="view">
-        <h2 style="color: var(--green); font-size: 18px;">Gerenciamento NTI Master</h2>
+        <h2 style="color: var(--green); font-size: 18px;">NTI MASTER | Gestão de Usuários</h2>
         <div style="background: var(--card); border-radius: 10px; border: 1px solid #334155; overflow: hidden;">
             <table>
                 <thead><tr><th>Nome</th><th>Prontuário</th><th>Cargo</th><th>Status</th><th>Ações TI</th></tr></thead>
@@ -165,9 +163,9 @@
             let s = (c === 'Gestão') ? 'gestao2026' : (c === 'Secretaria') ? 'secretaria2026' : 'pmsp2026';
             try {
                 await db.ref('usuarios/'+p).set({ nome: n, pront: p, cargo: c, pass: s, status: 'ativo' });
-                alert("Cadastro realizado!\nSenha padrão: " + s);
+                alert("Cadastro realizado!\nSenha padrão para " + c + ": " + s);
                 document.getElementById('c-nome').value = ""; document.getElementById('c-pront').value = "";
-            } catch(e) { alert("Erro."); }
+            } catch(e) { alert("Erro ao salvar no banco."); }
         },
 
         async login(portal) {
@@ -182,7 +180,7 @@
             if(snap.exists() && snap.val().pass == s && snap.val().cargo === portal) {
                 if(snap.val().status === 'bloqueado') return alert("Acesso bloqueado pelo NTI.");
                 this.user = snap.val(); this.start();
-            } else alert("Dados incorretos!");
+            } else alert("Dados incorretos para o portal de " + portal);
         },
 
         start() {
@@ -237,10 +235,10 @@
         },
 
         async reservar(item) {
-            const local = prompt("Sala de destino?");
+            const local = prompt("Qual sala ou setor?");
             if(local) await db.ref('reservas').push({ item, user: this.user.nome, pront: this.user.pront, local: local });
         },
-        async darBaixa(id) { if(confirm("Liberar?")) await db.ref('reservas/'+id).remove(); },
+        async darBaixa(id) { if(confirm("Confirmar devolução do item?")) await db.ref('reservas/'+id).remove(); },
         tiCmd(p, c, v) { db.ref('usuarios/'+p).update({ [c]: v }); }
     };
 </script>
