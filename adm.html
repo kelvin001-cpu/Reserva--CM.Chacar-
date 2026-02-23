@@ -3,68 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NTI - TERMINAL MASTER KELVIN</title>
+    <title>SANTANA TECH - ADMINISTRAÇÃO MASTER</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        :root { --neon-blue: #00f3ff; --neon-red: #ff0055; --bg-dark: #0a0b10; --card-dark: rgba(20, 22, 30, 0.95); }
+        :root { --neon-blue: #00f3ff; --neon-red: #ff0055; --bg-dark: #08090d; --card: #12141d; }
         
         body { 
             margin: 0; font-family: 'Rajdhani', sans-serif; background: var(--bg-dark); color: white;
-            min-height: 100vh; overflow-x: hidden;
+            min-height: 100vh;
         }
 
-        /* LOGIN SCREEN - ÚNICA COISA QUE APARECE AO ABRIR */
+        /* 1. TELA DE LOGIN (BLOQUEIO TOTAL) */
         #telaLogin {
             position: fixed; inset: 0; background: var(--bg-dark); z-index: 9999;
             display: flex; align-items: center; justify-content: center;
         }
         .login-box {
-            background: var(--card-dark); border: 1px solid var(--neon-blue); border-radius: 15px;
-            padding: 40px; width: 350px; text-align: center; box-shadow: 0 0 30px rgba(0, 243, 255, 0.2);
+            background: var(--card); border: 1px solid var(--neon-blue); padding: 40px;
+            width: 320px; text-align: center; border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
         }
         .login-box input {
             width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #333;
-            color: var(--neon-blue); border-radius: 5px; font-size: 18px; outline: none;
+            color: var(--neon-blue); border-radius: 5px; outline: none; box-sizing: border-box;
         }
-        .btn-master {
-            width: 100%; padding: 15px; background: var(--neon-blue); color: #000; border: none;
-            border-radius: 5px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer;
+        .btn-entrar {
+            width: 100%; padding: 12px; background: var(--neon-blue); color: #000; border: none;
+            font-family: 'Orbitron'; font-weight: bold; cursor: pointer; border-radius: 5px;
         }
 
-        /* LAYOUT DO PAINEL */
-        .container { max-width: 1100px; margin: 0 auto; padding: 20px; display: none; }
+        /* 2. ESTRUTURA DO PAINEL (ESCONDIDO ATÉ LOGAR) */
+        #painelMaster { display: none; padding: 20px; max-width: 1200px; margin: 0 auto; }
+        
         header { 
-            padding: 20px 0; border-bottom: 2px solid var(--neon-blue); margin-bottom: 30px;
+            border-bottom: 2px solid var(--neon-blue); padding-bottom: 15px; margin-bottom: 20px;
             display: flex; justify-content: space-between; align-items: center;
         }
-        h1 { font-family: 'Orbitron', sans-serif; color: var(--neon-blue); margin: 0; font-size: 22px; }
+        header h1 { font-family: 'Orbitron'; color: var(--neon-blue); margin: 0; font-size: 20px; }
 
-        /* ABAS DE NAVEGAÇÃO */
-        .nav-tabs { display: flex; gap: 10px; margin-bottom: 25px; }
-        .tab-btn { 
-            background: #161822; border: 1px solid #333; color: #888; padding: 12px 25px; 
-            cursor: pointer; font-family: 'Orbitron'; font-size: 12px; border-radius: 5px; transition: 0.3s;
+        /* MENU DE ABAS */
+        .menu-abas { display: flex; gap: 10px; margin-bottom: 20px; }
+        .aba-btn { 
+            background: #1a1d29; border: 1px solid #333; color: #777; padding: 12px 20px;
+            cursor: pointer; font-family: 'Orbitron'; font-size: 12px; border-radius: 5px;
         }
-        .tab-btn.active { border-color: var(--neon-blue); color: var(--neon-blue); background: rgba(0, 243, 255, 0.1); }
+        .aba-btn.ativa { border-color: var(--neon-blue); color: var(--neon-blue); background: rgba(0, 243, 255, 0.05); }
 
-        .content-section { display: none; animation: fadeIn 0.5s ease; }
-        .content-section.active { display: block; }
+        /* SEÇÕES DE CONTEÚDO */
+        .secao { display: none; background: var(--card); padding: 25px; border-radius: 10px; border: 1px solid #222; }
+        .secao.ativa { display: block; }
 
-        /* ESTILO DOS CARDS E TABELAS */
-        .card { background: var(--card-dark); border: 1px solid #1a1c26; border-radius: 10px; padding: 25px; margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; color: var(--neon-blue); padding: 15px; border-bottom: 2px solid #1a1c26; font-size: 13px; text-transform: uppercase; }
-        td { padding: 15px; border-bottom: 1px solid #1a1c26; font-size: 16px; }
+        /* TABELAS */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { text-align: left; color: var(--neon-blue); padding: 12px; border-bottom: 2px solid #222; font-size: 13px; }
+        td { padding: 12px; border-bottom: 1px solid #1a1d29; }
 
-        /* FORMULÁRIO DE CADASTRO INTERNO */
-        .grid-form { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 15px; align-items: end; }
-        .grid-form input, .grid-form select { 
-            background: #000; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 5px; outline: none;
+        /* FORMULÁRIO DE CADASTRO */
+        .form-cadastro { display: flex; flex-direction: column; gap: 15px; max-width: 400px; }
+        .form-cadastro input, .form-cadastro select {
+            padding: 12px; background: #000; border: 1px solid #333; color: white; border-radius: 5px;
         }
-        .grid-form input:focus { border-color: var(--neon-blue); }
-        .btn-save { background: #00ff88; color: #000; border: none; padding: 12px 25px; border-radius: 5px; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; }
+        .btn-salvar { background: #00ff88; color: black; padding: 15px; border: none; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; border-radius: 5px; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -72,83 +72,65 @@
 
     <div id="telaLogin">
         <div class="login-box">
-            <h2 style="font-family:'Orbitron'; color:var(--neon-blue); font-size:16px; margin-bottom:20px;">AUTENTICAÇÃO NTI</h2>
-            <input type="text" id="user" placeholder="USUÁRIO MASTER">
+            <h2 style="font-family:'Orbitron'; color:var(--neon-blue); font-size:16px;">SANTANA ADM</h2>
+            <input type="text" id="user" placeholder="USUÁRIO">
             <input type="text" id="pront" placeholder="PRONTUÁRIO">
-            <input type="password" id="pass" placeholder="SENHA DE ACESSO">
-            <button class="btn-master" onclick="autenticar()">DESBLOQUEAR SISTEMA</button>
-            <p id="erro" style="color:var(--neon-red); font-size:12px; margin-top:15px; display:none;">CREDENCIAIS INCORRETAS</p>
+            <input type="password" id="pass" placeholder="SENHA MASTER">
+            <button class="btn-entrar" onclick="login()">ENTRAR NO SISTEMA</button>
+            <p id="erro" style="color:var(--neon-red); font-size:12px; margin-top:10px; display:none;">DADOS INCORRETOS</p>
         </div>
     </div>
 
-    <div id="painelMaster" class="container">
+    <div id="painelMaster">
         <header>
-            <h1>SANTANA TECH <span style="font-weight: 300; font-size: 14px; color: #555;">| TERMINAL ADM</span></h1>
-            <button onclick="location.reload()" style="background:none; border:1px solid var(--neon-red); color:var(--neon-red); padding:5px 15px; cursor:pointer; border-radius:4px; font-size:11px;">LOGOUT</button>
+            <h1>SANTANA TECH <span style="font-weight: 300; font-size: 12px; color: #444;">TERMINAL MASTER</span></h1>
+            <button onclick="location.reload()" style="background:none; border:1px solid #333; color:#555; padding:5px 10px; cursor:pointer; font-size:10px;">SAIR</button>
         </header>
 
-        <nav class="nav-tabs">
-            <button class="tab-btn active" onclick="mudarAba('monitor')">MONITOR DE RESERVAS</button>
-            <button class="tab-btn" onclick="mudarAba('usuarios')">GESTÃO DE PROFESSORES</button>
-        </nav>
+        <div class="menu-abas">
+            <button id="btn-mon" class="aba-btn ativa" onclick="mudarPara('monitor')">MONITOR DE RESERVAS</button>
+            <button id="btn-cad" class="aba-btn" onclick="mudarPara('cadastro')">CADASTRAR PROFESSORES</button>
+        </div>
 
-        <section id="aba-monitor" class="content-section active">
-            <div class="card">
-                <table style="width:100%">
-                    <thead>
-                        <tr>
-                            <th>PROFESSOR</th>
-                            <th>LOCAL / EQUIPAMENTO</th>
-                            <th>RETIRADA</th>
-                            <th>GERENCIAR</th>
-                        </tr>
-                    </thead>
-                    <tbody id="listaReservas"></tbody>
-                </table>
-            </div>
-        </section>
+        <div id="secao-monitor" class="secao ativa">
+            <h3 style="margin:0; font-size:14px; font-family:'Orbitron';">EQUIPAMENTOS EM USO</h3>
+            <table>
+                <thead>
+                    <tr><th>PROFESSOR</th><th>LOCAL</th><th>INÍCIO</th><th>AÇÕES</th></tr>
+                </thead>
+                <tbody id="listaReservas"></tbody>
+            </table>
+        </div>
 
-        <section id="aba-usuarios" class="content-section">
-            <div class="card">
-                <h3 style="margin: 0 0 20px 0; font-family: 'Orbitron'; font-size: 14px; color: var(--neon-blue);">REGISTRAR NOVO ACESSO</h3>
-                <div class="grid-form">
-                    <div>
-                        <label style="font-size:11px; color:#555; display:block; margin-bottom:5px;">NOME COMPLETO</label>
-                        <input type="text" id="cad-nome" placeholder="Ex: João Silva">
-                    </div>
-                    <div>
-                        <label style="font-size:11px; color:#555; display:block; margin-bottom:5px;">PRONTUÁRIO</label>
-                        <input type="number" id="cad-pront" placeholder="00000">
-                    </div>
-                    <div>
-                        <label style="font-size:11px; color:#555; display:block; margin-bottom:5px;">CARGO</label>
-                        <select id="cad-cargo">
-                            <option value="Professor">Professor</option>
-                            <option value="Coordenador">Coordenador</option>
-                            <option value="Gestão">Gestão</option>
-                        </select>
-                    </div>
-                    <button class="btn-save" onclick="salvarProfessor()">CADASTRAR</button>
-                </div>
+        <div id="secao-cadastro" class="secao">
+            <h3 style="margin:0 0 20px 0; font-size:14px; font-family:'Orbitron'; color:var(--neon-blue);">REGISTRAR NOVO ACESSO NO BANCO</h3>
+            
+            <div class="form-cadastro">
+                <input type="text" id="cad-nome" placeholder="Nome Completo do Professor">
+                <input type="number" id="cad-pront" placeholder="Prontuário (Apenas números)">
+                <select id="cad-cargo">
+                    <option value="Professor">Professor(a)</option>
+                    <option value="Coordenador">Coordenador(a)</option>
+                    <option value="Gestor">Gestor(a)</option>
+                </select>
+                <button class="btn-salvar" onclick="salvarNoFirebase()">CADASTRAR NO SISTEMA</button>
             </div>
 
-            <div class="card">
-                <h3 style="margin: 0 0 20px 0; font-family: 'Orbitron'; font-size: 14px; color: var(--neon-blue);">USUÁRIOS CADASTRADOS</h3>
-                <table>
-                    <thead>
-                        <tr><th>NOME</th><th>PRONTUÁRIO</th><th>CARGO</th><th>AÇÃO</th></tr>
-                    </thead>
-                    <tbody id="listaUsuarios"></tbody>
-                </table>
-            </div>
-        </section>
+            <hr style="margin: 40px 0 20px 0; border: 0; border-top: 1px solid #222;">
+            <h3 style="margin:0 0 10px 0; font-size:14px; font-family:'Orbitron';">PROFESSORES ATIVOS</h3>
+            <table>
+                <thead>
+                    <tr><th>NOME</th><th>PRONTUÁRIO</th><th>CARGO</th><th>REMOVER</th></tr>
+                </thead>
+                <tbody id="listaUsuarios"></tbody>
+            </table>
+        </div>
     </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-    // Configuração do seu banco
     const firebaseConfig = {
         apiKey: "AIzaSyBoGFDKz-nBwKvczGpxg-fHJYdVykcBUQ",
         authDomain: "escala-chacara.firebaseapp.com",
@@ -162,15 +144,15 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // LOGIN MASTER
-    const MASTER_KEY = { u: "kelvin", p: "46690", s: "2683503205" };
+    // LOGIN MASTER FIXO
+    const MASTER = { u: "kelvin", p: "46690", s: "2683503205" };
 
-    window.autenticar = () => {
+    window.login = () => {
         const u = document.getElementById('user').value.toLowerCase();
         const p = document.getElementById('pront').value;
         const s = document.getElementById('pass').value;
 
-        if(u === MASTER_KEY.u && p === MASTER_KEY.p && s === MASTER_KEY.s) {
+        if(u === MASTER.u && p === MASTER.p && s === MASTER.s) {
             document.getElementById('telaLogin').classList.add('hidden');
             document.getElementById('painelMaster').style.display = 'block';
             carregarDados();
@@ -179,71 +161,77 @@
         }
     };
 
-    // NAVEGAÇÃO ENTRE ABAS
-    window.mudarAba = (aba) => {
-        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('aba-' + aba).classList.add('active');
-        event.target.classList.add('active');
+    // TROCAR DE ABA (ESPAÇO)
+    window.mudarPara = (onde) => {
+        document.querySelectorAll('.secao').forEach(s => s.classList.remove('ativa'));
+        document.querySelectorAll('.aba-btn').forEach(b => b.classList.remove('ativa'));
+        
+        if(onde === 'monitor') {
+            document.getElementById('secao-monitor').classList.add('ativa');
+            document.getElementById('btn-mon').classList.add('ativa');
+        } else {
+            document.getElementById('secao-cadastro').classList.add('ativa');
+            document.getElementById('btn-cad').classList.add('ativa');
+        }
     };
 
-    // LOGICA DE CADASTRO (SALVANDO NO FIREBASE)
-    window.salvarProfessor = () => {
+    // SALVAR NO BANCO
+    window.salvarNoFirebase = () => {
         const nome = document.getElementById('cad-nome').value;
         const pront = document.getElementById('cad-pront').value;
         const cargo = document.getElementById('cad-cargo').value;
 
-        if(!nome || !pront) return alert("Preencha todos os campos!");
+        if(!nome || !pront) return alert("Preencha o Nome e Prontuário!");
 
         set(ref(db, 'usuarios/' + pront), {
             nome: nome,
             pront: pront,
             cargo: cargo,
-            senha: "pmsp" + pront, // Senha padrão inicial
+            senha: "pmsp" + pront, // Senha padrão
             status: "ativo"
         }).then(() => {
-            alert("Professor cadastrado com sucesso!");
+            alert("Sucesso! Professor " + nome + " já pode acessar.");
             document.getElementById('cad-nome').value = "";
             document.getElementById('cad-pront').value = "";
         });
     };
 
     function carregarDados() {
-        // Monitor de Reservas
+        // Reservas em Tempo Real
         onValue(ref(db, 'reservas'), (snap) => {
-            const lista = document.getElementById('listaReservas');
-            lista.innerHTML = "";
+            const body = document.getElementById('listaReservas');
+            body.innerHTML = "";
             const dados = snap.val();
             for(let id in dados) {
                 const r = dados[id];
-                lista.innerHTML += `<tr>
-                    <td><b style="color:#fff">${r.prof}</b></td>
+                body.innerHTML += `<tr>
+                    <td><b>${r.prof}</b></td>
                     <td>${r.local || r.equipamento}</td>
-                    <td><span style="color:#00ff88">${r.inicio ? r.inicio.split(' ')[1] : '--:--'}</span></td>
-                    <td><button onclick="removerReserva('${id}')" style="background:none; border:1px solid #ff0055; color:#ff0055; cursor:pointer; padding:3px 10px; border-radius:4px;">LIBERAR</button></td>
+                    <td>${r.inicio ? r.inicio.split(' ')[1] : '--:--'}</td>
+                    <td><button onclick="removerReserva('${id}')" style="color:red; background:none; border:none; cursor:pointer;">DESLOGAR</button></td>
                 </tr>`;
             }
         });
 
-        // Lista de Usuários
+        // Lista de Usuários no Banco
         onValue(ref(db, 'usuarios'), (snap) => {
-            const lista = document.getElementById('listaUsuarios');
-            lista.innerHTML = "";
-            const dados = snap.val();
-            for(let p in dados) {
-                const u = dados[p];
-                lista.innerHTML += `<tr>
+            const body = document.getElementById('listaUsuarios');
+            body.innerHTML = "";
+            const lista = snap.val();
+            for(let p in lista) {
+                const u = lista[p];
+                body.innerHTML += `<tr>
                     <td>${u.nome}</td>
                     <td>${u.pront}</td>
                     <td>${u.cargo}</td>
-                    <td><button onclick="removerUser('${p}')" style="background:none; border:none; color:#555; cursor:pointer;">EXCLUIR</button></td>
+                    <td><button onclick="removerUser('${p}')" style="color:#555; background:none; border:none; cursor:pointer;">APAGAR</button></td>
                 </tr>`;
             }
         });
     }
 
     window.removerReserva = (id) => remove(ref(db, 'reservas/' + id));
-    window.removerUser = (p) => confirm("Excluir professor?") && remove(ref(db, 'usuarios/' + p));
+    window.removerUser = (p) => confirm("Excluir acesso deste professor?") && remove(ref(db, 'usuarios/' + p));
 
 </script>
 </body>
