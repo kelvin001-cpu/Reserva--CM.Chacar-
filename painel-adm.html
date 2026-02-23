@@ -7,128 +7,118 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* O DESIGN QUE VOCÊ GOSTA: FUNDO ESCURO E BOTÕES COLORIDOS */
+        /* VOLTANDO AO DESIGN QUE VOCÊ FEZ HOJE CEDO */
         body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #0f172a; color: white; }
         
         #auth-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
         .main-title { color: #00adef; font-size: 35px; margin-bottom: 40px; text-transform: uppercase; font-weight: bold; }
 
-        /* AS 4 COLUNAS ORIGINAIS */
-        .auth-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; width: 100%; max-width: 1200px; }
-        .auth-card { background: #1e293b; padding: 25px; border-radius: 15px; border: 1px solid #334155; text-align: center; }
-        .auth-card h2 { margin-bottom: 20px; font-size: 18px; color: #fff; }
+        /* OS 4 CARDS ORIGINAIS LADO A LADO */
+        .auth-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; width: 100%; max-width: 1200px; }
+        .auth-card { background: #1e293b; padding: 30px; border-radius: 15px; border: 1px solid #334155; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .auth-card h2 { margin-bottom: 25px; font-size: 20px; color: #fff; border-bottom: 2px solid #00adef; padding-bottom: 10px; }
 
-        /* CORES DOS BOTÕES */
-        .btn { width: 100%; padding: 12px; margin-top: 10px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        input { width: 100%; padding: 12px; margin: 10px 0; background: #0f172a; color: white; border: 1px solid #334155; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        
+        .btn { width: 100%; padding: 15px; margin-top: 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; text-transform: uppercase; transition: 0.3s; }
         .btn-blue { background: #00adef; color: white; }
         .btn-green { background: #00ff9d; color: black; }
         .btn-red { background: #ff4757; color: white; }
+        .btn:hover { opacity: 0.8; transform: scale(1.02); }
 
-        input { width: 100%; padding: 10px; margin: 8px 0; background: #0f172a; color: white; border: 1px solid #334155; border-radius: 5px; box-sizing: border-box; }
-
-        /* LAYOUT APÓS LOGIN */
-        #main-container { display: none; height: 100vh; }
-        nav { width: 250px; background: #000; padding: 20px; border-right: 2px solid #334155; display: flex; flex-direction: column; }
-        section { flex: 1; padding: 30px; overflow-y: auto; }
-
-        .hidden { display: none !important; }
+        /* INTERFACE PÓS-LOGIN (SIMPLES) */
+        #main-container { display: none; padding: 30px; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; background: #000; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
         
+        .view { display: none; }
+        .active { display: block; }
+
         /* BLOQUEIO TOTAL */
-        #lock-screen { position: fixed; inset: 0; background: black; z-index: 100000; display: none; flex-direction: column; align-items: center; justify-content: center; border: 10px solid red; }
+        #lock-screen { position: fixed; inset: 0; background: black; z-index: 100000; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; border: 15px solid red; }
     </style>
 </head>
 <body>
 
 <div id="lock-screen">
-    <h1 style="color: red; font-size: 50px;">SISTEMA INTERROMPIDO</h1>
-    <h2 id="lock-title"></h2>
-    <p id="lock-msg" style="font-size: 20px;"></p>
+    <h1 style="color: red; font-size: 60px;">ACESSO INTERROMPIDO</h1>
+    <h2 id="lock-title" style="color: white;"></h2>
+    <p id="lock-msg" style="font-size: 25px; color: #ccc;"></p>
+    <b style="color: #00adef; margin-top: 30px;">NTI CHÁCARA DAS GARÇAS</b>
 </div>
 
 <div id="auth-screen">
-    <div class="main-title">PORTAL NTI | CHÁCARA</div>
+    <div class="main-title">SISTEMA NTI | CHÁCARA</div>
     <div class="auth-grid">
         <div class="auth-card">
             <h2>PROFESSOR</h2>
             <input type="number" id="p-p" placeholder="Prontuário">
             <input type="password" id="p-s" placeholder="Senha">
-            <button class="btn btn-blue" onclick="app.login('Professor')">ENTRAR</button>
+            <button class="btn btn-blue" onclick="app.login('Professor')">ENTRAR NO PORTAL</button>
         </div>
         <div class="auth-card">
             <h2>SECRETARIA</h2>
             <input type="number" id="s-p" placeholder="Prontuário">
             <input type="password" id="s-s" placeholder="Senha">
-            <button class="btn btn-blue" onclick="app.login('Secretaria')">ENTRAR</button>
+            <button class="btn btn-blue" onclick="app.login('Secretaria')">ENTRAR NO PORTAL</button>
         </div>
         <div class="auth-card">
             <h2>GESTORES</h2>
             <input type="number" id="g-p" placeholder="Prontuário">
             <input type="password" id="g-s" placeholder="Senha">
-            <button class="btn btn-blue" onclick="app.login('Gestão')">ENTRAR</button>
+            <button class="btn btn-blue" onclick="app.login('Gestão')">ENTRAR NO PORTAL</button>
         </div>
         <div class="auth-card" style="border-color: #00ff9d;">
-            <h2 style="color: #00ff9d;">TERMINAL NTI</h2>
+            <h2 style="color: #00ff9d;">PORTAL NTI</h2>
             <input type="number" id="t-p" placeholder="ID KELVIN">
             <input type="password" id="t-s" placeholder="Senha Master">
-            <button class="btn btn-green" onclick="app.login('TI')">MASTER LOGIN</button>
+            <button class="btn btn-green" onclick="app.login('TI')">TERMINAL MASTER</button>
         </div>
     </div>
 </div>
 
 <div id="main-container">
-    <nav>
-        <h3 id="u-nome"></h3>
-        <button class="btn btn-blue" onclick="app.view('v-reserva')">RESERVAS</button>
-        <button class="btn btn-red" onclick="app.view('v-chamado')">ABRIR CHAMADO</button>
-        <div id="ti-area" class="hidden">
-            <button class="btn btn-green" onclick="app.view('v-ti')">PAINEL MASTER</button>
+    <div class="header-top">
+        <div>
+            <b id="u-nome" style="font-size: 20px;"></b> | <span id="u-cargo" style="color: #00adef;"></span>
         </div>
-        <button class="btn btn-red" style="margin-top: auto;" onclick="location.reload()">SAIR</button>
-    </nav>
-    <section>
-        <div id="v-reserva" class="view">
-            <h2>Equipamentos</h2>
-            <div id="equip-list" style="display: flex; gap: 15px; flex-wrap: wrap;"></div>
-            <h2>Uso Atual</h2>
-            <table width="100%" border="1" style="border-collapse: collapse;">
-                <thead><tr><th>Item</th><th>User</th><th>Local</th><th>Ação</th></tr></thead>
-                <tbody id="uso-list"></tbody>
-            </table>
+        <div>
+            <button class="btn btn-blue" style="width: 150px; margin: 0 5px;" onclick="app.view('v-reserva')">RESERVAS</button>
+            <button class="btn btn-red" style="width: 150px; margin: 0 5px;" id="btn-ti-view" onclick="app.view('v-ti')">PAINEL TI</button>
+            <button class="btn btn-red" style="width: 100px; margin: 0 5px;" onclick="location.reload()">SAIR</button>
         </div>
+    </div>
 
-        <div id="v-ti" class="view">
-            <h2>GERENCIAMENTO NTI</h2>
-            <div style="display: flex; gap: 20px;">
-                <div class="auth-card" style="flex:1">
-                    <h3>CADASTRO DE USUÁRIO</h3>
-                    <input type="text" id="c-n" placeholder="Nome">
-                    <input type="number" id="c-p" placeholder="Prontuário">
-                    <select id="c-c"><option>Professor</option><option>Secretaria</option><option>Gestão</option></select>
-                    <button class="btn btn-green" onclick="app.confirmarCad()">CADASTRAR</button>
-                </div>
-                <div class="auth-card" style="flex:1">
-                    <h3>BLOQUEIO SITE</h3>
-                    <input id="av-tit" placeholder="Título">
-                    <textarea id="av-txt" placeholder="Mensagem"></textarea>
-                    <button class="btn btn-red" onclick="app.postAviso('critico')">TRAVAR SITE</button>
-                    <button class="btn btn-blue" onclick="app.limparAviso()">LIBERAR</button>
-                </div>
+    <div id="v-reserva" class="view">
+        <h1>RESERVA DE EQUIPAMENTOS</h1>
+        <div id="equip-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;"></div>
+    </div>
+
+    <div id="v-ti" class="view">
+        <h1 style="color: #00ff9d;">PAINEL DE CADASTRO E CONTROLE NTI</h1>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+            <div class="auth-card">
+                <h3>CADASTRAR NOVO ACESSO</h3>
+                <input type="text" id="c-n" placeholder="Nome Completo">
+                <input type="number" id="c-p" placeholder="Prontuário">
+                <select id="c-c" style="width:100%; padding:10px; background:#0f172a; color:white; border-radius:8px;">
+                    <option>Professor</option>
+                    <option>Secretaria</option>
+                    <option>Gestão</option>
+                </select>
+                <button class="btn btn-green" onclick="app.confirmarCad()">CADASTRAR USUÁRIO</button>
             </div>
-            <h3>Usuários e Chamados</h3>
-            <div id="master-tables"></div>
+            <div class="auth-card">
+                <h3>BLOQUEIO DE SEGURANÇA</h3>
+                <input id="av-tit" placeholder="Título do Bloqueio">
+                <textarea id="av-txt" style="width:100%; height:80px; background:#0f172a; color:white; border-radius:8px; padding:10px;" placeholder="Mensagem para os usuários"></textarea>
+                <button class="btn btn-red" onclick="app.postAviso('critico')">ATIVAR BLOQUEIO TOTAL</button>
+                <button class="btn btn-blue" style="margin-top:10px" onclick="app.limparAviso()">LIMPAR E LIBERAR</button>
+            </div>
         </div>
-
-        <div id="v-chamado" class="view">
-            <h2>Solicitar Técnico</h2>
-            <input id="ch-loc" placeholder="Onde você está?">
-            <textarea id="ch-msg" placeholder="Qual o problema?"></textarea>
-            <button class="btn btn-red" onclick="app.abrirChamado()">ENVIAR PARA KELVIN</button>
-        </div>
-    </section>
+    </div>
 </div>
 
 <script>
-    // FIREBASE E LÓGICA (Mantida do jeito que funciona)
     const firebaseConfig = { databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
@@ -136,7 +126,7 @@
     const app = {
         user: null,
         itens: ['CROMES 01', 'CROMES 02', 'CROMES 03', 'CROMES 04', 'TV 01', 'TV 02', 'TV 03'],
-        
+
         async login(tipo) {
             let p = document.getElementById(tipo==='Professor'?'p-p':tipo==='Secretaria'?'s-p':tipo==='Gestão'?'g-p':'t-p').value;
             let s = document.getElementById(tipo==='Professor'?'p-s':tipo==='Secretaria'?'s-s':tipo==='Gestão'?'g-s':'t-s').value;
@@ -150,14 +140,19 @@
             if(snap.exists() && snap.val().pass == s) {
                 this.user = snap.val();
                 this.start();
-            } else { alert('Erro de login!'); }
+            } else { alert('Acesso negado!'); }
         },
 
         start() {
             document.getElementById('auth-screen').style.display = 'none';
-            document.getElementById('main-container').style.display = 'flex';
+            document.getElementById('main-container').style.display = 'block';
             document.getElementById('u-nome').innerText = this.user.nome;
-            if(this.user.cargo === 'TI') document.getElementById('ti-area').classList.remove('hidden');
+            document.getElementById('u-cargo').innerText = this.user.cargo;
+            
+            if(this.user.cargo !== 'TI') {
+                document.getElementById('btn-ti-view').style.display = 'none';
+            }
+            
             this.sync(); this.watchAvisos();
             this.view('v-reserva');
         },
@@ -167,7 +162,6 @@
             document.getElementById(id).style.display = 'block';
         },
 
-        // RESTO DAS FUNÇÕES DE BAN, RESET E AVISO CONTINUAM ATIVAS...
         async postAviso(g) {
             const t = document.getElementById('av-tit').value, m = document.getElementById('av-txt').value;
             await db.ref('sistema/aviso').set({ titulo: t, texto: m, gravidade: g });
@@ -183,15 +177,29 @@
                 } else { document.getElementById('lock-screen').style.display = 'none'; }
             });
         },
-        async reservar(i) { const l = prompt("Local?"); if(l) await db.ref('reservas').push({item:i, user:this.user.nome, local:l}); },
+
+        async confirmarCad() {
+            const n = document.getElementById('c-n').value, p = document.getElementById('c-p').value, c = document.getElementById('c-c').value;
+            let s = c==='Gestão'?'gestao2026':c==='Secretaria'?'secretaria2026':'pmsp2026';
+            await db.ref('usuarios/'+p).set({ nome: n, pront: p, cargo: c, pass: s, status: 'ativo' });
+            alert("USUÁRIO CADASTRADO!");
+        },
+
         sync() {
             db.ref('reservas').on('value', snap => {
-                const l = document.getElementById('uso-list'), g = document.getElementById('equip-list');
-                l.innerHTML = ""; g.innerHTML = ""; let u = {};
-                snap.forEach(r => { u[r.val().item] = r.val(); l.innerHTML += `<tr><td>${r.val().item}</td><td>${r.val().user}</td><td>${r.val().local}</td><td><button onclick="db.ref('reservas/${r.key}').remove()">X</button></td></tr>`; });
-                this.itens.forEach(i => { g.innerHTML += `<div class="auth-card"><b>${i}</b><br>${u[i]?'EM USO':'LIVRE'}<br>${!u[i]?`<button class="btn btn-blue" onclick="app.reservar('${i}')">PEGAR</button>`:''}</div>`; });
+                const g = document.getElementById('equip-list'); g.innerHTML = "";
+                let u = {}; snap.forEach(r => { u[r.val().item] = r.val(); });
+                this.itens.forEach(i => {
+                    g.innerHTML += `
+                        <div class="auth-card">
+                            <b>${i}</b><br>
+                            <span style="color:${u[i]?'red':'#00ff9d'}">${u[i]?'EM USO POR: '+u[i].user:'DISPONÍVEL'}</span><br>
+                            ${!u[i]?`<button class="btn btn-blue" onclick="app.reservar('${i}')">PEGAR</button>`:''}
+                        </div>`;
+                });
             });
-        }
+        },
+        async reservar(i) { const l = prompt("Onde você vai usar?"); if(l) await db.ref('reservas').push({item:i, user:this.user.nome, local:l}); }
     }
 </script>
 </body>
