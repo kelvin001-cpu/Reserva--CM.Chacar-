@@ -12,33 +12,31 @@
         :root { --blue: #00adef; --green: #00ff9d; --red: #ff4757; --dark: #0f172a; --card: #1e293b; }
         body { margin: 0; font-family: 'Inter', sans-serif; background: var(--dark); color: white; display: flex; height: 100vh; overflow: hidden; }
         
-        /* LOGIN */
-        #auth-screen { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .grid-login { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; width: 100%; max-width: 1100px; }
-        .login-box { background: var(--card); padding: 25px; border-radius: 15px; text-align: center; border: 1px solid #334155; }
+        /* LOGIN SCREEN */
+        #auth-screen { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+        .grid-login { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; width: 100%; max-width: 1200px; }
+        .login-box { background: var(--card); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid #334155; display: flex; flex-direction: column; justify-content: space-between; }
         
-        /* ESTRUTURA */
+        /* ESTRUTURA INTERNA */
         nav { width: 260px; background: #000; padding: 20px; display: flex; flex-direction: column; border-right: 1px solid #334155; }
         main { flex: 1; padding: 30px; overflow-y: auto; }
         .view { display: none; } .view.active { display: block; }
         
-        /* COMPONENTES */
         .card { background: var(--card); padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #334155; }
-        input, select { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; }
+        input, select { width: 100%; padding: 10px; margin: 8px 0; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; }
         .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.2s; }
         .btn-blue { background: var(--blue); color: white; }
+        .btn-green { background: var(--green); color: #000; }
         .btn-red { background: var(--red); color: white; }
-        .btn-outline { background: transparent; border: 1px solid var(--blue); color: var(--blue); margin-top: 10px; }
+        .btn-outline { background: transparent; border: 1px solid var(--blue); color: var(--blue); margin-top: 5px; }
         
-        /* EQUIPAMENTOS */
         .grid-equip { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
         .equip-card { background: #0f172a; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #334155; }
         
-        /* TABELAS */
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #334155; font-size: 13px; }
         
-        .hidden { display: none; }
+        .hidden { display: none !important; }
         .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; }
         .badge-free { background: var(--green); color: #000; }
         .badge-busy { background: var(--red); color: #fff; }
@@ -47,12 +45,49 @@
 <body>
 
 <div id="auth-screen">
-    <h1 style="color: var(--blue); margin-bottom: 30px;">NTI CHÁCARA - SISTEMA DE GESTÃO</h1>
+    <h1 style="color: var(--blue); margin-bottom: 30px; text-align: center;">NTI CHÁCARA - PORTAL DE ACESSO</h1>
+    
     <div class="grid-login">
-        <div class="login-box"><h3>PROFESSOR</h3><input type="number" id="p-pront" placeholder="Prontuário"><input type="password" id="p-pass" placeholder="Senha"><button class="btn btn-blue" onclick="app.login('Professor')">ENTRAR</button><button class="btn btn-outline" onclick="app.showCad('Professor')">CRIAR CONTA</button></div>
-        <div class="login-box"><h3>SECRETARIA</h3><input type="number" id="s-pront" placeholder="Prontuário"><input type="password" id="s-pass" placeholder="Senha"><button class="btn btn-blue" onclick="app.login('Secretaria')">ENTRAR</button><button class="btn btn-outline" onclick="app.showCad('Secretaria')">CRIAR CONTA</button></div>
-        <div class="login-box"><h3>GESTÃO</h3><input type="number" id="g-pront" placeholder="Prontuário"><input type="password" id="g-pass" placeholder="Senha"><button class="btn btn-blue" onclick="app.login('Gestão')">ENTRAR</button><button class="btn btn-outline" onclick="app.showCad('Gestão')">CRIAR CONTA</button></div>
-        <div class="login-box" style="border-color: var(--green)"><h3>TI MASTER</h3><input type="number" id="t-pront" placeholder="ID Kelvin"><input type="password" id="t-pass" placeholder="Senha Master"><button class="btn" style="background: var(--green); color:#000" onclick="app.login('TI')">TERMINAL MASTER</button></div>
+        <div class="login-box">
+            <h3>PROFESSOR</h3>
+            <input type="number" id="p-pront" placeholder="Prontuário">
+            <input type="password" id="p-pass" placeholder="Senha">
+            <button class="btn btn-blue" onclick="app.login('Professor')">ENTRAR</button>
+        </div>
+
+        <div class="login-box">
+            <h3>SECRETARIA</h3>
+            <input type="number" id="s-pront" placeholder="Prontuário">
+            <input type="password" id="s-pass" placeholder="Senha">
+            <button class="btn btn-blue" onclick="app.login('Secretaria')">ENTRAR</button>
+        </div>
+
+        <div class="login-box">
+            <h3>GESTÃO</h3>
+            <input type="number" id="g-pront" placeholder="Prontuário">
+            <input type="password" id="g-pass" placeholder="Senha">
+            <button class="btn btn-blue" onclick="app.login('Gestão')">ENTRAR</button>
+        </div>
+
+        <div class="login-box" style="border: 1px dashed var(--blue); background: rgba(0, 173, 239, 0.05);">
+            <h3 style="color: var(--blue)">SOLICITAR ACESSO</h3>
+            <p style="font-size: 11px; margin: 0; color: #94a3b8;">Novo no sistema? Cadastre-se aqui.</p>
+            <select id="c-cargo-new">
+                <option value="Professor">Sou Professor</option>
+                <option value="Secretaria">Sou Secretaria</option>
+                <option value="Gestão">Sou Gestão</option>
+            </select>
+            <input type="text" id="c-nome" placeholder="Nome Completo">
+            <input type="number" id="c-pront" placeholder="Prontuário">
+            <button class="btn btn-outline" onclick="app.confirmarCad()">CRIAR MINHA CONTA</button>
+        </div>
+
+        <div class="login-box" style="border-color: var(--green)">
+            <h3 style="color: var(--green)">TI MASTER</h3>
+            <input type="number" id="t-pront" placeholder="ID Kelvin">
+            <input type="password" id="t-pass" placeholder="Senha Master">
+            <button class="btn btn-green" onclick="app.login('TI')">TERMINAL</button>
+        </div>
     </div>
 </div>
 
@@ -65,7 +100,7 @@
     <button class="btn btn-outline" style="text-align:left; margin-bottom:10px" onclick="app.view('v-perfil')"><i class="fa fa-key"></i> Minha Senha</button>
     <div id="ti-menu" class="hidden">
         <hr style="border:0; border-top:1px solid #334155; margin: 20px 0;">
-        <button class="btn" style="background: var(--green); color:#000; text-align:left" onclick="app.view('v-ti')"><i class="fa fa-shield"></i> PAINEL MASTER</button>
+        <button class="btn btn-green" style="text-align:left" onclick="app.view('v-ti')"><i class="fa fa-shield"></i> PAINEL MASTER</button>
     </div>
     <button class="btn btn-red" style="margin-top:auto" onclick="location.reload()">SAIR</button>
 </nav>
@@ -103,34 +138,30 @@
     </div>
 </main>
 
-<div id="modal-cad" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:10000; display:flex; align-items:center; justify-content:center;">
-    <div class="login-box" style="width:350px">
-        <h2 id="cad-title">Cadastro</h2>
-        <input type="text" id="c-nome" placeholder="Nome Completo">
-        <input type="number" id="c-pront" placeholder="Prontuário">
-        <button class="btn btn-blue" onclick="app.confirmarCad()">CRIAR CONTA</button>
-        <button class="btn btn-red" style="margin-top:10px" onclick="document.getElementById('modal-cad').classList.add('hidden')">CANCELAR</button>
-    </div>
-</div>
-
 <script>
     const firebaseConfig = { databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     const app = {
-        user: null, curCad: '',
+        user: null,
         itens: ['CROMES 01', 'CROMES 02', 'TABLETS', 'TV 01', 'TV 02', 'TV 03'],
 
-        showCad(p) { this.curCad = p; document.getElementById('cad-title').innerText = "Novo " + p; document.getElementById('modal-cad').classList.remove('hidden'); },
-        
         async confirmarCad() {
-            const n = document.getElementById('c-nome').value, p = document.getElementById('c-pront').value;
-            if(!n || !p) return alert("Preencha tudo!");
-            let s = (this.curCad==='Gestão')?'gestao2026':(this.curCad==='Secretaria')?'secretaria2026':'pmsp2026';
-            await db.ref('usuarios/'+p).set({ nome: n, pront: p, cargo: this.curCad, pass: s, status: 'ativo' });
-            alert("Sucesso! Senha padrão: " + s);
-            document.getElementById('modal-cad').classList.add('hidden');
+            const n = document.getElementById('c-nome').value;
+            const p = document.getElementById('c-pront').value;
+            const c = document.getElementById('c-cargo-new').value;
+            
+            if(!n || !p) return alert("Por favor, preencha nome e prontuário no campo de cadastro!");
+            
+            let s = (c === 'Gestão') ? 'gestao2026' : (c === 'Secretaria') ? 'secretaria2026' : 'pmsp2026';
+            
+            try {
+                await db.ref('usuarios/'+p).set({ nome: n, pront: p, cargo: c, pass: s, status: 'ativo' });
+                alert("Cadastro realizado!\nCargo: " + c + "\nSenha Padrão: " + s + "\n\nAgora use os campos de login acima para entrar.");
+                document.getElementById('c-nome').value = "";
+                document.getElementById('c-pront').value = "";
+            } catch(e) { alert("Erro ao cadastrar."); }
         },
 
         async login(portal) {
@@ -145,7 +176,7 @@
             if(snap.exists() && snap.val().pass == s && snap.val().cargo === portal) {
                 if(snap.val().status === 'bloqueado') return alert("Acesso Bloqueado pelo TI.");
                 this.user = snap.val(); this.start();
-            } else alert("Dados incorretos!");
+            } else alert("Dados incorretos ou cargo não correspondente!");
         },
 
         start() {
@@ -172,7 +203,7 @@
                 snap.forEach(r => {
                     const d = r.val(); emUso[d.item] = d;
                     list.innerHTML += `<tr><td>${d.item}</td><td>${d.user}</td><td>${d.local}</td><td>
-                        ${(this.user.cargo==='TI' || this.user.pront === d.pront) ? `<button class="btn btn-red btn-sm" style="width:auto; padding:5px 10px" onclick="app.darBaixa('${r.key}')">BAIXA</button>` : '-'}
+                        ${(this.user.cargo==='TI' || this.user.pront === d.pront) ? `<button class="btn btn-red" style="width:auto; padding:5px 10px" onclick="app.darBaixa('${r.key}')">BAIXA</button>` : '-'}
                     </td></tr>`;
                 });
 
@@ -193,7 +224,7 @@
                         let padrao = (d.cargo==='Gestão')?'gestao2026':(d.cargo==='Secretaria')?'secretaria2026':'pmsp2026';
                         t.innerHTML += `<tr><td>${d.nome}</td><td>${d.pront}</td><td>${d.cargo}</td><td>${d.status}</td><td>
                             <button class="btn btn-red" style="width:auto; padding:5px" onclick="app.tiCmd('${d.pront}','status','bloqueado')">BAN</button>
-                            <button class="btn" style="width:auto; padding:5px; background:green; color:white" onclick="app.tiCmd('${d.pront}','status','ativo')">OK</button>
+                            <button class="btn btn-green" style="width:auto; padding:5px" onclick="app.tiCmd('${d.pront}','status','ativo')">OK</button>
                             <button class="btn btn-blue" style="width:auto; padding:5px" onclick="app.tiCmd('${d.pront}','pass','${padrao}')">RESET</button>
                         </td></tr>`;
                     });
