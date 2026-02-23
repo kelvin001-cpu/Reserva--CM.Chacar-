@@ -3,136 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SANTANA TECH ADM - Terminal Master</title>
+    <title>NTI - TERMINAL MASTER KELVIN</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        :root { --neon-blue: #00f3ff; --neon-red: #ff0055; --dark-card: rgba(20, 22, 30, 0.95); }
+        :root { --neon-blue: #00f3ff; --neon-red: #ff0055; --bg-dark: #050608; --card-dark: rgba(15, 17, 26, 0.95); }
         
+        * { box-sizing: border-box; }
         body { 
-            margin: 0; font-family: 'Rajdhani', sans-serif; background: #0a0b10; color: white;
-            background-image: radial-gradient(circle at top, #161822 0%, #0a0b10 100%); min-height: 100vh;
-            display: flex; flex-direction: column; overflow-x: hidden;
+            margin: 0; font-family: 'Rajdhani', sans-serif; background: var(--bg-dark); color: white;
+            min-height: 100vh; display: flex; flex-direction: column;
         }
 
         header { 
-            padding: 15px; text-align: center; border-bottom: 2px solid var(--neon-blue);
-            background: rgba(0, 0, 0, 0.9); box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+            padding: 15px 30px; border-bottom: 2px solid var(--neon-blue);
+            background: rgba(0, 0, 0, 0.9); display: flex; justify-content: space-between; align-items: center;
         }
+        h1 { font-family: 'Orbitron', sans-serif; color: var(--neon-blue); text-shadow: 0 0 8px var(--neon-blue); margin: 0; font-size: 20px; }
 
-        h1 { font-family: 'Orbitron', sans-serif; color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); margin: 0; font-size: 22px; }
-
-        .container { max-width: 1000px; margin: 20px auto; padding: 0 20px; width: 100%; box-sizing: border-box; }
-
-        /* TELA DE LOGIN ADM - CORRIGIDA */
+        /* TELA LOGIN */
         #telaLogin {
-            position: fixed; inset: 0; background: #0a0b10; z-index: 9999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            position: fixed; inset: 0; background: var(--bg-dark); z-index: 2000;
+            display: flex; align-items: center; justify-content: center;
         }
         .login-box {
-            background: var(--dark-card); border: 1px solid var(--neon-blue); border-radius: 15px;
-            padding: 40px; width: 100%; max-width: 380px; text-align: center;
-            box-shadow: 0 0 40px rgba(0, 243, 255, 0.15);
+            background: var(--card-dark); border: 1px solid var(--neon-blue); border-radius: 12px;
+            padding: 40px; width: 350px; text-align: center;
         }
         .login-box input {
-            width: 100%; padding: 14px; margin: 10px 0; background: #000; border: 1px solid #333;
-            color: var(--neon-blue); border-radius: 8px; font-family: 'Rajdhani'; font-size: 18px; box-sizing: border-box; outline: none;
+            width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #222;
+            color: var(--neon-blue); border-radius: 5px; font-family: 'Rajdhani'; font-size: 18px; outline: none;
         }
-        .login-box input:focus { border-color: var(--neon-blue); box-shadow: 0 0 10px rgba(0, 243, 255, 0.2); }
-        
         .btn-login {
             width: 100%; padding: 15px; background: var(--neon-blue); color: black; border: none;
-            border-radius: 8px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; margin-top: 15px; transition: 0.3s;
-        }
-        .btn-login:hover { background: #fff; box-shadow: 0 0 20px #fff; }
-
-        /* PAINEL DE CONTROLE */
-        .status-panel { 
-            background: var(--dark-card); border: 1px solid var(--neon-blue); border-radius: 15px;
-            padding: 20px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;
-            flex-wrap: wrap; gap: 15px;
+            border-radius: 5px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer;
         }
 
-        .btn-portal { 
-            padding: 12px 20px; border-radius: 8px; border: none; font-family: 'Orbitron'; 
-            font-size: 11px; cursor: pointer; transition: 0.3s; font-weight: bold; flex: 1; min-width: 140px;
+        /* CONTEÚDO */
+        .container { max-width: 1100px; margin: 20px auto; padding: 0 20px; width: 100%; }
+        #painelConteudo { display: none; }
+
+        /* ABAS */
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { 
+            background: #111; border: 1px solid #333; color: #888; padding: 10px 20px; 
+            cursor: pointer; font-family: 'Orbitron'; font-size: 11px; border-radius: 5px;
         }
-        .btn-on { background: #00ff88; color: #000; }
-        .btn-off { background: var(--neon-red); color: white; }
+        .tab-btn.active { border-color: var(--neon-blue); color: var(--neon-blue); background: rgba(0, 243, 255, 0.05); }
 
-        .table-container { 
-            background: var(--dark-card); border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 15px; overflow-x: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        .view { display: none; }
+        .view.active { display: block; }
+
+        /* CARDS E TABELAS */
+        .card { background: var(--card-dark); border-radius: 10px; padding: 20px; border: 1px solid #1a1c26; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { color: var(--neon-blue); padding: 15px; text-align: left; font-size: 13px; border-bottom: 2px solid #1a1c26; }
+        td { padding: 15px; border-bottom: 1px solid #1a1c26; }
+
+        /* FORM CADASTRO INTERNO */
+        .form-cad { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+        .form-cad input, .form-cad select { 
+            background: #000; border: 1px solid #333; color: white; padding: 10px; border-radius: 5px; font-family: 'Rajdhani';
         }
+        .btn-add { background: var(--neon-blue); color: black; border: none; font-weight: bold; cursor: pointer; border-radius: 5px; }
 
-        table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        th { background: rgba(0, 243, 255, 0.05); color: var(--neon-blue); padding: 18px; text-align: left; font-size: 13px; letter-spacing: 1px; }
-        td { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 15px; }
-        
-        .prof-name { color: #fff; font-weight: 600; font-size: 16px; display: block; }
-        .equip-name { color: var(--neon-blue); font-size: 14px; }
-        .time-tag { color: #00ff88; font-family: monospace; font-size: 14px; font-weight: bold; }
-
-        .btn-liberar { 
-            background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red); 
-            padding: 6px 12px; border-radius: 5px; cursor: pointer; transition: 0.3s; font-family: 'Orbitron'; font-size: 10px;
-        }
-        .btn-liberar:hover { background: var(--neon-red); color: white; }
-
-        .hidden { display: none !important; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>KELVIN MASTER ADM</h1>
+        <h1>NTI TECH MASTER</h1>
+        <button onclick="location.reload()" style="background:none; border:1px solid #333; color:#888; cursor:pointer; padding:5px 10px; font-size:10px;">LOGOUT</button>
     </header>
 
     <div id="telaLogin">
         <div class="login-box">
-            <h2 style="font-family:'Orbitron'; color:var(--neon-blue); font-size:18px; margin-bottom:20px;">ACESSO RESTRITO NTI</h2>
-            <input type="text" id="user" placeholder="Usuário Master">
-            <input type="text" id="pront" placeholder="Prontuário">
-            <input type="password" id="pass" placeholder="Senha ADM">
-            <button class="btn-login" onclick="validar()">DESBLOQUEAR TERMINAL</button>
-            <p id="erro" style="color:var(--neon-red); font-size:13px; margin-top:20px; display:none; font-weight:bold;">ACESSO NEGADO: CREDENCIAIS INCORRETAS</p>
+            <h2 style="font-family:'Orbitron'; color:var(--neon-blue); font-size:16px;">ACESSO RESTRITO</h2>
+            <input type="text" id="user" placeholder="USUÁRIO">
+            <input type="text" id="pront" placeholder="PRONTUÁRIO">
+            <input type="password" id="pass" placeholder="SENHA MASTER">
+            <button class="btn-login" onclick="validar()">ENTRAR</button>
+            <p id="erro" style="color:var(--neon-red); font-size:12px; margin-top:15px; display:none;">ACESSO NEGADO</p>
         </div>
     </div>
 
-    <div id="painelConteudo" class="container hidden">
-        <div class="status-panel">
-            <div>
-                <span style="font-family: 'Orbitron'; font-size: 12px; color: #888;">STATUS DO SISTEMA:</span><br>
-                <span id="portalStatus" style="color: #00ff88; font-weight: bold;">PORTAL ONLINE</span>
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <button class="btn-portal btn-on" onclick="setPortal(true)">ATIVAR PORTAL</button>
-                <button class="btn-portal btn-off" onclick="setPortal(false)">TRAVAR TUDO</button>
+    <div id="painelConteudo" class="container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('monitor')">MONITOR DE REDE</button>
+            <button class="tab-btn" onclick="switchTab('usuarios')">GESTÃO DE USUÁRIOS</button>
+        </div>
+
+        <div id="view-monitor" class="view active">
+            <div class="card">
+                <h3 style="margin-top:0; color:var(--neon-blue); font-family:'Orbitron'; font-size:14px;">EQUIPAMENTOS EM USO</h3>
+                <table>
+                    <thead>
+                        <tr><th>PROFESSOR</th><th>LOCAL</th><th>HORÁRIO</th><th>AÇÃO</th></tr>
+                    </thead>
+                    <tbody id="liveData"></tbody>
+                </table>
             </div>
         </div>
 
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>RESPONSÁVEL</th>
-                        <th>LOCAL / EQUIPAMENTO</th>
-                        <th>HORÁRIO</th>
-                        <th>AÇÃO</th>
-                    </tr>
-                </thead>
-                <tbody id="liveData">
-                    </tbody>
-            </table>
+        <div id="view-usuarios" class="view">
+            <div class="card">
+                <h3 style="margin-top:0; color:var(--neon-blue); font-family:'Orbitron'; font-size:14px;">NOVO CADASTRO</h3>
+                <div class="form-cad">
+                    <input type="text" id="new-nome" placeholder="Nome Completo">
+                    <input type="number" id="new-pront" placeholder="Prontuário">
+                    <select id="new-cargo">
+                        <option value="Professor">Professor</option>
+                        <option value="Secretaria">Secretaria</option>
+                        <option value="Gestão">Gestão</option>
+                    </select>
+                </div>
+                <button class="btn-add" style="width:100%; margin-top:10px; padding:12px;" onclick="cadastrarUsuario()">SALVAR NOVO USUÁRIO</button>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-top:0; color:var(--neon-blue); font-family:'Orbitron'; font-size:14px;">USUÁRIOS CADASTRADOS</h3>
+                <table>
+                    <thead>
+                        <tr><th>NOME</th><th>PRONTUÁRIO</th><th>CARGO</th><th>AÇÃO</th></tr>
+                    </thead>
+                    <tbody id="userList"></tbody>
+                </table>
+            </div>
         </div>
-        
-        <button onclick="location.reload()" style="margin-top:30px; background:none; border:none; color:#444; cursor:pointer; width:100%; font-family:'Orbitron'; font-size:10px;">ENCERRAR SESSÃO MASTER</button>
     </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getDatabase, ref, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-    // Sua config original
     const firebaseConfig = {
         apiKey: "AIzaSyBoGFDKz-nBwKvczGpxg-fHJYdVykcBUQ",
         authDomain: "escala-chacara.firebaseapp.com",
@@ -146,7 +149,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Credenciais que você definiu
     const MASTER = { u: "kelvin", p: "46690", s: "2683503205" };
 
     window.validar = () => {
@@ -156,56 +158,82 @@
 
         if(u === MASTER.u && p === MASTER.p && s === MASTER.s) {
             document.getElementById('telaLogin').classList.add('hidden');
-            document.getElementById('painelConteudo').classList.remove('hidden');
+            document.getElementById('painelConteudo').style.display = 'block';
             iniciarMonitoramento();
+            carregarUsuarios();
         } else {
             document.getElementById('erro').style.display = 'block';
         }
     };
 
-    function iniciarMonitoramento() {
-        // Monitorar Status do Portal
-        onValue(ref(db, 'ativo'), (snap) => {
-            const status = snap.val();
-            const label = document.getElementById('portalStatus');
-            label.innerText = status ? "PORTAL ONLINE" : "PORTAL BLOQUEADO";
-            label.style.color = status ? "#00ff88" : "#ff0055";
-        });
+    window.switchTab = (tab) => {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('view-' + tab).classList.add('active');
+        event.target.classList.add('active');
+    };
 
-        // Monitorar Reservas
+    // FUNÇÃO PARA CADASTRAR (SÓ FUNCIONA LOGADO NO MASTER)
+    window.cadastrarUsuario = () => {
+        const nome = document.getElementById('new-nome').value;
+        const pront = document.getElementById('new-pront').value;
+        const cargo = document.getElementById('new-cargo').value;
+        
+        if(!nome || !pront) return alert("Preencha tudo!");
+
+        // Senha padrão baseada no cargo
+        const senhaPadrao = cargo === "Professor" ? "pmsp2026" : (cargo === "Gestão" ? "gestao2026" : "secretaria2026");
+
+        set(ref(db, 'usuarios/' + pront), {
+            nome: nome,
+            pront: pront,
+            cargo: cargo,
+            pass: senhaPadrao,
+            status: "ativo"
+        }).then(() => {
+            alert("Usuário " + nome + " cadastrado com sucesso!");
+            document.getElementById('new-nome').value = "";
+            document.getElementById('new-pront').value = "";
+        });
+    };
+
+    function iniciarMonitoramento() {
         onValue(ref(db, 'reservas'), (snap) => {
             const body = document.getElementById('liveData');
             body.innerHTML = "";
             const dados = snap.val();
-            
-            if(!dados) {
-                body.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#555; padding:40px;">NENHUM EQUIPAMENTO EM USO NO MOMENTO</td></tr>';
-                return;
-            }
-
             for(let id in dados) {
                 const r = dados[id];
-                const horaInicio = r.inicio ? r.inicio.split(' ')[1] || r.inicio : '--:--';
-                const horaFim = r.entrega ? r.entrega.split(' ')[1] : (r.termino ? r.termino.split(' ')[1] : '--:--');
-
-                body.innerHTML += `
-                    <tr>
-                        <td><span class="prof-name">${r.prof}</span></td>
-                        <td><span class="equip-name">${r.local || r.equipamento}</span></td>
-                        <td><span class="time-tag">${horaInicio}</span> <span style="color:#333">➔</span> <span style="color:#ff0055">${horaFim}</span></td>
-                        <td><button class="btn-liberar" onclick="limpar('${id}')">LIBERAR</button></td>
-                    </tr>`;
+                body.innerHTML += `<tr>
+                    <td>${r.prof}</td>
+                    <td>${r.local || r.equipamento}</td>
+                    <td>${r.inicio ? r.inicio.split(' ')[1] : '--'}</td>
+                    <td><button class="tab-btn" style="color:var(--neon-red); border-color:var(--neon-red);" onclick="limparReserva('${id}')">LIBERAR</button></td>
+                </tr>`;
             }
         });
     }
 
-    window.setPortal = (v) => set(ref(db, 'ativo'), v).then(() => alert("COMANDO ENVIADO: Status do Portal Alterado."));
-    
-    window.limpar = (id) => {
-        if(confirm("FORÇAR LIBERAÇÃO? Isso removerá o registro do sistema imediatamente.")) {
-            remove(ref(db, 'reservas/' + id));
-        }
-    };
+    function carregarUsuarios() {
+        onValue(ref(db, 'usuarios'), (snap) => {
+            const body = document.getElementById('userList');
+            body.innerHTML = "";
+            const lista = snap.val();
+            for(let p in lista) {
+                const u = lista[p];
+                body.innerHTML += `<tr>
+                    <td>${u.nome}</td>
+                    <td>${u.pront}</td>
+                    <td>${u.cargo}</td>
+                    <td><button class="tab-btn" style="color:var(--neon-red);" onclick="removerUser('${p}')">EXCLUIR</button></td>
+                </tr>`;
+            }
+        });
+    }
+
+    window.limparReserva = (id) => remove(ref(db, 'reservas/' + id));
+    window.removerUser = (p) => confirm("Excluir este usuário permanentemente?") && remove(ref(db, 'usuarios/' + p));
+
 </script>
 </body>
 </html>
