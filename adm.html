@@ -3,176 +3,243 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TECH ADM - Acesso Restrito</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <title>PORTAL NTI | CHÁCARA DAS GARÇAS</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --neon-blue: #00f3ff; --neon-red: #ff0055; --dark-card: rgba(20, 22, 30, 0.9); }
+        :root { --blue: #00adef; --green: #00ff9d; --red: #ff4757; --dark: #0f172a; --card: #1e293b; }
+        body { margin: 0; font-family: 'Inter', sans-serif; background: var(--dark); color: white; display: flex; height: 100vh; overflow: hidden; }
         
-        body { 
-            margin: 0; font-family: 'Rajdhani', sans-serif; background: #0a0b10; color: white;
-            background-image: linear-gradient(180deg, #0a0b10 0%, #161822 100%); min-height: 100vh;
-            display: flex; flex-direction: column;
-        }
+        /* TELA DE LOGIN */
+        #auth-screen { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; overflow-y: auto; }
+        .grid-login { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; width: 100%; max-width: 1050px; }
+        .login-box { background: var(--card); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #334155; transition: 0.3s; }
+        .login-box:hover { border-color: var(--blue); }
+        
+        .box-cadastro { border: 1px solid rgba(0, 173, 239, 0.3); background: rgba(0, 173, 239, 0.02); }
+        .box-cadastro h3 { color: var(--blue); margin-top: 0; }
 
-        header { 
-            padding: 20px; text-align: center; border-bottom: 2px solid var(--neon-blue);
-            background: rgba(0, 0, 0, 0.8); box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
-        }
-
-        h1 { font-family: 'Orbitron', sans-serif; color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); margin: 0; }
-
-        .container { max-width: 900px; margin: 30px auto; padding: 0 20px; width: 100%; box-sizing: border-box; }
-
-        /* Estilo da Tela de Login */
-        .login-box {
-            background: var(--dark-card); border: 1px solid var(--neon-blue); border-radius: 15px;
-            padding: 40px; max-width: 400px; margin: 100px auto; text-align: center;
-            box-shadow: 0 0 30px rgba(0, 243, 255, 0.1);
-        }
-        .login-box input {
-            width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid var(--neon-blue);
-            color: white; border-radius: 8px; font-family: 'Rajdhani'; font-size: 16px; box-sizing: border-box;
-        }
-        .btn-login {
-            width: 100%; padding: 15px; background: var(--neon-blue); color: black; border: none;
-            border-radius: 8px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; margin-top: 10px;
-        }
-
-        /* Painel escondido inicialmente */
-        #painelConteudo { display: none; }
-
-        .status-panel { 
-            background: var(--dark-card); border: 1px solid var(--neon-blue); border-radius: 15px;
-            padding: 20px; margin-bottom: 30px; display: flex; justify-content: space-around; align-items: center;
-        }
-
-        .btn { 
-            padding: 12px 25px; border-radius: 30px; border: none; font-family: 'Orbitron'; 
-            font-size: 12px; cursor: pointer; transition: 0.3s; font-weight: bold;
-        }
-        .btn-on { background: #28a745; color: white; box-shadow: 0 0 10px #28a745; }
-        .btn-off { background: var(--neon-red); color: white; box-shadow: 0 0 10px var(--neon-red); }
-
-        .table-container { 
-            background: var(--dark-card); border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 15px; overflow: hidden; backdrop-filter: blur(10px);
-        }
-
+        nav { width: 230px; background: #000; padding: 20px; display: flex; flex-direction: column; border-right: 1px solid #334155; }
+        main { flex: 1; padding: 25px; overflow-y: auto; }
+        .view { display: none; } .view.active { display: block; }
+        
+        input, select { width: 100%; padding: 9px; margin: 5px 0; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; font-size: 13px; outline: none; }
+        
+        .btn { padding: 10px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.2s; font-size: 11px; text-transform: uppercase; }
+        .btn-blue { background: var(--blue); color: white; }
+        .btn-green { background: var(--green); color: #000; }
+        .btn-red { background: var(--red); color: white; }
+        .btn-outline { background: transparent; border: 1px solid var(--blue); color: var(--blue); margin-top: 5px; }
+        
+        .grid-equip { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+        .equip-card { background: #0f172a; padding: 15px; border-radius: 8px; text-align: center; border: 1px solid #334155; }
+        
         table { width: 100%; border-collapse: collapse; }
-        th { background: rgba(0, 243, 255, 0.1); color: var(--neon-blue); padding: 15px; text-align: left; text-transform: uppercase; font-size: 14px; }
-        td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 16px; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #334155; font-size: 12px; }
         
-        .highlight { color: var(--neon-blue); font-weight: bold; }
-        .time-tag { background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 5px; font-size: 13px; color: #00f3ff; }
-        .finish-tag { color: #ff0055; border: 1px solid #ff0055; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
-
-        .btn-action { background: none; border: 1px solid #aaa; color: #aaa; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
-        .btn-action:hover { border-color: var(--neon-blue); color: var(--neon-blue); }
+        .hidden { display: none !important; }
+        .status-badge { padding: 3px 6px; border-radius: 4px; font-size: 9px; font-weight: bold; }
+        .badge-free { background: var(--green); color: #000; }
+        .badge-busy { background: var(--red); color: #fff; }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>SANTANA TECH ADM</h1>
-    </header>
-
-    <div id="telaLogin" class="login-box">
-        <h2 style="font-family:'Orbitron'; color:var(--neon-blue); font-size:18px;">AUTENTICAÇÃO ADM</h2>
-        <input type="text" id="user" placeholder="Nome de Usuário">
-        <input type="text" id="pront" placeholder="Prontuário">
-        <input type="password" id="pass" placeholder="Senha de Segurança">
-        <button class="btn-login" onclick="validar()">ENTRAR NO SISTEMA</button>
-        <p id="erro" style="color:var(--neon-red); font-size:12px; margin-top:15px; display:none;">CREDENCIAIS INVÁLIDAS!</p>
-    </div>
-
-    <div id="painelConteudo" class="container">
-        <div class="status-panel">
-            <span style="font-family: 'Orbitron'; font-size: 14px;">ESTADO DO PORTAL:</span>
-            <button class="btn btn-on" onclick="setPortal(true)">ATIVAR SISTEMA</button>
-            <button class="btn btn-off" onclick="setPortal(false)">BLOQUEAR SISTEMA</button>
+<div id="auth-screen">
+    <h1 style="color: var(--blue); margin-bottom: 25px; font-size: 20px; font-weight: 700; letter-spacing: 1px; text-align: center;">
+        PORTAL NTI | CHÁCARA DAS GARÇAS
+    </h1>
+    
+    <div class="grid-login">
+        <div class="login-box">
+            <i class="fa fa-chalkboard-teacher" style="color: var(--blue); margin-bottom: 10px;"></i>
+            <h3>PROFESSOR</h3>
+            <input type="number" id="p-pront" placeholder="Prontuário">
+            <input type="password" id="p-pass" placeholder="Senha">
+            <button class="btn btn-blue" onclick="app.login('Professor')">ENTRAR</button>
         </div>
 
-        <div class="table-container">
+        <div class="login-box">
+            <i class="fa fa-user-tie" style="color: var(--blue); margin-bottom: 10px;"></i>
+            <h3>SECRETARIA</h3>
+            <input type="number" id="s-pront" placeholder="Prontuário">
+            <input type="password" id="s-pass" placeholder="Senha">
+            <button class="btn btn-blue" onclick="app.login('Secretaria')">ENTRAR</button>
+        </div>
+
+        <div class="login-box">
+            <i class="fa fa-users-cog" style="color: var(--blue); margin-bottom: 10px;"></i>
+            <h3>GESTÃO</h3>
+            <input type="number" id="g-pront" placeholder="Prontuário">
+            <input type="password" id="g-pass" placeholder="Senha">
+            <button class="btn btn-blue" onclick="app.login('Gestão')">ENTRAR</button>
+        </div>
+
+        <div class="login-box box-cadastro">
+            <i class="fa fa-user-plus" style="margin-bottom: 10px;"></i>
+            <h3>NOVO ACESSO</h3>
+            <select id="c-cargo-new">
+                <option value="Professor">Professor</option>
+                <option value="Secretaria">Secretaria</option>
+                <option value="Gestão">Gestão</option>
+            </select>
+            <input type="text" id="c-nome" placeholder="Nome Completo">
+            <input type="number" id="c-pront" placeholder="Prontuário">
+            <button class="btn btn-outline" onclick="app.confirmarCad()">SOLICITAR</button>
+        </div>
+
+        <div class="login-box" style="border-color: var(--green)">
+            <i class="fa fa-shield-alt" style="color: var(--green); margin-bottom: 10px;"></i>
+            <h3 style="color: var(--green)">PORTAL nTi</h3>
+            <input type="number" id="t-pront" placeholder="ID Kelvin">
+            <input type="password" id="t-pass" placeholder="Senha Master">
+            <button class="btn btn-green" onclick="app.login('TI')">TERMINAL</button>
+        </div>
+    </div>
+</div>
+
+<nav id="sidebar" class="hidden">
+    <div style="text-align:center; margin-bottom: 25px;">
+        <i class="fa fa-user-shield fa-2x" style="color: var(--blue)"></i><br>
+        <b id="u-nome" style="font-size: 13px; display: block; margin-top: 10px;"></b>
+        <small id="u-cargo" style="color: var(--blue); font-size: 11px;"></small>
+    </div>
+    
+    <button class="btn btn-outline" style="text-align:left; margin-bottom:8px" onclick="app.view('v-reserva')">
+        <i class="fa fa-laptop" style="width: 20px;"></i> Reservas
+    </button>
+
+    <div id="ti-menu" class="hidden">
+        <hr style="border:0; border-top:1px solid #334155; margin: 15px 0;">
+        <button class="btn btn-green" style="text-align:left" onclick="app.view('v-ti')">
+            <i class="fa fa-users" style="width: 20px;"></i> PAINEL MASTER
+        </button>
+    </div>
+    
+    <button class="btn btn-red" style="margin-top:auto" onclick="location.reload()">SAIR</button>
+</nav>
+
+<main id="main-content" class="hidden">
+    <div id="v-reserva" class="view active">
+        <h2 style="font-size: 18px;">NTI | Painel de Equipamentos</h2>
+        <div class="grid-equip" id="equip-list"></div>
+        
+        <h2 style="margin-top: 30px; font-size: 18px;">Registros em Uso</h2>
+        <div style="background: var(--card); border-radius: 10px; border: 1px solid #334155; overflow: hidden;">
             <table>
-                <thead>
-                    <tr>
-                        <th>Professor</th>
-                        <th>Sala / Equipamento</th>
-                        <th>Início ➔ Término</th>
-                        <th>Ação</th>
-                    </tr>
-                </thead>
-                <tbody id="liveData"></tbody>
+                <thead><tr><th>Item</th><th>Quem</th><th>Local</th><th>Ação</th></tr></thead>
+                <tbody id="uso-list"></tbody>
             </table>
         </div>
-        <button onclick="location.reload()" style="margin-top:20px; background:none; border:none; color:#555; cursor:pointer; width:100%;">ENCERRAR SESSÃO</button>
     </div>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    <div id="v-ti" class="view">
+        <h2 style="color: var(--green); font-size: 18px;">NTI MASTER | Gestão de Usuários</h2>
+        <div style="background: var(--card); border-radius: 10px; border: 1px solid #334155; overflow: hidden;">
+            <table>
+                <thead><tr><th>Nome</th><th>Prontuário</th><th>Cargo</th><th>Status</th><th>Ações TI</th></tr></thead>
+                <tbody id="ti-users"></tbody>
+            </table>
+        </div>
+    </div>
+</main>
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyBoGFDKz-nBwKvczGpxg-fHJYdVykcBUQ",
-        authDomain: "escala-chacara.firebaseapp.com",
-        databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com",
-        projectId: "escala-chacara",
-        storageBucket: "escala-chacara.firebasestorage.app",
-        messagingSenderId: "741259231706",
-        appId: "1:741259231706:web:27e2b60be100e6a34180e3"
-    };
+<script>
+    const firebaseConfig = { databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+    const app = {
+        user: null,
+        itens: ['CROMES 01', 'CROMES 02', 'TABLETS', 'TV 01', 'TV 02', 'TV 03'],
 
-    // DADOS DE ACESSO
-    const credenciais = {
-        u: "kelvin",
-        p: "46690",
-        s: "2683503205"
-    };
+        async confirmarCad() {
+            const n = document.getElementById('c-nome').value;
+            const p = document.getElementById('c-pront').value;
+            const c = document.getElementById('c-cargo-new').value;
+            if(!n || !p) return alert("Preencha os campos!");
+            let s = (c === 'Gestão') ? 'gestao2026' : (c === 'Secretaria') ? 'secretaria2026' : 'pmsp2026';
+            try {
+                await db.ref('usuarios/'+p).set({ nome: n, pront: p, cargo: c, pass: s, status: 'ativo' });
+                alert("Solicitação registrada!\nSenha inicial: " + s);
+                document.getElementById('c-nome').value = ""; document.getElementById('c-pront').value = "";
+            } catch(e) { alert("Erro de rede."); }
+        },
 
-    window.validar = () => {
-        const uInput = document.getElementById('user').value.toLowerCase();
-        const pInput = document.getElementById('pront').value;
-        const sInput = document.getElementById('pass').value;
+        async login(portal) {
+            let p = document.getElementById(portal==='Professor'?'p-pront':portal==='Secretaria'?'s-pront':portal==='Gestão'?'g-pront':'t-pront').value;
+            let s = document.getElementById(portal==='Professor'?'p-pass':portal==='Secretaria'?'s-pass':portal==='Gestão'?'g-pass':'t-pass').value;
 
-        if(uInput === credenciais.u && pInput === credenciais.p && sInput === credenciais.s) {
-            document.getElementById('telaLogin').style.display = 'none';
-            document.getElementById('painelConteudo').style.display = 'block';
-            iniciarMonitoramento();
-        } else {
-            document.getElementById('erro').style.display = 'block';
-        }
-    };
-
-    function iniciarMonitoramento() {
-        onValue(ref(db, 'reservas'), (snap) => {
-            const body = document.getElementById('liveData');
-            body.innerHTML = "";
-            const lista = snap.val();
-            for(let id in lista) {
-                const r = lista[id];
-                body.innerHTML += `
-                    <tr>
-                        <td><span class="highlight">${r.prof}</span></td>
-                        <td>${r.local || r.equipamento}</td>
-                        <td>
-                            <span class="time-tag">${r.inicio.split(' ')[1] || r.inicio}</span> 
-                            <span style="color:#555">➔</span> 
-                            <span class="finish-tag">${r.entrega ? r.entrega.split(' ')[1] : r.termino.split(' ')[1]}</span>
-                        </td>
-                        <td><button class="btn-action" onclick="limpar('${id}')">LIBERAR</button></td>
-                    </tr>`;
+            if(portal === 'TI' && p === '46690' && s === 'nti2026') { 
+                this.user = { nome: 'Kelvin Almeida', cargo: 'TI', pront: '46690' }; return this.start(); 
             }
-        });
-    }
 
-    window.setPortal = (v) => set(ref(db, 'ativo'), v).then(() => alert("Comando de Rede Executado!"));
-    window.limpar = (id) => {
-        if(confirm("Deseja confirmar a liberação manual?")) {
-            remove(ref(db, 'reservas/' + id));
-        }
+            const snap = await db.ref('usuarios/'+p).once('value');
+            if(snap.exists() && snap.val().pass == s && snap.val().cargo === portal) {
+                if(snap.val().status === 'bloqueado') return alert("Acesso bloqueado pelo NTI.");
+                this.user = snap.val(); this.start();
+            } else alert("Credenciais não conferem para " + portal);
+        },
+
+        start() {
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('sidebar').classList.remove('hidden');
+            document.getElementById('main-content').classList.remove('hidden');
+            document.getElementById('u-nome').innerText = this.user.nome;
+            document.getElementById('u-cargo').innerText = this.user.cargo;
+            if(this.user.cargo === 'TI') document.getElementById('ti-menu').classList.remove('hidden');
+            this.sync();
+        },
+
+        view(id) { 
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        },
+
+        sync() {
+            db.ref('reservas').on('value', snap => {
+                const list = document.getElementById('uso-list'), grid = document.getElementById('equip-list');
+                list.innerHTML = ""; grid.innerHTML = "";
+                let emUso = {};
+                snap.forEach(r => {
+                    const d = r.val(); emUso[d.item] = d;
+                    list.innerHTML += `<tr><td>${d.item}</td><td>${d.user}</td><td>${d.local}</td><td>
+                        ${(this.user.cargo==='TI' || this.user.pront === d.pront) ? `<button class="btn btn-red" style="width:auto; padding:4px 8px" onclick="app.darBaixa('${r.key}')">BAIXA</button>` : '-'}
+                    </td></tr>`;
+                });
+                this.itens.forEach(i => {
+                    grid.innerHTML += `<div class="equip-card">
+                        <b style="font-size:13px">${i}</b><br>
+                        <span class="status-badge ${emUso[i]?'badge-busy':'badge-free'}">${emUso[i]?'OCUPADO':'LIVRE'}</span>
+                        ${!emUso[i] ? `<button class="btn btn-blue" style="margin-top:8px; padding:4px" onclick="app.reservar('${i}')">PEGAR</button>` : ''}
+                    </div>`;
+                });
+            });
+
+            if(this.user.cargo === 'TI') {
+                db.ref('usuarios').on('value', snap => {
+                    const t = document.getElementById('ti-users'); t.innerHTML = "";
+                    snap.forEach(u => {
+                        const d = u.val();
+                        let padrao = (d.cargo==='Gestão')?'gestao2026':(d.cargo==='Secretaria')?'secretaria2026':'pmsp2026';
+                        t.innerHTML += `<tr><td>${d.nome}</td><td>${d.pront}</td><td>${d.cargo}</td><td>${d.status}</td><td>
+                            <button class="btn btn-red" style="width:auto; padding:4px" onclick="app.tiCmd('${d.pront}','status','bloqueado')">BAN</button>
+                            <button class="btn btn-green" style="width:auto; padding:4px" onclick="app.tiCmd('${d.pront}','status','ativo')">OK</button>
+                            <button class="btn btn-blue" style="width:auto; padding:4px" onclick="app.tiCmd('${d.pront}','pass','${padrao}')">RESET</button>
+                        </td></tr>`;
+                    });
+                });
+            }
+        },
+
+        async reservar(item) {
+            const local = prompt("Indique a sala/local:");
+            if(local) await db.ref('reservas').push({ item, user: this.user.nome, pront: this.user.pront, local: local });
+        },
+        async darBaixa(id) { if(confirm("Deseja dar baixa neste item?")) await db.ref('reservas/'+id).remove(); },
+        tiCmd(p, c, v) { db.ref('usuarios/'+p).update({ [c]: v }); }
     };
 </script>
 </body>
