@@ -3,115 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TECH ADM - Acesso Restrito</title>
+    <title>SANTANA TECH ADM - Terminal Master</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        :root { --neon-blue: #00f3ff; --neon-red: #ff0055; --dark-card: rgba(20, 22, 30, 0.9); }
+        :root { --neon-blue: #00f3ff; --neon-red: #ff0055; --dark-card: rgba(20, 22, 30, 0.95); }
         
         body { 
             margin: 0; font-family: 'Rajdhani', sans-serif; background: #0a0b10; color: white;
-            background-image: linear-gradient(180deg, #0a0b10 0%, #161822 100%); min-height: 100vh;
-            display: flex; flex-direction: column;
+            background-image: radial-gradient(circle at top, #161822 0%, #0a0b10 100%); min-height: 100vh;
+            display: flex; flex-direction: column; overflow-x: hidden;
         }
 
         header { 
-            padding: 20px; text-align: center; border-bottom: 2px solid var(--neon-blue);
-            background: rgba(0, 0, 0, 0.8); box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+            padding: 15px; text-align: center; border-bottom: 2px solid var(--neon-blue);
+            background: rgba(0, 0, 0, 0.9); box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
         }
 
-        h1 { font-family: 'Orbitron', sans-serif; color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); margin: 0; }
+        h1 { font-family: 'Orbitron', sans-serif; color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); margin: 0; font-size: 22px; }
 
-        .container { max-width: 900px; margin: 30px auto; padding: 0 20px; width: 100%; box-sizing: border-box; }
+        .container { max-width: 1000px; margin: 20px auto; padding: 0 20px; width: 100%; box-sizing: border-box; }
 
-        /* Estilo da Tela de Login */
+        /* TELA DE LOGIN ADM - CORRIGIDA */
+        #telaLogin {
+            position: fixed; inset: 0; background: #0a0b10; z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
         .login-box {
             background: var(--dark-card); border: 1px solid var(--neon-blue); border-radius: 15px;
-            padding: 40px; max-width: 400px; margin: 100px auto; text-align: center;
-            box-shadow: 0 0 30px rgba(0, 243, 255, 0.1);
+            padding: 40px; width: 100%; max-width: 380px; text-align: center;
+            box-shadow: 0 0 40px rgba(0, 243, 255, 0.15);
         }
         .login-box input {
-            width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid var(--neon-blue);
-            color: white; border-radius: 8px; font-family: 'Rajdhani'; font-size: 16px; box-sizing: border-box;
+            width: 100%; padding: 14px; margin: 10px 0; background: #000; border: 1px solid #333;
+            color: var(--neon-blue); border-radius: 8px; font-family: 'Rajdhani'; font-size: 18px; box-sizing: border-box; outline: none;
         }
+        .login-box input:focus { border-color: var(--neon-blue); box-shadow: 0 0 10px rgba(0, 243, 255, 0.2); }
+        
         .btn-login {
             width: 100%; padding: 15px; background: var(--neon-blue); color: black; border: none;
-            border-radius: 8px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; margin-top: 10px;
+            border-radius: 8px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; margin-top: 15px; transition: 0.3s;
         }
+        .btn-login:hover { background: #fff; box-shadow: 0 0 20px #fff; }
 
-        /* Painel escondido inicialmente */
-        #painelConteudo { display: none; }
-
+        /* PAINEL DE CONTROLE */
         .status-panel { 
             background: var(--dark-card); border: 1px solid var(--neon-blue); border-radius: 15px;
-            padding: 20px; margin-bottom: 30px; display: flex; justify-content: space-around; align-items: center;
+            padding: 20px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 15px;
         }
 
-        .btn { 
-            padding: 12px 25px; border-radius: 30px; border: none; font-family: 'Orbitron'; 
-            font-size: 12px; cursor: pointer; transition: 0.3s; font-weight: bold;
+        .btn-portal { 
+            padding: 12px 20px; border-radius: 8px; border: none; font-family: 'Orbitron'; 
+            font-size: 11px; cursor: pointer; transition: 0.3s; font-weight: bold; flex: 1; min-width: 140px;
         }
-        .btn-on { background: #28a745; color: white; box-shadow: 0 0 10px #28a745; }
-        .btn-off { background: var(--neon-red); color: white; box-shadow: 0 0 10px var(--neon-red); }
+        .btn-on { background: #00ff88; color: #000; }
+        .btn-off { background: var(--neon-red); color: white; }
 
         .table-container { 
             background: var(--dark-card); border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 15px; overflow: hidden; backdrop-filter: blur(10px);
+            border-radius: 15px; overflow-x: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        table { width: 100%; border-collapse: collapse; }
-        th { background: rgba(0, 243, 255, 0.1); color: var(--neon-blue); padding: 15px; text-align: left; text-transform: uppercase; font-size: 14px; }
-        td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 16px; }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th { background: rgba(0, 243, 255, 0.05); color: var(--neon-blue); padding: 18px; text-align: left; font-size: 13px; letter-spacing: 1px; }
+        td { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 15px; }
         
-        .highlight { color: var(--neon-blue); font-weight: bold; }
-        .time-tag { background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 5px; font-size: 13px; color: #00f3ff; }
-        .finish-tag { color: #ff0055; border: 1px solid #ff0055; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+        .prof-name { color: #fff; font-weight: 600; font-size: 16px; display: block; }
+        .equip-name { color: var(--neon-blue); font-size: 14px; }
+        .time-tag { color: #00ff88; font-family: monospace; font-size: 14px; font-weight: bold; }
 
-        .btn-action { background: none; border: 1px solid #aaa; color: #aaa; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
-        .btn-action:hover { border-color: var(--neon-blue); color: var(--neon-blue); }
+        .btn-liberar { 
+            background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red); 
+            padding: 6px 12px; border-radius: 5px; cursor: pointer; transition: 0.3s; font-family: 'Orbitron'; font-size: 10px;
+        }
+        .btn-liberar:hover { background: var(--neon-red); color: white; }
+
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>SANTANA TECH ADM</h1>
+        <h1>KELVIN MASTER ADM</h1>
     </header>
 
-    <div id="telaLogin" class="login-box">
-        <h2 style="font-family:'Orbitron'; color:var(--neon-blue); font-size:18px;">AUTENTICAÇÃO ADM</h2>
-        <input type="text" id="user" placeholder="Nome de Usuário">
-        <input type="text" id="pront" placeholder="Prontuário">
-        <input type="password" id="pass" placeholder="Senha de Segurança">
-        <button class="btn-login" onclick="validar()">ENTRAR NO SISTEMA</button>
-        <p id="erro" style="color:var(--neon-red); font-size:12px; margin-top:15px; display:none;">CREDENCIAIS INVÁLIDAS!</p>
+    <div id="telaLogin">
+        <div class="login-box">
+            <h2 style="font-family:'Orbitron'; color:var(--neon-blue); font-size:18px; margin-bottom:20px;">ACESSO RESTRITO NTI</h2>
+            <input type="text" id="user" placeholder="Usuário Master">
+            <input type="text" id="pront" placeholder="Prontuário">
+            <input type="password" id="pass" placeholder="Senha ADM">
+            <button class="btn-login" onclick="validar()">DESBLOQUEAR TERMINAL</button>
+            <p id="erro" style="color:var(--neon-red); font-size:13px; margin-top:20px; display:none; font-weight:bold;">ACESSO NEGADO: CREDENCIAIS INCORRETAS</p>
+        </div>
     </div>
 
-    <div id="painelConteudo" class="container">
+    <div id="painelConteudo" class="container hidden">
         <div class="status-panel">
-            <span style="font-family: 'Orbitron'; font-size: 14px;">ESTADO DO PORTAL:</span>
-            <button class="btn btn-on" onclick="setPortal(true)">ATIVAR SISTEMA</button>
-            <button class="btn btn-off" onclick="setPortal(false)">BLOQUEAR SISTEMA</button>
+            <div>
+                <span style="font-family: 'Orbitron'; font-size: 12px; color: #888;">STATUS DO SISTEMA:</span><br>
+                <span id="portalStatus" style="color: #00ff88; font-weight: bold;">PORTAL ONLINE</span>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-portal btn-on" onclick="setPortal(true)">ATIVAR PORTAL</button>
+                <button class="btn-portal btn-off" onclick="setPortal(false)">TRAVAR TUDO</button>
+            </div>
         </div>
 
         <div class="table-container">
             <table>
                 <thead>
                     <tr>
-                        <th>Professor</th>
-                        <th>Sala / Equipamento</th>
-                        <th>Início ➔ Término</th>
-                        <th>Ação</th>
+                        <th>RESPONSÁVEL</th>
+                        <th>LOCAL / EQUIPAMENTO</th>
+                        <th>HORÁRIO</th>
+                        <th>AÇÃO</th>
                     </tr>
                 </thead>
-                <tbody id="liveData"></tbody>
+                <tbody id="liveData">
+                    </tbody>
             </table>
         </div>
-        <button onclick="location.reload()" style="margin-top:20px; background:none; border:none; color:#555; cursor:pointer; width:100%;">ENCERRAR SESSÃO</button>
+        
+        <button onclick="location.reload()" style="margin-top:30px; background:none; border:none; color:#444; cursor:pointer; width:100%; font-family:'Orbitron'; font-size:10px;">ENCERRAR SESSÃO MASTER</button>
     </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
+    // Sua config original
     const firebaseConfig = {
         apiKey: "AIzaSyBoGFDKz-nBwKvczGpxg-fHJYdVykcBUQ",
         authDomain: "escala-chacara.firebaseapp.com",
@@ -125,21 +146,17 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // DADOS DE ACESSO QUE VOCÊ PEDIU
-    const credenciais = {
-        u: "kelvin",
-        p: "46690",
-        s: "2683503205"
-    };
+    // Credenciais que você definiu
+    const MASTER = { u: "kelvin", p: "46690", s: "2683503205" };
 
     window.validar = () => {
-        const uInput = document.getElementById('user').value.toLowerCase();
-        const pInput = document.getElementById('pront').value;
-        const sInput = document.getElementById('pass').value;
+        const u = document.getElementById('user').value.toLowerCase();
+        const p = document.getElementById('pront').value;
+        const s = document.getElementById('pass').value;
 
-        if(uInput === credenciais.u && pInput === credenciais.p && sInput === credenciais.s) {
-            document.getElementById('telaLogin').style.display = 'none';
-            document.getElementById('painelConteudo').style.display = 'block';
+        if(u === MASTER.u && p === MASTER.p && s === MASTER.s) {
+            document.getElementById('telaLogin').classList.add('hidden');
+            document.getElementById('painelConteudo').classList.remove('hidden');
             iniciarMonitoramento();
         } else {
             document.getElementById('erro').style.display = 'block';
@@ -147,30 +164,45 @@
     };
 
     function iniciarMonitoramento() {
+        // Monitorar Status do Portal
+        onValue(ref(db, 'ativo'), (snap) => {
+            const status = snap.val();
+            const label = document.getElementById('portalStatus');
+            label.innerText = status ? "PORTAL ONLINE" : "PORTAL BLOQUEADO";
+            label.style.color = status ? "#00ff88" : "#ff0055";
+        });
+
+        // Monitorar Reservas
         onValue(ref(db, 'reservas'), (snap) => {
             const body = document.getElementById('liveData');
             body.innerHTML = "";
-            const lista = snap.val();
-            for(let id in lista) {
-                const r = lista[id];
+            const dados = snap.val();
+            
+            if(!dados) {
+                body.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#555; padding:40px;">NENHUM EQUIPAMENTO EM USO NO MOMENTO</td></tr>';
+                return;
+            }
+
+            for(let id in dados) {
+                const r = dados[id];
+                const horaInicio = r.inicio ? r.inicio.split(' ')[1] || r.inicio : '--:--';
+                const horaFim = r.entrega ? r.entrega.split(' ')[1] : (r.termino ? r.termino.split(' ')[1] : '--:--');
+
                 body.innerHTML += `
                     <tr>
-                        <td><span class="highlight">${r.prof}</span></td>
-                        <td>${r.local || r.equipamento}</td>
-                        <td>
-                            <span class="time-tag">${r.inicio.split(' ')[1] || r.inicio}</span> 
-                            <span style="color:#555">➔</span> 
-                            <span class="finish-tag">${r.entrega ? r.entrega.split(' ')[1] : r.termino.split(' ')[1]}</span>
-                        </td>
-                        <td><button class="btn-action" onclick="limpar('${id}')">LIBERAR</button></td>
+                        <td><span class="prof-name">${r.prof}</span></td>
+                        <td><span class="equip-name">${r.local || r.equipamento}</span></td>
+                        <td><span class="time-tag">${horaInicio}</span> <span style="color:#333">➔</span> <span style="color:#ff0055">${horaFim}</span></td>
+                        <td><button class="btn-liberar" onclick="limpar('${id}')">LIBERAR</button></td>
                     </tr>`;
             }
         });
     }
 
-    window.setPortal = (v) => set(ref(db, 'ativo'), v).then(() => alert("Comando de Rede Executado!"));
+    window.setPortal = (v) => set(ref(db, 'ativo'), v).then(() => alert("COMANDO ENVIADO: Status do Portal Alterado."));
+    
     window.limpar = (id) => {
-        if(confirm("Deseja confirmar a liberação manual?")) {
+        if(confirm("FORÇAR LIBERAÇÃO? Isso removerá o registro do sistema imediatamente.")) {
             remove(ref(db, 'reservas/' + id));
         }
     };
