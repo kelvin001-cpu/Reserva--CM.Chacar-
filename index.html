@@ -12,26 +12,32 @@
         :root { --blue: #00adef; --green: #00ff9d; --red: #ff4757; --dark: #0f172a; --card: #1e293b; }
         body { margin: 0; font-family: 'Inter', sans-serif; background: var(--dark); color: white; display: flex; height: 100vh; overflow: hidden; }
         
-        /* LOGIN SCREEN - NORMALIZADO */
+        /* TELA DE LOGIN - BALÕES MAIS PRÓXIMOS */
         #auth-screen { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; overflow-y: auto; }
-        .grid-login { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; width: 100%; max-width: 1100px; }
-        .login-box { background: var(--card); padding: 18px; border-radius: 12px; text-align: center; border: 1px solid #334155; }
+        .grid-login { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; width: 100%; max-width: 1050px; }
+        .login-box { background: var(--card); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #334155; transition: 0.3s; }
+        .login-box:hover { border-color: var(--blue); }
         
-        /* ESTRUTURA INTERNA */
-        nav { width: 240px; background: #000; padding: 20px; display: flex; flex-direction: column; border-right: 1px solid #334155; }
+        /* ESTILO ESPECÍFICO PARA NOVO ACESSO */
+        .box-cadastro { border: 1px solid rgba(0, 173, 239, 0.3); background: rgba(0, 173, 239, 0.02); }
+        .box-cadastro h3 { color: var(--blue); margin-top: 0; }
+
+        /* NAVEGAÇÃO E CONTEÚDO */
+        nav { width: 230px; background: #000; padding: 20px; display: flex; flex-direction: column; border-right: 1px solid #334155; }
         main { flex: 1; padding: 25px; overflow-y: auto; }
         .view { display: none; } .view.active { display: block; }
         
-        .card { background: var(--card); padding: 18px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #334155; }
-        input, select { width: 100%; padding: 10px; margin: 6px 0; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; font-size: 14px; }
-        
-        .btn { padding: 10px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.2s; font-size: 13px; }
+        input, select { width: 100%; padding: 9px; margin: 5px 0; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; font-size: 13px; outline: none; }
+        input:focus { border-color: var(--blue); }
+
+        .btn { padding: 10px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.2s; font-size: 12px; text-transform: uppercase; }
         .btn-blue { background: var(--blue); color: white; }
         .btn-green { background: var(--green); color: #000; }
         .btn-red { background: var(--red); color: white; }
         .btn-outline { background: transparent; border: 1px solid var(--blue); color: var(--blue); margin-top: 5px; }
+        .btn-outline:hover { background: var(--blue); color: white; }
         
-        .grid-equip { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+        .grid-equip { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
         .equip-card { background: #0f172a; padding: 15px; border-radius: 8px; text-align: center; border: 1px solid #334155; }
         
         table { width: 100%; border-collapse: collapse; }
@@ -46,10 +52,11 @@
 <body>
 
 <div id="auth-screen">
-    <h1 style="color: var(--blue); margin-bottom: 20px; font-size: 22px;">SANTANA TECH | GESTÃO</h1>
+    <h1 style="color: var(--blue); margin-bottom: 25px; font-size: 20px; font-weight: 700; letter-spacing: 1px;">SANTANA TECH | PORTAL NTI</h1>
     
     <div class="grid-login">
         <div class="login-box">
+            <i class="fa fa-chalkboard-teacher" style="color: var(--blue); margin-bottom: 10px;"></i>
             <h3>PROFESSOR</h3>
             <input type="number" id="p-pront" placeholder="Prontuário">
             <input type="password" id="p-pass" placeholder="Senha">
@@ -57,6 +64,7 @@
         </div>
 
         <div class="login-box">
+            <i class="fa fa-user-tie" style="color: var(--blue); margin-bottom: 10px;"></i>
             <h3>SECRETARIA</h3>
             <input type="number" id="s-pront" placeholder="Prontuário">
             <input type="password" id="s-pass" placeholder="Senha">
@@ -64,14 +72,16 @@
         </div>
 
         <div class="login-box">
+            <i class="fa fa-users-cog" style="color: var(--blue); margin-bottom: 10px;"></i>
             <h3>GESTÃO</h3>
             <input type="number" id="g-pront" placeholder="Prontuário">
             <input type="password" id="g-pass" placeholder="Senha">
             <button class="btn btn-blue" onclick="app.login('Gestão')">ENTRAR</button>
         </div>
 
-        <div class="login-box" style="border: 1px dashed var(--blue); background: rgba(0, 173, 239, 0.03);">
-            <h3 style="color: var(--blue)">NOVO ACESSO</h3>
+        <div class="login-box box-cadastro">
+            <i class="fa fa-user-plus" style="margin-bottom: 10px;"></i>
+            <h3>NOVO ACESSO</h3>
             <select id="c-cargo-new">
                 <option value="Professor">Professor</option>
                 <option value="Secretaria">Secretaria</option>
@@ -79,10 +89,11 @@
             </select>
             <input type="text" id="c-nome" placeholder="Nome Completo">
             <input type="number" id="c-pront" placeholder="Prontuário">
-            <button class="btn btn-outline" onclick="app.confirmarCad()">CADASTRAR</button>
+            <button class="btn btn-outline" onclick="app.confirmarCad()">SOLICITAR</button>
         </div>
 
         <div class="login-box" style="border-color: var(--green)">
+            <i class="fa fa-shield-alt" style="color: var(--green); margin-bottom: 10px;"></i>
             <h3 style="color: var(--green)">TI MASTER</h3>
             <input type="number" id="t-pront" placeholder="ID Kelvin">
             <input type="password" id="t-pass" placeholder="Senha Master">
@@ -93,9 +104,9 @@
 
 <nav id="sidebar" class="hidden">
     <div style="text-align:center; margin-bottom: 25px;">
-        <i class="fa fa-user-circle fa-2x"></i><br>
-        <b id="u-nome" style="font-size: 14px;"></b><br>
-        <small id="u-cargo" style="color: var(--blue)"></small>
+        <i class="fa fa-user-shield fa-2x" style="color: var(--blue)"></i><br>
+        <b id="u-nome" style="font-size: 13px; display: block; margin-top: 10px;"></b>
+        <small id="u-cargo" style="color: var(--blue); font-size: 11px;"></small>
     </div>
     
     <button class="btn btn-outline" style="text-align:left; margin-bottom:8px" onclick="app.view('v-reserva')">
@@ -105,7 +116,7 @@
     <div id="ti-menu" class="hidden">
         <hr style="border:0; border-top:1px solid #334155; margin: 15px 0;">
         <button class="btn btn-green" style="text-align:left" onclick="app.view('v-ti')">
-            <i class="fa fa-shield" style="width: 20px;"></i> PAINEL MASTER
+            <i class="fa fa-users" style="width: 20px;"></i> PAINEL MASTER
         </button>
     </div>
     
@@ -114,11 +125,11 @@
 
 <main id="main-content" class="hidden">
     <div id="v-reserva" class="view active">
-        <h2>Painel de Equipamentos</h2>
+        <h2 style="font-size: 18px;">Painel de Equipamentos</h2>
         <div class="grid-equip" id="equip-list"></div>
         
-        <h2 style="margin-top: 30px;">Registros em Uso</h2>
-        <div class="card" style="padding:0">
+        <h2 style="margin-top: 30px; font-size: 18px;">Registros em Uso</h2>
+        <div style="background: var(--card); border-radius: 10px; border: 1px solid #334155; overflow: hidden;">
             <table>
                 <thead><tr><th>Item</th><th>Quem</th><th>Local</th><th>Ação</th></tr></thead>
                 <tbody id="uso-list"></tbody>
@@ -127,8 +138,8 @@
     </div>
 
     <div id="v-ti" class="view">
-        <h2 style="color: var(--green)">Gerenciamento de Usuários (NTI Master)</h2>
-        <div class="card">
+        <h2 style="color: var(--green); font-size: 18px;">Gerenciamento NTI Master</h2>
+        <div style="background: var(--card); border-radius: 10px; border: 1px solid #334155; overflow: hidden;">
             <table>
                 <thead><tr><th>Nome</th><th>Prontuário</th><th>Cargo</th><th>Status</th><th>Ações TI</th></tr></thead>
                 <tbody id="ti-users"></tbody>
@@ -150,13 +161,13 @@
             const n = document.getElementById('c-nome').value;
             const p = document.getElementById('c-pront').value;
             const c = document.getElementById('c-cargo-new').value;
-            if(!n || !p) return alert("Preencha os dados de cadastro!");
+            if(!n || !p) return alert("Preencha os campos!");
             let s = (c === 'Gestão') ? 'gestao2026' : (c === 'Secretaria') ? 'secretaria2026' : 'pmsp2026';
             try {
                 await db.ref('usuarios/'+p).set({ nome: n, pront: p, cargo: c, pass: s, status: 'ativo' });
-                alert("Cadastrado! Senha padrão: " + s);
+                alert("Cadastro realizado!\nSenha padrão: " + s);
                 document.getElementById('c-nome').value = ""; document.getElementById('c-pront').value = "";
-            } catch(e) { alert("Erro ao cadastrar."); }
+            } catch(e) { alert("Erro."); }
         },
 
         async login(portal) {
@@ -164,14 +175,14 @@
             let s = document.getElementById(portal==='Professor'?'p-pass':portal==='Secretaria'?'s-pass':portal==='Gestão'?'g-pass':'t-pass').value;
 
             if(portal === 'TI' && p === '46690' && s === 'nti2026') { 
-                this.user = { nome: 'Kelvin (NTI)', cargo: 'TI', pront: '46690' }; return this.start(); 
+                this.user = { nome: 'Kelvin Almeida', cargo: 'TI', pront: '46690' }; return this.start(); 
             }
 
             const snap = await db.ref('usuarios/'+p).once('value');
             if(snap.exists() && snap.val().pass == s && snap.val().cargo === portal) {
-                if(snap.val().status === 'bloqueado') return alert("Acesso Bloqueado pelo NTI.");
+                if(snap.val().status === 'bloqueado') return alert("Acesso bloqueado pelo NTI.");
                 this.user = snap.val(); this.start();
-            } else alert("Dados inválidos!");
+            } else alert("Dados incorretos!");
         },
 
         start() {
@@ -202,9 +213,9 @@
                 });
                 this.itens.forEach(i => {
                     grid.innerHTML += `<div class="equip-card">
-                        <b>${i}</b><br>
+                        <b style="font-size:13px">${i}</b><br>
                         <span class="status-badge ${emUso[i]?'badge-busy':'badge-free'}">${emUso[i]?'OCUPADO':'LIVRE'}</span>
-                        ${!emUso[i] ? `<button class="btn btn-blue" style="margin-top:8px; padding:4px" onclick="app.reservar('${i}')">RETIRAR</button>` : ''}
+                        ${!emUso[i] ? `<button class="btn btn-blue" style="margin-top:8px; padding:4px" onclick="app.reservar('${i}')">PEGAR</button>` : ''}
                     </div>`;
                 });
             });
@@ -218,7 +229,7 @@
                         t.innerHTML += `<tr><td>${d.nome}</td><td>${d.pront}</td><td>${d.cargo}</td><td>${d.status}</td><td>
                             <button class="btn btn-red" style="width:auto; padding:4px" onclick="app.tiCmd('${d.pront}','status','bloqueado')">BAN</button>
                             <button class="btn btn-green" style="width:auto; padding:4px" onclick="app.tiCmd('${d.pront}','status','ativo')">OK</button>
-                            <button class="btn btn-blue" style="width:auto; padding:4px" onclick="app.tiCmd('${d.pront}','pass','${padrao}')">RESET SENHA</button>
+                            <button class="btn btn-blue" style="width:auto; padding:4px" onclick="app.tiCmd('${d.pront}','pass','${padrao}')">RESET</button>
                         </td></tr>`;
                     });
                 });
@@ -226,10 +237,10 @@
         },
 
         async reservar(item) {
-            const local = prompt("Local de uso?");
+            const local = prompt("Sala de destino?");
             if(local) await db.ref('reservas').push({ item, user: this.user.nome, pront: this.user.pront, local: local });
         },
-        async darBaixa(id) { if(confirm("Confirmar devolução?")) await db.ref('reservas/'+id).remove(); },
+        async darBaixa(id) { if(confirm("Liberar?")) await db.ref('reservas/'+id).remove(); },
         tiCmd(p, c, v) { db.ref('usuarios/'+p).update({ [c]: v }); }
     };
 </script>
