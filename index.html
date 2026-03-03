@@ -12,7 +12,7 @@
 
     <style>
         :root {
-            --prof: #00adef; --gestao: #f1c40f; --secre: #a55eea; --nti: #eb4d4b;
+            --prof: #00adef; --gestao: #f1c40f; --secre: #a55eea; --cad: #2ecc71; --nti: #eb4d4b;
             --dark: #0a0a0c;
         }
 
@@ -22,172 +22,129 @@
             overflow: hidden;
         }
 
-        /* DIVISÃO DA TELA EM 4 COLUNAS TOTAIS */
-        .login-container {
-            display: flex;
-            width: 100%;
-            height: 100vh;
-        }
+        /* 5 COLUNAS TOTAIS */
+        .login-container { display: flex; width: 100%; height: 100vh; }
 
         .sector-column {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            transition: all 0.5s ease;
-            position: relative;
-            border-right: 1px solid rgba(255,255,255,0.05);
-            overflow: hidden;
+            flex: 1; display: flex; flex-direction: column; align-items: center;
+            justify-content: center; padding: 20px; transition: all 0.5s ease;
+            position: relative; border-right: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* EFEITO DE FOCO NA COLUNA */
-        .sector-column:hover {
-            flex: 1.5;
-            background: rgba(255,255,255,0.02);
-        }
+        .sector-column:hover { flex: 1.8; background: rgba(255,255,255,0.03); }
 
-        /* ICONES E TEXTOS */
-        .icon-box {
-            font-size: 50px;
-            margin-bottom: 20px;
-            text-shadow: 0 0 20px currentColor;
-        }
+        .icon-box { font-size: 45px; margin-bottom: 15px; text-shadow: 0 0 15px currentColor; }
+        h2 { font-family: 'Orbitron', sans-serif; font-size: 1rem; margin-bottom: 25px; letter-spacing: 1px; text-align: center; }
 
-        h2 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-            letter-spacing: 2px;
-            text-align: center;
-        }
+        .login-form { width: 100%; max-width: 220px; }
 
-        /* FORMULÁRIO INTERNO */
-        .login-form {
-            width: 100%;
-            max-width: 240px;
-            opacity: 0.8;
-            transition: 0.3s;
-        }
-
-        .sector-column:hover .login-form { opacity: 1; }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(0,0,0,0.5);
-            color: white;
-            box-sizing: border-box;
-            outline: none;
+        input, select {
+            width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.6);
+            color: white; box-sizing: border-box; outline: none; font-size: 13px;
         }
 
         .btn-access {
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 700;
-            font-family: 'Orbitron', sans-serif;
-            text-transform: uppercase;
-            transition: 0.3s;
+            width: 100%; padding: 12px; border: none; border-radius: 8px;
+            cursor: pointer; font-weight: 700; font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase; transition: 0.3s; font-size: 12px;
         }
 
-        /* CUSTOMIZAÇÃO POR SETOR */
-        .col-prof { color: var(--prof); border-top: 5px solid var(--prof); }
+        /* CORES POR COLUNA */
+        .col-prof { color: var(--prof); border-top: 6px solid var(--prof); }
         .col-prof .btn-access { background: var(--prof); color: white; }
-        
-        .col-gestao { color: var(--gestao); border-top: 5px solid var(--gestao); }
+        .col-gestao { color: var(--gestao); border-top: 6px solid var(--gestao); }
         .col-gestao .btn-access { background: var(--gestao); color: black; }
-
-        .col-secre { color: var(--secre); border-top: 5px solid var(--secre); }
+        .col-secre { color: var(--secre); border-top: 6px solid var(--secre); }
         .col-secre .btn-access { background: var(--secre); color: white; }
-
-        .col-nti { color: var(--nti); border-top: 5px solid var(--nti); }
+        .col-cad { color: var(--cad); border-top: 6px solid var(--cad); }
+        .col-cad .btn-access { background: var(--cad); color: white; }
+        .col-nti { color: var(--nti); border-top: 6px solid var(--nti); }
         .col-nti .btn-access { background: var(--nti); color: white; }
 
-        /* FUNDO COM NOME DO SETOR EM MARCA D'ÁGUA */
-        .watermark {
-            position: absolute;
-            bottom: -20px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 5rem;
-            opacity: 0.03;
-            pointer-events: none;
-            white-space: nowrap;
+        /* TELA DE TROCA DE SENHA (MODAL) */
+        #change-pass-screen {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+            z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(10px);
         }
+        .change-card { background: #1a1a1c; padding: 40px; border-radius: 20px; border: 1px solid var(--prof); text-align: center; width: 300px; }
 
-        #app-screen {
-            display: none;
-            position: fixed; inset: 0;
-            background: var(--dark);
-            z-index: 100;
-            padding: 50px;
-            text-align: center;
-        }
-
+        #app-screen { display: none; position: fixed; inset: 0; background: var(--dark); z-index: 100; padding: 50px; text-align: center; }
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
     <div class="login-container" id="login-screen">
-        
         <div class="sector-column col-prof">
-            <div class="icon-box"><i class="fa fa-graduation-cap"></i></div>
+            <div class="icon-box"><i class="fa fa-chalkboard-user"></i></div>
             <h2>PROFESSORES</h2>
             <div class="login-form">
                 <input type="number" id="p-pront" placeholder="PRONTUÁRIO">
                 <input type="password" id="p-pass" placeholder="SENHA">
                 <button class="btn-access" onclick="app.login('p', 'Professor')">Entrar</button>
             </div>
-            <div class="watermark">TEACHER</div>
         </div>
 
         <div class="sector-column col-gestao">
-            <div class="icon-box"><i class="fa fa-briefcase"></i></div>
+            <div class="icon-box"><i class="fa fa-users-viewfinder"></i></div>
             <h2>GESTÃO</h2>
             <div class="login-form">
                 <input type="number" id="g-pront" placeholder="PRONTUÁRIO">
                 <input type="password" id="g-pass" placeholder="SENHA">
                 <button class="btn-access" onclick="app.login('g', 'Gestão')">Entrar</button>
             </div>
-            <div class="watermark">ADMIN</div>
         </div>
 
         <div class="sector-column col-secre">
-            <div class="icon-box"><i class="fa fa-folder-open"></i></div>
+            <div class="icon-box"><i class="fa fa-building-columns"></i></div>
             <h2>SECRETARIA</h2>
             <div class="login-form">
                 <input type="number" id="s-pront" placeholder="PRONTUÁRIO">
                 <input type="password" id="s-pass" placeholder="SENHA">
                 <button class="btn-access" onclick="app.login('s', 'Secretaria')">Entrar</button>
             </div>
-            <div class="watermark">OFFICE</div>
+        </div>
+
+        <div class="sector-column col-cad">
+            <div class="icon-box"><i class="fa fa-user-plus"></i></div>
+            <h2>NOVO CADASTRO</h2>
+            <div class="login-form">
+                <input type="text" id="c-nome" placeholder="NOME COMPLETO">
+                <input type="number" id="c-pront" placeholder="PRONTUÁRIO">
+                <select id="c-cargo">
+                    <option value="Professor">Professor</option>
+                    <option value="Secretaria">Secretaria</option>
+                    <option value="Gestão">Gestão</option>
+                </select>
+                <button class="btn-access" onclick="app.confirmarCad()">Cadastrar</button>
+            </div>
         </div>
 
         <div class="sector-column col-nti">
-            <div class="icon-box"><i class="fa fa-microchip"></i></div>
+            <div class="icon-box"><i class="fa fa-terminal"></i></div>
             <h2>PORTAL NTI</h2>
             <div class="login-form">
                 <input type="number" id="n-pront" placeholder="ID MASTER">
                 <input type="password" id="n-pass" placeholder="SENHA">
                 <button class="btn-access" onclick="app.login('n', 'TI')">Configurar</button>
             </div>
-            <div class="watermark">SYSTEM</div>
         </div>
+    </div>
 
+    <div id="change-pass-screen">
+        <div class="change-card">
+            <h3 style="color:var(--prof)">TROCA DE SENHA</h3>
+            <p style="font-size: 11px; opacity: 0.7;">Você está usando uma senha padrão. Crie uma nova senha pessoal para continuar.</p>
+            <input type="password" id="new-pass" placeholder="Nova Senha">
+            <button class="btn-access" style="background:var(--prof); color:white" onclick="app.atualizarSenha()">Salvar Nova Senha</button>
+        </div>
     </div>
 
     <div id="app-screen">
-        <h1 id="user-welcome" style="color: var(--prof); font-family: 'Orbitron';"></h1>
-        <p id="user-info" style="color: white; opacity: 0.7;"></p>
-        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 30px 0;">
-        <button onclick="location.reload()" style="background:none; border: 1px solid white; color:white; padding: 10px 30px; border-radius: 5px; cursor: pointer;">Sair do Portal</button>
+        <h1 id="user-welcome" style="font-family: 'Orbitron'; color:var(--prof)"></h1>
+        <p id="user-info"></p>
+        <button onclick="location.reload()" style="background:none; border:1px solid white; color:white; padding:10px; cursor:pointer">Sair</button>
     </div>
 
 <script>
@@ -196,33 +153,56 @@
     const db = firebase.database();
 
     const app = {
+        tempUser: null,
+        senhasPadrao: ["pmspmudar123", "gestao2026", "secretaria2026"],
+
         async login(pre, cargo) {
             const p = document.getElementById(pre + '-pront').value;
             const s = document.getElementById(pre + '-pass').value;
 
-            // Login Master Kelvin
-            if(cargo === 'TI' && p === '46690' && s === 'nti2026') {
-                return this.showPortal('Kelvin Master', 'Administrador NTI');
-            }
+            if(cargo === 'TI' && p === '46690' && s === 'nti2026') return this.showPortal('Kelvin Master', 'TI');
 
             const snap = await db.ref('usuarios/' + p).once('value');
-            if(snap.exists() && snap.val().pass == s) {
+            if(snap.exists() && snap.val().pass === s) {
                 const u = snap.val();
-                if(u.cargo === cargo || cargo === 'Professor') {
-                    this.showPortal(u.nome, cargo);
+                if(this.senhasPadrao.includes(s)) {
+                    this.tempUser = u;
+                    document.getElementById('change-pass-screen').style.display = 'flex';
                 } else {
-                    alert("Acesso negado para este setor.");
+                    this.showPortal(u.nome, u.cargo);
                 }
-            } else {
-                alert("Credenciais incorretas.");
-            }
+            } else { alert("Credenciais Inválidas!"); }
+        },
+
+        async atualizarSenha() {
+            const nova = document.getElementById('new-pass').value;
+            if(nova.length < 4) return alert("Senha muito curta!");
+            await db.ref('usuarios/' + this.tempUser.pront).update({ pass: nova });
+            alert("Senha atualizada! Faça login novamente.");
+            location.reload();
+        },
+
+        async confirmarCad() {
+            const n = document.getElementById('c-nome').value;
+            const p = document.getElementById('c-pront').value;
+            const c = document.getElementById('c-cargo').value;
+            
+            let senhaP = "pmspmudar123";
+            if(c === "Gestão") senhaP = "gestao2026";
+            if(c === "Secretaria") senhaP = "secretaria2026";
+
+            if(!n || !p) return alert("Preencha tudo!");
+            
+            await db.ref('usuarios/' + p).set({ nome: n, pront: p, cargo: c, pass: senhaP });
+            alert(`Cadastrado! Senha padrão para ${c}: ${senhaP}`);
+            location.reload();
         },
 
         showPortal(nome, cargo) {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('app-screen').style.display = 'block';
-            document.getElementById('user-welcome').innerText = "PORTAL: " + cargo.toUpperCase();
-            document.getElementById('user-info').innerText = "Usuário conectado: " + nome;
+            document.getElementById('user-welcome').innerText = cargo.toUpperCase();
+            document.getElementById('user-info').innerText = "Bem-vindo, " + nome;
         }
     };
 </script>
