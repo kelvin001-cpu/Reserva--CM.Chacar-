@@ -12,7 +12,7 @@
     <style>
         :root {
             --prof: #00adef; --gestao: #f1c40f; --secre: #a55eea; --cad: #2ecc71; --nti: #eb4d4b;
-            --bg-overlay: rgba(10, 11, 16, 0.85);
+            --bg-overlay: rgba(10, 11, 16, 0.75);
         }
 
         body, html { 
@@ -28,19 +28,17 @@
             align-items: center; justify-content: center; padding: 20px; 
             transition: 0.5s; border-right: 1px solid rgba(255,255,255,0.1); text-align: center;
         }
-        .sector-column:hover { background: rgba(255,255,255,0.05); }
+        .sector-column:hover { flex: 1.4; background: rgba(255,255,255,0.05); backdrop-filter: blur(5px); }
 
-        .col-prof { color: var(--prof); border-top: 8px solid var(--prof); }
-        .col-gestao { color: var(--gestao); border-top: 8px solid var(--gestao); }
-        .col-secre { color: var(--secre); border-top: 8px solid var(--secre); }
-        .col-cad { color: var(--cad); border-top: 8px solid var(--cad); }
-        .col-nti { color: var(--nti); border-top: 8px solid var(--nti); }
+        /* TELA DE TROCA DE SENHA */
+        #setup-password { display: none; position: fixed; inset: 0; background: var(--bg-overlay); z-index: 100; align-items: center; justify-content: center; }
+        .modal { background: rgba(22, 27, 34, 0.95); padding: 30px; border-radius: 15px; border: 1px solid var(--gestao); width: 350px; text-align: center; }
 
-        /* TELAS */
-        #main-system, #pass-change-screen { display: none; padding: 40px; background: var(--bg-overlay); min-height: 100vh; }
-        .panel { background: rgba(22, 27, 34, 0.9); padding: 25px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); max-width: 500px; margin: auto; }
-        
-        input, select { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #444; background: rgba(0,0,0,0.6); color: white; box-sizing: border-box; }
+        #main-system { display: none; padding: 20px; padding-top: 70px; background: var(--bg-overlay); min-height: 100vh; }
+        .grid-layout { display: grid; grid-template-columns: 320px 1fr 320px; gap: 20px; }
+
+        .panel { background: rgba(22, 27, 34, 0.85); backdrop-filter: blur(15px); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: rgba(0,0,0,0.6); color: white; box-sizing: border-box; }
         .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; text-transform: uppercase; }
 
         .hidden { display: none !important; }
@@ -49,47 +47,47 @@
 <body>
 
     <div class="login-container" id="login-screen">
-        <div class="sector-column col-prof"><i class="fa fa-user-graduate fa-3x"></i><h2>PROFESSOR</h2>
+        <div class="sector-column col-prof"><i class="fa fa-chalkboard-user fa-3x"></i><h2>PROFESSOR</h2>
             <input type="text" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof); color:white" onclick="app.login('p','Professor')">Entrar</button>
         </div>
         <div class="sector-column col-gestao"><i class="fa fa-user-shield fa-3x"></i><h2>GESTÃO</h2>
             <input type="text" id="g-p" placeholder="Prontuário"><input type="password" id="g-s" placeholder="Senha"><button class="btn" style="background:var(--gestao)" onclick="app.login('g','Gestão')">Entrar</button>
         </div>
-        <div class="sector-column col-secre"><i class="fa fa-file-invoice fa-3x"></i><h2>SECRETARIA</h2>
+        <div class="sector-column col-secre"><i class="fa fa-building-columns fa-3x"></i><h2>SECRETARIA</h2>
             <input type="text" id="s-p" placeholder="Prontuário"><input type="password" id="s-s" placeholder="Senha"><button class="btn" style="background:var(--secre); color:white" onclick="app.login('s','Secretaria')">Entrar</button>
         </div>
         <div class="sector-column col-cad"><i class="fa fa-user-plus fa-3x"></i><h2>CADASTRO</h2>
             <input type="text" id="c-n" placeholder="Nome"><input type="text" id="c-p" placeholder="Prontuário">
-            <select id="c-c"><option value="Professor">Professor</option><option value="Gestão">Gestão</option><option value="Secretaria">Secretaria</option></select>
-            <button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Criar Conta</button>
+            <select id="c-c"><option>Professor</option><option>Gestão</option><option>Secretaria</option></select>
+            <button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Criar</button>
         </div>
-        <div class="sector-column col-nti"><i class="fa fa-code fa-3x"></i><h2>NTI</h2>
+        <div class="sector-column col-nti"><i class="fa fa-terminal fa-3x"></i><h2>NTI</h2>
             <input type="text" id="n-p" placeholder="ID NTI"><input type="password" id="n-s" placeholder="Senha Master"><button class="btn" style="background:var(--nti); color:white" onclick="app.login('n','NTI')">Painel NTI</button>
         </div>
     </div>
 
-    <div id="pass-change-screen">
-        <div class="panel">
-            <h2 style="color:var(--gestao)"><i class="fa fa-key"></i> Primeira Acesso</h2>
-            <p>Você está usando uma senha padrão. Por favor, crie uma senha pessoal para continuar.</p>
+    <div id="setup-password">
+        <div class="modal">
+            <h3 style="color:var(--gestao)">Senha Padrão Detectada</h3>
+            <p style="font-size: 13px;">Para sua segurança, crie uma senha pessoal agora:</p>
             <input type="password" id="new-pass" placeholder="Nova Senha">
-            <input type="password" id="confirm-new-pass" placeholder="Confirme a Senha">
-            <button class="btn" style="background:var(--cad); color:white" onclick="app.saveNewPass()">Salvar e Entrar</button>
+            <input type="password" id="new-pass-confirm" placeholder="Confirme a Senha">
+            <button class="btn" style="background:var(--cad); color:white; margin-top:10px" onclick="app.updatePassword()">Salvar e Acessar</button>
         </div>
     </div>
 
     <div id="main-system">
-        <div class="panel" style="max-width: 800px;">
-            <h1 id="user-name">Carregando...</h1>
-            <p id="user-cargo"></p>
-            <hr>
-            <div id="nti-panel" class="hidden">
-                <h3 style="color:var(--nti)">Painel NTI Master</h3>
-                <input type="text" id="res-p" placeholder="Prontuário do Usuário">
-                <button class="btn" style="background:var(--nti); color:white" onclick="app.resetParaPadrao()">Resetar para Senha Padrão</button>
+        <div class="grid-layout">
+            <div class="panel">
+                <h3 id="welcome">Olá</h3>
+                <div id="nti-panel" class="hidden">
+                    <h4 style="color:var(--nti)">Admin Master</h4>
+                    <input type="text" id="res-p" placeholder="Prontuário">
+                    <button class="btn" style="background:var(--gestao)" onclick="app.resetSenha()">Resetar p/ Padrão</button>
+                </div>
+                <button class="btn" style="background:#444; color:white; margin-top:10px" onclick="location.reload()">Sair</button>
             </div>
-            <button class="btn" style="background:#444; color:white; margin-top:20px" onclick="location.reload()">Sair do Sistema</button>
-        </div>
+            </div>
     </div>
 
 <script>
@@ -107,73 +105,65 @@
 
             if(cargo === 'NTI' && p === '46690' && s === 'nti2026') {
                 this.user = {nome: 'Kelvin', cargo: 'NTI', pront: '46690'};
-                return this.startSystem();
+                return this.start();
             }
 
             const snap = await db.ref('usuarios/' + p).once('value');
-            if(snap.exists()){
+            if(snap.exists()) {
                 const d = snap.val();
                 if(String(d.pass) === String(s)) {
                     this.user = d;
                     this.tempPront = p;
-                    // Verifica se é senha padrão
-                    const padrões = ['pmspmudar123', 'gestao2026', 'secretaria2026'];
-                    if(padrões.includes(s)) {
-                        document.getElementById('login-screen').classList.add('hidden');
-                        document.getElementById('pass-change-screen').style.display = 'block';
+
+                    // Lista de senhas padrão
+                    const padroes = ['pmspmudar123', 'gestao2026', 'secretaria2026'];
+                    if(padroes.includes(s)) {
+                        document.getElementById('setup-password').style.display = 'flex';
                     } else {
-                        this.startSystem();
+                        this.start();
                     }
                 } else { alert("Senha incorreta!"); }
-            } else { alert("Prontuário não cadastrado!"); }
+            } else { alert("Usuário não encontrado!"); }
         },
 
-        async saveNewPass() {
-            const n1 = document.getElementById('new-pass').value;
-            const n2 = document.getElementById('confirm-new-pass').value;
+        async updatePassword() {
+            const n1 = document.getElementById('new-pass').value.trim();
+            const n2 = document.getElementById('new-pass-confirm').value.trim();
+            
             if(n1.length < 4) return alert("A senha deve ter pelo menos 4 caracteres.");
             if(n1 !== n2) return alert("As senhas não coincidem.");
 
-            await db.ref('usuarios/' + this.tempPront).update({pass: n1});
-            alert("Senha alterada com sucesso!");
-            this.user.pass = n1;
-            this.startSystem();
+            await db.ref('usuarios/' + this.tempPront).update({ pass: n1 });
+            alert("Senha pessoal definida!");
+            document.getElementById('setup-password').style.display = 'none';
+            this.start();
         },
 
-        startSystem() {
+        start() {
             document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('pass-change-screen').style.display = 'none';
             document.getElementById('main-system').style.display = 'block';
-            document.getElementById('user-name').innerText = "Olá, " + this.user.nome;
-            document.getElementById('user-cargo').innerText = "Cargo: " + this.user.cargo;
+            document.getElementById('welcome').innerText = "Olá, " + this.user.nome;
             if(this.user.cargo === 'NTI') document.getElementById('nti-panel').classList.remove('hidden');
         },
 
         confirmarCad() {
-            const n = document.getElementById('c-n').value.trim();
-            const p = document.getElementById('c-p').value.trim();
-            const c = document.getElementById('c-c').value;
-            if(!n || !p) return alert("Preencha nome e prontuário!");
-
+            const n = document.getElementById('c-n').value, p = document.getElementById('c-p').value, c = document.getElementById('c-c').value;
             let s = 'pmspmudar123';
             if(c === 'Gestão') s = 'gestao2026';
             if(c === 'Secretaria') s = 'secretaria2026';
-
-            db.ref('usuarios/' + p).set({nome: n, pront: p, cargo: c, pass: s})
-            .then(() => alert("Usuário " + n + " criado!\nSenha inicial: " + s));
+            db.ref('usuarios/'+p).set({nome:n, pront:p, cargo:c, pass:s});
+            alert("Criado! Quando ele entrar com '" + s + "', o sistema pedirá uma senha pessoal.");
         },
 
-        async resetParaPadrao() {
-            const p = document.getElementById('res-p').value.trim();
-            const snap = await db.ref('usuarios/' + p).once('value');
+        async resetSenha() {
+            const p = document.getElementById('res-p').value;
+            const snap = await db.ref('usuarios/'+p).once('value');
             if(snap.exists()){
                 const c = snap.val().cargo;
-                let s = 'pmspmudar123';
-                if(c === 'Gestão') s = 'gestao2026';
-                if(c === 'Secretaria') s = 'secretaria2026';
-                await db.ref('usuarios/' + p).update({pass: s});
-                alert("O usuário voltou para a senha padrão: " + s);
-            } else { alert("Usuário não encontrado."); }
+                let s = c === 'Gestão' ? 'gestao2026' : (c === 'Secretaria' ? 'secretaria2026' : 'pmspmudar123');
+                db.ref('usuarios/'+p).update({pass: s});
+                alert("Resetado para a padrão: " + s);
+            }
         }
     };
 </script>
