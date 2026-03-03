@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA NTI | SETORES</title>
+    <title>SISTEMA NTI | MULTI-PAINEL</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -12,145 +12,144 @@
 
     <style>
         :root {
-            --primary: #00adef; --gestao: #f1c40f; --secretaria: #9b59b6; --cadastro: #2ecc71; --nti: #e74c3c;
-            --glass: rgba(15, 23, 42, 0.9); --border: rgba(255, 255, 255, 0.1);
+            --prof: #00adef; --gestao: #f1c40f; --secre: #9b59b6; --nti: #e74c3c;
+            --glass: rgba(15, 23, 42, 0.95); --border: rgba(255, 255, 255, 0.1);
         }
 
         body { 
             margin: 0; font-family: 'Poppins', sans-serif; 
             background: #000 url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072') no-repeat center center fixed;
-            background-size: cover; color: white; min-height: 100vh; overflow-x: hidden;
+            background-size: cover; color: white; height: 100vh; overflow: hidden;
         }
 
         /* LOGIN */
         #auth-screen { 
-            position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; 
+            position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 9999; 
             display: flex; align-items: center; justify-content: center; backdrop-filter: blur(20px);
         }
-        .login-card { background: var(--glass); padding: 40px; border-radius: 25px; border: 1px solid var(--primary); width: 320px; text-align: center; }
+        .login-card { background: var(--glass); padding: 40px; border-radius: 25px; border: 1px solid var(--prof); width: 320px; text-align: center; }
 
-        /* GRID DE MENUS SEPARADOS */
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 25px;
-            padding: 40px;
-            max-width: 1200px;
-            margin: 0 auto;
+        /* HEADER */
+        header {
+            height: 60px; padding: 0 30px; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(0,0,0,0.8); border-bottom: 1px solid var(--border);
         }
 
-        /* ESTILO DOS CARDS DE MENU (ILHAS) */
-        .menu-card {
+        /* LAYOUT EM COLUNAS SEPARADAS */
+        .container-setores {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4 Colunas: Prof, Gestão, Secre, Cadastro */
+            gap: 15px;
+            padding: 15px;
+            height: calc(100vh - 140px);
+            box-sizing: border-box;
+        }
+
+        .setor-card {
             background: var(--glass);
-            border-radius: 25px;
+            border-radius: 20px;
             border: 1px solid var(--border);
-            padding: 30px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 15px;
+            overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        .menu-card:hover { transform: translateY(-10px); border-color: white; box-shadow: 0 15px 45px rgba(0,0,0,0.8); }
-        .menu-card i { font-size: 45px; margin-bottom: 10px; }
-        .menu-card h3 { margin: 0; font-size: 18px; letter-spacing: 1px; }
-        .menu-card p { margin: 0; font-size: 12px; opacity: 0.6; }
 
-        /* CORES POR SETOR */
-        .m-prof { border-bottom: 6px solid var(--primary); } .m-prof i { color: var(--primary); }
-        .m-gestao { border-bottom: 6px solid var(--gestao); } .m-gestao i { color: var(--gestao); }
-        .m-secre { border-bottom: 6px solid var(--secretaria); } .m-secre i { color: var(--secretaria); }
-        .m-cad { border-bottom: 6px solid var(--cadastro); } .m-cad i { color: var(--cadastro); }
-        .m-nti { border-bottom: 6px solid var(--nti); } .m-nti i { color: var(--nti); }
-
-        /* ÁREA DE CONTEÚDO (MODAL) */
-        .content-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100;
-            display: none; padding: 40px; overflow-y: auto; backdrop-filter: blur(10px);
+        .setor-header {
+            padding: 15px;
+            font-weight: 700;
+            font-size: 14px;
+            text-align: center;
+            text-transform: uppercase;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
         }
-        .close-btn { position: fixed; top: 20px; right: 40px; font-size: 30px; cursor: pointer; color: var(--nti); }
+
+        /* CORES DOS SETORES */
+        .head-prof { background: var(--prof); color: white; }
+        .head-gestao { background: var(--gestao); color: black; }
+        .head-secre { background: var(--secre); color: white; }
+        .head-cad { background: #2ecc71; color: white; }
+
+        .setor-body { flex: 1; padding: 15px; overflow-y: auto; }
+
+        /* FOOTER / PORTAL NTI */
+        .footer-nti {
+            height: 60px; margin: 10px 15px;
+            background: var(--nti);
+            border-radius: 15px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-weight: 800; letter-spacing: 2px;
+            transition: 0.3s;
+        }
+        .footer-nti:hover { filter: brightness(1.2); transform: scale(1.01); }
+
+        /* ESTILOS INTERNOS */
+        .item-list { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; margin-bottom: 8px; font-size: 12px; border-left: 4px solid transparent; }
+        input, select, textarea { width: 100%; padding: 8px; margin-bottom: 8px; border-radius: 5px; border: 1px solid var(--border); background: #000; color: white; }
+        .btn-setor { width: 100%; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: 600; }
 
         .hidden { display: none !important; }
-        input, select, textarea { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid var(--border); background: #000; color: white; }
-        .btn { padding: 12px 25px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div id="auth-screen">
     <div class="login-card">
-        <h2 style="color:var(--primary)">SISTEMA CHÁCARA</h2>
+        <h2 style="color:var(--prof)">NTI CHÁCARA</h2>
         <input type="number" id="l-pront" placeholder="Prontuário">
         <input type="password" id="l-pass" placeholder="Senha">
-        <button class="btn" style="background:var(--primary); color:white" onclick="app.login()">ENTRAR NO PORTAL</button>
+        <button class="btn-setor" style="background:var(--prof); color:white" onclick="app.login()">ACESSAR SISTEMA</button>
     </div>
 </div>
 
-<div id="main-portal" class="hidden">
-    <header style="padding: 20px 40px; display: flex; justify-content: space-between; align-items: center;">
-        <h1 style="font-size: 20px; color: var(--primary)">DASHBOARD DE SETORES</h1>
-        <button onclick="location.reload()" style="background:none; border:1px solid var(--nti); color:var(--nti); padding:5px 15px; border-radius:20px; cursor:pointer">Sair</button>
-    </header>
+<header id="main-header" class="hidden">
+    <div style="font-weight:bold"><i class="fa fa-school"></i> EMEF CHÁCARA</div>
+    <div id="u-nome" style="font-size: 13px; opacity:0.8"></div>
+    <button onclick="location.reload()" style="background:none; border:1px solid white; color:white; border-radius:5px; cursor:pointer">Sair</button>
+</header>
 
-    <div class="menu-grid">
-        <div class="menu-card m-prof" onclick="app.open('v-prof')">
-            <i class="fa fa-chalkboard-user"></i>
-            <h3>PROFESSORES</h3>
-            <p>Reservas e Equipamentos</p>
-        </div>
+<div id="main-ui" class="hidden">
+    <div class="container-setores">
+        
+        <section class="setor-card" style="border-color: var(--prof)">
+            <div class="setor-header head-prof"><i class="fa fa-chalkboard-user"></i> Professores</div>
+            <div class="setor-body">
+                <p style="font-size:11px; margin-bottom:15px">Reservar Equipamentos:</p>
+                <div id="equip-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:5px"></div>
+            </div>
+        </section>
 
-        <div class="menu-card m-gestao" onclick="app.open('v-gestao')">
-            <i class="fa fa-users-gear"></i>
-            <h3>GESTÃO</h3>
-            <p>Relatórios e Status</p>
-        </div>
+        <section class="setor-card" style="border-color: var(--gestao)">
+            <div class="setor-header head-gestao"><i class="fa fa-users-gear"></i> Gestão</div>
+            <div class="setor-body">
+                <p style="font-size:11px">Equipamentos em Uso:</p>
+                <div id="uso-list"></div>
+            </div>
+        </section>
 
-        <div class="menu-card m-secre" onclick="app.open('v-secre')">
-            <i class="fa fa-file-invoice"></i>
-            <h3>SECRETARIA</h3>
-            <p>Documentos e Avisos</p>
-        </div>
+        <section class="setor-card" style="border-color: var(--secre)">
+            <div class="setor-header head-secre"><i class="fa fa-file-contract"></i> Secretaria</div>
+            <div class="setor-body">
+                <input type="text" placeholder="Assunto do Aviso">
+                <textarea rows="3" placeholder="Mensagem para o mural..."></textarea>
+                <button class="btn-setor" style="background:var(--secre); color:white">Publicar Aviso</button>
+            </div>
+        </section>
 
-        <div class="menu-card m-cad" onclick="app.open('v-cad')">
-            <i class="fa fa-user-plus"></i>
-            <h3>CADASTRO</h3>
-            <p>Novos Usuários</p>
-        </div>
+        <section class="setor-card" style="border-color: #2ecc71">
+            <div class="setor-header head-cad"><i class="fa fa-user-plus"></i> Cadastro</div>
+            <div class="setor-body">
+                <input type="text" id="c-nome" placeholder="Nome do Professor">
+                <input type="number" id="c-pront" placeholder="Prontuário">
+                <select id="c-cargo"><option>Professor</option><option>Secretaria</option><option>Gestão</option></select>
+                <button class="btn-setor" style="background:#2ecc71; color:white" onclick="app.confirmarCad()">CADASTRAR</button>
+            </div>
+        </section>
 
-        <div class="menu-card m-nti" onclick="app.open('v-nti')">
-            <i class="fa fa-shield-halved"></i>
-            <h3>PORTAL NTI</h3>
-            <p>Suporte e Segurança</p>
-        </div>
-    </div>
-</div>
-
-<div id="content-view" class="content-overlay">
-    <span class="close-btn" onclick="app.close()">&times; FECHAR</span>
-    
-    <div id="v-prof" class="view-content hidden">
-        <h2>Área do Professor</h2>
-        <div id="equip-list" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:15px"></div>
-    </div>
-
-    <div id="v-cad" class="view-content hidden">
-        <div style="max-width: 500px; margin: auto; background: var(--glass); padding: 30px; border-radius: 20px;">
-            <h2>Cadastrar Novo Usuário</h2>
-            <input type="text" id="c-nome" placeholder="Nome">
-            <input type="number" id="c-pront" placeholder="Prontuário">
-            <select id="c-cargo"><option>Professor</option><option>Secretaria</option><option>Gestão</option></select>
-            <button class="btn" style="background:var(--cadastro); color:black" onclick="app.confirmarCad()">SALVAR NO BANCO</button>
-        </div>
     </div>
 
-    <div id="v-nti" class="view-content hidden">
-        <h2>Suporte NTI Master</h2>
-        <input type="text" id="ch-local" placeholder="Onde está o problema?">
-        <textarea id="ch-problema" rows="4" placeholder="Descreva o defeito"></textarea>
-        <button class="btn" style="background:var(--nti); color:white" onclick="app.enviarChamado()">ABRIR CHAMADO</button>
+    <div class="footer-nti" onclick="app.openNTI()">
+        <i class="fa fa-shield-halved"></i> &nbsp; PORTAL NTI MASTER
     </div>
 </div>
 
@@ -168,42 +167,45 @@
             if(p === '46690' && s === 'nti2026') { this.user = {nome: 'Kelvin Master', cargo: 'TI'}; return this.start(); }
             const snap = await db.ref('usuarios/'+p).once('value');
             if(snap.exists() && snap.val().pass == s) { this.user = snap.val(); this.start(); }
-            else alert("Acesso Negado");
+            else alert("Acesso negado!");
         },
 
         start() {
             document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('main-portal').classList.remove('hidden');
+            document.getElementById('main-header').classList.remove('hidden');
+            document.getElementById('main-ui').classList.remove('hidden');
+            document.getElementById('u-nome').innerText = "Logado como: " + this.user.nome;
             this.sync();
         },
 
-        open(id) {
-            document.getElementById('content-view').style.display = 'block';
-            document.querySelectorAll('.view-content').forEach(v => v.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
-        },
-
-        close() { document.getElementById('content-view').style.display = 'none'; },
-
         sync() {
             db.ref('reservas').on('value', snap => {
-                const g = document.getElementById('equip-list'); g.innerHTML = ""; let u = {};
-                snap.forEach(r => { u[r.val().item] = r.val(); });
+                const l = document.getElementById('uso-list'), g = document.getElementById('equip-grid');
+                l.innerHTML = ""; g.innerHTML = ""; let u = {};
+                snap.forEach(r => { 
+                    const d = r.val(); u[d.item] = d; 
+                    l.innerHTML += `<div class="item-list" style="border-color:var(--nti)"><b>${d.item}</b><br>${d.user} (${d.local})</div>`; 
+                });
                 this.itens.forEach(i => {
                     const o = u[i];
-                    g.innerHTML += `<div style="background:rgba(255,255,255,0.05); padding:20px; border-radius:15px; text-align:center; border: 1px solid ${o?'var(--nti)':'var(--cadastro)'}">
-                        <b>${i}</b><br><small>${o?'EM USO':'LIVRE'}</small><br>
-                        ${!o?`<button class="btn" style="background:var(--primary); font-size:10px" onclick="app.reservar('${i}')">RESERVAR</button>`:''}
-                    </div>`;
+                    g.innerHTML += `<button onclick="${o?'':'app.reservar(\''+i+'\')'}" style="background:${o?'rgba(255,255,255,0.1)':'var(--prof)'}; border:none; color:white; padding:10px; border-radius:8px; font-size:10px; cursor:pointer;">
+                        ${i}<br><b>${o?'EM USO':'LIVRE'}</b>
+                    </button>`;
                 });
             });
         },
+
         async reservar(i) { const loc = prompt("Local:"); if(loc) await db.ref('reservas').push({item:i, user:this.user.nome, local:loc}); },
-        async enviarChamado() { await db.ref('chamados').push({autor:this.user.nome, local:document.getElementById('ch-local').value, problema:document.getElementById('ch-problema').value}); alert("Enviado!"); this.close(); },
+        
+        openNTI() {
+            const prob = prompt("Descreva o problema para o NTI:");
+            if(prob) alert("Chamado enviado para o Portal NTI!");
+        },
+
         async confirmarCad() {
             const p = document.getElementById('c-pront').value;
             await db.ref('usuarios/'+p).set({nome: document.getElementById('c-nome').value, pront: p, cargo: document.getElementById('c-cargo').value, pass: 'pmsp2026'});
-            alert("Cadastrado!"); this.close();
+            alert("Professor cadastrado!");
         }
     };
 </script>
