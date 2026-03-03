@@ -3,152 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA NTI | CHÁCARA</title>
+    <title>SISTEMA NTI | PORTAL DE ACESSO</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
-            --bg: #0f172a; --side: #1e293b; --accent: #00adef;
-            --prof: #00adef; --gestao: #f1c40f; --secre: #9b59b6; --cad: #2ecc71; --nti: #e74c3c;
+            --prof: #00adef; --gestao: #f1c40f; --secre: #a55eea; --nti: #eb4d4b;
+            --dark: #0a0a0c;
         }
 
-        body { 
-            margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); color: white; 
-            height: 100vh; display: flex; overflow: hidden;
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            font-family: 'Poppins', sans-serif; background: var(--dark);
+            overflow: hidden;
         }
 
-        /* BARRA LATERAL (MENU SEPARADO) */
-        aside {
-            width: 280px; background: var(--side); border-right: 1px solid rgba(255,255,255,0.1);
-            display: flex; flex-direction: column; padding: 20px;
+        /* DIVISÃO DA TELA EM 4 COLUNAS TOTAIS */
+        .login-container {
+            display: flex;
+            width: 100%;
+            height: 100vh;
         }
 
-        .logo-area { text-align: center; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
-        .logo-area h2 { font-size: 18px; color: var(--accent); margin: 0; }
-
-        /* BOTÕES DE MENU POR SETOR */
-        .menu-item {
-            padding: 15px; border-radius: 12px; margin-bottom: 10px; cursor: pointer;
-            display: flex; align-items: center; gap: 15px; transition: 0.3s;
-            border-left: 5px solid transparent; font-weight: 600;
+        .sector-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: all 0.5s ease;
+            position: relative;
+            border-right: 1px solid rgba(255,255,255,0.05);
+            overflow: hidden;
         }
-        .menu-item:hover { background: rgba(255,255,255,0.05); }
+
+        /* EFEITO DE FOCO NA COLUNA */
+        .sector-column:hover {
+            flex: 1.5;
+            background: rgba(255,255,255,0.02);
+        }
+
+        /* ICONES E TEXTOS */
+        .icon-box {
+            font-size: 50px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px currentColor;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+
+        /* FORMULÁRIO INTERNO */
+        .login-form {
+            width: 100%;
+            max-width: 240px;
+            opacity: 0.8;
+            transition: 0.3s;
+        }
+
+        .sector-column:hover .login-form { opacity: 1; }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.5);
+            color: white;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        .btn-access {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
+
+        /* CUSTOMIZAÇÃO POR SETOR */
+        .col-prof { color: var(--prof); border-top: 5px solid var(--prof); }
+        .col-prof .btn-access { background: var(--prof); color: white; }
         
-        .m-prof { color: var(--prof); } .m-prof.active { background: rgba(0, 173, 239, 0.1); border-left-color: var(--prof); }
-        .m-gestao { color: var(--gestao); } .m-gestao.active { background: rgba(241, 196, 15, 0.1); border-left-color: var(--gestao); }
-        .m-secre { color: var(--secre); } .m-secre.active { background: rgba(155, 89, 182, 0.1); border-left-color: var(--secre); }
-        .m-cad { color: var(--cad); } .m-cad.active { background: rgba(46, 204, 113, 0.1); border-left-color: var(--cad); }
-        .m-nti { color: var(--nti); } .m-nti.active { background: rgba(231, 76, 60, 0.1); border-left-color: var(--nti); }
+        .col-gestao { color: var(--gestao); border-top: 5px solid var(--gestao); }
+        .col-gestao .btn-access { background: var(--gestao); color: black; }
 
-        /* ÁREA DE CONTEÚDO */
-        main { flex: 1; padding: 40px; overflow-y: auto; background: #0a0f1e; }
-        .view { display: none; animation: fadeIn 0.4s ease; }
-        .view.active { display: block; }
+        .col-secre { color: var(--secre); border-top: 5px solid var(--secre); }
+        .col-secre .btn-access { background: var(--secre); color: white; }
 
-        .card { background: var(--side); padding: 30px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
-        h1 { margin-top: 0; border-bottom: 2px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        .col-nti { color: var(--nti); border-top: 5px solid var(--nti); }
+        .col-nti .btn-access { background: var(--nti); color: white; }
 
-        input, select, textarea { 
-            width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #334155;
-            background: #0f172a; color: white; font-family: 'Poppins';
+        /* FUNDO COM NOME DO SETOR EM MARCA D'ÁGUA */
+        .watermark {
+            position: absolute;
+            bottom: -20px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 5rem;
+            opacity: 0.03;
+            pointer-events: none;
+            white-space: nowrap;
         }
 
-        .btn { border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 700; width: 100%; }
+        #app-screen {
+            display: none;
+            position: fixed; inset: 0;
+            background: var(--dark);
+            z-index: 100;
+            padding: 50px;
+            text-align: center;
+        }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <aside id="sidebar" class="hidden">
-        <div class="logo-area">
-            <h2>EMEF CHÁCARA</h2>
-            <p id="u-nome" style="font-size: 11px; opacity: 0.6; margin-top: 5px;"></p>
-        </div>
-
-        <nav>
-            <div class="menu-item m-prof active" onclick="app.view('v-prof', this)">
-                <i class="fa fa-chalkboard-user"></i> Professores
-            </div>
-            <div class="menu-item m-gestao" onclick="app.view('v-gestao', this)">
-                <i class="fa fa-users-gear"></i> Gestão
-            </div>
-            <div class="menu-item m-secre" onclick="app.view('v-secre', this)">
-                <i class="fa fa-file-invoice"></i> Secretaria
-            </div>
-            <div class="menu-item m-cad" onclick="app.view('v-cad', this)">
-                <i class="fa fa-user-plus"></i> Cadastro
-            </div>
-            <div class="menu-item m-nti" onclick="app.view('v-nti', this)">
-                <i class="fa fa-shield-halved"></i> Portal NTI
-            </div>
-        </nav>
-
-        <button onclick="location.reload()" style="margin-top:auto; background:none; border:1px solid #ff4757; color:#ff4757; padding:10px; border-radius:10px; cursor:pointer">
-            <i class="fa fa-power-off"></i> Sair do Sistema
-        </button>
-    </aside>
-
-    <main id="main-content" class="hidden">
+    <div class="login-container" id="login-screen">
         
-        <div id="v-prof" class="view active">
-            <h1 style="color: var(--prof)">Painel de Professores</h1>
-            <div class="card">
-                <h3>Reservar Equipamento</h3>
-                <div id="equip-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px;"></div>
+        <div class="sector-column col-prof">
+            <div class="icon-box"><i class="fa fa-graduation-cap"></i></div>
+            <h2>PROFESSORES</h2>
+            <div class="login-form">
+                <input type="number" id="p-pront" placeholder="PRONTUÁRIO">
+                <input type="password" id="p-pass" placeholder="SENHA">
+                <button class="btn-access" onclick="app.login('p', 'Professor')">Entrar</button>
             </div>
+            <div class="watermark">TEACHER</div>
         </div>
 
-        <div id="v-gestao" class="view">
-            <h1 style="color: var(--gestao)">Painel de Gestão</h1>
-            <div class="card">
-                <h3>Monitoramento de Uso</h3>
-                <div id="uso-list"></div>
+        <div class="sector-column col-gestao">
+            <div class="icon-box"><i class="fa fa-briefcase"></i></div>
+            <h2>GESTÃO</h2>
+            <div class="login-form">
+                <input type="number" id="g-pront" placeholder="PRONTUÁRIO">
+                <input type="password" id="g-pass" placeholder="SENHA">
+                <button class="btn-access" onclick="app.login('g', 'Gestão')">Entrar</button>
             </div>
+            <div class="watermark">ADMIN</div>
         </div>
 
-        <div id="v-secre" class="view">
-            <h1 style="color: var(--secre)">Painel da Secretaria</h1>
-            <div class="card">
-                <h3>Comunicados e Avisos</h3>
-                <textarea placeholder="Digite o aviso para os professores..."></textarea>
-                <button class="btn" style="background: var(--secre); color: white;">Enviar Aviso</button>
+        <div class="sector-column col-secre">
+            <div class="icon-box"><i class="fa fa-folder-open"></i></div>
+            <h2>SECRETARIA</h2>
+            <div class="login-form">
+                <input type="number" id="s-pront" placeholder="PRONTUÁRIO">
+                <input type="password" id="s-pass" placeholder="SENHA">
+                <button class="btn-access" onclick="app.login('s', 'Secretaria')">Entrar</button>
             </div>
+            <div class="watermark">OFFICE</div>
         </div>
 
-        <div id="v-cad" class="view">
-            <h1 style="color: var(--cad)">Gerenciar Usuários</h1>
-            <div class="card" style="max-width: 500px;">
-                <input type="text" id="c-nome" placeholder="Nome do Professor">
-                <input type="number" id="c-pront" placeholder="Número do Prontuário">
-                <select id="c-cargo"><option>Professor</option><option>Secretaria</option><option>Gestão</option></select>
-                <button class="btn" style="background: var(--cad); color: white;" onclick="app.confirmarCad()">CADASTRAR</button>
+        <div class="sector-column col-nti">
+            <div class="icon-box"><i class="fa fa-microchip"></i></div>
+            <h2>PORTAL NTI</h2>
+            <div class="login-form">
+                <input type="number" id="n-pront" placeholder="ID MASTER">
+                <input type="password" id="n-pass" placeholder="SENHA">
+                <button class="btn-access" onclick="app.login('n', 'TI')">Configurar</button>
             </div>
+            <div class="watermark">SYSTEM</div>
         </div>
 
-        <div id="v-nti" class="view">
-            <h1 style="color: var(--nti)">Portal NTI Master</h1>
-            <div class="card">
-                <h3>Suporte Técnico</h3>
-                <input type="text" id="ch-local" placeholder="Sala / Localização">
-                <textarea id="ch-problema" placeholder="Descreva o problema técnico"></textarea>
-                <button class="btn" style="background: var(--nti); color: white;" onclick="app.enviarChamado()">ABRIR CHAMADO</button>
-            </div>
-        </div>
+    </div>
 
-    </main>
-
-    <div id="auth-screen">
-        <div style="background: var(--side); padding: 40px; border-radius: 20px; text-align: center; border: 1px solid var(--accent);">
-            <h2 style="color: var(--accent);">LOGIN NTI</h2>
-            <input type="number" id="l-pront" placeholder="Prontuário">
-            <input type="password" id="l-pass" placeholder="Senha">
-            <button class="btn" style="background: var(--accent); color: white;" onclick="app.login()">ENTRAR</button>
-        </div>
+    <div id="app-screen">
+        <h1 id="user-welcome" style="color: var(--prof); font-family: 'Orbitron';"></h1>
+        <p id="user-info" style="color: white; opacity: 0.7;"></p>
+        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 30px 0;">
+        <button onclick="location.reload()" style="background:none; border: 1px solid white; color:white; padding: 10px 30px; border-radius: 5px; cursor: pointer;">Sair do Portal</button>
     </div>
 
 <script>
@@ -157,60 +196,33 @@
     const db = firebase.database();
 
     const app = {
-        user: null,
-        itens: ['CROMES 01', 'CROMES 02', 'CROMES 03', 'CROMES 04', 'TV 01', 'TV 02', 'TV 03'],
+        async login(pre, cargo) {
+            const p = document.getElementById(pre + '-pront').value;
+            const s = document.getElementById(pre + '-pass').value;
 
-        async login() {
-            const p = document.getElementById('l-pront').value, s = document.getElementById('l-pass').value;
-            if(p === '46690' && s === 'nti2026') { this.user = {nome: 'Kelvin Master', cargo: 'TI'}; return this.start(); }
-            const snap = await db.ref('usuarios/'+p).once('value');
-            if(snap.exists() && snap.val().pass == s) { this.user = snap.val(); this.start(); }
-            else alert("Acesso inválido!");
-        },
+            // Login Master Kelvin
+            if(cargo === 'TI' && p === '46690' && s === 'nti2026') {
+                return this.showPortal('Kelvin Master', 'Administrador NTI');
+            }
 
-        start() {
-            document.getElementById('auth-screen').style.display = 'none';
-            document.getElementById('sidebar').style.display = 'flex';
-            document.getElementById('main-content').style.display = 'block';
-            document.getElementById('u-nome').innerText = this.user.nome;
-            this.sync();
-        },
-
-        view(id, btn) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
-            btn.classList.add('active');
+            const snap = await db.ref('usuarios/' + p).once('value');
+            if(snap.exists() && snap.val().pass == s) {
+                const u = snap.val();
+                if(u.cargo === cargo || cargo === 'Professor') {
+                    this.showPortal(u.nome, cargo);
+                } else {
+                    alert("Acesso negado para este setor.");
+                }
+            } else {
+                alert("Credenciais incorretas.");
+            }
         },
 
-        sync() {
-            db.ref('reservas').on('value', snap => {
-                const l = document.getElementById('uso-list'), g = document.getElementById('equip-list');
-                l.innerHTML = ""; g.innerHTML = ""; let u = {};
-                snap.forEach(r => { 
-                    const d = r.val(); u[d.item] = d; 
-                    l.innerHTML += `<div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px; margin-bottom:10px;">
-                        <b>${d.item}</b> - Retirado por: ${d.user} <button onclick="db.ref('reservas/${r.key}').remove()" style="float:right; color:red; background:none; border:none; cursor:pointer">X</button>
-                    </div>`; 
-                });
-                this.itens.forEach(i => {
-                    const o = u[i];
-                    g.innerHTML += `<div style="background:${o?'rgba(255,0,0,0.1)':'rgba(0,255,0,0.1)'}; padding:15px; border-radius:12px; text-align:center; border:1px solid ${o?'red':'green'}">
-                        <small>${i}</small><br><b>${o?'EM USO':'LIVRE'}</b><br>
-                        ${!o?`<button onclick="app.reservar('${i}')" style="background:var(--accent); border:none; color:white; padding:5px; border-radius:5px; margin-top:5px; font-size:10px; cursor:pointer">RESERVAR</button>`:''}
-                    </div>`;
-                });
-            });
-        },
-        async reservar(i) { const loc = prompt("Localização:"); if(loc) await db.ref('reservas').push({item:i, user:this.user.nome, local:loc}); },
-        async enviarChamado() { 
-            await db.ref('chamados').push({autor:this.user.nome, local:document.getElementById('ch-local').value, problema:document.getElementById('ch-problema').value});
-            alert("Enviado ao NTI!");
-        },
-        async confirmarCad() {
-            const p = document.getElementById('c-pront').value;
-            await db.ref('usuarios/'+p).set({nome: document.getElementById('c-nome').value, pront: p, cargo: document.getElementById('c-cargo').value, pass: 'pmsp2026'});
-            alert("Usuário Cadastrado!");
+        showPortal(nome, cargo) {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app-screen').style.display = 'block';
+            document.getElementById('user-welcome').innerText = "PORTAL: " + cargo.toUpperCase();
+            document.getElementById('user-info').innerText = "Usuário conectado: " + nome;
         }
     };
 </script>
