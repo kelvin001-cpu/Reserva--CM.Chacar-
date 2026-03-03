@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NTI MASTER | SANTANA DE PARNAÍBA</title>
+    <title>NTI MASTER | EMEF CHÁCARA</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -13,24 +13,24 @@
     <style>
         :root {
             --prof: #00adef; --gestao: #f1c40f; --secre: #a55eea; --cad: #2ecc71; --nti: #eb4d4b;
-            --bg-overlay: rgba(0, 0, 0, 0.7);
+            --bg-overlay: rgba(10, 11, 16, 0.7);
         }
 
         body, html { 
             margin: 0; padding: 0; font-family: 'Poppins', sans-serif; color: white; min-height: 100vh;
-            /* IMAGEM DE FUNDO - SANTANA DE PARNAÍBA */
-            background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Santana_de_Parna%C3%ADba_-_SP.jpg/1200px-Santana_de_Parna%C3%ADba_-_SP.jpg') no-repeat center center fixed;
+            /* FUNDO DO PLANETA RESTAURADO */
+            background: url('https://get.wallhere.com/photo/space-planet-Earth-NASA-blue-marble-atmosphere-outer-space-astronomical-object-82285.jpg') no-repeat center center fixed;
             background-size: cover;
         }
 
-        /* LOGIN ORIGINAL 5 COLUNAS */
+        /* LOGIN 5 COLUNAS LARGAS */
         .login-container { display: flex; width: 100%; height: 100vh; flex-wrap: wrap; background: var(--bg-overlay); }
         .sector-column { 
             flex: 1; min-width: 200px; display: flex; flex-direction: column; 
             align-items: center; justify-content: center; padding: 20px; 
             transition: 0.5s; border-right: 1px solid rgba(255,255,255,0.1); text-align: center;
         }
-        .sector-column:hover { flex: 1.4; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
+        .sector-column:hover { flex: 1.5; background: rgba(255,255,255,0.05); backdrop-filter: blur(5px); }
 
         @media (max-width: 768px) {
             .login-container { height: auto; }
@@ -48,32 +48,33 @@
         .grid-layout { display: grid; grid-template-columns: 320px 1fr 320px; gap: 20px; }
         @media (max-width: 1024px) { .grid-layout { grid-template-columns: 1fr; } }
 
-        .panel { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(15px); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.2); }
+        .panel { background: rgba(22, 27, 34, 0.85); backdrop-filter: blur(15px); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
         
         input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: rgba(0,0,0,0.6); color: white; box-sizing: border-box; }
         .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; text-transform: uppercase; }
 
         /* CHAT */
-        #chat-box { height: 300px; overflow-y: auto; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; margin-bottom: 10px; }
+        #chat-box { height: 300px; overflow-y: auto; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1); }
         .msg { margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 13px; }
+        .msg b { display: block; font-size: 11px; margin-bottom: 2px; }
 
-        #lock-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 99999; flex-direction: column; align-items: center; justify-content: center; }
         .hidden { display: none !important; }
+        #lock-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 99999; flex-direction: column; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
 
     <div id="lock-overlay">
-        <i class="fa fa-user-shield fa-5x" style="color:var(--nti); margin-bottom:20px"></i>
-        <h1 style="font-family:'Orbitron'">SISTEMA BLOQUEADO</h1>
-        <p>Acesso suspenso temporariamente pelo NTI.</p>
+        <i class="fa fa-lock fa-4x" style="color:var(--nti); margin-bottom:20px"></i>
+        <h1 style="font-family:'Orbitron'">SISTEMA OFFLINE</h1>
+        <p>Acesso bloqueado pelo NTI.</p>
     </div>
 
     <div class="login-container" id="login-screen">
         <div class="sector-column col-prof"><i class="fa fa-chalkboard-user fa-3x"></i><h2>PROFESSOR</h2>
             <input type="number" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof); color:white" onclick="app.login('p','Professor')">Entrar</button>
         </div>
-        <div class="sector-column col-gestao"><i class="fa fa-user-tie fa-3x"></i><h2>GESTÃO</h2>
+        <div class="sector-column col-gestao"><i class="fa fa-users-viewfinder fa-3x"></i><h2>GESTÃO</h2>
             <input type="number" id="g-p" placeholder="Prontuário"><input type="password" id="g-s" placeholder="Senha"><button class="btn" style="background:var(--gestao)" onclick="app.login('g','Gestão')">Entrar</button>
         </div>
         <div class="sector-column col-secre"><i class="fa fa-building-columns fa-3x"></i><h2>SECRETARIA</h2>
@@ -85,43 +86,43 @@
             <button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Criar</button>
         </div>
         <div class="sector-column col-nti"><i class="fa fa-terminal fa-3x"></i><h2>NTI</h2>
-            <input type="number" id="n-p" placeholder="ID NTI"><input type="password" id="n-s" placeholder="Senha Master"><button class="btn" style="background:var(--nti); color:white" onclick="app.login('n','NTI')">Painel NTI</button>
+            <input type="number" id="n-p" placeholder="ID"><input type="password" id="n-s" placeholder="Senha Master"><button class="btn" style="background:var(--nti); color:white" onclick="app.login('n','NTI')">Painel NTI</button>
         </div>
     </div>
 
     <div id="main-system">
         <div class="grid-layout">
             <div class="panel">
-                <h3><i class="fa fa-plus-circle"></i> Reservas</h3>
+                <h3><i class="fa fa-calendar-plus"></i> Reservar</h3>
                 <select id="res-eq"><option>SALA INFO</option><option>CHROMEBOOKS</option><option>TV</option></select>
                 <input type="text" id="res-sl" placeholder="Sala">
                 <input type="datetime-local" id="res-dt">
                 <button class="btn" style="background:var(--prof); color:white" onclick="app.reservar()">Confirmar</button>
 
-                <div id="nti-panel" class="hidden" style="margin-top:30px; border-top:1px solid #444; padding-top:20px">
-                    <h3 style="color:var(--nti)">Painel de Controle</h3>
+                <div id="nti-panel" class="hidden" style="margin-top:30px; border-top: 1px solid #444; padding-top:20px">
+                    <h3 style="color:var(--nti)">Controle NTI</h3>
                     <div style="display:flex; gap:5px; margin-bottom:10px">
                         <button class="btn" style="background:var(--nti); color:white" onclick="app.setLock(true)">TRAVAR</button>
                         <button class="btn" style="background:var(--cad); color:white" onclick="app.setLock(false)">LIBERAR</button>
                     </div>
-                    <input type="number" id="reset-p" placeholder="Reset Prontuário">
-                    <button class="btn" style="background:var(--gestao)" onclick="app.resetSenha()">RESETAR SENHA</button>
-                    <button class="btn" style="background:#333; color:white; margin-top:5px" onclick="app.deletar()">EXCLUIR USER</button>
+                    <input type="number" id="reset-p" placeholder="Prontuário Reset">
+                    <button class="btn" style="background:var(--gestao)" onclick="app.resetSenha()">Resetar Senha</button>
+                    <button class="btn" style="background:#444; color:white; margin-top:5px" onclick="app.deletar()">Excluir Usuário</button>
                 </div>
             </div>
 
             <div class="panel">
-                <h3><i class="fa fa-calendar-alt"></i> Cronograma</h3>
+                <h3><i class="fa fa-list-ul"></i> Cronograma</h3>
                 <div id="lista-res" style="max-height: 250px; overflow-y:auto"></div>
                 <hr style="opacity:0.1; margin:20px 0">
                 <canvas id="meuGrafico" height="150"></canvas>
             </div>
 
             <div class="panel">
-                <h3><i class="fa fa-comments"></i> Chat Integrado</h3>
+                <h3><i class="fa fa-comments"></i> Chat Geral</h3>
                 <div id="chat-box"></div>
                 <div style="display:flex; gap:5px">
-                    <input type="text" id="chat-in" placeholder="Escreva...">
+                    <input type="text" id="chat-in" placeholder="Mensagem...">
                     <button onclick="app.sendChat()" style="width:50px; background:var(--prof); border:none; border-radius:8px; cursor:pointer">></button>
                 </div>
                 <h3 style="margin-top:20px">Online</h3>
@@ -143,7 +144,7 @@
             if(cargo==='NTI' && p==='46690' && s==='nti2026') { this.user={nome:'Kelvin', cargo:'NTI', pront:'46690'}; return this.start(); }
             const snap = await db.ref('usuarios/'+p).once('value');
             if(snap.exists() && snap.val().pass === s) { this.user = snap.val(); this.start(); }
-            else { alert("Login Inválido!"); }
+            else { alert("Acesso Negado!"); }
         },
 
         start() {
@@ -163,8 +164,8 @@
                 const box = document.getElementById('chat-box'); box.innerHTML = "";
                 snap.forEach(m => {
                     const d = m.val();
-                    const cor = d.c === 'NTI' ? 'var(--nti)' : 'var(--prof)';
-                    box.innerHTML += `<div class="msg"><b style="color:${cor}">${d.n} (${d.c}):</b><br>${d.t}</div>`;
+                    const color = d.c === 'NTI' ? 'var(--nti)' : 'var(--prof)';
+                    box.innerHTML += `<div class="msg"><b style="color:${color}">${d.n} (${d.c})</b>${d.t}</div>`;
                 });
                 box.scrollTop = box.scrollHeight;
             });
@@ -207,22 +208,22 @@
                 const cargo = u.val().cargo;
                 const nova = cargo === 'Gestão' ? 'gestao2026' : (cargo === 'Secretaria' ? 'secretaria2026' : 'pmspmudar123');
                 db.ref('usuarios/'+p).update({pass: nova});
-                alert("Senha resetada com sucesso!");
+                alert("Senha resetada!");
             }
         },
 
-        deletar() { if(confirm("Apagar permanentemente?")) db.ref('usuarios/'+document.getElementById('reset-p').value).remove(); },
+        deletar() { if(confirm("Excluir usuário?")) db.ref('usuarios/'+document.getElementById('reset-p').value).remove(); },
 
         confirmarCad() {
             const n = document.getElementById('c-n').value, p = document.getElementById('c-p').value, c = document.getElementById('c-c').value;
             const s = c === 'Gestão' ? 'gestao2026' : (c === 'Secretaria' ? 'secretaria2026' : 'pmspmudar123');
             db.ref('usuarios/'+p).set({nome:n, pront:p, cargo:c, pass:s});
-            alert("Cadastrado!");
+            alert("Sucesso!");
         },
 
         initChart() {
             new Chart(document.getElementById('meuGrafico'), {
-                type: 'bar', data: { labels: ['INFO', 'CHROME', 'TV'], datasets: [{ label: 'Reservas', data: [8, 14, 6], backgroundColor: '#00adef' }] }
+                type: 'bar', data: { labels: ['INFO', 'CHROME', 'TV'], datasets: [{ label: 'Reservas', data: [8, 12, 5], backgroundColor: '#00adef' }] }
             });
         }
     };
