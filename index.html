@@ -8,63 +8,61 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
             --prof: #00adef; --gestao: #f1c40f; --secre: #a55eea; --cad: #2ecc71; --nti: #eb4d4b;
-            --bg: #05070a; --panel: #0d1117; --border: rgba(255,255,255,0.08);
+            --dark: #0a0a0c; --panel: #161b22; --border: rgba(255,255,255,0.1);
         }
 
-        body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); color: #e6edf3; overflow-x: hidden; }
+        body, html { margin: 0; padding: 0; font-family: 'Poppins', sans-serif; background: var(--dark); color: white; overflow-x: hidden; }
 
-        /* TELA DE BLOQUEIO GLOBAL (CONTROLE NTI) */
-        #maintenance-screen {
-            display: none; position: fixed; inset: 0; background: var(--bg); z-index: 10000;
-            flex-direction: column; align-items: center; justify-content: center; text-align: center;
+        /* DESIGN DE COLUNAS (O QUE VOCÊ CURTIU) */
+        .login-container { display: flex; width: 100%; height: 100vh; }
+        .sector-column { 
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            padding: 20px; transition: 0.5s ease; border-right: 1px solid var(--border); position: relative;
         }
+        .sector-column:hover { flex: 2; background: rgba(255,255,255,0.03); }
+        .col-prof { color: var(--prof); border-top: 5px solid var(--prof); }
+        .col-gestao { color: var(--gestao); border-top: 5px solid var(--gestao); }
+        .col-secre { color: var(--secre); border-top: 5px solid var(--secre); }
+        .col-cad { color: var(--cad); border-top: 5px solid var(--cad); }
+        .col-nti { color: var(--nti); border-top: 5px solid var(--nti); }
 
-        /* LOGIN SEPARADO (ESTILO COLUNAS MELHORADO) */
-        .login-grid { display: flex; height: 100vh; width: 100%; }
-        .login-col { 
-            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            border-right: 1px solid var(--border); transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative; cursor: pointer;
-        }
-        .login-col:hover { flex: 2; background: rgba(255,255,255,0.02); }
-        .login-col h2 { font-family: 'Orbitron'; font-size: 14px; margin: 15px 0; letter-spacing: 1px; }
-        .form-box { width: 80%; max-width: 200px; opacity: 0; pointer-events: none; transition: 0.3s; }
-        .login-col:hover .form-box { opacity: 1; pointer-events: auto; }
-
-        /* DASHBOARD PRINCIPAL */
-        #dashboard { display: none; padding-top: 70px; }
-        nav { 
-            position: fixed; top: 0; width: 100%; height: 60px; background: rgba(13, 17, 23, 0.95);
-            backdrop-filter: blur(10px); border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-sizing: border-box; z-index: 1000;
-        }
-
-        .main-container { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 300px 1fr 300px; gap: 20px; padding: 20px; }
-        .card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
-
-        /* LISTAS E ITENS */
-        .reserva-item { 
-            background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; margin-bottom: 10px;
-            border-left: 4px solid var(--prof); display: flex; justify-content: space-between; align-items: center;
-        }
-        .status-tag { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
-
-        .btn { 
-            border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: 600; 
-            transition: 0.2s; font-family: 'Poppins'; width: 100%; margin-top: 5px;
-        }
-        .btn-blue { background: var(--prof); color: white; }
-        .btn-red { background: var(--nti); color: white; }
+        .form-auth { width: 100%; max-width: 220px; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .sector-column:hover .form-auth { opacity: 1; pointer-events: auto; }
 
         input, select, textarea { 
-            width: 100%; padding: 10px; margin: 8px 0; border-radius: 6px; border: 1px solid var(--border); 
-            background: #161b22; color: white; box-sizing: border-box;
+            width: 100%; padding: 10px; margin: 5px 0; border-radius: 8px; border: 1px solid var(--border); 
+            background: rgba(0,0,0,0.5); color: white; box-sizing: border-box; 
+        }
+
+        .btn { padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; }
+
+        /* INTERFACE DO SISTEMA */
+        #main-portal { display: none; padding: 20px; margin-top: 60px; }
+        header { 
+            position: fixed; top: 0; width: 100%; height: 60px; background: var(--panel); 
+            display: flex; align-items: center; justify-content: space-between; padding: 0 30px; 
+            border-bottom: 1px solid var(--border); z-index: 1000; box-sizing: border-box;
+        }
+
+        .grid-master { display: grid; grid-template-columns: 320px 1fr 320px; gap: 20px; }
+        .card { background: var(--panel); border-radius: 15px; padding: 20px; border: 1px solid var(--border); }
+        
+        /* MONITORAMENTO NTI */
+        .user-status { display: flex; align-items: center; gap: 10px; padding: 8px; background: rgba(0,0,0,0.2); border-radius: 8px; margin-bottom: 5px; font-size: 12px; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; }
+        .online { background: var(--cad); box-shadow: 0 0 10px var(--cad); }
+        .offline { background: #555; }
+
+        /* BLOQUEIO */
+        #lock-screen { 
+            display: none; position: fixed; inset: 0; background: #000; z-index: 9999; 
+            flex-direction: column; align-items: center; justify-content: center; text-align: center; 
         }
 
         .hidden { display: none !important; }
@@ -72,114 +70,128 @@
 </head>
 <body>
 
-    <div id="maintenance-screen">
-        <i class="fa fa-screwdriver-wrench fa-4x" style="color:var(--nti)"></i>
-        <h1 style="font-family: 'Orbitron'">SISTEMA BLOQUEADO</h1>
-        <p>O Portal NTI está realizando atualizações de segurança.<br>Tente novamente em breve.</p>
+    <div id="lock-screen">
+        <i class="fa fa-lock fa-4x" style="color:var(--nti)"></i>
+        <h1 style="font-family: 'Orbitron';">SISTEMA BLOQUEADO PELO NTI</h1>
+        <p id="lock-msg">Aguarde a liberação do administrador.</p>
     </div>
 
-    <div class="login-grid" id="login-ui">
-        <div class="login-col" style="color:var(--prof)">
-            <i class="fa fa-graduation-cap fa-3x"></i><h2>PROFESSORES</h2>
-            <div class="form-box">
+    <div class="login-container" id="login-ui">
+        <div class="sector-column col-prof">
+            <i class="fa fa-chalkboard-user fa-3x"></i><h2>PROFESSOR</h2>
+            <div class="form-auth">
                 <input type="number" id="p-p" placeholder="Prontuário">
                 <input type="password" id="p-s" placeholder="Senha">
-                <button class="btn btn-blue" onclick="app.login('p', 'Professor')">Acessar</button>
+                <button class="btn" style="background:var(--prof); color:white" onclick="app.login('p', 'Professor')">Entrar</button>
             </div>
         </div>
-        <div class="login-col" style="color:var(--gestao)">
-            <i class="fa fa-shield-user fa-3x"></i><h2>GESTÃO</h2>
-            <div class="form-box">
+        <div class="sector-column col-gestao">
+            <i class="fa fa-users-gear fa-3x"></i><h2>GESTÃO</h2>
+            <div class="form-auth">
                 <input type="number" id="g-p" placeholder="Prontuário">
                 <input type="password" id="g-s" placeholder="Senha">
-                <button class="btn" style="background:var(--gestao)" onclick="app.login('g', 'Gestão')">Acessar</button>
+                <button class="btn" style="background:var(--gestao); color:black" onclick="app.login('g', 'Gestão')">Entrar</button>
             </div>
         </div>
-        <div class="login-col" style="color:var(--secre)">
-            <i class="fa fa-file-signature fa-3x"></i><h2>SECRETARIA</h2>
-            <div class="form-box">
+        <div class="sector-column col-secre">
+            <i class="fa fa-building-columns fa-3x"></i><h2>SECRETARIA</h2>
+            <div class="form-auth">
                 <input type="number" id="s-p" placeholder="Prontuário">
                 <input type="password" id="s-s" placeholder="Senha">
-                <button class="btn" style="background:var(--secre); color:white" onclick="app.login('s', 'Secretaria')">Acessar</button>
+                <button class="btn" style="background:var(--secre); color:white" onclick="app.login('s', 'Secretaria')">Entrar</button>
             </div>
         </div>
-        <div class="login-col" style="color:var(--cad)">
+        <div class="sector-column col-cad">
             <i class="fa fa-user-plus fa-3x"></i><h2>CADASTRO</h2>
-            <div class="form-box">
+            <div class="form-auth">
                 <input type="text" id="c-n" placeholder="Nome">
                 <input type="number" id="c-p" placeholder="Prontuário">
-                <select id="c-c"><option>Professor</option><option>Secretaria</option><option>Gestão</option></select>
-                <button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Criar Conta</button>
+                <select id="c-c">
+                    <option>Professor</option>
+                    <option>Secretaria</option>
+                    <option>Gestão</option>
+                </select>
+                <button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Registrar</button>
             </div>
         </div>
-        <div class="login-col" style="color:var(--nti)">
-            <i class="fa fa-microchip fa-3x"></i><h2>PORTAL NTI</h2>
-            <div class="form-box">
-                <input type="number" id="n-p" placeholder="ID NTI">
-                <input type="password" id="n-s" placeholder="Senha Master">
-                <button class="btn btn-red" onclick="app.login('n', 'TI')">Admin</button>
+        <div class="sector-column col-nti">
+            <i class="fa fa-terminal fa-3x"></i><h2>PORTAL NTI</h2>
+            <div class="form-auth">
+                <input type="number" id="n-p" placeholder="ID MASTER">
+                <input type="password" id="n-s" placeholder="Senha NTI">
+                <button class="btn" style="background:var(--nti); color:white" onclick="app.login('n', 'TI')">Admin</button>
             </div>
         </div>
     </div>
 
-    <div id="dashboard">
-        <nav>
-            <div style="font-family:'Orbitron'; font-weight:bold; color:var(--prof)">NTI_CONTROL v2.0</div>
-            <div id="user-tag" style="font-size:12px; opacity:0.7"></div>
-            <button class="btn btn-red" style="width:auto; padding:5px 15px" onclick="location.reload()">LOGOUT</button>
-        </nav>
+    <header id="main-nav" class="hidden">
+        <div style="font-family:'Orbitron'; color:var(--prof)">SISTEMA_CHÁCARA v3.0</div>
+        <div id="user-info" style="font-size: 12px"></div>
+        <button class="btn" style="width:auto; background:var(--nti); font-size:10px" onclick="location.reload()">SAIR</button>
+    </header>
 
-        <div class="main-container">
+    <div id="main-portal">
+        <div class="grid-master">
+            
             <div class="card">
-                <h3>Ações do Setor</h3>
-                <div id="prof-actions" class="hidden">
-                    <label>Novo Agendamento:</label>
-                    <select id="res-item">
-                        <option>LABORATÓRIO INFO</option>
-                        <option>CARRINHO CHROME 01</option>
-                        <option>TV 4K - SALA 05</option>
-                        <option>PROJETOR MÓVEL</option>
+                <div id="panel-reserva">
+                    <h3><i class="fa fa-calendar-plus"></i> Reservar</h3>
+                    <select id="res-equip">
+                        <option>SALA DE INFORMÁTICA</option>
+                        <option>TV 01 (SAMSUNG)</option>
+                        <option>TV 02 (LG)</option>
+                        <option>CARRINHO CHROMEBOOKS</option>
                     </select>
                     <input type="datetime-local" id="res-data">
-                    <button class="btn btn-blue" onclick="app.reservar()">RESERVAR AGORA</button>
+                    <button class="btn" style="background:var(--prof); color:white" onclick="app.reservar()">RESERVAR AGORA</button>
                 </div>
 
-                <div id="nti-actions" class="hidden">
-                    <button class="btn btn-red" onclick="app.toggleLock()">BLOQUEAR SISTEMA</button>
-                    <hr style="margin:15px 0; opacity:0.1">
-                    <label>Reset de Senha:</label>
-                    <input type="number" id="reset-p" placeholder="Prontuário">
-                    <button class="btn btn-blue" onclick="app.resetSenha()">RESETAR</button>
+                <div id="panel-nti-only" class="hidden" style="margin-top:20px; border-top:1px solid var(--border); padding-top:20px">
+                    <h3 style="color:var(--nti)">Controle NTI</h3>
+                    <button class="btn" style="background:var(--nti); color:white; margin-bottom:10px" onclick="app.toggleSite()">BLOQUEAR/DESBLOQUEAR SITE</button>
+                    <input type="number" id="reset-p" placeholder="Prontuário para Reset">
+                    <button class="btn" style="background:var(--prof); color:white" onclick="app.resetSenha()">Resetar Senha</button>
                 </div>
             </div>
 
             <div class="card">
-                <h3 id="main-title">Cronograma de Uso</h3>
-                <div id="content-list"></div>
-                <div id="nti-charts" class="hidden">
-                    <canvas id="usageChart"></canvas>
+                <h3><i class="fa fa-clock-rotate-left"></i> Cronograma em Tempo Real</h3>
+                <div id="cronograma-list"></div>
+                
+                <div id="nti-dashboard" class="hidden" style="margin-top:30px">
+                    <h3><i class="fa fa-chart-line"></i> Dashboard de Uso</h3>
+                    <canvas id="meuGrafico"></canvas>
                 </div>
             </div>
 
             <div class="card">
-                <h3>Suporte NTI</h3>
-                <div id="ticket-area">
-                    <select id="ch-urg">
-                        <option value="Baixa">🟢 Urgência Baixa</option>
-                        <option value="Média">🟡 Urgência Média</option>
-                        <option value="Alta">🔴 Urgência Alta</option>
-                    </select>
-                    <textarea id="ch-txt" rows="3" placeholder="Qual o problema?"></textarea>
-                    <button class="btn btn-red" onclick="app.abrirChamado()">ABRIR CHAMADO</button>
+                <h3><i class="fa fa-headset"></i> Suporte e Status</h3>
+                
+                <div id="monitoramento-real">
+                    <h4 style="font-size:11px; opacity:0.6">USUÁRIOS NO SITE:</h4>
+                    <div id="lista-monitor"></div>
                 </div>
+
                 <hr style="margin:20px 0; opacity:0.1">
-                <h4>Avisos Gerais</h4>
-                <div id="mural-avisos" style="font-size:12px; color:var(--gestao)"></div>
+
+                <div id="chamados-area">
+                    <h4>Chamados NTI</h4>
+                    <select id="ch-urg">
+                        <option value="Baixa">Urgência: Baixa</option>
+                        <option value="Média">Urgência: Média</option>
+                        <option value="Alta">Urgência: Alta</option>
+                    </select>
+                    <textarea id="ch-msg" placeholder="Descreva o problema..."></textarea>
+                    <button class="btn" style="background:var(--nti); color:white" onclick="app.abrirChamado()">ABRIR CHAMADO</button>
+                    <div id="lista-chamados" style="margin-top:15px"></div>
+                </div>
             </div>
+
         </div>
     </div>
 
 <script>
+    // CONFIGURAÇÃO FIREBASE
     const firebaseConfig = { databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
@@ -191,109 +203,127 @@
             const p = document.getElementById(pre+'-p').value;
             const s = document.getElementById(pre+'-s').value;
 
-            // Master Login
+            // Login NTI Master
             if(cargo === 'TI' && p === '46690' && s === 'nti2026') {
                 this.user = {nome: 'Kelvin Master', cargo: 'TI', pront: '46690'};
-                return this.init();
+                return this.iniciarSistema();
             }
 
             const snap = await db.ref('usuarios/'+p).once('value');
             if(snap.exists() && snap.val().pass === s) {
-                this.user = snap.val();
-                this.init();
-            } else { alert("Acesso negado."); }
+                const u = snap.val();
+                if(u.cargo === cargo || cargo === 'Professor') {
+                    this.user = u;
+                    this.iniciarSistema();
+                } else { alert("Cargo não corresponde a este menu!"); }
+            } else { alert("Credenciais incorretas!"); }
         },
 
-        init() {
-            // Checar Bloqueio NTI
-            db.ref('sistema_bloqueado').on('value', snap => {
-                if(snap.val() === true && this.user.cargo !== 'TI') {
-                    document.body.innerHTML = document.getElementById('maintenance-screen').innerHTML;
-                    document.body.style.display = 'flex';
+        iniciarSistema() {
+            // Monitor de Trava Global
+            db.ref('trava_site').on('value', snap => {
+                if(snap.val() && this.user.cargo !== 'TI') {
+                    document.getElementById('lock-screen').style.display = 'flex';
+                } else {
+                    document.getElementById('lock-screen').style.display = 'none';
                 }
             });
 
             document.getElementById('login-ui').classList.add('hidden');
-            document.getElementById('dashboard').style.display = 'block';
-            document.getElementById('user-tag').innerText = `${this.user.nome} (${this.user.cargo})`;
+            document.getElementById('main-nav').classList.remove('hidden');
+            document.getElementById('main-portal').style.display = 'block';
+            document.getElementById('user-info').innerText = `${this.user.nome} | ${this.user.cargo}`;
 
-            if(this.user.cargo === 'Professor') document.getElementById('prof-actions').classList.remove('hidden');
+            // Ajuste de permissões visuais
             if(this.user.cargo === 'TI') {
-                document.getElementById('nti-actions').classList.remove('hidden');
-                document.getElementById('nti-charts').classList.remove('hidden');
-                this.loadCharts();
+                document.getElementById('panel-nti-only').classList.remove('hidden');
+                document.getElementById('nti-dashboard').classList.remove('hidden');
+                this.gerarGrafico();
             }
-            this.sync();
+
+            this.marcarOnline();
+            this.sincronizar();
         },
 
-        sync() {
-            // Sincroniza Reservas (Cronograma)
+        marcarOnline() {
+            const statusRef = db.ref('monitoramento/' + this.user.pront);
+            statusRef.set({ nome: this.user.nome, cargo: this.user.cargo, status: 'online', time: Date.now() });
+            statusRef.onDisconnect().set({ nome: this.user.nome, cargo: this.user.cargo, status: 'offline', time: Date.now() });
+        },
+
+        sincronizar() {
+            // Cronograma
             db.ref('reservas').on('value', snap => {
-                const box = document.getElementById('content-list');
-                box.innerHTML = "";
+                const box = document.getElementById('cronograma-list'); box.innerHTML = "";
                 snap.forEach(res => {
                     const r = res.val();
                     box.innerHTML += `
-                        <div class="reserva-item">
-                            <div>
-                                <b>${r.item}</b><br>
-                                <small>${new Date(r.data).toLocaleString()} | Prof. ${r.user}</small>
-                            </div>
-                            ${this.user.cargo === 'TI' || this.user.nome === r.user ? 
-                            `<button class="btn btn-red" style="width:auto; padding:5px" onclick="app.darBaixa('${res.key}')">BAIXA</button>` : ''}
+                        <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px; margin-bottom:10px; border-left:4px solid var(--prof)">
+                            <b>${r.equip}</b><br><small>${new Date(r.data).toLocaleString()} - Por: ${r.user}</small>
+                            ${this.user.cargo === 'TI' || this.user.cargo === 'Gestão' ? 
+                            `<button onclick="db.ref('reservas/${res.key}').remove()" style="float:right; background:none; color:var(--nti); border:none; cursor:pointer">Dar Baixa</button>` : ''}
                         </div>`;
                 });
             });
 
-            // Sincroniza Avisos
-            db.ref('avisos').on('value', snap => {
-                const mural = document.getElementById('mural-avisos');
-                mural.innerHTML = "";
-                snap.forEach(av => { mural.innerHTML += `<p>• ${av.val().txt}</p>`; });
+            // Chamados (NTI vê todos, outros veem os seus)
+            db.ref('chamados').on('value', snap => {
+                const box = document.getElementById('lista-chamados'); box.innerHTML = "";
+                snap.forEach(ch => {
+                    const c = ch.val();
+                    if(this.user.cargo === 'TI' || c.user === this.user.nome) {
+                        box.innerHTML += `<div style="font-size:11px; padding:5px; border-bottom:1px solid #333">
+                            <b style="color:var(--nti)">[${c.urgencia}]</b> ${c.msg} <br> <small>Status: ${c.status}</small>
+                            ${this.user.cargo === 'TI' ? `<button onclick="db.ref('chamados/${ch.key}').remove()">Encerrar</button>` : ''}
+                        </div>`;
+                    }
+                });
+            });
+
+            // Monitoramento Real-Time (Apenas TI e Gestão)
+            db.ref('monitoramento').on('value', snap => {
+                const box = document.getElementById('lista-monitor'); box.innerHTML = "";
+                snap.forEach(u => {
+                    const user = u.val();
+                    const isOnline = (Date.now() - user.time) < 10000; // 10 seg de tolerância
+                    box.innerHTML += `<div class="user-status">
+                        <div class="dot ${isOnline ? 'online' : 'offline'}"></div>
+                        ${user.nome} (${user.cargo})
+                    </div>`;
+                });
             });
         },
 
         async reservar() {
-            const item = document.getElementById('res-item').value;
+            const equip = document.getElementById('res-equip').value;
             const data = document.getElementById('res-data').value;
             if(!data) return alert("Escolha data e hora!");
-
-            // Lógica Simples de Conflito
-            const snap = await db.ref('reservas').once('value');
-            let conflito = false;
-            snap.forEach(r => { if(r.val().item === item && r.val().data === data) conflito = true; });
-
-            if(conflito) return alert("ERRO: Este item já está reservado neste horário!");
-
-            await db.ref('reservas').push({item, data, user: this.user.nome});
-            alert("Reservado com sucesso!");
+            await db.ref('reservas').push({ equip, data, user: this.user.nome });
+            alert("Reservado!");
         },
 
         async abrirChamado() {
-            const txt = document.getElementById('ch-txt').value;
+            const msg = document.getElementById('ch-msg').value;
             const urg = document.getElementById('ch-urg').value;
-            if(!txt) return;
-            await db.ref('chamados').push({user: this.user.nome, msg: txt, urgencia: urg, data: Date.now()});
-            alert("Chamado aberto! O NTI foi notificado.");
-            document.getElementById('ch-txt').value = "";
+            if(!msg) return;
+            await db.ref('chamados').push({ user: this.user.nome, msg, urgencia: urg, status: 'Aberto' });
+            alert("Chamado enviado!");
+            document.getElementById('ch-msg').value = "";
         },
 
-        // FUNÇÕES EXCLUSIVAS NTI
-        async toggleLock() {
-            const snap = await db.ref('sistema_bloqueado').once('value');
-            const status = snap.val() || false;
-            await db.ref('sistema_bloqueado').set(!status);
-            alert("Status do sistema alterado!");
+        // FUNÇÕES NTI
+        async toggleSite() {
+            const snap = await db.ref('trava_site').once('value');
+            db.ref('trava_site').set(!snap.val());
         },
 
         async resetSenha() {
             const p = document.getElementById('reset-p').value;
-            const uSnap = await db.ref('usuarios/'+p).once('value');
-            if(uSnap.exists()) {
-                const c = uSnap.val().cargo;
-                let s = c==='Gestão'?'gestao2026':(c==='Secretaria'?'secretaria2026':'pmspmudar123');
-                await db.ref('usuarios/'+p).update({pass: s});
-                alert("Senha resetada para: " + s);
+            const u = await db.ref('usuarios/'+p).once('value');
+            if(u.exists()) {
+                let s = u.val().cargo === 'Gestão' ? 'gestao2026' : (u.val().cargo === 'Secretaria' ? 'secretaria2026' : 'pmspmudar123');
+                db.ref('usuarios/'+p).update({ pass: s });
+                alert("Senha resetada para o padrão!");
             }
         },
 
@@ -301,26 +331,22 @@
             const n = document.getElementById('c-n').value;
             const p = document.getElementById('c-p').value;
             const c = document.getElementById('c-c').value;
-            let s = c==='Gestão'?'gestao2026':(c==='Secretaria'?'secretaria2026':'pmspmudar123');
-            await db.ref('usuarios/'+p).set({nome:n, pront:p, cargo:c, pass:s});
+            let s = c === 'Gestão' ? 'gestao2026' : (c === 'Secretaria' ? 'secretaria2026' : 'pmspmudar123');
+            await db.ref('usuarios/'+p).set({ nome: n, pront: p, cargo: c, pass: s });
             alert("Cadastrado com sucesso!");
         },
 
-        darBaixa(id) { if(confirm("Deseja finalizar este uso e liberar o equipamento?")) db.ref('reservas/'+id).remove(); },
-
-        loadCharts() {
-            const ctx = document.getElementById('usageChart').getContext('2d');
+        gerarGrafico() {
+            const ctx = document.getElementById('meuGrafico').getContext('2d');
             new Chart(ctx, {
-                type: 'bar',
+                type: 'doughnut',
                 data: {
-                    labels: ['Info', 'Chrome', 'TV 01', 'TV 02'],
+                    labels: ['Info', 'TVs', 'Chromebooks'],
                     datasets: [{
-                        label: 'Uso Mensal',
-                        data: [15, 25, 10, 5],
-                        backgroundColor: '#00adef'
+                        data: [12, 19, 7],
+                        backgroundColor: ['#00adef', '#f1c40f', '#eb4d4b']
                     }]
-                },
-                options: { responsive: true, scales: { y: { beginAtZero: true } } }
+                }
             });
         }
     };
