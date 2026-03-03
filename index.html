@@ -3,148 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA NTI | PORTAL DE ACESSO</title>
+    <title>SISTEMA NTI | FULL CONTROL</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
             --prof: #00adef; --gestao: #f1c40f; --secre: #a55eea; --cad: #2ecc71; --nti: #eb4d4b;
-            --dark: #0a0a0c;
+            --dark: #0a0a0c; --card: #161b22;
         }
 
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            font-family: 'Poppins', sans-serif; background: var(--dark);
-            overflow: hidden;
-        }
-
-        /* 5 COLUNAS TOTAIS */
+        body, html { margin: 0; padding: 0; font-family: 'Poppins', sans-serif; background: var(--dark); color: white; overflow-x: hidden; }
+        
+        /* REAPROVEITANDO SEU DESIGN DE COLUNAS PARA O LOGIN */
         .login-container { display: flex; width: 100%; height: 100vh; }
-
-        .sector-column {
-            flex: 1; display: flex; flex-direction: column; align-items: center;
-            justify-content: center; padding: 20px; transition: all 0.5s ease;
-            position: relative; border-right: 1px solid rgba(255,255,255,0.05);
-        }
-
+        .sector-column { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; transition: 0.5s; border-right: 1px solid rgba(255,255,255,0.05); }
         .sector-column:hover { flex: 1.8; background: rgba(255,255,255,0.03); }
-
-        .icon-box { font-size: 45px; margin-bottom: 15px; text-shadow: 0 0 15px currentColor; }
-        h2 { font-family: 'Orbitron', sans-serif; font-size: 1rem; margin-bottom: 25px; letter-spacing: 1px; text-align: center; }
-
-        .login-form { width: 100%; max-width: 220px; }
-
-        input, select {
-            width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.6);
-            color: white; box-sizing: border-box; outline: none; font-size: 13px;
-        }
-
-        .btn-access {
-            width: 100%; padding: 12px; border: none; border-radius: 8px;
-            cursor: pointer; font-weight: 700; font-family: 'Orbitron', sans-serif;
-            text-transform: uppercase; transition: 0.3s; font-size: 12px;
-        }
-
-        /* CORES POR COLUNA */
         .col-prof { color: var(--prof); border-top: 6px solid var(--prof); }
-        .col-prof .btn-access { background: var(--prof); color: white; }
         .col-gestao { color: var(--gestao); border-top: 6px solid var(--gestao); }
-        .col-gestao .btn-access { background: var(--gestao); color: black; }
         .col-secre { color: var(--secre); border-top: 6px solid var(--secre); }
-        .col-secre .btn-access { background: var(--secre); color: white; }
         .col-cad { color: var(--cad); border-top: 6px solid var(--cad); }
-        .col-cad .btn-access { background: var(--cad); color: white; }
         .col-nti { color: var(--nti); border-top: 6px solid var(--nti); }
-        .col-nti .btn-access { background: var(--nti); color: white; }
 
-        /* TELA DE TROCA DE SENHA (MODAL) */
-        #change-pass-screen {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95);
-            z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(10px);
-        }
-        .change-card { background: #1a1a1c; padding: 40px; border-radius: 20px; border: 1px solid var(--prof); text-align: center; width: 300px; }
+        /* INTERFACE DO SISTEMA (PÓS LOGIN) */
+        #main-system { display: none; min-height: 100vh; padding: 20px; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background: var(--card); border-radius: 15px; margin-bottom: 20px; border-left: 5px solid var(--prof); }
+        
+        .grid-layout { display: grid; grid-template-columns: 1fr 350px; gap: 20px; }
+        .panel { background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
+        
+        /* ESTILO CARDS EQUIPAMENTOS */
+        .equip-card { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 4px solid var(--prof); display: flex; justify-content: space-between; align-items: center; }
+        
+        /* CHAMADOS */
+        .ticket { padding: 10px; border-radius: 8px; margin-bottom: 8px; font-size: 13px; }
+        .urg-alta { border-left: 5px solid var(--nti); background: rgba(235, 77, 75, 0.1); }
+        .urg-media { border-left: 5px solid var(--gestao); background: rgba(241, 196, 15, 0.1); }
 
-        #app-screen { display: none; position: fixed; inset: 0; background: var(--dark); z-index: 100; padding: 50px; text-align: center; }
-        .hidden { display: none; }
+        input, select, textarea { width: 100%; padding: 10px; margin: 5px 0; border-radius: 8px; border: 1px solid #30363d; background: #0d1117; color: white; }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.3s; }
+        .btn-prof { background: var(--prof); color: white; }
+        .btn-nti { background: var(--nti); color: white; }
+
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
     <div class="login-container" id="login-screen">
         <div class="sector-column col-prof">
-            <div class="icon-box"><i class="fa fa-chalkboard-user"></i></div>
-            <h2>PROFESSORES</h2>
-            <div class="login-form">
-                <input type="number" id="p-pront" placeholder="PRONTUÁRIO">
-                <input type="password" id="p-pass" placeholder="SENHA">
-                <button class="btn-access" onclick="app.login('p', 'Professor')">Entrar</button>
-            </div>
+            <i class="fa fa-chalkboard-user fa-3x"></i><h2>PROFESSORES</h2>
+            <input type="number" id="p-pront" placeholder="PRONTUÁRIO">
+            <input type="password" id="p-pass" placeholder="SENHA">
+            <button class="btn" style="background:var(--prof)" onclick="app.login('p', 'Professor')">Entrar</button>
         </div>
-
         <div class="sector-column col-gestao">
-            <div class="icon-box"><i class="fa fa-users-viewfinder"></i></div>
-            <h2>GESTÃO</h2>
-            <div class="login-form">
-                <input type="number" id="g-pront" placeholder="PRONTUÁRIO">
-                <input type="password" id="g-pass" placeholder="SENHA">
-                <button class="btn-access" onclick="app.login('g', 'Gestão')">Entrar</button>
-            </div>
+            <i class="fa fa-users-viewfinder fa-3x"></i><h2>GESTÃO</h2>
+            <input type="number" id="g-pront" placeholder="PRONTUÁRIO">
+            <input type="password" id="g-pass" placeholder="SENHA">
+            <button class="btn" style="background:var(--gestao)" onclick="app.login('g', 'Gestão')">Entrar</button>
         </div>
-
         <div class="sector-column col-secre">
-            <div class="icon-box"><i class="fa fa-building-columns"></i></div>
-            <h2>SECRETARIA</h2>
-            <div class="login-form">
-                <input type="number" id="s-pront" placeholder="PRONTUÁRIO">
-                <input type="password" id="s-pass" placeholder="SENHA">
-                <button class="btn-access" onclick="app.login('s', 'Secretaria')">Entrar</button>
-            </div>
+            <i class="fa fa-building-columns fa-3x"></i><h2>SECRETARIA</h2>
+            <input type="number" id="s-pront" placeholder="PRONTUÁRIO">
+            <input type="password" id="s-pass" placeholder="SENHA">
+            <button class="btn" style="background:var(--secre)" onclick="app.login('s', 'Secretaria')">Entrar</button>
         </div>
-
         <div class="sector-column col-cad">
-            <div class="icon-box"><i class="fa fa-user-plus"></i></div>
-            <h2>NOVO CADASTRO</h2>
-            <div class="login-form">
-                <input type="text" id="c-nome" placeholder="NOME COMPLETO">
-                <input type="number" id="c-pront" placeholder="PRONTUÁRIO">
-                <select id="c-cargo">
-                    <option value="Professor">Professor</option>
-                    <option value="Secretaria">Secretaria</option>
-                    <option value="Gestão">Gestão</option>
-                </select>
-                <button class="btn-access" onclick="app.confirmarCad()">Cadastrar</button>
-            </div>
+            <i class="fa fa-user-plus fa-3x"></i><h2>CADASTRO</h2>
+            <input type="text" id="c-nome" placeholder="NOME">
+            <input type="number" id="c-pront" placeholder="PRONTUÁRIO">
+            <select id="c-cargo">
+                <option value="Professor">Professor</option>
+                <option value="Secretaria">Secretaria</option>
+                <option value="Gestão">Gestão</option>
+            </select>
+            <button class="btn" style="background:var(--cad)" onclick="app.confirmarCad()">Cadastrar</button>
         </div>
-
         <div class="sector-column col-nti">
-            <div class="icon-box"><i class="fa fa-terminal"></i></div>
-            <h2>PORTAL NTI</h2>
-            <div class="login-form">
-                <input type="number" id="n-pront" placeholder="ID MASTER">
-                <input type="password" id="n-pass" placeholder="SENHA">
-                <button class="btn-access" onclick="app.login('n', 'TI')">Configurar</button>
+            <i class="fa fa-terminal fa-3x"></i><h2>PORTAL NTI</h2>
+            <input type="number" id="n-pront" placeholder="ID MASTER">
+            <input type="password" id="n-pass" placeholder="SENHA">
+            <button class="btn" style="background:var(--nti)" onclick="app.login('n', 'TI')">Configurar</button>
+        </div>
+    </div>
+
+    <div id="main-system">
+        <div class="top-bar" id="status-bar">
+            <div><b id="user-display"></b> | <span id="cargo-display"></span></div>
+            <button class="btn-nti" style="padding:5px 15px" onclick="location.reload()">SAIR</button>
+        </div>
+
+        <div class="grid-layout">
+            <div class="panel">
+                <div id="view-professor" class="hidden">
+                    <h3><i class="fa fa-calendar-check"></i> Reservar Recurso</h3>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px">
+                        <select id="res-item">
+                            <option>SALA DE INFORMÁTICA</option>
+                            <option>TV 01</option>
+                            <option>TV 02</option>
+                            <option>CARRINHO CHROMEBOOKS</option>
+                        </select>
+                        <input type="datetime-local" id="res-data">
+                    </div>
+                    <button class="btn btn-prof" style="width:100%; margin-top:10px" onclick="app.fazerReserva()">CONFIRMAR RESERVA</button>
+                    
+                    <h3 style="margin-top:30px">Minhas Atividades / Cronograma</h3>
+                    <div id="lista-reservas"></div>
+                </div>
+
+                <div id="view-nti" class="hidden">
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px">
+                        <div>
+                            <h3>Chamados em Aberto</h3>
+                            <div id="nti-chamados"></div>
+                        </div>
+                        <div>
+                            <h3>Gestão de Senhas (Reset)</h3>
+                            <input type="number" id="reset-pront" placeholder="Prontuário do Usuário">
+                            <button class="btn btn-prof" onclick="app.resetSenha()">RESET PARA PADRÃO</button>
+                            
+                            <h3 style="margin-top:20px">Avisos do Sistema</h3>
+                            <textarea id="nti-aviso" placeholder="Mensagem global..."></textarea>
+                            <button class="btn btn-nti" onclick="app.enviarAviso()">PUBLICAR AVISO</button>
+                        </div>
+                    </div>
+                    <div style="margin-top:30px">
+                        <h3>Dashboard de Desempenho</h3>
+                        <canvas id="ntiChart" height="100"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div id="side-chamado">
+                    <h4><i class="fa fa-headset"></i> Suporte NTI</h4>
+                    <p style="font-size:10px">Relate problemas técnicos aqui</p>
+                    <select id="ch-urgencia">
+                        <option value="Baixa">Urgência: Baixa</option>
+                        <option value="Média">Urgência: Média</option>
+                        <option value="Alta">Urgência: Alta</option>
+                    </select>
+                    <textarea id="ch-msg" placeholder="Descreva o problema..."></textarea>
+                    <button class="btn btn-nti" style="width:100%" onclick="app.abrirChamado()">ABRIR CHAMADO</button>
+                </div>
+
+                <div id="side-monitor" class="hidden" style="margin-top:20px">
+                    <h4><i class="fa fa-eye"></i> Monitoramento</h4>
+                    <div id="monitor-lista" style="font-size:11px"></div>
+                </div>
             </div>
         </div>
-    </div>
-
-    <div id="change-pass-screen">
-        <div class="change-card">
-            <h3 style="color:var(--prof)">TROCA DE SENHA</h3>
-            <p style="font-size: 11px; opacity: 0.7;">Você está usando uma senha padrão. Crie uma nova senha pessoal para continuar.</p>
-            <input type="password" id="new-pass" placeholder="Nova Senha">
-            <button class="btn-access" style="background:var(--prof); color:white" onclick="app.atualizarSenha()">Salvar Nova Senha</button>
-        </div>
-    </div>
-
-    <div id="app-screen">
-        <h1 id="user-welcome" style="font-family: 'Orbitron'; color:var(--prof)"></h1>
-        <p id="user-info"></p>
-        <button onclick="location.reload()" style="background:none; border:1px solid white; color:white; padding:10px; cursor:pointer">Sair</button>
     </div>
 
 <script>
@@ -153,56 +167,122 @@
     const db = firebase.database();
 
     const app = {
-        tempUser: null,
-        senhasPadrao: ["pmspmudar123", "gestao2026", "secretaria2026"],
+        user: null,
 
         async login(pre, cargo) {
             const p = document.getElementById(pre + '-pront').value;
             const s = document.getElementById(pre + '-pass').value;
 
-            if(cargo === 'TI' && p === '46690' && s === 'nti2026') return this.showPortal('Kelvin Master', 'TI');
+            if(cargo === 'TI' && p === '46690' && s === 'nti2026') {
+                this.user = {nome: 'Kelvin Master', cargo: 'TI', pront: '46690'};
+                return this.start();
+            }
 
             const snap = await db.ref('usuarios/' + p).once('value');
             if(snap.exists() && snap.val().pass === s) {
-                const u = snap.val();
-                if(this.senhasPadrao.includes(s)) {
-                    this.tempUser = u;
-                    document.getElementById('change-pass-screen').style.display = 'flex';
-                } else {
-                    this.showPortal(u.nome, u.cargo);
-                }
-            } else { alert("Credenciais Inválidas!"); }
+                this.user = snap.val();
+                this.start();
+            } else { alert("Dados incorretos!"); }
         },
 
-        async atualizarSenha() {
-            const nova = document.getElementById('new-pass').value;
-            if(nova.length < 4) return alert("Senha muito curta!");
-            await db.ref('usuarios/' + this.tempUser.pront).update({ pass: nova });
-            alert("Senha atualizada! Faça login novamente.");
-            location.reload();
+        start() {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('main-system').style.display = 'block';
+            document.getElementById('user-display').innerText = this.user.nome;
+            document.getElementById('cargo-display').innerText = this.user.cargo;
+            
+            // Lógica de Visibilidade por Cargo
+            if(this.user.cargo === 'Professor') {
+                document.getElementById('view-professor').classList.remove('hidden');
+            } else if(this.user.cargo === 'TI') {
+                document.getElementById('view-nti').classList.remove('hidden');
+                this.initChart();
+            }
+            
+            if(this.user.cargo !== 'Professor') {
+                document.getElementById('side-monitor').classList.remove('hidden');
+            }
+
+            this.syncData();
+        },
+
+        syncData() {
+            // Sincronizar Reservas
+            db.ref('reservas').on('value', snap => {
+                const list = document.getElementById('lista-reservas');
+                const monitor = document.getElementById('monitor-lista');
+                list.innerHTML = ""; monitor.innerHTML = "";
+                
+                snap.forEach(res => {
+                    const d = res.val();
+                    const html = `<div class="equip-card">
+                        <div><b>${d.item}</b><br><small>${new Date(d.data).toLocaleString()}</small><br>Por: ${d.user}</div>
+                        ${this.user.nome === d.user || this.user.cargo === 'TI' ? `<button onclick="db.ref('reservas/${res.key}').remove()" class="btn-nti" style="padding:2px 8px">DAR BAIXA</button>` : ''}
+                    </div>`;
+                    list.innerHTML += html;
+                    monitor.innerHTML += `<div style="margin-bottom:10px; border-bottom:1px solid #333">${d.item} -> ${d.user}</div>`;
+                });
+            });
+
+            // Sincronizar Chamados (Somente NTI vê todos)
+            db.ref('chamados').on('value', snap => {
+                const ntiBox = document.getElementById('nti-chamados');
+                if(ntiBox) {
+                    ntiBox.innerHTML = "";
+                    snap.forEach(ch => {
+                        const c = ch.val();
+                        ntiBox.innerHTML += `<div class="ticket urg-${c.urgencia.toLowerCase()}">
+                            <b>${c.user}</b> [${c.urgencia}]<br>${c.msg} 
+                            <button onclick="db.ref('chamados/${ch.key}').remove()" style="float:right">OK</button>
+                        </div>`;
+                    });
+                }
+            });
+        },
+
+        async fazerReserva() {
+            const item = document.getElementById('res-item').value;
+            const data = document.getElementById('res-data').value;
+            if(!data) return alert("Selecione data e hora!");
+            await db.ref('reservas').push({item, data, user: this.user.nome});
+            alert("Reserva confirmada no cronograma!");
+        },
+
+        async abrirChamado() {
+            const urg = document.getElementById('ch-urgencia').value;
+            const msg = document.getElementById('ch-msg').value;
+            if(!msg) return alert("Descreva o problema!");
+            await db.ref('chamados').push({user: this.user.nome, urgencia: urg, msg: msg, status: 'Aberto'});
+            alert("Chamado enviado ao NTI!");
+            document.getElementById('ch-msg').value = "";
+        },
+
+        async resetSenha() {
+            const p = document.getElementById('reset-pront').value;
+            if(!p) return;
+            const snap = await db.ref('usuarios/'+p).once('value');
+            if(snap.exists()){
+                const cargo = snap.val().cargo;
+                let padrao = cargo === 'Gestão' ? 'gestao2026' : (cargo === 'Secretaria' ? 'secretaria2026' : 'pmspmudar123');
+                await db.ref('usuarios/'+p).update({pass: padrao});
+                alert("Senha resetada para: " + padrao);
+            }
         },
 
         async confirmarCad() {
-            const n = document.getElementById('c-nome').value;
-            const p = document.getElementById('c-pront').value;
-            const c = document.getElementById('c-cargo').value;
-            
-            let senhaP = "pmspmudar123";
-            if(c === "Gestão") senhaP = "gestao2026";
-            if(c === "Secretaria") senhaP = "secretaria2026";
-
-            if(!n || !p) return alert("Preencha tudo!");
-            
-            await db.ref('usuarios/' + p).set({ nome: n, pront: p, cargo: c, pass: senhaP });
-            alert(`Cadastrado! Senha padrão para ${c}: ${senhaP}`);
-            location.reload();
+            const n = document.getElementById('c-nome').value, p = document.getElementById('c-pront').value, c = document.getElementById('c-cargo').value;
+            let s = c === 'Gestão' ? 'gestao2026' : (c === 'Secretaria' ? 'secretaria2026' : 'pmspmudar123');
+            await db.ref('usuarios/'+p).set({nome:n, pront:p, cargo:c, pass:s});
+            alert("Cadastrado com senha padrão!");
         },
 
-        showPortal(nome, cargo) {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('app-screen').style.display = 'block';
-            document.getElementById('user-welcome').innerText = cargo.toUpperCase();
-            document.getElementById('user-info').innerText = "Bem-vindo, " + nome;
+        initChart() {
+            const ctx = document.getElementById('ntiChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: { labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex'], datasets: [{ label: 'Chamados Resolvidos', data: [12, 19, 3, 5, 2], borderColor: '#eb4d4b', tension: 0.4 }] },
+                options: { scales: { y: { beginAtZero: true } } }
+            });
         }
     };
 </script>
