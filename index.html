@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA NTI | SANTANA DE PARNAÍBA</title>
+    <title>NTI MASTER | SANTANA DE PARNAÍBA</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -13,24 +13,24 @@
     <style>
         :root {
             --prof: #00adef; --gestao: #f1c40f; --secre: #a55eea; --cad: #2ecc71; --nti: #eb4d4b;
-            --bg-overlay: rgba(0, 0, 0, 0.65);
+            --bg-overlay: rgba(0, 0, 0, 0.7);
         }
 
         body, html { 
             margin: 0; padding: 0; font-family: 'Poppins', sans-serif; color: white; min-height: 100vh;
-            /* FUNDO SOLICITADO */
-            background: url('https://www.santanadeparnaiba.sp.gov.br/planodemetas/planodemetas2020/img/topo.jpg') no-repeat center center fixed;
+            /* IMAGEM DE FUNDO - SANTANA DE PARNAÍBA */
+            background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Santana_de_Parna%C3%ADba_-_SP.jpg/1200px-Santana_de_Parna%C3%ADba_-_SP.jpg') no-repeat center center fixed;
             background-size: cover;
         }
 
-        /* LOGIN 5 COLUNAS */
+        /* LOGIN ORIGINAL 5 COLUNAS */
         .login-container { display: flex; width: 100%; height: 100vh; flex-wrap: wrap; background: var(--bg-overlay); }
         .sector-column { 
             flex: 1; min-width: 200px; display: flex; flex-direction: column; 
             align-items: center; justify-content: center; padding: 20px; 
             transition: 0.5s; border-right: 1px solid rgba(255,255,255,0.1); text-align: center;
         }
-        .sector-column:hover { flex: 1.4; background: rgba(255,255,255,0.15); backdrop-filter: blur(5px); }
+        .sector-column:hover { flex: 1.4; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
 
         @media (max-width: 768px) {
             .login-container { height: auto; }
@@ -43,35 +43,34 @@
         .col-cad { color: var(--cad); border-top: 8px solid var(--cad); }
         .col-nti { color: var(--nti); border-top: 8px solid var(--nti); }
 
-        /* DASHBOARD */
+        /* PAINEL INTERNO */
         #main-system { display: none; padding: 20px; padding-top: 70px; background: var(--bg-overlay); min-height: 100vh; }
         .grid-layout { display: grid; grid-template-columns: 320px 1fr 320px; gap: 20px; }
         @media (max-width: 1024px) { .grid-layout { grid-template-columns: 1fr; } }
 
-        .panel { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(15px); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .panel { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(15px); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.2); }
         
-        input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: rgba(0,0,0,0.5); color: white; box-sizing: border-box; }
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: rgba(0,0,0,0.6); color: white; box-sizing: border-box; }
         .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; text-transform: uppercase; }
 
         /* CHAT */
-        #chat-box { height: 300px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; margin-bottom: 10px; }
+        #chat-box { height: 300px; overflow-y: auto; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; margin-bottom: 10px; }
         .msg { margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 13px; }
-        .msg b { display: block; font-size: 11px; margin-bottom: 2px; }
 
+        #lock-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 99999; flex-direction: column; align-items: center; justify-content: center; }
         .hidden { display: none !important; }
-        #lock-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 99999; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
     </style>
 </head>
 <body>
 
     <div id="lock-overlay">
-        <i class="fa fa-shield-virus fa-4x" style="color:var(--nti); margin-bottom:20px"></i>
-        <h1 style="font-family:'Orbitron'">SISTEMA PROTEGIDO</h1>
-        <p>O NTI iniciou uma manutenção preventiva.<br>Aguarde o reestabelecimento.</p>
+        <i class="fa fa-user-shield fa-5x" style="color:var(--nti); margin-bottom:20px"></i>
+        <h1 style="font-family:'Orbitron'">SISTEMA BLOQUEADO</h1>
+        <p>Acesso suspenso temporariamente pelo NTI.</p>
     </div>
 
     <div class="login-container" id="login-screen">
-        <div class="sector-column col-prof"><i class="fa fa-graduation-cap fa-3x"></i><h2>PROFESSOR</h2>
+        <div class="sector-column col-prof"><i class="fa fa-chalkboard-user fa-3x"></i><h2>PROFESSOR</h2>
             <input type="number" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof); color:white" onclick="app.login('p','Professor')">Entrar</button>
         </div>
         <div class="sector-column col-gestao"><i class="fa fa-user-tie fa-3x"></i><h2>GESTÃO</h2>
@@ -83,7 +82,7 @@
         <div class="sector-column col-cad"><i class="fa fa-user-plus fa-3x"></i><h2>CADASTRO</h2>
             <input type="text" id="c-n" placeholder="Nome"><input type="number" id="c-p" placeholder="Prontuário">
             <select id="c-c"><option>Professor</option><option>Gestão</option><option>Secretaria</option></select>
-            <button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Criar Conta</button>
+            <button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Criar</button>
         </div>
         <div class="sector-column col-nti"><i class="fa fa-terminal fa-3x"></i><h2>NTI</h2>
             <input type="number" id="n-p" placeholder="ID NTI"><input type="password" id="n-s" placeholder="Senha Master"><button class="btn" style="background:var(--nti); color:white" onclick="app.login('n','NTI')">Painel NTI</button>
@@ -93,26 +92,26 @@
     <div id="main-system">
         <div class="grid-layout">
             <div class="panel">
-                <h3><i class="fa fa-calendar-check"></i> Reservar</h3>
-                <select id="res-eq"><option>SALA INFO</option><option>CHROMEBOOKS</option><option>TV SAMSUNG</option></select>
+                <h3><i class="fa fa-plus-circle"></i> Reservas</h3>
+                <select id="res-eq"><option>SALA INFO</option><option>CHROMEBOOKS</option><option>TV</option></select>
                 <input type="text" id="res-sl" placeholder="Sala">
                 <input type="datetime-local" id="res-dt">
-                <button class="btn" style="background:var(--prof); color:white" onclick="app.reservar()">Confirmar Reserva</button>
+                <button class="btn" style="background:var(--prof); color:white" onclick="app.reservar()">Confirmar</button>
 
-                <div id="nti-panel" class="hidden" style="margin-top:30px; border-top: 1px solid rgba(255,255,255,0.2); padding-top:20px">
-                    <h3 style="color:var(--nti)">Admin NTI Master</h3>
+                <div id="nti-panel" class="hidden" style="margin-top:30px; border-top:1px solid #444; padding-top:20px">
+                    <h3 style="color:var(--nti)">Painel de Controle</h3>
                     <div style="display:flex; gap:5px; margin-bottom:10px">
                         <button class="btn" style="background:var(--nti); color:white" onclick="app.setLock(true)">TRAVAR</button>
                         <button class="btn" style="background:var(--cad); color:white" onclick="app.setLock(false)">LIBERAR</button>
                     </div>
-                    <input type="number" id="reset-p" placeholder="Prontuário para Reset">
-                    <button class="btn" style="background:var(--gestao)" onclick="app.resetSenha()">Resetar Senha</button>
-                    <button class="btn" style="background:#444; color:white; margin-top:5px" onclick="app.deletar()">Excluir Usuário</button>
+                    <input type="number" id="reset-p" placeholder="Reset Prontuário">
+                    <button class="btn" style="background:var(--gestao)" onclick="app.resetSenha()">RESETAR SENHA</button>
+                    <button class="btn" style="background:#333; color:white; margin-top:5px" onclick="app.deletar()">EXCLUIR USER</button>
                 </div>
             </div>
 
             <div class="panel">
-                <h3><i class="fa fa-list-ol"></i> Cronograma de Uso</h3>
+                <h3><i class="fa fa-calendar-alt"></i> Cronograma</h3>
                 <div id="lista-res" style="max-height: 250px; overflow-y:auto"></div>
                 <hr style="opacity:0.1; margin:20px 0">
                 <canvas id="meuGrafico" height="150"></canvas>
@@ -122,10 +121,10 @@
                 <h3><i class="fa fa-comments"></i> Chat Integrado</h3>
                 <div id="chat-box"></div>
                 <div style="display:flex; gap:5px">
-                    <input type="text" id="chat-in" placeholder="Diga algo...">
-                    <button onclick="app.sendChat()" style="width:50px; background:var(--prof); border:none; border-radius:8px; cursor:pointer"><i class="fa fa-paper-plane"></i></button>
+                    <input type="text" id="chat-in" placeholder="Escreva...">
+                    <button onclick="app.sendChat()" style="width:50px; background:var(--prof); border:none; border-radius:8px; cursor:pointer">></button>
                 </div>
-                <h3 style="margin-top:20px">Usuários Online</h3>
+                <h3 style="margin-top:20px">Online</h3>
                 <div id="monitor-online" style="font-size:12px"></div>
             </div>
         </div>
@@ -144,7 +143,7 @@
             if(cargo==='NTI' && p==='46690' && s==='nti2026') { this.user={nome:'Kelvin', cargo:'NTI', pront:'46690'}; return this.start(); }
             const snap = await db.ref('usuarios/'+p).once('value');
             if(snap.exists() && snap.val().pass === s) { this.user = snap.val(); this.start(); }
-            else { alert("Acesso Negado: Verifique seus dados."); }
+            else { alert("Login Inválido!"); }
         },
 
         start() {
@@ -164,8 +163,8 @@
                 const box = document.getElementById('chat-box'); box.innerHTML = "";
                 snap.forEach(m => {
                     const d = m.val();
-                    const color = d.c === 'NTI' ? 'var(--nti)' : (d.c === 'Gestão' ? 'var(--gestao)' : 'var(--prof)');
-                    box.innerHTML += `<div class="msg"><b style="color:${color}">${d.n} (${d.c})</b>${d.t}</div>`;
+                    const cor = d.c === 'NTI' ? 'var(--nti)' : 'var(--prof)';
+                    box.innerHTML += `<div class="msg"><b style="color:${cor}">${d.n} (${d.c}):</b><br>${d.t}</div>`;
                 });
                 box.scrollTop = box.scrollHeight;
             });
@@ -175,7 +174,7 @@
                 snap.forEach(r => {
                     const d = r.val();
                     box.innerHTML += `<div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:8px; margin-bottom:5px; font-size:12px">
-                        <b>${d.eq}</b> - Sala ${d.sl}<br><small>${new Date(d.dt).toLocaleString()}</small><br><i>Responsável: ${d.u}</i>
+                        <b>${d.eq}</b> (Sala ${d.sl})<br>${d.u}
                         ${this.user.cargo !== 'Professor' ? `<i class="fa fa-trash" style="float:right; color:var(--nti); cursor:pointer" onclick="db.ref('reservas/${r.key}').remove()"></i>` : ''}
                     </div>`;
                 });
@@ -208,22 +207,22 @@
                 const cargo = u.val().cargo;
                 const nova = cargo === 'Gestão' ? 'gestao2026' : (cargo === 'Secretaria' ? 'secretaria2026' : 'pmspmudar123');
                 db.ref('usuarios/'+p).update({pass: nova});
-                alert("Sucesso: Senha resetada para o padrão do cargo.");
+                alert("Senha resetada com sucesso!");
             }
         },
 
-        deletar() { if(confirm("Deseja realmente excluir este usuário do banco de dados?")) db.ref('usuarios/'+document.getElementById('reset-p').value).remove(); },
+        deletar() { if(confirm("Apagar permanentemente?")) db.ref('usuarios/'+document.getElementById('reset-p').value).remove(); },
 
         confirmarCad() {
             const n = document.getElementById('c-n').value, p = document.getElementById('c-p').value, c = document.getElementById('c-c').value;
             const s = c === 'Gestão' ? 'gestao2026' : (c === 'Secretaria' ? 'secretaria2026' : 'pmspmudar123');
             db.ref('usuarios/'+p).set({nome:n, pront:p, cargo:c, pass:s});
-            alert("Usuário registrado com sucesso!");
+            alert("Cadastrado!");
         },
 
         initChart() {
             new Chart(document.getElementById('meuGrafico'), {
-                type: 'bar', data: { labels: ['SALA INFO', 'CHROME', 'TV'], datasets: [{ label: 'Reservas Hoje', data: [7, 15, 5], backgroundColor: '#00adef' }] }
+                type: 'bar', data: { labels: ['INFO', 'CHROME', 'TV'], datasets: [{ label: 'Reservas', data: [8, 14, 6], backgroundColor: '#00adef' }] }
             });
         }
     };
