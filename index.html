@@ -22,7 +22,6 @@
             background-size: cover;
         }
 
-        /* LOGIN ORIGINAL 5 COLUNAS */
         .login-container { display: flex; width: 100%; height: 100vh; flex-wrap: wrap; background: var(--bg-overlay); }
         .sector-column { 
             flex: 1; min-width: 200px; display: flex; flex-direction: column; 
@@ -31,32 +30,27 @@
         }
         .sector-column:hover { flex: 1.4; background: rgba(255,255,255,0.05); }
 
-        @media (max-width: 768px) {
-            .login-container { height: auto; }
-            .sector-column { min-width: 100%; height: 100vh; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        }
-
         .col-prof { color: var(--prof); border-top: 8px solid var(--prof); }
         .col-gestao { color: var(--gestao); border-top: 8px solid var(--gestao); }
         .col-secre { color: var(--secre); border-top: 8px solid var(--secre); }
         .col-cad { color: var(--cad); border-top: 8px solid var(--cad); }
         .col-nti { color: var(--nti); border-top: 8px solid var(--nti); }
 
-        /* PAINEL INTERNO */
         #main-system { display: none; padding: 20px; padding-top: 70px; background: var(--bg-overlay); min-height: 100vh; }
         .grid-layout { display: grid; grid-template-columns: 320px 1fr 320px; gap: 20px; }
-        @media (max-width: 1024px) { .grid-layout { grid-template-columns: 1fr; } }
+        
+        /* GRID DE GRÁFICOS */
+        .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .chart-container { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; }
 
         .panel { background: rgba(22, 27, 34, 0.8); backdrop-filter: blur(10px); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
-        
         input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: rgba(0,0,0,0.6); color: white; box-sizing: border-box; }
         .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; text-transform: uppercase; }
 
-        /* CHAT */
-        #chat-box { height: 300px; overflow-y: auto; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05); }
-        .msg { margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 13px; }
-        .msg b { display: block; font-size: 11px; margin-bottom: 2px; }
-
+        /* MODAL SENHA */
+        #pass-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; align-items: center; justify-content: center; }
+        
+        #chat-box { height: 300px; overflow-y: auto; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; margin-bottom: 10px; }
         .hidden { display: none !important; }
         #lock-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 99999; flex-direction: column; align-items: center; justify-content: center; }
     </style>
@@ -66,7 +60,16 @@
     <div id="lock-overlay">
         <i class="fa fa-user-slash fa-4x" style="color:var(--nti); margin-bottom:20px"></i>
         <h1 style="font-family:'Orbitron'">SISTEMA EM MANUTENÇÃO</h1>
-        <p>Acesso bloqueado pelo NTI.</p>
+    </div>
+
+    <div id="pass-modal">
+        <div class="panel" style="width: 350px; text-align: center; border: 2px solid var(--gestao);">
+            <h2 style="color:var(--gestao)">Nova Senha</h2>
+            <p>Você está usando uma senha padrão. Crie uma senha pessoal:</p>
+            <input type="password" id="new-pass" placeholder="Nova Senha">
+            <input type="password" id="new-pass-conf" placeholder="Confirmar Senha">
+            <button class="btn" style="background:var(--cad); color:white" onclick="app.salvarNovaSenha()">Salvar e Entrar</button>
+        </div>
     </div>
 
     <div class="login-container" id="login-screen">
@@ -93,7 +96,13 @@
         <div class="grid-layout">
             <div class="panel">
                 <h3><i class="fa fa-calendar-plus"></i> Reservar</h3>
-                <select id="res-eq"><option>SALA INFO</option><option>CHROMEBOOKS</option><option>TV</option></select>
+                <select id="res-eq">
+                    <option>SALA INFO</option>
+                    <option>CHROMEBOOKS</option>
+                    <option>TV 1</option>
+                    <option>TV 2</option>
+                    <option>TV TOUCH</option>
+                </select>
                 <input type="text" id="res-sl" placeholder="Sala Destino">
                 <input type="datetime-local" id="res-dt">
                 <button class="btn" style="background:var(--prof); color:white" onclick="app.reservar()">Confirmar</button>
@@ -104,17 +113,22 @@
                         <button class="btn" style="background:var(--nti); color:white" onclick="app.setLock(true)">TRAVAR</button>
                         <button class="btn" style="background:var(--cad); color:white" onclick="app.setLock(false)">LIBERAR</button>
                     </div>
-                    <input type="number" id="reset-p" placeholder="Prontuário para Reset">
+                    <input type="number" id="reset-p" placeholder="Prontuário">
                     <button class="btn" style="background:var(--gestao)" onclick="app.resetSenha()">Resetar Senha</button>
-                    <button class="btn" style="background:#444; color:white; margin-top:5px" onclick="app.deletar()">Excluir Usuário</button>
                 </div>
+                <button class="btn" style="background:#444; color:white; margin-top:20px" onclick="location.reload()">Sair</button>
             </div>
 
             <div class="panel">
-                <h3><i class="fa fa-list-ul"></i> Cronograma</h3>
-                <div id="lista-res" style="max-height: 250px; overflow-y:auto"></div>
+                <h3><i class="fa fa-chart-line"></i> Painel de Monitoramento</h3>
+                <div class="charts-grid">
+                    <div class="chart-container"><canvas id="chartNTI"></canvas></div>
+                    <div class="chart-container"><canvas id="chartInfo"></canvas></div>
+                    <div class="chart-container"><canvas id="chartChrome"></canvas></div>
+                    <div class="chart-container"><canvas id="chartTV"></canvas></div>
+                </div>
                 <hr style="opacity:0.1; margin:20px 0">
-                <canvas id="meuGrafico" height="150"></canvas>
+                <div id="lista-res" style="max-height: 150px; overflow-y:auto"></div>
             </div>
 
             <div class="panel">
@@ -122,10 +136,8 @@
                 <div id="chat-box"></div>
                 <div style="display:flex; gap:5px">
                     <input type="text" id="chat-in" placeholder="Mensagem...">
-                    <button onclick="app.sendChat()" style="width:50px; background:var(--prof); border:none; border-radius:8px; cursor:pointer">></button>
+                    <button onclick="app.sendChat()" style="width:50px; background:var(--prof); border:none; border-radius:8px; cursor:pointer; color:white">></button>
                 </div>
-                <h3 style="margin-top:20px">Online</h3>
-                <div id="monitor-online" style="font-size:12px"></div>
             </div>
         </div>
     </div>
@@ -140,10 +152,28 @@
         async login(pre, cargo) {
             const p = document.getElementById(pre+'-p').value;
             const s = document.getElementById(pre+'-s').value;
+            
             if(cargo==='NTI' && p==='46690' && s==='nti2026') { this.user={nome:'Kelvin', cargo:'NTI', pront:'46690'}; return this.start(); }
+            
             const snap = await db.ref('usuarios/'+p).once('value');
-            if(snap.exists() && snap.val().pass === s) { this.user = snap.val(); this.start(); }
-            else { alert("Dados incorretos!"); }
+            if(snap.exists() && String(snap.val().pass) === String(s)) { 
+                this.user = snap.val(); 
+                const padroes = ['pmspmudar123', 'gestao2026', 'secretaria2026'];
+                if(padroes.includes(s)) {
+                    document.getElementById('pass-modal').style.display = 'flex';
+                } else {
+                    this.start(); 
+                }
+            } else { alert("Dados incorretos!"); }
+        },
+
+        async salvarNovaSenha() {
+            const n1 = document.getElementById('new-pass').value;
+            const n2 = document.getElementById('new-pass-conf').value;
+            if(n1 !== n2 || n1.length < 4) return alert("Senhas não batem ou muito curta!");
+            await db.ref('usuarios/'+this.user.pront).update({pass: n1});
+            document.getElementById('pass-modal').style.display = 'none';
+            this.start();
         },
 
         start() {
@@ -151,7 +181,7 @@
             document.getElementById('main-system').style.display = 'block';
             if(this.user.cargo === 'NTI') document.getElementById('nti-panel').classList.remove('hidden');
             this.sync();
-            this.initChart();
+            this.initCharts();
         },
 
         sync() {
@@ -164,7 +194,7 @@
                 snap.forEach(m => {
                     const d = m.val();
                     const color = d.c === 'NTI' ? 'var(--nti)' : (d.c === 'Gestão' ? 'var(--gestao)' : 'var(--prof)');
-                    box.innerHTML += `<div class="msg"><b style="color:${color}">${d.n} (${d.c})</b>${d.t}</div>`;
+                    box.innerHTML += `<div class="msg"><b style="color:${color}">${d.n}</b>${d.t}</div>`;
                 });
                 box.scrollTop = box.scrollHeight;
             });
@@ -173,17 +203,10 @@
                 const box = document.getElementById('lista-res'); box.innerHTML = "";
                 snap.forEach(r => {
                     const d = r.val();
-                    box.innerHTML += `<div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:8px; margin-bottom:5px; font-size:12px">
-                        <b>${d.eq}</b> (${d.sl})<br>${new Date(d.dt).toLocaleString()}<br><i>${d.u}</i>
-                        ${this.user.cargo !== 'Professor' ? `<i class="fa fa-trash" style="float:right; color:var(--nti); cursor:pointer" onclick="db.ref('reservas/${r.key}').remove()"></i>` : ''}
+                    box.innerHTML += `<div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:8px; margin-bottom:5px; font-size:11px">
+                        <b>${d.eq}</b> - ${d.sl} | ${d.u}
                     </div>`;
                 });
-            });
-
-            const onRef = db.ref('online/'+this.user.pront); onRef.set({n: this.user.nome}); onRef.onDisconnect().remove();
-            db.ref('online').on('value', snap => {
-                const box = document.getElementById('monitor-online'); box.innerHTML = "";
-                snap.forEach(u => { box.innerHTML += `<div>● ${u.val().n}</div>`; });
             });
         },
 
@@ -200,6 +223,27 @@
 
         setLock(v) { db.ref('lock').set(v); },
 
+        initCharts() {
+            const ctx1 = document.getElementById('chartNTI').getContext('2d');
+            new Chart(ctx1, { type: 'line', data: { labels: ['S','T','Q','Q','S'], datasets: [{ label: 'Chamados NTI', data: [2,5,3,8,4], borderColor: '#eb4d4b', tension: 0.4 }] } });
+
+            const ctx2 = document.getElementById('chartInfo').getContext('2d');
+            new Chart(ctx2, { type: 'bar', data: { labels: ['S','T','Q','Q','S'], datasets: [{ label: 'Sala Info', data: [8,10,7,9,12], backgroundColor: '#00adef' }] } });
+
+            const ctx3 = document.getElementById('chartChrome').getContext('2d');
+            new Chart(ctx3, { type: 'line', data: { labels: ['S','T','Q','Q','S'], datasets: [{ label: 'Chromebooks', data: [15,20,12,25,18], borderColor: '#2ecc71', tension: 0.4 }] } });
+
+            const ctx4 = document.getElementById('chartTV').getContext('2d');
+            new Chart(ctx4, { type: 'pie', data: { labels: ['TV 1', 'TV 2', 'TV Touch'], datasets: [{ data: [30, 20, 50], backgroundColor: ['#a55eea', '#f1c40f', '#00adef'] }] } });
+        },
+
+        confirmarCad() {
+            const n = document.getElementById('c-n').value, p = document.getElementById('c-p').value, c = document.getElementById('c-c').value;
+            const s = c === 'Gestão' ? 'gestao2026' : (c === 'Secretaria' ? 'secretaria2026' : 'pmspmudar123');
+            db.ref('usuarios/'+p).set({nome:n, pront:p, cargo:c, pass:s});
+            alert("Cadastrado!");
+        },
+
         async resetSenha() {
             const p = document.getElementById('reset-p').value;
             const u = await db.ref('usuarios/'+p).once('value');
@@ -209,21 +253,6 @@
                 db.ref('usuarios/'+p).update({pass: nova});
                 alert("Senha resetada!");
             }
-        },
-
-        deletar() { if(confirm("Apagar usuário?")) db.ref('usuarios/'+document.getElementById('reset-p').value).remove(); },
-
-        confirmarCad() {
-            const n = document.getElementById('c-n').value, p = document.getElementById('c-p').value, c = document.getElementById('c-c').value;
-            const s = c === 'Gestão' ? 'gestao2026' : (c === 'Secretaria' ? 'secretaria2026' : 'pmspmudar123');
-            db.ref('usuarios/'+p).set({nome:n, pront:p, cargo:c, pass:s});
-            alert("Cadastrado!");
-        },
-
-        initChart() {
-            new Chart(document.getElementById('meuGrafico'), {
-                type: 'line', data: { labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex'], datasets: [{ label: 'Reservas', data: [5, 12, 8, 15, 7], borderColor: '#00adef', tension: 0.4 }] }
-            });
         }
     };
 </script>
