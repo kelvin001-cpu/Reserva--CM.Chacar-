@@ -22,111 +22,149 @@
             background-size: cover; overflow-x: hidden;
         }
 
-        /* --- BANNER --- */
-        .conect-banner { width: 100%; text-align: center; padding: 30px 0; background: linear-gradient(180deg, rgba(0,173,239,0.4) 0%, transparent 100%); }
-        .conect-banner h1 { font-family: 'Orbitron'; margin: 0; font-size: 3rem; color: var(--prof); text-shadow: 0 0 15px var(--prof); letter-spacing: 4px; }
+        /* --- LOGO MASTER --- */
+        .conect-banner {
+            width: 100%; text-align: center; padding: 35px 0;
+            background: linear-gradient(180deg, rgba(0,173,239,0.4) 0%, transparent 100%);
+        }
+        .conect-banner h1 { 
+            font-family: 'Orbitron'; margin: 0; font-size: 3.5rem; font-weight: 700;
+            color: var(--prof); text-shadow: 0 0 20px var(--prof); letter-spacing: 5px;
+        }
+        .conect-banner p { margin-top: 5px; font-size: 1.2rem; letter-spacing: 3px; opacity: 0.9; }
 
-        /* --- LOGIN --- */
+        /* --- LOGIN 5 COLUNAS --- */
         .login-container { display: flex; width: 100%; height: 100vh; flex-wrap: wrap; background: var(--bg-overlay); align-content: center; }
         .sector-column { flex: 1; min-width: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; transition: 0.5s; border-right: 1px solid rgba(255,255,255,0.1); text-align: center; }
+        .sector-column:hover { flex: 1.3; background: rgba(255,255,255,0.05); }
+        .sector-column h2 { font-family: 'Orbitron'; font-size: 1.2rem; margin: 15px 0; }
         
-        /* --- DASHBOARD --- */
+        .pass-info { font-size: 10px; background: rgba(255,255,255,0.1); padding: 5px; border-radius: 5px; margin: 10px 0; border: 1px dashed var(--cad); color: #ccc; }
+
+        /* --- SISTEMA --- */
         #main-system { display: none; padding: 20px; background: var(--bg-overlay); min-height: 100vh; }
         .grid-layout { display: grid; grid-template-columns: 320px 1fr 320px; gap: 20px; }
-        .panel { background: rgba(22, 27, 34, 0.85); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
-
-        /* --- ELEMENTOS --- */
-        input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: rgba(0,0,0,0.6); color: white; box-sizing: border-box; }
-        .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; text-transform: uppercase; margin-top: 5px; }
+        .panel { background: rgba(22, 27, 34, 0.85); backdrop-filter: blur(15px); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
         
-        /* --- LOCK OVERLAY --- */
-        #lock-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 999999; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: rgba(0,0,0,0.6); color: white; box-sizing: border-box; }
+        .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; text-transform: uppercase; }
 
-        /* --- MODAL TROCA SENHA --- */
-        #password-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100000; align-items: center; justify-content: center; }
-
+        /* --- GRÁFICOS --- */
         .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
-        .chart-card { background: rgba(0, 0, 0, 0.3); padding: 10px; border-radius: 12px; height: 180px; }
+        .chart-card { background: rgba(0, 0, 0, 0.3); padding: 10px; border-radius: 12px; height: 180px; border: 1px solid rgba(255,255,255,0.05); }
+
+        /* --- OVERLAYS --- */
+        #lock-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 999999; flex-direction: column; align-items: center; justify-content: center; }
+        #password-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 100000; align-items: center; justify-content: center; }
+
         .hidden { display: none !important; }
+        .btn-baixa { background: var(--cad); color: black; border: none; padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div id="lock-overlay">
-        <i class="fa fa-tools fa-5x fa-spin" style="color:var(--nti); margin-bottom:20px"></i>
-        <h1 style="font-family:'Orbitron'; color:var(--nti)">MANUTENÇÃO DO NTI</h1>
-        <p>O portal está temporariamente offline para atualizações.</p>
+        <i class="fa fa-radiation fa-5x fa-spin" style="color:var(--nti); margin-bottom:20px"></i>
+        <h1 style="font-family:'Orbitron'; color:var(--nti)">SISTEMA EM MANUTENÇÃO</h1>
+        <p>O NTI está realizando atualizações críticas. Voltamos em breve.</p>
     </div>
 
     <div id="password-modal">
-        <div class="panel" style="width: 350px;">
-            <h3 style="color:var(--gestao)"><i class="fa fa-key"></i> Definir Nova Senha</h3>
-            <p style="font-size: 12px;">Por segurança, você deve alterar sua senha padrão no primeiro acesso.</p>
+        <div class="panel" style="width: 350px; text-align: center;">
+            <h3 style="color:var(--gestao)"><i class="fa fa-key"></i> Segurança</h3>
+            <p>Você está usando uma senha padrão. Crie uma senha pessoal para continuar:</p>
             <input type="password" id="new-pass-val" placeholder="Nova Senha">
-            <button class="btn" style="background:var(--cad)" onclick="app.salvarNovaSenha()">Salvar e Entrar</button>
+            <button class="btn" style="background:var(--cad); margin-top:10px" onclick="app.salvarNovaSenha()">Definir e Entrar</button>
         </div>
     </div>
 
     <div class="login-container" id="login-screen">
-        <div class="conect-banner" style="position: absolute; top: 0;"><h1>PROGRAMA CONECT</h1></div>
-        <div class="sector-column"><i class="fa fa-user fa-3x"></i><h2>USUÁRIOS</h2><input type="number" id="u-p" placeholder="Prontuário"><input type="password" id="u-s" placeholder="Senha"><button class="btn" style="background:var(--prof); color:white" onclick="app.login('u','User')">Entrar</button></div>
+        <div class="conect-banner" style="position: absolute; top: 0;">
+            <h1>PROGRAMA CONECT</h1>
+            <p>Construindo uma geração de vencedores</p>
+        </div>
+
+        <div class="sector-column" style="border-top: 4px solid var(--prof);"><i class="fa fa-graduation-cap fa-3x" style="color:var(--prof)"></i><h2 style="color:var(--prof)">PROFESSOR</h2><input type="number" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof); color:white" onclick="app.login('p','Professor')">Entrar</button></div>
+        <div class="sector-column" style="border-top: 4px solid var(--gestao);"><i class="fa fa-user-tie fa-3x" style="color:var(--gestao)"></i><h2 style="color:var(--gestao)">GESTÃO</h2><input type="number" id="g-p" placeholder="Prontuário"><input type="password" id="g-s" placeholder="Senha"><button class="btn" style="background:var(--gestao)" onclick="app.login('g','Gestão')">Entrar</button></div>
+        <div class="sector-column" style="border-top: 4px solid var(--secre);"><i class="fa fa-building-columns fa-3x" style="color:var(--secre)"></i><h2 style="color:var(--secre)">SECRETARIA</h2><input type="number" id="s-p" placeholder="Prontuário"><input type="password" id="s-s" placeholder="Senha"><button class="btn" style="background:var(--secre); color:white" onclick="app.login('s','Secretaria')">Entrar</button></div>
         
-        <div class="sector-column" style="border-right:none"><i class="fa fa-terminal fa-3x"></i><h2 style="color:var(--nti)">NTI</h2><input type="number" id="n-p" placeholder="ID"><input type="password" id="n-s" placeholder="Senha"><button class="btn" style="background:var(--nti); color:white" onclick="app.login('n','NTI')">Painel Master</button></div>
+        <div class="sector-column" style="border-top: 4px solid var(--cad);">
+            <i class="fa fa-user-plus fa-3x" style="color:var(--cad)"></i><h2 style="color:var(--cad)">CADASTRO</h2>
+            <input type="text" id="c-n" placeholder="Nome">
+            <input type="number" id="c-p" placeholder="Prontuário">
+            <select id="c-c" onchange="app.updatePassHint()">
+                <option value="Professor">Professor</option>
+                <option value="Gestão">Gestão</option>
+                <option value="Secretaria">Secretaria</option>
+            </select>
+            <div class="pass-info">Senha inicial: <b id="hint-pass">pmspmudar123</b></div>
+            <button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Criar Conta</button>
+        </div>
+
+        <div class="sector-column" style="border-top: 4px solid var(--nti); border-right:none;"><i class="fa fa-terminal fa-3x" style="color:var(--nti)"></i><h2 style="color:var(--nti)">NTI</h2><input type="number" id="n-p" placeholder="ID"><input type="password" id="n-s" placeholder="Senha"><button class="btn" style="background:var(--nti); color:white" onclick="app.login('n','NTI')">Painel Master</button></div>
     </div>
 
     <div id="main-system">
-        <div class="conect-banner"><h1>PROGRAMA CONECT</h1><p>NTI CHÁCARA - DASHBOARD</p></div>
+        <div class="conect-banner">
+            <h1>PROGRAMA CONECT</h1>
+            <p id="sub-tag">Painel de Controle</p>
+        </div>
+
         <div class="grid-layout">
-            
             <div class="panel">
-                <div id="nti-tools" class="hidden">
-                    <h3 style="color:var(--nti)"><i class="fa fa-shield-alt"></i> Administração NTI</h3>
-                    <p style="font-size:11px">CONTROLE DE ACESSO AO SITE</p>
-                    <button class="btn" style="background:var(--nti); color:white" onclick="app.setLock(true)">BLOQUEAR SITE</button>
-                    <button class="btn" style="background:var(--cad); color:black" onclick="app.setLock(false)">LIBERAR SITE</button>
-                    <hr style="opacity:0.2; margin:20px 0">
-                    <h3 style="color:var(--prof)"><i class="fa fa-sync"></i> Reset de Senha</h3>
-                    <input type="number" id="reset-pront" placeholder="Prontuário do Usuário">
+                <div id="nti-admin-panel" class="hidden">
+                    <h3 style="color:var(--nti)"><i class="fa fa-server"></i> Master NTI</h3>
+                    <p style="font-size:10px; margin-bottom:15px">CONTROLE DE ACESSO GLOBAL</p>
+                    <button class="btn" style="background:var(--nti); color:white; margin-bottom:10px" onclick="app.setLock(true)">BLOQUEAR SITE</button>
+                    <button class="btn" style="background:var(--cad); color:black" onclick="app.setLock(false)">DESBLOQUEAR</button>
+                    <hr style="opacity:0.1; margin:20px 0">
+                    <h3 style="color:var(--prof)"><i class="fa fa-key"></i> Reset de Senha</h3>
+                    <input type="number" id="reset-p" placeholder="Prontuário do usuário">
                     <button class="btn" style="background:var(--prof); color:white" onclick="app.resetSenha()">Resetar para Padrão</button>
                 </div>
 
                 <div id="user-tools">
-                    <h3><i class="fa fa-calendar-check"></i> Reservar</h3>
+                    <h3><i class="fa fa-plus-circle"></i> Abrir Chamado</h3>
+                    <input type="text" id="chamado-desc" placeholder="Qual o problema?">
+                    <button class="btn" style="background:var(--nti); color:white" onclick="app.abrirChamado()">Enviar Chamado</button>
+                    <hr style="opacity:0.1; margin:20px 0">
+                    <h3><i class="fa fa-laptop"></i> Reservar</h3>
                     <select id="res-eq"><option>SALA INFO</option><option>CHROMEBOOKS</option><option>TV TOUCH</option></select>
                     <input type="text" id="res-sl" placeholder="Sala">
                     <input type="datetime-local" id="res-dt">
-                    <button class="btn" style="background:var(--prof); color:white" onclick="app.reservar()">Reservar</button>
+                    <button class="btn" style="background:var(--prof); color:white" onclick="app.reservar()">Confirmar</button>
                 </div>
                 <button class="btn" style="background:#444; color:white; margin-top:20px" onclick="location.reload()">Sair</button>
             </div>
 
             <div class="panel">
-                <h3><i class="fa fa-chart-line"></i> Monitoramento</h3>
+                <h3><i class="fa fa-chart-line"></i> Dashboard NTI</h3>
                 <div class="charts-grid">
                     <div class="chart-card"><canvas id="chartStatus"></canvas></div>
                     <div class="chart-card"><canvas id="chartEquip"></canvas></div>
                     <div class="chart-card"><canvas id="chartUsers"></canvas></div>
                     <div class="chart-card"><canvas id="chartChamados"></canvas></div>
                 </div>
-                <h4 style="margin-top:20px">Agenda</h4>
+                <h4 style="margin-top:20px"><i class="fa fa-list"></i> Reservas Ativas</h4>
                 <div id="lista-res" style="max-height: 200px; overflow-y:auto"></div>
             </div>
 
             <div class="panel">
-                <h3><i class="fa fa-headset"></i> Resolução de Chamados</h3>
-                <div id="lista-chamados" style="height:200px; overflow-y:auto; background:rgba(0,0,0,0.2); border-radius:8px; padding:10px; font-size:11px; margin-bottom:15px"></div>
+                <h3><i class="fa fa-headset"></i> Atendimento</h3>
+                <div id="lista-chamados" style="height:200px; overflow-y:auto; background:rgba(0,0,0,0.2); padding:10px; border-radius:8px; font-size:11px; margin-bottom:15px"></div>
                 
-                <h3><i class="fa fa-comments"></i> Chat</h3>
-                <div id="chat-box" style="height:150px; overflow-y:auto; background:rgba(0,0,0,0.2); margin-bottom:10px; padding:10px; border-radius:8px; font-size:12px"></div>
+                <h3><i class="fa fa-comments"></i> Chat Geral</h3>
+                <div id="chat-box" style="height:150px; overflow-y:auto; background:rgba(0,0,0,0.2); padding:10px; border-radius:8px; margin-bottom:10px; font-size:12px"></div>
                 <div style="display:flex; gap:5px">
-                    <input type="text" id="chat-in" placeholder="Mensagem...">
-                    <button onclick="app.sendChat()" style="width:45px; background:var(--prof); border:none; border-radius:8px; color:white"><i class="fa fa-paper-plane"></i></button>
+                    <input type="text" id="chat-in" placeholder="Digite...">
+                    <button onclick="app.sendChat()" style="width:50px; background:var(--prof); border:none; border-radius:8px; color:white"><i class="fa fa-paper-plane"></i></button>
                 </div>
             </div>
         </div>
     </div>
 
 <script>
+    // --- CONFIGURAÇÃO FIREBASE ---
     const firebaseConfig = { databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
@@ -135,6 +173,11 @@
         user: null,
         tempPront: null,
         padroes: ["pmspmudar123", "secretaria2026", "pmspgestores2026"],
+
+        updatePassHint() {
+            const c = document.getElementById('c-c').value;
+            document.getElementById('hint-pass').innerText = (c==="Secretaria") ? "secretaria2026" : (c==="Gestão") ? "pmspgestores2026" : "pmspmudar123";
+        },
 
         async login(pre, cargo) {
             const p = document.getElementById(pre+'-p').value;
@@ -147,13 +190,11 @@
 
             const snap = await db.ref('usuarios/'+p).once('value');
             if(snap.exists() && String(snap.val().pass) === String(s)) {
-                const userData = snap.val();
-                // Verifica se a senha é uma das padrões
                 if(this.padroes.includes(s)) {
                     this.tempPront = p;
                     document.getElementById('password-modal').style.display = 'flex';
                 } else {
-                    this.user = userData;
+                    this.user = snap.val();
                     this.start();
                 }
             } else { alert("Acesso negado!"); }
@@ -161,10 +202,9 @@
 
         salvarNovaSenha() {
             const nova = document.getElementById('new-pass-val').value;
-            if(nova.length < 4 || this.padroes.includes(nova)) return alert("Escolha uma senha mais segura e diferente da padrão!");
-            
+            if(nova.length < 5 || this.padroes.includes(nova)) return alert("Crie uma senha mais forte!");
             db.ref('usuarios/'+this.tempPront).update({pass: nova}).then(() => {
-                alert("Senha alterada com sucesso!");
+                alert("Senha salva! Faça login novamente.");
                 location.reload();
             });
         },
@@ -172,21 +212,19 @@
         start() {
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('main-system').style.display = 'block';
-            
             if(this.user.cargo === 'NTI') {
-                document.getElementById('nti-tools').classList.remove('hidden');
+                document.getElementById('nti-admin-panel').classList.remove('hidden');
                 document.getElementById('user-tools').classList.add('hidden');
             }
             this.sync();
             this.initCharts();
         },
 
-        setLock(status) { db.ref('lock').set(status); },
+        setLock(v) { db.ref('lock').set(v); },
         
         resetSenha() {
-            const p = document.getElementById('reset-pront').value;
-            if(!p) return;
-            // Define a senha padrão "pmspmudar123" para obrigar o usuário a trocar no próximo login
+            const p = document.getElementById('reset-p').value;
+            if(!p) return alert("Digite o prontuário!");
             db.ref('usuarios/'+p).update({pass: 'pmspmudar123'}).then(() => alert("Senha resetada para o padrão!"));
         },
 
@@ -196,12 +234,56 @@
                     document.getElementById('lock-overlay').style.display = s.val() ? 'flex' : 'none';
                 }
             });
-            // ... Sincronização de Chat, Reservas e Chamados (conforme anterior) ...
+
+            db.ref('chamados').on('value', snap => {
+                const box = document.getElementById('lista-chamados'); box.innerHTML = "";
+                snap.forEach(c => {
+                    const d = c.val();
+                    box.innerHTML += `<div style="border-bottom:1px solid #333; padding:8px; display:flex; justify-content:space-between">
+                        <span><b>${d.u}:</b> ${d.t}</span>
+                        ${this.user.cargo==='NTI' ? `<button class="btn-baixa" onclick="app.darBaixa('chamados','${c.key}')">OK</button>` : ''}
+                    </div>`;
+                });
+            });
+
+            db.ref('reservas').on('value', snap => {
+                const box = document.getElementById('lista-res'); box.innerHTML = "";
+                snap.forEach(r => {
+                    const d = r.val();
+                    box.innerHTML += `<div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:6px; margin-bottom:5px; font-size:11px; display:flex; justify-content:space-between">
+                        <span><b>${d.eq}</b> (${d.sl}) - ${d.u}</span>
+                        ${this.user.cargo==='NTI' ? `<button class="btn-baixa" onclick="app.darBaixa('reservas','${r.key}')">BAIXAR</button>` : ''}
+                    </div>`;
+                });
+            });
+
+            db.ref('chat').limitToLast(15).on('value', snap => {
+                const box = document.getElementById('chat-box'); box.innerHTML = "";
+                snap.forEach(m => {
+                    const d = m.val();
+                    const side = (d.n === this.user.nome) ? 'msg-out' : 'msg-in';
+                    box.innerHTML += `<div style="margin-bottom:8px; text-align:${d.n === this.user.nome ? 'right' : 'left'}">
+                        <small style="color:var(--prof)">${d.n}</small><br>
+                        <span style="background:${d.n === this.user.nome ? '#005c4b' : '#333'}; padding:5px 10px; border-radius:10px; display:inline-block">${d.t}</span>
+                    </div>`;
+                });
+                box.scrollTop = box.scrollHeight;
+            });
         },
 
-        initCharts() { /* Código dos gráficos Chart.js conforme screenshot */ },
-        reservar() { /* Código de reserva */ },
-        sendChat() { /* Código de chat */ }
+        initCharts() {
+            Chart.defaults.color = '#fff';
+            const opt = (t) => ({ responsive: true, maintainAspectRatio: false, plugins: { legend: {display: false}, title: {display: true, text: t} } });
+            new Chart(document.getElementById('chartStatus'), { type: 'doughnut', data: { labels: ['Ok'], datasets: [{data:[100], backgroundColor:['#2ecc71']}] }, options: opt('SISTEMA') });
+            new Chart(document.getElementById('chartEquip'), { type: 'bar', data: { labels: ['Uso'], datasets: [{data:[65], backgroundColor:['#00adef']}] }, options: opt('EQUIPAMENTOS') });
+            new Chart(document.getElementById('chartUsers'), { type: 'line', data: { labels: ['08h','12h','16h'], datasets: [{data:[5, 20, 15], borderColor:'#a55eea'}] }, options: opt('ACESSOS') });
+            new Chart(document.getElementById('chartChamados'), { type: 'bar', data: { labels: ['Abertos'], datasets: [{data:[3], backgroundColor:['#eb4d4b']}] }, options: opt('CHAMADOS') });
+        },
+
+        darBaixa(p, k) { if(confirm("Concluir tarefa?")) db.ref(p+'/'+k).remove(); },
+        abrirChamado() { const t = document.getElementById('chamado-desc').value; if(t) db.ref('chamados').push({u:this.user.nome, t:t}); document.getElementById('chamado-desc').value=""; },
+        reservar() { const eq=document.getElementById('res-eq').value, sl=document.getElementById('res-sl').value, dt=document.getElementById('res-dt').value; if(sl && dt) db.ref('reservas').push({eq,sl,dt,u:this.user.nome}); },
+        sendChat() { const t = document.getElementById('chat-in').value; if(t) db.ref('chat').push({n:this.user.nome, t:t}); document.getElementById('chat-in').value=""; }
     };
 </script>
 </body>
