@@ -35,26 +35,24 @@
         .sector-column { flex: 1; min-width: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; transition: 0.5s; border-right: 1px solid rgba(255,255,255,0.1); text-align: center; }
         .sector-column:hover { flex: 1.4; background: rgba(255,255,255,0.05); }
 
-        /* Estilo da Senha Padrão no Cadastro */
-        .default-pass-info { font-size: 11px; background: rgba(46, 204, 113, 0.2); color: #2ecc71; padding: 5px; border-radius: 5px; margin-top: 5px; width: 100%; box-sizing: border-box; border: 1px dashed #2ecc71; }
+        .default-pass-info { font-size: 11px; background: rgba(255, 255, 255, 0.1); color: #fff; padding: 8px; border-radius: 5px; margin-top: 5px; width: 100%; box-sizing: border-box; border: 1px dashed rgba(255,255,255,0.3); }
+        .default-pass-info b { color: var(--cad); }
 
         #main-system { display: none; padding: 20px; background: var(--bg-overlay); min-height: 100vh; }
         .grid-layout { display: grid; grid-template-columns: 320px 1fr 320px; gap: 20px; }
-        
         .panel { background: rgba(22, 27, 34, 0.9); backdrop-filter: blur(15px); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
         
         input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: rgba(0,0,0,0.6); color: white; box-sizing: border-box; }
         .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; text-transform: uppercase; }
 
-        /* DESIGN BOLHAS DE CHAT CORRIGIDO */
         #chat-box { 
             height: 300px; overflow-y: auto; background: rgba(0,0,0,0.4); 
             padding: 15px; border-radius: 12px; margin-bottom: 10px;
             display: flex; flex-direction: column; gap: 10px;
         }
         .msg { max-width: 85%; padding: 10px; border-radius: 12px; font-size: 13px; line-height: 1.4; word-wrap: break-word; position: relative; }
-        .msg-in { align-self: flex-start; background: #333; border-bottom-left-radius: 2px; border: 1px solid rgba(255,255,255,0.1); }
-        .msg-out { align-self: flex-end; background: #005c4b; border-bottom-right-radius: 2px; border: 1px solid rgba(255,255,255,0.1); }
+        .msg-in { align-self: flex-start; background: #333; border-bottom-left-radius: 2px; }
+        .msg-out { align-self: flex-end; background: #005c4b; border-bottom-right-radius: 2px; }
         .msg b { display: block; font-size: 10px; margin-bottom: 3px; color: var(--prof); text-transform: uppercase; }
 
         .hidden { display: none !important; }
@@ -77,8 +75,12 @@
         <div class="sector-column col-cad"><i class="fa fa-user-plus fa-3x"></i><h2>CADASTRO</h2>
             <input type="text" id="c-n" placeholder="Nome Completo">
             <input type="number" id="c-p" placeholder="Prontuário">
-            <select id="c-c"><option>Professor</option><option>Gestão</option><option>Secretaria</option></select>
-            <div class="default-pass-info">🔑 Senha Padrão: <b>conect2026</b></div>
+            <select id="c-c" onchange="app.updatePassHint()">
+                <option value="Professor">Professor</option>
+                <option value="Gestão">Gestão</option>
+                <option value="Secretaria">Secretaria</option>
+            </select>
+            <div class="default-pass-info">🔑 Senha Inicial: <b id="pass-hint">pmspmudar123</b></div>
             <button class="btn" style="background:var(--cad); color:white; margin-top:10px" onclick="app.confirmarCad()">Criar Conta</button>
         </div>
 
@@ -135,6 +137,15 @@
         user: null,
         charts: {},
 
+        // Atualiza a dica visual de senha no formulário de cadastro
+        updatePassHint() {
+            const cargo = document.getElementById('c-c').value;
+            const hint = document.getElementById('pass-hint');
+            if(cargo === 'Secretaria') hint.innerText = 'secretaria2026';
+            else if(cargo === 'Gestão') hint.innerText = 'pmspgestores2026';
+            else hint.innerText = 'pmspmudar123';
+        },
+
         async login(pre, cargo) {
             const p = document.getElementById(pre+'-p').value;
             const s = document.getElementById(pre+'-s').value;
@@ -149,8 +160,14 @@
             const p = document.getElementById('c-p').value;
             const c = document.getElementById('c-c').value;
             if(!n || !p) return alert("Preencha tudo!");
-            db.ref('usuarios/'+p).set({ nome: n, pront: p, cargo: c, pass: 'conect2026' });
-            alert("Cadastrado! Senha: conect2026");
+
+            // Lógica de senha por cargo
+            let senhaDefinida = 'pmspmudar123'; // Default para Professor
+            if(c === 'Secretaria') senhaDefinida = 'secretaria2026';
+            if(c === 'Gestão') senhaDefinida = 'pmspgestores2026';
+
+            db.ref('usuarios/'+p).set({ nome: n, pront: p, cargo: c, pass: senhaDefinida });
+            alert(`Usuário ${n} cadastrado!\nSenha de acesso: ${senhaDefinida}`);
         },
 
         start() {
@@ -184,8 +201,8 @@
         },
 
         initCharts() {
-            this.charts.status = new Chart(document.getElementById('chartStatus'), { type: 'doughnut', data: { labels: ['OK'], datasets: [{ data: [100], backgroundColor: ['#2ecc71'] }] }});
-            this.charts.chamados = new Chart(document.getElementById('chartChamados'), { type: 'bar', data: { labels: ['Chamados'], datasets: [{ data: [5], backgroundColor: '#eb4d4b' }] }});
+            this.charts.status = new Chart(document.getElementById('chartStatus'), { type: 'doughnut', data: { labels: ['OK'], datasets: [{ data: [100], backgroundColor: ['#2ecc71'] }] }, options: { plugins: { title: { display: true, text: 'Status do Servidor', color: '#fff' } } }});
+            this.charts.chamados = new Chart(document.getElementById('chartChamados'), { type: 'bar', data: { labels: ['Chamados'], datasets: [{ label: 'Abertos', data: [5], backgroundColor: '#eb4d4b' }] }, options: { plugins: { legend: { display: false } } }});
         },
 
         abrirChamado() { const t = document.getElementById('chamado-desc').value; if(t) db.ref('chamados').push({u: this.user.nome, t: t}); },
