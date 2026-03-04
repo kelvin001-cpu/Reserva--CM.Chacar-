@@ -22,7 +22,11 @@
             background-size: cover; overflow-x: hidden;
         }
 
-        /* AVISOS GLOBAIS */
+        /* BANNER INICIAL PROGRAMA CONECT */
+        .conect-header { width: 100%; text-align: center; padding: 20px 0; background: linear-gradient(90deg, transparent, rgba(0, 173, 239, 0.2), transparent); }
+        .conect-header h1 { font-family: 'Orbitron'; margin: 0; font-size: 24px; letter-spacing: 2px; color: var(--prof); }
+        .conect-header p { margin: 5px 0 0; font-weight: 300; font-style: italic; opacity: 0.8; }
+
         #alert-ribbon { background: var(--nti); color: white; padding: 10px; text-align: center; font-weight: bold; display: none; position: fixed; top: 0; width: 100%; z-index: 10000; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
 
         .login-container { display: flex; width: 100%; height: 100vh; flex-wrap: wrap; background: var(--bg-overlay); }
@@ -36,6 +40,12 @@
         
         input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: rgba(0,0,0,0.6); color: white; }
         .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; text-transform: uppercase; margin-top: 5px; }
+
+        /* ESTILO BOLHAS DE CHAT */
+        .chat-bubble { margin-bottom: 10px; padding: 8px 12px; border-radius: 12px; font-size: 13px; max-width: 85%; position: relative; line-height: 1.4; }
+        .bubble-me { background: #005c4b; align-self: flex-end; margin-left: auto; border-bottom-right-radius: 2px; }
+        .bubble-other { background: #333; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .chat-name { font-size: 10px; font-weight: bold; display: block; margin-bottom: 2px; color: var(--prof); }
 
         .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
         .chart-card { background: rgba(255,255,255,0.03); padding: 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); }
@@ -55,6 +65,11 @@
     </div>
 
     <div class="login-container" id="login-screen">
+        <div class="conect-header" style="position: absolute; top: 5%;">
+            <h1>PROGRAMA CONECT</h1>
+            <p>Construindo uma geração de vencedores</p>
+        </div>
+        
         <div class="sector-column col-prof"><i class="fa fa-graduation-cap fa-3x"></i><h2>PROFESSOR</h2><input type="number" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof); color:white" onclick="app.login('p','Professor')">Entrar</button></div>
         <div class="sector-column col-gestao"><i class="fa fa-user-tie fa-3x"></i><h2>GESTÃO</h2><input type="number" id="g-p" placeholder="Prontuário"><input type="password" id="g-s" placeholder="Senha"><button class="btn" style="background:var(--gestao)" onclick="app.login('g','Gestão')">Entrar</button></div>
         <div class="sector-column col-secre"><i class="fa fa-building-columns fa-3x"></i><h2>SECRETARIA</h2><input type="number" id="s-p" placeholder="Prontuário"><input type="password" id="s-s" placeholder="Senha"><button class="btn" style="background:var(--secre); color:white" onclick="app.login('s','Secretaria')">Entrar</button></div>
@@ -63,6 +78,11 @@
     </div>
 
     <div id="main-system">
+        <div class="conect-header" style="margin-bottom: 20px;">
+            <h1>PROGRAMA CONECT</h1>
+            <p>Construindo uma geração de vencedores</p>
+        </div>
+
         <div class="grid-layout">
             <div class="panel">
                 <h3><i class="fa fa-tools"></i> Painel de Controle</h3>
@@ -92,15 +112,14 @@
             </div>
 
             <div class="panel">
-                <h3><i class="fa fa-tachometer-alt"></i> Monitoramento em Tempo Real</h3>
+                <h3><i class="fa fa-tachometer-alt"></i> Monitoramento</h3>
                 <div class="charts-grid">
                     <div class="chart-card"><canvas id="chartStatus"></canvas></div>
                     <div class="chart-card"><canvas id="chartEquip"></canvas></div>
                     <div class="chart-card"><canvas id="chartUsers"></canvas></div>
                     <div class="chart-card"><canvas id="chartChamados"></canvas></div>
                 </div>
-                
-                <h4 style="margin-top:20px">Próximas Reservas</h4>
+                <h4 style="margin-top:20px">Agenda de Reservas</h4>
                 <div id="lista-res" style="max-height: 200px; overflow-y:auto"></div>
             </div>
 
@@ -109,10 +128,10 @@
                 <div id="lista-chamados" style="height:150px; overflow-y:auto; background:rgba(0,0,0,0.3); border-radius:8px; padding:10px; margin-bottom:10px; font-size:11px"></div>
                 
                 <h3><i class="fa fa-comments"></i> Chat Geral</h3>
-                <div id="chat-box" style="height:200px; overflow-y:auto; background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; margin-bottom:10px"></div>
+                <div id="chat-box" style="height:320px; overflow-y:auto; display: flex; flex-direction: column; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 12px; margin-bottom: 10px;"></div>
                 <div style="display:flex; gap:5px">
-                    <input type="text" id="chat-in" placeholder="Mensagem...">
-                    <button onclick="app.sendChat()" style="width:50px; background:var(--prof); border:none; border-radius:8px; color:white">></button>
+                    <input type="text" id="chat-in" placeholder="Digite sua mensagem...">
+                    <button onclick="app.sendChat()" style="width:50px; background:var(--prof); border:none; border-radius:8px; color:white"><i class="fa fa-paper-plane"></i></button>
                 </div>
             </div>
         </div>
@@ -146,13 +165,11 @@
         },
 
         sync() {
-            // Sincronizar Trava
             db.ref('lock').on('value', s => {
                 const isLocked = s.val();
                 document.getElementById('lock-overlay').style.display = (isLocked && this.user.cargo !== 'NTI') ? 'flex' : 'none';
             });
 
-            // Sincronizar Avisos
             db.ref('aviso').on('value', s => {
                 if(s.val()){
                     document.getElementById('alert-ribbon').style.display = 'block';
@@ -160,79 +177,56 @@
                 } else { document.getElementById('alert-ribbon').style.display = 'none'; }
             });
 
-            // Lista de Chamados NTI
-            db.ref('chamados').limitToLast(10).on('value', snap => {
+            db.ref('chamados').on('value', snap => {
                 const box = document.getElementById('lista-chamados'); box.innerHTML = "";
                 let count = 0;
                 snap.forEach(c => {
                     const d = c.val(); count++;
-                    box.innerHTML += `<div style="border-bottom:1px solid #333; padding:5px"><b>${d.u}:</b> ${d.t} <span style="float:right; color:var(--nti)">●</span></div>`;
+                    box.innerHTML += `<div style="border-bottom:1px solid #333; padding:5px"><b>${d.u}:</b> ${d.t}</div>`;
                 });
                 this.updateChamadosChart(count);
             });
 
-            // Lista de Reservas + Link Google Agenda
             db.ref('reservas').on('value', snap => {
                 const box = document.getElementById('lista-res'); box.innerHTML = "";
                 snap.forEach(r => {
                     const d = r.val();
-                    const gLink = `https://www.google.com/calendar/render?action=TEMPLATE&text=RESERVA+${d.eq}&dates=${d.dt.replace(/[-:]/g,'')}/${d.dt.replace(/[-:]/g,'')}&details=Sala:${d.sl}+Por:${d.u}`;
+                    const gLink = `https://www.google.com/calendar/render?action=TEMPLATE&text=RESERVA+${d.eq}&dates=${d.dt.replace(/[-:]/g,'')}/${d.dt.replace(/[-:]/g,'')}&details=Sala:${d.sl}`;
                     box.innerHTML += `<div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:8px; margin-bottom:5px; font-size:12px">
-                        <b>${d.eq}</b> (${d.sl}) - ${new Date(d.dt).toLocaleString()}<br><i>Usuário: ${d.u}</i>
-                        <a href="${gLink}" target="_blank" style="color:var(--cad); text-decoration:none; float:right"><i class="fab fa-google"></i> Agenda</a>
+                        <b>${d.eq}</b> (${d.sl}) - ${new Date(d.dt).toLocaleString()}
+                        <a href="${gLink}" target="_blank" style="color:var(--cad); float:right; text-decoration:none"><i class="fab fa-google"></i></a>
                     </div>`;
                 });
             });
 
-            // Chat
             db.ref('chat').limitToLast(20).on('value', snap => {
                 const box = document.getElementById('chat-box'); box.innerHTML = "";
                 snap.forEach(m => {
                     const d = m.val();
-                    box.innerHTML += `<div style="font-size:12px; margin-bottom:5px"><b>${d.n}:</b> ${d.t}</div>`;
+                    const isMe = d.n === this.user.nome;
+                    const bubbleClass = isMe ? 'bubble-me' : 'bubble-other';
+                    box.innerHTML += `
+                        <div class="chat-bubble ${bubbleClass}">
+                            <span class="chat-name">${d.n}</span>
+                            ${d.t}
+                        </div>`;
                 });
                 box.scrollTop = box.scrollHeight;
             });
         },
 
         initCharts() {
-            this.charts.status = new Chart(document.getElementById('chartStatus'), { type: 'doughnut', data: { labels: ['Online', 'Offline'], datasets: [{ data: [12, 45], backgroundColor: [ '#2ecc71', '#333'] }] }, options: { plugins: { title: { display: true, text: 'Status do Servidor' } } } });
-            this.charts.equip = new Chart(document.getElementById('chartEquip'), { type: 'bar', data: { labels: ['Info', 'Chrome', 'TVs'], datasets: [{ label: 'Uso %', data: [80, 45, 90], backgroundColor: '#00adef' }] } });
-            this.charts.users = new Chart(document.getElementById('chartUsers'), { type: 'line', data: { labels: ['08h','10h','12h','14h','16h'], datasets: [{ label: 'Acessos', data: [10, 25, 15, 40, 30], borderColor: '#a55eea', tension: 0.4 }] } });
-            this.charts.chamados = new Chart(document.getElementById('chartChamados'), { type: 'bar', data: { labels: ['Abertos'], datasets: [{ label: 'Chamados NTI', data: [0], backgroundColor: '#eb4d4b' }] } });
+            this.charts.status = new Chart(document.getElementById('chartStatus'), { type: 'doughnut', data: { labels: ['Sistema OK', 'Atenção'], datasets: [{ data: [100, 0], backgroundColor: [ '#2ecc71', '#333'] }] }, options: { plugins: { legend: { display: false }, title: { display: true, text: 'Status' } } } });
+            this.charts.equip = new Chart(document.getElementById('chartEquip'), { type: 'bar', data: { labels: ['Uso'], datasets: [{ label: 'Equipamentos', data: [65], backgroundColor: '#00adef' }] } });
+            this.charts.users = new Chart(document.getElementById('chartUsers'), { type: 'line', data: { labels: ['Seg','Ter','Qua','Qui','Sex'], datasets: [{ label: 'Acessos', data: [5, 12, 8, 15, 10], borderColor: '#a55eea' }] } });
+            this.charts.chamados = new Chart(document.getElementById('chartChamados'), { type: 'bar', data: { labels: ['Abertos'], datasets: [{ label: 'Chamados', data: [0], backgroundColor: '#eb4d4b' }] } });
         },
 
-        updateChamadosChart(val) {
-            if(this.charts.chamados) {
-                this.charts.chamados.data.datasets[0].data[0] = val;
-                this.charts.chamados.update();
-            }
-        },
-
-        abrirChamado() {
-            const t = document.getElementById('chamado-desc').value;
-            if(!t) return;
-            db.ref('chamados').push({u: this.user.nome, t: t, s: 'aberto'});
-            document.getElementById('chamado-desc').value = "";
-            alert("Chamado enviado!");
-        },
-
-        reservar() {
-            const eq = document.getElementById('res-eq').value, sl = document.getElementById('res-sl').value, dt = document.getElementById('res-dt').value;
-            if(sl && dt) db.ref('reservas').push({eq, sl, dt, u: this.user.nome});
-        },
-
-        sendChat() {
-            const t = document.getElementById('chat-in').value; if(!t) return;
-            db.ref('chat').push({n: this.user.nome, t: t});
-            document.getElementById('chat-in').value = "";
-        },
-
-        postAviso() {
-            const av = document.getElementById('nti-aviso').value;
-            db.ref('aviso').set(av);
-        },
-
+        updateChamadosChart(val) { if(this.charts.chamados) { this.charts.chamados.data.datasets[0].data[0] = val; this.charts.chamados.update(); } },
+        abrirChamado() { const t = document.getElementById('chamado-desc').value; if(t) db.ref('chamados').push({u: this.user.nome, t: t}); document.getElementById('chamado-desc').value = ""; },
+        reservar() { const eq = document.getElementById('res-eq').value, sl = document.getElementById('res-sl').value, dt = document.getElementById('res-dt').value; if(sl && dt) db.ref('reservas').push({eq, sl, dt, u: this.user.nome}); },
+        sendChat() { const t = document.getElementById('chat-in').value; if(t) db.ref('chat').push({n: this.user.nome, t: t}); document.getElementById('chat-in').value = ""; },
+        postAviso() { const av = document.getElementById('nti-aviso').value; db.ref('aviso').set(av); },
         setLock(v) { db.ref('lock').set(v); }
     };
 </script>
