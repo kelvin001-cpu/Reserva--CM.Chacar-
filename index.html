@@ -3,193 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CONECT MASTER - NTI CHÁCARA</title>
+    <title>Programa Conect - NTI CHÁCARA</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
-            --nti: #ef4444; --prof: #3b82f6; --gestao: #f59e0b; --secre: #8b5cf6; --cad: #10b981;
-            --bg: #0f172a; --panel: #1e293b; --border: #334155;
+            --prof: #00adef; --gestao: #f1c40f; --secre: #a55eea; --cad: #2ecc71; --nti: #eb4d4b;
+            --bg-overlay: #0b0e14;
         }
 
         body, html { 
-            margin: 0; padding: 0; font-family: 'Inter', sans-serif; 
-            background-color: var(--bg); color: #f8fafc; min-height: 100vh; overflow-x: hidden;
+            margin: 0; padding: 0; font-family: 'Poppins', sans-serif; color: white;
+            background: #080a0f; overflow-x: hidden;
         }
 
-        /* --- LOGIN 5 COLUNAS --- */
-        .login-container { display: flex; width: 100%; height: 100vh; }
-        .sector-column { 
-            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            padding: 20px; transition: all 0.4s ease; border-right: 1px solid var(--border);
-            background: linear-gradient(180deg, rgba(30,41,59,0.5) 0%, rgba(15,23,42,1) 100%);
-        }
-        .sector-column:hover { flex: 1.5; background: rgba(51,65,85,0.4); }
-        .sector-column h2 { font-family: 'Orbitron'; font-size: 1rem; margin: 15px 0; letter-spacing: 2px; }
+        .conect-banner { width: 100%; text-align: center; padding: 25px 0; background: #0b0e14; border-bottom: 2px solid #1a1f26; }
+        .conect-banner h1 { font-family: 'Orbitron'; margin: 0; font-size: 2.8rem; color: #40a9ff; letter-spacing: 4px; }
+        .conect-banner p { margin: 5px 0; font-size: 1rem; color: #fff; opacity: 0.8; text-transform: uppercase; }
+
+        .grid-layout { display: grid; grid-template-columns: 280px 1fr 280px; gap: 15px; padding: 15px; }
+        .panel { background: #11151c; border-radius: 10px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+
+        /* ESTILO DOS GRÁFICOS IGUAL À IMAGEM */
+        .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .chart-card { background: #161b22; padding: 15px; border-radius: 8px; height: 230px; position: relative; }
         
-        /* --- DASHBOARD LAYOUT --- */
-        #main-system { display: none; }
-        .top-bar { 
-            background: var(--panel); padding: 15px 30px; border-bottom: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .top-bar h1 { font-family: 'Orbitron'; font-size: 1.5rem; color: var(--prof); margin: 0; }
+        h3 { font-size: 14px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; color: #eee; }
+        input, select { width: 100%; padding: 10px; margin: 5px 0; border-radius: 5px; border: 1px solid #333; background: #080a0f; color: white; }
+        .btn { padding: 10px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; text-transform: uppercase; }
 
-        .dashboard { display: grid; grid-template-columns: 300px 1fr 300px; gap: 20px; padding: 20px; }
-        
-        .card { 
-            background: var(--panel); border: 1px solid var(--border); border-radius: 12px; 
-            padding: 20px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
-        }
-
-        /* --- GRAFICOS ESTILO "IMAGE" --- */
-        .charts-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .chart-box { background: #111827; border-radius: 8px; padding: 15px; height: 250px; border: 1px solid #1f2937; }
-        .chart-title { font-size: 11px; font-weight: 600; color: #94a3b8; text-transform: uppercase; margin-bottom: 10px; display: block; }
-
-        /* --- INPUTS E BOTÕES --- */
-        input, select { 
-            width: 100%; padding: 10px; margin: 8px 0; border-radius: 6px; 
-            border: 1px solid var(--border); background: #0f172a; color: white; font-size: 14px;
-        }
-        .btn { 
-            width: 100%; padding: 12px; border: none; border-radius: 6px; 
-            font-weight: 700; cursor: pointer; text-transform: uppercase; transition: 0.2s;
-        }
-        .btn-nti { background: var(--nti); color: white; }
-        .btn-nti:hover { filter: brightness(1.2); }
-
-        /* --- MANUTENÇÃO --- */
-        #lock-screen { 
-            display: none; position: fixed; inset: 0; background: #000; z-index: 9999;
-            flex-direction: column; align-items: center; justify-content: center;
-        }
-
-        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; }
+        #chat-box { height: 300px; overflow-y: auto; background: #080a0f; padding: 10px; border-radius: 8px; margin-bottom: 10px; }
+        #lock-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div id="lock-screen">
-        <h1 style="font-family:'Orbitron'; color:var(--nti); font-size: 3rem;">OFFLINE</h1>
-        <p>MANUTENÇÃO PROGRAMADA PELO NTI</p>
-    </div>
-
-    <div class="login-container" id="login-screen">
-        <div class="sector-column" style="border-top: 5px solid var(--prof);"><i class="fa fa-graduation-cap fa-2x"></i><h2>PROFESSOR</h2><input type="number" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof); color:white" onclick="app.login('p','Professor')">Entrar</button></div>
-        <div class="sector-column" style="border-top: 5px solid var(--gestao);"><i class="fa fa-user-tie fa-2x"></i><h2>GESTÃO</h2><input type="number" id="g-p" placeholder="Prontuário"><input type="password" id="g-s" placeholder="Senha"><button class="btn" style="background:var(--gestao)" onclick="app.login('g','Gestão')">Entrar</button></div>
-        <div class="sector-column" style="border-top: 5px solid var(--secre);"><i class="fa fa-landmark fa-2x"></i><h2>SECRETARIA</h2><input type="number" id="s-p" placeholder="Prontuário"><input type="password" id="s-s" placeholder="Senha"><button class="btn" style="background:var(--secre); color:white" onclick="app.login('s','Secretaria')">Entrar</button></div>
-        <div class="sector-column" style="border-top: 5px solid var(--cad);"><i class="fa fa-user-plus fa-2x"></i><h2>CADASTRO</h2><input type="text" id="c-n" placeholder="Nome"><input type="number" id="c-p" placeholder="Prontuário"><button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Criar</button></div>
-        <div class="sector-column" style="border-top: 5px solid var(--nti);"><i class="fa fa-terminal fa-2x"></i><h2>NTI</h2><input type="number" id="n-p" placeholder="ID"><input type="password" id="n-s" placeholder="Senha"><button class="btn btn-nti" onclick="app.login('n','NTI')">Painel Master</button></div>
+    <div id="lock-overlay">
+        <h1 style="font-family:'Orbitron'; color:var(--nti)">SISTEMA BLOQUEADO</h1>
+        <p>Manutenção em andamento pelo NTI.</p>
     </div>
 
     <div id="main-system">
-        <div class="top-bar">
-            <h1>CONECT <span style="color:white; font-weight:400">NTI</span></h1>
-            <div id="user-display" style="font-size:12px"></div>
+        <div class="conect-banner">
+            <h1>PROGRAMA CONECT</h1>
+            <p>NTI CHÁCARA - DASHBOARD</p>
         </div>
 
-        <div class="dashboard">
-            <div class="card">
-                <h3 style="margin-top:0"><i class="fa fa-sliders"></i> Master Control</h3>
-                <div id="admin-only" class="hidden">
-                    <label>Segurança do Portal</label>
-                    <button class="btn btn-nti" style="margin-bottom:10px" onclick="app.lockSite(true)">Bloquear Acesso</button>
-                    <button class="btn" style="background:var(--cad); color:white" onclick="app.lockSite(false)">Liberar Acesso</button>
-                    
-                    <hr style="margin:20px 0; border:0; border-top:1px solid var(--border)">
-                    
-                    <label>Recuperação de Conta</label>
-                    <input type="number" id="reset-id" placeholder="ID Usuário">
-                    <button class="btn" style="background:var(--prof); color:white" onclick="app.resetUser()">Resetar Senha</button>
+        <div class="grid-layout">
+            <div class="panel">
+                <h3><i class="fa fa-cog"></i> Controle</h3>
+                <div id="nti-admin">
+                    <button class="btn" style="background:var(--nti); margin-bottom:10px" onclick="app.setLock(true)">Bloquear Site</button>
+                    <button class="btn" style="background:var(--cad); color:black" onclick="app.setLock(false)">Desbloquear</button>
+                    <hr style="border:0; border-top:1px solid #333; margin:15px 0">
+                    <p style="font-size:12px">Resetar Usuário:</p>
+                    <input type="number" id="reset-p" placeholder="Prontuário">
+                    <button class="btn" style="background:var(--prof)" onclick="app.resetSenha()">Resetar Senha</button>
                 </div>
-                <button class="btn" style="background:#334155; color:white; margin-top:20px" onclick="location.reload()">Desconectar</button>
+                <button class="btn" style="background:#333; margin-top:30px" onclick="location.reload()">Sair</button>
             </div>
 
-            <div class="card">
-                <div class="charts-container">
-                    <div class="chart-box"><span class="chart-title">Status do Servidor</span><canvas id="c1"></canvas></div>
-                    <div class="chart-box"><span class="chart-title">Ocupação de Equipamentos</span><canvas id="c2"></canvas></div>
-                    <div class="chart-box"><span class="chart-title">Tráfego da Rede</span><canvas id="c3"></canvas></div>
-                    <div class="chart-box"><span class="chart-title">Chamados por Categoria</span><canvas id="c4"></canvas></div>
+            <div class="panel">
+                <h3><i class="fa fa-chart-line"></i> Monitoramento em Tempo Real</h3>
+                <div class="charts-grid">
+                    <div class="chart-card"><canvas id="chartStatus"></canvas></div>
+                    <div class="chart-card"><canvas id="chartEquip"></canvas></div>
+                    <div class="chart-card"><canvas id="chartUsers"></canvas></div>
+                    <div class="chart-card"><canvas id="chartChamados"></canvas></div>
                 </div>
+                <div style="background:#080a0f; padding:10px; margin-top:15px; border-radius:5px; font-size:12px; color:var(--prof)">
+                    <b>SISTEMA:</b> Operação estável.
+                </div>
+                <h3 style="margin-top:15px">Agenda de Reservas</h3>
+                <div id="lista-res"></div>
             </div>
 
-            <div class="card">
-                <h3><i class="fa fa-headset"></i> Chamados</h3>
-                <div id="ticket-list" style="height:200px; overflow-y:auto; font-size:12px; margin-bottom:15px"></div>
-                
-                <h3><i class="fa fa-comments"></i> Chat</h3>
-                <div id="chat-list" style="height:200px; overflow-y:auto; font-size:12px; background:#0f172a; border-radius:8px; padding:10px"></div>
+            <div class="panel">
+                <h3><i class="fa fa-comments"></i> Comunicação</h3>
+                <div id="chat-box"></div>
+                <h3>Chamados NTI</h3>
+                <div id="lista-chamados" style="font-size:11px"></div>
             </div>
         </div>
     </div>
 
 <script>
     const app = {
-        user: null,
-        
-        login(pre, cargo) {
-            const p = document.getElementById(pre+'-p').value;
-            const s = document.getElementById(pre+'-s').value;
-            // Lógica Kelvin
-            if(cargo === 'NTI' && p === '46690' && s === 'nti2026') {
-                this.user = {nome: 'Kelvin', cargo: 'NTI'};
-                this.initDashboard();
-            }
-        },
+        initCharts() {
+            Chart.defaults.color = '#888';
+            Chart.defaults.font.family = 'Poppins';
 
-        initDashboard() {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('main-system').style.display = 'block';
-            document.getElementById('user-display').innerText = `Operador: ${this.user.nome}`;
-            if(this.user.cargo === 'NTI') document.getElementById('admin-only').classList.remove('hidden');
-            this.renderCharts();
-        },
-
-        renderCharts() {
-            const config = { 
-                responsive: true, 
-                maintainAspectRatio: false, 
-                plugins: { legend: { display: false } } 
-            };
-
-            // 1. DOUGHNUT STATUS
-            new Chart(document.getElementById('c1'), {
+            // 1. STATUS DO SERVIDOR (Doughnut Verde)
+            new Chart(document.getElementById('chartStatus'), {
                 type: 'doughnut',
-                data: { labels: ['Online'], datasets: [{ data: [100], backgroundColor: ['#10b981'], borderWidth: 0, cutout: '80%' }] },
-                options: config
+                data: {
+                    labels: ['Online', 'Manutenção'],
+                    datasets: [{
+                        data: [100, 0],
+                        backgroundColor: ['#2ecc71', '#e74c3c'],
+                        borderWidth: 0,
+                        cutout: '70%'
+                    }]
+                },
+                options: {
+                    plugins: { 
+                        title: { display: true, text: 'STATUS DO SERVIDOR', color: '#fff' },
+                        legend: { position: 'bottom', labels: { boxWidth: 12 } }
+                    }
+                }
             });
 
-            // 2. BARS EQUIPAMENTOS
-            new Chart(document.getElementById('c2'), {
+            // 2. OCUPAÇÃO DE EQUIPAMENTOS (Barras Azuis)
+            new Chart(document.getElementById('chartEquip'), {
                 type: 'bar',
-                data: { labels: ['INFO', 'CHROME', 'TV'], datasets: [{ data: [45, 90, 20], backgroundColor: '#3b82f6', borderRadius: 5 }] },
-                options: { ...config, scales: { y: { display: false }, x: { grid: { display: false } } } }
+                data: {
+                    labels: ['INFO', 'CHROME', 'TV'],
+                    datasets: [{
+                        label: 'Uso %',
+                        data: [40, 80, 30],
+                        backgroundColor: '#40a9ff'
+                    }]
+                },
+                options: {
+                    plugins: { title: { display: true, text: 'OCUPAÇÃO DE EQUIPAMENTOS', color: '#fff' }, legend: {display: false} },
+                    scales: { y: { beginAtZero: true, max: 100, grid: { color: '#222' } }, x: { grid: { display: false } } }
+                }
             });
 
-            // 3. LINE TRAFEGO
-            new Chart(document.getElementById('c3'), {
+            // 3. TRÁFEGO DA REDE (Linha Roxa Curvada)
+            new Chart(document.getElementById('chartUsers'), {
                 type: 'line',
-                data: { labels: ['8h', '10h', '12h', '14h', '16h'], datasets: [{ data: [10, 45, 30, 80, 40], borderColor: '#8b5cf6', fill: true, backgroundColor: 'rgba(139, 92, 246, 0.1)', tension: 0.4 }] },
-                options: { ...config, scales: { x: { display: false }, y: { display: false } } }
+                data: {
+                    labels: ['08h', '10h', '12h', '14h', '16h'],
+                    datasets: [{
+                        label: 'Acessos',
+                        data: [5, 12, 25, 18, 10],
+                        borderColor: '#a55eea',
+                        backgroundColor: 'rgba(165, 94, 234, 0.2)',
+                        fill: true,
+                        tension: 0.4 // Curvatura igual da foto
+                    }]
+                },
+                options: {
+                    plugins: { title: { display: true, text: 'TRÁFEGO DA REDE', color: '#fff' }, legend: {display: false} },
+                    scales: { y: { grid: { color: '#222' } }, x: { grid: { display: false } } }
+                }
             });
 
-            // 4. POLAR AREA (IGUAL À FOTO)
-            new Chart(document.getElementById('c4'), {
+            // 4. CATEGORIA DE CHAMADOS (Polar Area Colorido)
+            new Chart(document.getElementById('chartChamados'), {
                 type: 'polarArea',
-                data: { labels: ['Rede', 'Hardware', 'Software'], datasets: [{ data: [15, 10, 25], backgroundColor: ['#ef4444', '#f59e0b', '#10b981'], borderWidth: 0 }] },
-                options: { ...config, scales: { r: { display: false } } }
+                data: {
+                    labels: ['Hardware', 'Software', 'Rede'],
+                    datasets: [{
+                        data: [1.2, 1.8, 0.8],
+                        backgroundColor: [
+                            'rgba(241, 196, 15, 0.8)', // Amarelo
+                            'rgba(46, 204, 113, 0.8)', // Verde
+                            'rgba(231, 76, 60, 0.8)'   // Vermelho
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    plugins: { 
+                        title: { display: true, text: 'CATEGORIA DE CHAMADOS', color: '#fff' },
+                        legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } }
+                    },
+                    scales: { r: { ticks: { display: false }, grid: { color: '#333' } } }
+                }
             });
         },
+        
+        setLock(val) { /* Lógica Firebase para bloquear site */ alert("Site " + (val ? "Bloqueado" : "Liberado")); },
+        resetSenha() { const p = document.getElementById('reset-p').value; alert("Senha do prontuário " + p + " resetada!"); }
+    };
 
-        lockSite(status) { alert(status ? "Site BLOQUEADO para manutenção." : "Site LIBERADO."); },
-        resetUser() { alert("Senha do prontuário resetada para o padrão."); }
+    // Iniciar tudo
+    window.onload = () => {
+        document.getElementById('main-system').style.display = 'block';
+        app.initCharts();
     };
 </script>
 </body>
