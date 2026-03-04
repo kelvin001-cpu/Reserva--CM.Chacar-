@@ -22,12 +22,37 @@
             background-size: cover; overflow-x: hidden;
         }
 
+        /* --- LOGO / BANNER AUMENTADO --- */
         .conect-banner {
-            width: 100%; text-align: center; padding: 20px 0;
-            background: linear-gradient(180deg, rgba(0,173,239,0.3) 0%, transparent 100%);
+            width: 100%; text-align: center; padding: 40px 0; /* Aumentei o respiro lateral */
+            background: linear-gradient(180deg, rgba(0,173,239,0.4) 0%, transparent 100%);
         }
-        .conect-banner h1 { font-family: 'Orbitron'; margin: 0; font-size: 1.8rem; color: var(--prof); text-shadow: 0 0 10px var(--prof); }
-        .conect-banner p { margin: 5px 0; font-weight: 300; letter-spacing: 1px; opacity: 0.9; }
+        .conect-banner h1 { 
+            font-family: 'Orbitron'; 
+            margin: 0; 
+            font-size: 3.5rem; /* Aumentado de 1.8rem para 3.5rem */
+            font-weight: 700;
+            color: var(--prof); 
+            text-shadow: 0 0 20px rgba(0, 173, 239, 0.8), 0 0 40px rgba(0, 173, 239, 0.4); 
+            letter-spacing: 5px;
+            text-transform: uppercase;
+        }
+        .conect-banner p { 
+            margin: 10px 0 0 0; 
+            font-weight: 400; 
+            font-size: 1.2rem; /* Frase de efeito maior */
+            letter-spacing: 3px; 
+            opacity: 1; 
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* Ajuste para telas menores (Celular) */
+        @media (max-width: 768px) {
+            .conect-banner h1 { font-size: 2rem; }
+            .conect-banner p { font-size: 0.9rem; }
+        }
+        /* ------------------------------- */
 
         #alert-ribbon { background: var(--nti); color: white; padding: 10px; text-align: center; font-weight: bold; display: none; position: fixed; top: 0; width: 100%; z-index: 10000; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
 
