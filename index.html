@@ -13,7 +13,7 @@
     <style>
         :root {
             --prof: #00adef; --gestao: #f1c40f; --secre: #a55eea; --cad: #2ecc71; --nti: #eb4d4b;
-            --bg-glass: rgba(10, 11, 16, 0.75); /* Fundo mais transparente */
+            --bg-overlay: rgba(10, 11, 16, 0.95);
         }
 
         body, html { 
@@ -22,118 +22,121 @@
             background-size: cover; overflow-x: hidden;
         }
 
-        .conect-banner { width: 100%; text-align: center; padding: 15px 0; background: linear-gradient(180deg, rgba(0,173,239,0.4) 0%, transparent 100%); backdrop-filter: blur(5px); }
-        .conect-banner h1 { font-family: 'Orbitron'; margin: 0; font-size: 1.8rem; color: var(--prof); text-shadow: 0 0 15px var(--prof); }
-
-        /* PAINÉIS TRANSPARENTES */
-        .panel { 
-            background: var(--bg-glass); 
-            backdrop-filter: blur(12px); 
-            padding: 20px; 
-            border-radius: 15px; 
-            border: 1px solid rgba(255,255,255,0.15); 
-            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-        }
-
-        .grid-layout { display: grid; grid-template-columns: 320px 1fr 320px; gap: 20px; padding: 20px; }
-        
-        /* GRÁFICOS */
-        .charts-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .chart-card { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); text-align: center; }
-        .chart-label { font-size: 10px; text-transform: uppercase; color: var(--prof); margin-top: 10px; font-weight: bold; letter-spacing: 1px; }
-
-        /* RELATÓRIO NTI */
-        #nti-report { 
-            background: rgba(0, 173, 239, 0.1); 
-            border: 1px solid var(--prof); 
-            padding: 10px; 
-            border-radius: 8px; 
-            margin-top: 15px; 
-            font-size: 11px; 
-            line-height: 1.5;
-            color: #fff;
-        }
-        .status-up { color: var(--cad); }
-        .status-down { color: var(--nti); }
+        .conect-banner { width: 100%; text-align: center; padding: 15px 0; background: linear-gradient(180deg, rgba(0,173,239,0.3) 0%, transparent 100%); }
+        .conect-banner h1 { font-family: 'Orbitron'; margin: 0; font-size: 1.6rem; color: var(--prof); text-shadow: 0 0 10px var(--prof); }
 
         /* LOGIN */
-        .login-container { display: flex; width: 100%; height: 100vh; flex-wrap: wrap; background: rgba(0,0,0,0.6); align-content: center; }
-        .sector-column { flex: 1; min-width: 180px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; border-right: 1px solid rgba(255,255,255,0.1); text-align: center; }
+        .login-container { display: flex; width: 100%; height: 100vh; flex-wrap: wrap; background: var(--bg-overlay); align-content: center; position: relative; }
+        .sector-column { flex: 1; min-width: 180px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; border-right: 1px solid rgba(255,255,255,0.1); text-align: center; transition: 0.3s; }
+        .sector-column:hover { background: rgba(255,255,255,0.05); }
         
-        input, select { width: 100%; padding: 10px; margin: 8px 0; border-radius: 8px; border: 1px solid #555; background: rgba(0,0,0,0.7); color: white; }
-        .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; text-transform: uppercase; font-family: 'Orbitron'; font-size: 0.7rem; }
+        input, select { width: 100%; padding: 10px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: rgba(0,0,0,0.6); color: white; }
+        .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; text-transform: uppercase; font-family: 'Orbitron'; font-size: 0.7rem; transition: 0.2s; }
+        .btn:hover { filter: brightness(1.2); }
 
-        #lista-res, #chat-box, #lista-chamados { background: rgba(0,0,0,0.4); border-radius: 10px; padding: 10px; overflow-y: auto; }
-        .item-row { background: rgba(255,255,255,0.08); padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--prof); }
+        /* DASHBOARD GRID */
+        #main-system { display: none; padding: 20px; background: var(--bg-overlay); min-height: 100vh; }
+        .grid-layout { display: grid; grid-template-columns: 320px 1fr 320px; gap: 20px; }
+        .panel { background: rgba(22, 27, 34, 0.9); backdrop-filter: blur(15px); padding: 18px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        .panel h3 { font-family: 'Orbitron'; font-size: 0.85rem; color: var(--prof); margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+
+        /* LISTAS E COMPONENTES */
+        #chat-box, #lista-res, #lista-chamados, #nti-side-cron { overflow-y: auto; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; font-size: 12px; border: 1px solid rgba(255,255,255,0.05); }
+        #lista-res { height: 500px; } /* Maior para visão geral */
+        #chat-box { height: 280px; }
+        #lista-chamados { height: 180px; }
+        #nti-side-cron { height: 200px; font-size: 10px; }
+
+        .item-row { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid var(--prof); display: flex; justify-content: space-between; align-items: center; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .btn-baixa { background: var(--cad); color: black; border: none; padding: 5px 10px; border-radius: 5px; font-size: 9px; cursor: pointer; font-weight: bold; font-family: 'Orbitron'; }
         
+        .msg { padding: 8px 12px; border-radius: 10px; margin-bottom: 8px; max-width: 85%; line-height: 1.4; }
+        .msg-out { background: #005c4b; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .msg-in { background: #333; align-self: flex-start; border-bottom-left-radius: 2px; }
+
+        .charts-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .chart-card { background: rgba(255,255,255,0.02); padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); }
+
+        #password-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; align-items: center; justify-content: center; }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div class="login-container" id="login-screen">
-        <div class="conect-banner" style="position: absolute; top: 0;"><h1>PROGRAMA CONECT</h1><p>NTI CHÁCARA - PORTAL OFICIAL</p></div>
-        <div class="sector-column" style="color:var(--prof)"><i class="fa fa-graduation-cap fa-4x"></i><h2>PROFESSOR</h2><input type="number" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof); color:white" onclick="app.login('p')">Entrar</button></div>
-        <div class="sector-column" style="color:var(--nti)"><i class="fa fa-microchip fa-4x"></i><h2>NTI CORE</h2><input type="number" id="n-p" placeholder="ID"><input type="password" id="n-s" placeholder="Senha"><button class="btn" style="background:var(--nti); color:white" onclick="app.login('n','NTI')">Painel Master</button></div>
+    <div id="password-modal">
+        <div class="panel" style="width: 300px; text-align: center;">
+            <h3><i class="fa fa-shield-alt"></i> SEGURANÇA</h3>
+            <p style="font-size: 11px; opacity: 0.7;">Redefina sua senha padrão.</p>
+            <input type="password" id="new-p" placeholder="Nova senha">
+            <button class="btn" style="background:var(--cad)" onclick="app.updatePassword()">ATUALIZAR</button>
         </div>
+    </div>
+
+    <div class="login-container" id="login-screen">
+        <div class="conect-banner" style="position: absolute; top: 0;"><h1>PROGRAMA CONECT</h1><p>CHÁCARA - GESTÃO NTI</p></div>
+        <div class="sector-column" style="color:var(--prof)"><i class="fa fa-graduation-cap fa-3x"></i><h2>PROFESSOR</h2><input type="number" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof); color:white" onclick="app.login('p')">Acessar</button></div>
+        <div class="sector-column" style="color:var(--gestao)"><i class="fa fa-user-tie fa-3x"></i><h2>GESTÃO</h2><input type="number" id="g-p" placeholder="Prontuário"><input type="password" id="g-s" placeholder="Senha"><button class="btn" style="background:var(--gestao)" onclick="app.login('g')">Acessar</button></div>
+        <div class="sector-column" style="color:var(--secre)"><i class="fa fa-building-columns fa-3x"></i><h2>SECRETARIA</h2><input type="number" id="s-p" placeholder="Prontuário"><input type="password" id="s-s" placeholder="Senha"><button class="btn" style="background:var(--secre); color:white" onclick="app.login('s')">Acessar</button></div>
+        <div class="sector-column" style="color:var(--nti)"><i class="fa fa-microchip fa-3x"></i><h2>NTI CORE</h2><input type="number" id="n-p" placeholder="ID Master"><input type="password" id="n-s" placeholder="Chave NTI"><button class="btn" style="background:var(--nti); color:white" onclick="app.login('n','NTI')">Painel NTI</button></div>
+    </div>
 
     <div id="main-system">
         <div class="grid-layout">
             
             <div class="panel">
-                <h3 id="user-tag" style="color:var(--prof)"></h3>
+                <div id="user-tag" style="font-weight: bold; color:var(--prof); margin-bottom:15px; font-family:'Orbitron'; font-size:0.7rem"></div>
                 
-                <div id="nti-tools" class="hidden">
-                    <h3 style="color:var(--nti)"><i class="fa fa-terminal"></i> COMANDOS NTI</h3>
-                    <input type="text" id="nti-av" placeholder="Aviso global...">
-                    <button class="btn" style="background:var(--nti); color:white" onclick="app.setAviso()">POSTAR</button>
-                    
-                    <h3 style="margin-top:20px"><i class="fa fa-list"></i> RESERVAS ATUAIS</h3>
-                    <div id="nti-side-cron" style="height: 250px; overflow-y:auto; font-size:10px"></div>
-                </div>
-
                 <div id="user-tools">
-                    <h3><i class="fa fa-headset"></i> CHAMADO NTI</h3>
-                    <input type="text" id="ch-t" placeholder="Descreva o problema...">
-                    <button class="btn" style="background:var(--nti); color:white" onclick="app.postChamado()">ENVIAR</button>
+                    <h3><i class="fa fa-tools"></i> SUPORTE</h3>
+                    <input type="text" id="ch-t" placeholder="Problema técnico?">
+                    <button class="btn" style="background:var(--nti); color:white" onclick="app.postChamado()">ABRIR CHAMADO</button>
                 </div>
 
-                <h3 style="margin-top:20px"><i class="fa fa-laptop"></i> NOVO AGENDAMENTO</h3>
-                <select id="rs-e"><option>CHROMEBOOKS</option><option>SALA INFO</option><option>TV TOUCH</option></select>
-                <input type="text" id="rs-s" placeholder="Sala">
+                <div id="nti-tools" class="hidden">
+                    <h3 style="color:var(--nti)"><i class="fa fa-terminal"></i> NTI COMMAND</h3>
+                    <input type="text" id="nti-av" placeholder="Aviso global...">
+                    <button class="btn" style="background:var(--nti); color:white; margin-bottom:10px" onclick="app.setAviso()">PUBLICAR</button>
+                    <button class="btn" style="background:red; color:white" onclick="db.ref('lock').set(true)">BLOQUEAR</button>
+                    <button class="btn" style="background:green; color:white; margin-top:5px" onclick="db.ref('lock').set(false)">LIBERAR</button>
+                    
+                    <h3 style="margin-top:20px; color:var(--prof)"><i class="fa fa-history"></i> LOG RESERVAS</h3>
+                    <div id="nti-side-cron"></div>
+                </div>
+
+                <h3 style="margin-top:20px"><i class="fa fa-plus"></i> AGENDAR</h3>
+                <select id="rs-e"><option>CHROMEBOOKS</option><option>SALA INFO</option><option>TV TOUCH</option><option>LAB MÓVEL</option></select>
+                <input type="text" id="rs-s" placeholder="Turma / Sala">
                 <input type="datetime-local" id="rs-d">
-                <button class="btn" style="background:var(--prof); color:white" onclick="app.postReserva()">CONFIRMAR</button>
-                <button class="btn" style="background:#222; color:white; margin-top:20px" onclick="location.reload()">SAIR</button>
+                <button class="btn" style="background:var(--prof); color:white" onclick="app.postReserva()">RESERVAR</button>
+                <button class="btn" style="background:#222; color:white; margin-top:20px" onclick="location.reload()">LOGOUT</button>
             </div>
 
             <div class="panel">
                 <div id="view-normal">
-                    <h3><i class="fa fa-calendar-alt"></i> CRONOGRAMA DE USO</h3>
-                    <div id="lista-res" style="height: 600px;"></div>
+                    <h3><i class="fa fa-calendar-alt"></i> CRONOGRAMA OFICIAL DE RECURSOS</h3>
+                    <div id="lista-res"></div>
                 </div>
 
                 <div id="view-nti" class="hidden">
-                    <h3><i class="fa fa-project-diagram"></i> TELEMETRIA E RELATÓRIO</h3>
+                    <h3><i class="fa fa-project-diagram"></i> TELEMETRIA NTI MASTER</h3>
                     <div class="charts-container">
-                        <div class="chart-card"><canvas id="c1"></canvas><div class="chart-label">Frequência de Rede</div></div>
-                        <div class="chart-card"><canvas id="c2"></canvas><div class="chart-label">Saúde do Sistema</div></div>
-                        <div class="chart-card"><canvas id="c3"></canvas><div class="chart-label">Uso por Equipamento</div></div>
-                        <div class="chart-card"><canvas id="c4"></canvas><div class="chart-label">Picos de Acesso</div></div>
-                    </div>
-                    
-                    <div id="nti-report">
-                        <b style="color:var(--prof)">RELATÓRIO DE PERFORMANCE:</b><br>
-                        <span id="rep-text">Analisando dados em tempo real...</span>
+                        <div class="chart-card"><canvas id="c1"></canvas></div>
+                        <div class="chart-card"><canvas id="c2"></canvas></div>
+                        <div class="chart-card"><canvas id="c3"></canvas></div>
+                        <div class="chart-card"><canvas id="c4"></canvas></div>
+                        <div class="chart-card" style="grid-column: span 2;"><canvas id="c5"></canvas></div>
                     </div>
                 </div>
             </div>
 
             <div class="panel">
-                <h3><i class="fa fa-exclamation-triangle"></i> CHAMADOS ATIVOS</h3>
-                <div id="lista-chamados" style="height: 200px;"></div>
+                <h3><i class="fa fa-headset"></i> FILA TÉCNICA (CHAMADOS)</h3>
+                <div id="lista-chamados"></div>
                 
-                <h3 style="margin-top:20px"><i class="fa fa-comments"></i> CHAT CONECT</h3>
-                <div id="chat-box" style="height: 300px; display:flex; flex-direction:column"></div>
+                <h3 style="margin-top:20px"><i class="fa fa-comments"></i> CHAT DA REDE</h3>
+                <div id="chat-box" style="display:flex; flex-direction:column"></div>
                 <div style="display:flex; gap:5px; margin-top:10px">
                     <input type="text" id="msg-in" placeholder="Mensagem..." style="margin:0">
                     <button onclick="app.sendChat()" style="width:50px; background:var(--prof); border:none; border-radius:8px; color:white"><i class="fa fa-paper-plane"></i></button>
@@ -148,19 +151,27 @@
     const db = firebase.database();
 
     const app = {
-        user: null, charts: {},
+        user: null, userKey: null, charts: {},
         async login(pre, isNti) {
             const p = document.getElementById(pre+'-p').value, s = document.getElementById(pre+'-s').value;
             if(isNti==='NTI' && p==='46690' && s==='nti2026') { this.user={nome:'Kelvin', cargo:'NTI'}; this.start(); return; }
             const snap = await db.ref('usuarios/'+p).once('value');
-            if(snap.exists() && String(snap.val().pass) === String(s)) { this.user = snap.val(); this.start(); }
-            else alert("Acesso Negado.");
+            if(snap.exists() && String(snap.val().pass) === String(s)) {
+                this.user = snap.val(); this.userKey = p;
+                if(['pmspmudar123', 'secretaria2026', 'pmspgestores2026'].includes(s)) document.getElementById('password-modal').style.display='flex';
+                else this.start();
+            } else alert("Acesso Negado.");
+        },
+
+        updatePassword() {
+            const nv = document.getElementById('new-p').value;
+            if(nv.length > 3) db.ref('usuarios/'+this.userKey+'/pass').set(nv).then(()=> { document.getElementById('password-modal').style.display='none'; this.start(); });
         },
 
         start() {
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('main-system').style.display = 'block';
-            document.getElementById('user-tag').innerText = this.user.nome.toUpperCase();
+            document.getElementById('user-tag').innerText = "ONLINE: " + this.user.nome.toUpperCase();
             
             if(this.user.cargo === 'NTI') {
                 document.getElementById('nti-tools').classList.remove('hidden');
@@ -173,8 +184,9 @@
         },
 
         sync() {
+            // Reservas
             db.ref('reservas').on('value', snap => {
-                const box = document.getElementById('lista-res');
+                const box = document.getElementById('lista-res'); 
                 const side = document.getElementById('nti-side-cron');
                 box.innerHTML = ""; if(side) side.innerHTML = "";
                 let count = 0;
@@ -182,24 +194,27 @@
                     count++; const d = r.val();
                     const html = `<div class="item-row">
                         <span><b>${d.eq}</b> - ${d.sl}<br><small>${d.u} | ${new Date(d.dt).toLocaleString()}</small></span>
-                        ${this.user.cargo==='NTI' ? `<button class="btn" style="width:60px; background:var(--cad); padding:5px" onclick="app.del('reservas','${r.key}')">BAIXA</button>` : ''}
+                        ${this.user.cargo==='NTI' ? `<button class="btn-baixa" onclick="app.del('reservas','${r.key}')">BAIXA</button>` : ''}
                     </div>`;
-                    box.innerHTML += html; if(side) side.innerHTML += html;
+                    box.innerHTML += html;
+                    if(side) side.innerHTML += html;
                 });
-                this.updateReport(count);
+                if(this.charts.c5) { this.charts.c5.data.datasets[0].data[4] = count; this.charts.c5.update(); }
             });
 
+            // Chamados
             db.ref('chamados').on('value', snap => {
                 const box = document.getElementById('lista-chamados'); box.innerHTML = "";
                 snap.forEach(c => {
+                    const d = c.val();
                     box.innerHTML += `<div class="item-row" style="border-left-color:var(--nti)">
-                        <span><b>${c.val().u}:</b> ${c.val().t}</span>
-                        ${this.user.cargo==='NTI' ? `<button class="btn" style="width:40px; background:var(--cad); padding:5px" onclick="app.del('chamados','${c.key}')">OK</button>` : ''}
+                        <span><b>${d.u}:</b> ${d.t}</span>
+                        ${this.user.cargo==='NTI' ? `<button class="btn-baixa" onclick="app.del('chamados','${c.key}')">OK</button>` : ''}
                     </div>`;
                 });
             });
 
-            db.ref('chat').limitToLast(15).on('value', snap => {
+            db.ref('chat').limitToLast(20).on('value', snap => {
                 const box = document.getElementById('chat-box'); box.innerHTML = "";
                 snap.forEach(m => {
                     const d = m.val(); const side = d.n === this.user.nome ? 'msg-out' : 'msg-in';
@@ -209,19 +224,13 @@
             });
         },
 
-        updateReport(resCount) {
-            const report = document.getElementById('rep-text');
-            if(resCount > 5) report.innerHTML = `<span class="status-up">▲ ALTA DEMANDA:</span> O sistema detectou ${resCount} reservas ativas. Carga de equipamentos acima da média.`;
-            else if(resCount > 0) report.innerHTML = `<span class="status-up">● NORMAL:</span> ${resCount} agendamentos em curso. Sistema estável.`;
-            else report.innerHTML = `<span class="status-down">▼ BAIXO FLUXO:</span> Nenhuma reserva ativa no momento.`;
-        },
-
         initCharts() {
-            const config = { plugins: { legend: { display: false } } };
-            this.charts.c1 = new Chart(document.getElementById('c1'), { type:'line', data:{ labels:['1h','2h','3h','4h'], datasets:[{data:[2,10,5,15], borderColor: '#00adef'}]}, options: config });
-            this.charts.c2 = new Chart(document.getElementById('c2'), { type:'doughnut', data:{ labels:['Bom','Alerta'], datasets:[{data:[90,10], backgroundColor:['#2ecc71','#333']}]}, options: config });
-            this.charts.c3 = new Chart(document.getElementById('c3'), { type:'bar', data:{ labels:['Chr','Info','TV'], datasets:[{data:[30,10,20], backgroundColor: '#f1c40f'}]}, options: config });
-            this.charts.c4 = new Chart(document.getElementById('c4'), { type:'line', data:{ labels:['Manhã','Tarde'], datasets:[{data:[12,25], borderColor:'#a55eea'}]}, options: config });
+            const cfg = (title) => ({ plugins: { legend: { display: false }, title: { display: true, text: title, color: '#ccc' } }, scales: { y: { beginAtZero: true } } });
+            this.charts.c1 = new Chart(document.getElementById('c1'), { type:'line', data:{ labels:['S','T','Q','Q','S'], datasets:[{data:[4,8,12,6,10], borderColor: '#00adef'}]}, options: cfg('Trafego de Dados') });
+            this.charts.c2 = new Chart(document.getElementById('c2'), { type:'doughnut', data:{ labels:['Ativo','Off'], datasets:[{data:[85,15], backgroundColor:['#2ecc71','#333']}]}, options: cfg('Status Servidor') });
+            this.charts.c3 = new Chart(document.getElementById('c3'), { type:'bar', data:{ labels:['Chrome','Labs','TV'], datasets:[{data:[45,20,35], backgroundColor:'#f1c40f'}]}, options: cfg('Uso por Categoria') });
+            this.charts.c4 = new Chart(document.getElementById('c4'), { type:'line', data:{ labels:['08h','12h','16h','20h'], datasets:[{data:[5,15,25,10], borderColor:'#a55eea'}]}, options: cfg('Pico de Acesso') });
+            this.charts.c5 = new Chart(document.getElementById('c5'), { type:'bar', data:{ labels:['Seg','Ter','Qua','Qui','Hoje'], datasets:[{data:[10,14,8,12,0], backgroundColor: '#eb4d4b'}]}, options: cfg('Volume de Reservas Diárias (Tempo Real)') });
         },
 
         postReserva() {
@@ -238,7 +247,7 @@
             if(t) db.ref('chat').push({n: this.user.nome, t: t});
             document.getElementById('msg-in').value = "";
         },
-        del(p, k) { db.ref(p+'/'+k).remove(); },
+        del(path, key) { db.ref(path+'/'+key).remove(); },
         setAviso() { db.ref('aviso').set(document.getElementById('nti-av').value); }
     };
 </script>
