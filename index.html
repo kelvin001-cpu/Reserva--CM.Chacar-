@@ -2,97 +2,60 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CONECT NTI - MASTER FIXED</title>
+    <title>CONECT NTI - V4 ATUALIZADO</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
-        :root {
-            --prof: #00adef; --gestao: #f1c40f; --secre: #a55eea; --cad: #2ecc71; --nti: #eb4d4b;
-            --bg: rgba(10, 11, 16, 0.98);
-        }
-        body, html { margin: 0; padding: 0; font-family: 'Poppins', sans-serif; color: white; min-height: 100vh; background: #0a0b10; }
+        :root { --prof: #00adef; --gestao: #f1c40f; --secre: #a55eea; --cad: #2ecc71; --nti: #eb4d4b; }
+        body { margin: 0; font-family: 'Poppins', sans-serif; background: #0a0b10; color: white; }
         
-        /* TELA DE MANUTENÇÃO */
-        #lock-screen { display: none; position: fixed; inset: 0; background: #000; z-index: 99999; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        /* TELA DE MANUTENÇÃO (BLOQUEIO) */
+        #lock-screen { display: none; position: fixed; inset: 0; background: #000; z-index: 10000; flex-direction: column; align-items: center; justify-content: center; }
+        
+        /* MURAL DE ANÚNCIOS */
+        #mural { display: none; background: #eb4d4b; padding: 15px; text-align: center; font-weight: bold; border-bottom: 3px solid white; }
 
-        /* LOGIN */
-        .login-screen { display: flex; width: 100%; height: 100vh; position: fixed; z-index: 999; background: var(--bg); }
-        .col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border-right: 1px solid #222; transition: 0.3s; }
-        .col:hover { background: rgba(255,255,255,0.03); }
+        .login-screen { display: flex; width: 100%; height: 100vh; position: fixed; z-index: 999; background: #0a0b10; }
+        .col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; border: 1px solid #222; }
+        input, select { width: 80%; padding: 10px; margin: 5px; border-radius: 5px; background: #000; color: #fff; border: 1px solid #444; }
+        .btn { width: 85%; padding: 12px; cursor: pointer; border: none; font-weight: bold; border-radius: 5px; margin-top: 5px; }
         
-        h2 { font-family: 'Orbitron'; font-size: 1.1rem; margin-bottom: 20px; text-align: center; }
-        input, select { width: 90%; padding: 12px; margin: 5px 0; border-radius: 5px; border: 1px solid #333; background: #000; color: #fff; }
-        .btn { width: 90%; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; text-transform: uppercase; margin-top: 10px; transition: 0.2s; }
-        .btn:active { transform: scale(0.98); }
-        
-        .info-box { background: rgba(46, 204, 113, 0.1); border: 1px dashed var(--cad); padding: 10px; font-size: 11px; width: 85%; margin: 10px 0; border-radius: 5px; }
-        
-        /* ANÚNCIO */
-        #mural { display: none; background: var(--nti); color: white; padding: 10px; text-align: center; font-weight: bold; font-size: 14px; position: sticky; top: 0; z-index: 100; border-radius: 0 0 15px 15px; }
-
-        /* MAIN */
         #main { display: none; padding: 20px; }
         .grid { display: grid; grid-template-columns: 300px 1fr 300px; gap: 20px; }
-        .card { background: #161b22; padding: 20px; border-radius: 12px; border: 1px solid #30363d; height: fit-content; }
-        
-        .chat-container { height: 200px; overflow-y: auto; background: #0d1117; padding: 10px; border-radius: 8px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 5px; border: 1px solid #222; }
-        .m { padding: 8px; border-radius: 8px; font-size: 11px; max-width: 85%; line-height: 1.4; }
-        .m-me { background: #005c4b; align-self: flex-end; }
-        .m-other { background: #333; align-self: flex-start; }
-
-        .hidden { display: none !important; }
+        .card { background: #161b22; padding: 20px; border-radius: 10px; border: 1px solid #333; }
+        .chat-box { height: 150px; overflow-y: auto; background: #000; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
+        .msg { font-size: 12px; margin-bottom: 5px; padding: 5px; border-radius: 5px; background: #222; }
     </style>
 </head>
 <body>
 
     <div id="lock-screen">
-        <i class="fa fa-tools fa-5x" style="color:var(--nti); margin-bottom:20px"></i>
-        <h1>SISTEMA EM MANUTENÇÃO</h1>
-        <p>O NTI está atualizando os servidores. Voltamos em breve.</p>
+        <i class="fa fa-exclamation-triangle fa-4x" style="color:var(--nti)"></i>
+        <h1>SISTEMA BLOQUEADO PARA MANUTENÇÃO</h1>
+        <p>O NTI está trabalhando no momento.</p>
     </div>
 
     <div class="login-screen" id="view-login">
-        <div class="col" style="border-top: 5px solid var(--prof)">
-            <i class="fa fa-graduation-cap fa-2x" style="color:var(--prof)"></i><h2>PROFESSOR</h2>
-            <input type="text" id="l-p-u" placeholder="Prontuário">
-            <input type="password" id="l-p-s" placeholder="Senha">
-            <button class="btn" style="background:var(--prof);color:white" onclick="core.login('l-p')">Entrar</button>
-        </div>
-        <div class="col" style="border-top: 5px solid var(--gestao)">
-            <i class="fa fa-user-tie fa-2x" style="color:var(--gestao)"></i><h2>GESTÃO</h2>
-            <input type="text" id="l-g-u" placeholder="Prontuário">
-            <input type="password" id="l-g-s" placeholder="Senha">
-            <button class="btn" style="background:var(--gestao)" onclick="core.login('l-g')">Entrar</button>
-        </div>
-        <div class="col" style="border-top: 5px solid var(--secre)">
-            <i class="fa fa-building fa-2x" style="color:var(--secre)"></i><h2>SECRETARIA</h2>
-            <input type="text" id="l-s-u" placeholder="Prontuário">
-            <input type="password" id="l-s-s" placeholder="Senha">
-            <button class="btn" style="background:var(--secre);color:white" onclick="core.login('l-s')">Entrar</button>
-        </div>
-        <div class="col" style="border-top: 5px solid var(--cad)">
-            <i class="fa fa-user-plus fa-2x" style="color:var(--cad)"></i><h2>NOVO ACESSO</h2>
-            <input type="text" id="reg-n" placeholder="Nome Completo">
-            <input type="text" id="reg-p" placeholder="Novo Prontuário">
-            <select id="reg-c" onchange="core.updatePassInfo()">
+        <div class="col" style="border-top:5px solid var(--prof)"><h2>PROFESSOR</h2><input id="l-p-u" placeholder="Prontuário"><input type="password" id="l-p-s" placeholder="Senha"><button class="btn" style="background:var(--prof)" onclick="core.login('l-p')">Entrar</button></div>
+        <div class="col" style="border-top:5px solid var(--gestao)"><h2>GESTÃO</h2><input id="l-g-u" placeholder="Prontuário"><input type="password" id="l-g-s" placeholder="Senha"><button class="btn" style="background:var(--gestao)" onclick="core.login('l-g')">Entrar</button></div>
+        <div class="col" style="border-top:5px solid var(--secre)"><h2>SECRETARIA</h2><input id="l-s-u" placeholder="Prontuário"><input type="password" id="l-s-s" placeholder="Senha"><button class="btn" style="background:var(--secre); color:white" onclick="core.login('l-s')">Entrar</button></div>
+        
+        <div class="col" style="border-top:5px solid var(--cad)">
+            <h2>CADASTRO</h2>
+            <input id="reg-n" placeholder="Nome">
+            <input id="reg-p" placeholder="Prontuário">
+            <select id="reg-c" onchange="core.updateHint()">
                 <option value="Professor">Professor</option>
                 <option value="Gestão">Gestão</option>
                 <option value="Secretaria">Secretaria</option>
             </select>
-            <div class="info-box">Senha Padrão: <b id="pass-label" style="color:var(--cad)">pmspmudar123</b></div>
-            <button class="btn" style="background:var(--cad);color:white" onclick="core.register()">Criar Agora</button>
+            <p id="hint" style="font-size:11px; color:var(--cad)">Senha: pmspmudar123</p>
+            <button class="btn" style="background:var(--cad)" onclick="core.register()">Criar Conta</button>
         </div>
-        <div class="col" style="border-top: 5px solid var(--nti)">
-            <i class="fa fa-terminal fa-2x" style="color:var(--nti)"></i><h2>NTI MASTER</h2>
-            <input type="text" id="l-n-u" placeholder="ID NTI">
-            <input type="password" id="l-n-s" placeholder="Senha">
-            <button class="btn" style="background:var(--nti);color:white" onclick="core.login('l-n')">Painel</button>
-        </div>
+
+        <div class="col" style="border-top:5px solid var(--nti)"><h2>NTI</h2><input id="l-n-u" placeholder="ID"><input type="password" id="l-n-s" placeholder="Senha"><button class="btn" style="background:var(--nti); color:white" onclick="core.login('l-n')">Painel</button></div>
     </div>
 
     <div id="main">
@@ -100,46 +63,32 @@
         <div class="grid">
             <div class="card">
                 <h3 id="u-name">Usuário</h3>
-                <p id="u-cargo" style="font-size:12px; opacity:0.5"></p>
-                
-                <div id="user-tools">
-                    <h4>Reservas</h4>
-                    <select id="res-eq"><option>CHROMEBOOKS</option><option>KIT MULTIMÍDIA</option><option>TV 01</option></select>
-                    <input type="datetime-local" id="res-dt">
-                    <button class="btn" style="background:var(--prof); color:white" onclick="core.reservar()">Salvar Reserva</button>
+                <div id="nti-panel" style="display:none">
+                    <h4 style="color:var(--nti)">CONTROLE MASTER</h4>
+                    <button class="btn" style="background:orange" onclick="core.setLock(true)">Bloquear Site</button>
+                    <button class="btn" style="background:green" onclick="core.setLock(false)">Desbloquear</button>
+                    <hr>
+                    <input id="ann-text" placeholder="Aviso do mural...">
+                    <button class="btn" style="background:var(--prof)" onclick="core.setAnn()">Postar no Mural</button>
                 </div>
-
-                <div id="nti-tools" class="hidden">
-                    <h4 style="color:var(--nti)">Ações NTI Master</h4>
-                    <button class="btn" style="background:orange; color:black" onclick="core.setLock(true)">Bloquear Site</button>
-                    <button class="btn" style="background:var(--cad); color:white" onclick="core.setLock(false)">Desbloquear</button>
-                    <hr style="border:1px solid #333; margin:15px 0">
-                    <input type="text" id="ann-input" placeholder="Novo Anúncio...">
-                    <button class="btn" style="background:var(--prof); color:white" onclick="core.postAnn()">Lançar Mural</button>
-                </div>
-                <button class="btn" style="background:transparent; border:1px solid #444; color:#666; margin-top:30px" onclick="location.reload()">Sair</button>
+                <button class="btn" style="background:#333; margin-top:20px" onclick="location.reload()">Sair</button>
             </div>
 
             <div class="card">
-                <h3>Monitoramento Rede</h3>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px">
-                    <canvas id="c1" height="100"></canvas>
-                    <canvas id="c2" height="100"></canvas>
-                </div>
-                <h4>Cronograma</h4>
-                <div id="cron" style="font-size:11px"></div>
+                <h3>Monitoramento</h3>
+                <canvas id="chart1" height="150"></canvas>
+                <h4>Reservas Ativas</h4>
+                <div id="res-list"></div>
             </div>
 
             <div class="card">
                 <h4>Chat Geral</h4>
-                <div id="chat-g" class="chat-container"></div>
-                <input type="text" id="msg-g" placeholder="Mensagem...">
-                <button class="btn" style="background:var(--prof); color:white" onclick="core.send('chat_geral', 'msg-g')">Enviar</button>
-
+                <div id="chat-g" class="chat-box"></div>
+                <input id="in-g" placeholder="Texto..."><button onclick="core.send('chat_geral', 'in-g')">Enviar</button>
+                
                 <h4 style="margin-top:20px">Suporte NTI</h4>
-                <div id="chat-p" class="chat-container"></div>
-                <input type="text" id="msg-p" placeholder="Falar com Kelvin...">
-                <button class="btn" style="background:var(--nti); color:white" onclick="core.send('chat_nti', 'msg-p')">Suporte</button>
+                <div id="chat-p" class="chat-box"></div>
+                <input id="in-p" placeholder="Falar com Kelvin..."><button onclick="core.send('chat_p', 'in-p')">Enviar</button>
             </div>
         </div>
     </div>
@@ -152,96 +101,71 @@
     const core = {
         user: null,
 
-        updatePassInfo() {
+        updateHint() {
             const c = document.getElementById('reg-c').value;
-            const label = document.getElementById('pass-label');
-            if(c === 'Gestão') label.innerText = "pmspgestores2026";
-            else if(c === 'Secretaria') label.innerText = "pmspsecretaria2026";
-            else label.innerText = "pmspmudar123";
+            const h = document.getElementById('hint');
+            if(c==='Gestão') h.innerText = "Senha: pmspgestores2026";
+            else if(c==='Secretaria') h.innerText = "Senha: pmspsecretaria2026";
+            else h.innerText = "Senha: pmspmudar123";
         },
 
         async register() {
             const n = document.getElementById('reg-n').value, p = document.getElementById('reg-p').value, c = document.getElementById('reg-c').value;
             let s = "pmspmudar123";
-            if(c === 'Gestão') s = "pmspgestores2026";
-            if(c === 'Secretaria') s = "pmspsecretaria2026";
-            if(!n || !p) return alert("Preencha Nome e Prontuário!");
-            await db.ref('usuarios/' + p).set({ nome: n, pront: p, cargo: c, pass: s });
-            alert("Sucesso! Senha: " + s);
+            if(c==='Gestão') s = "pmspgestores2026";
+            if(c==='Secretaria') s = "pmspsecretaria2026";
+            if(n && p) {
+                await db.ref('usuarios/'+p).set({nome:n, cargo:c, pass:s, pront:p});
+                alert("Cadastrado! Senha: " + s);
+            }
         },
 
-        async login(prefix) {
-            const u = document.getElementById(prefix + '-u').value, s = document.getElementById(prefix + '-s').value;
-            if(u === '46690' && s === 'nti2026') { this.user = { nome: 'Kelvin', cargo: 'NTI' }; return this.init(); }
-            const snap = await db.ref('usuarios/' + u).once('value');
+        async login(pre) {
+            const u = document.getElementById(pre+'-u').value, s = document.getElementById(pre+'-s').value;
+            if(u==='46690' && s==='nti2026') { this.user={nome:'Kelvin', cargo:'NTI'}; return this.start(); }
+            
+            const snap = await db.ref('usuarios/'+u).once('value');
             if(snap.exists() && String(snap.val().pass) === String(s)) {
                 this.user = snap.val();
-                this.init();
-            } else { alert("Login Incorreto!"); }
+                this.start();
+            } else { alert("Erro no Login!"); }
         },
 
-        init() {
-            document.getElementById('view-login').style.display = 'none';
-            document.getElementById('main').style.display = 'block';
-            document.getElementById('u-name').innerText = "Olá, " + this.user.nome;
-            document.getElementById('u-cargo').innerText = "Cargo: " + this.user.cargo;
-            if(this.user.cargo === 'NTI') document.getElementById('nti-tools').classList.remove('hidden');
+        start() {
+            document.getElementById('view-login').style.display='none';
+            document.getElementById('main').style.display='block';
+            document.getElementById('u-name').innerText = this.user.nome;
+            if(this.user.cargo === 'NTI') document.getElementById('nti-panel').style.display='block';
             this.sync();
         },
 
         sync() {
-            // Monitor de Bloqueio
             db.ref('config/lock').on('value', s => {
-                if(s.val() === true && this.user.cargo !== 'NTI') {
-                    document.getElementById('lock-screen').style.display = 'flex';
-                } else { document.getElementById('lock-screen').style.display = 'none'; }
+                document.getElementById('lock-screen').style.display = (s.val() && this.user.cargo !== 'NTI') ? 'flex' : 'none';
             });
-
-            // Mural de Anúncios
             db.ref('config/ann').on('value', s => {
                 const m = document.getElementById('mural');
-                if(s.val()) { m.innerText = s.val(); m.style.display = 'block'; }
-                else { m.style.display = 'none'; }
+                if(s.val()) { m.innerText = s.val(); m.style.display='block'; } else { m.style.display='none'; }
             });
+            this.listen('chat_geral', 'chat-g');
+            this.listen('chat_p', 'chat-p');
+        },
 
-            // Chat Geral
-            db.ref('chat_geral').limitToLast(15).on('value', s => {
-                const box = document.getElementById('chat-g'); box.innerHTML = "";
-                s.forEach(m => {
-                    const cls = m.val().u === this.user.nome ? 'm-me' : 'm-other';
-                    box.innerHTML += `<div class="m ${cls}"><b>${m.val().u}:</b> ${m.val().t}</div>`;
-                });
+        listen(path, id) {
+            db.ref(path).limitToLast(10).on('value', s => {
+                const box = document.getElementById(id); box.innerHTML = "";
+                s.forEach(d => { box.innerHTML += `<div class="msg"><b>${d.val().u}:</b> ${d.val().t}</div>`; });
                 box.scrollTop = box.scrollHeight;
-            });
-
-            // Chat NTI
-            db.ref('chat_nti').limitToLast(15).on('value', s => {
-                const box = document.getElementById('chat-p'); box.innerHTML = "";
-                s.forEach(m => {
-                    const cls = m.val().u === this.user.nome ? 'm-me' : 'm-other';
-                    box.innerHTML += `<div class="m ${cls}"><b>${m.val().u}:</b> ${m.val().t}</div>`;
-                });
-                box.scrollTop = box.scrollHeight;
-            });
-
-            // Cronograma
-            db.ref('reservas').on('value', s => {
-                const c = document.getElementById('cron'); c.innerHTML = "";
-                s.forEach(r => c.innerHTML += `<div style="border-bottom:1px solid #222; padding:5px">${r.val().dt} - ${r.val().eq} (${r.val().u})</div>`);
             });
         },
 
-        send(path, inp) {
-            const t = document.getElementById(inp).value;
-            if(t) { db.ref(path).push({u: this.user.nome, t: t}); document.getElementById(inp).value = ""; }
+        send(path, id) {
+            const t = document.getElementById(id).value;
+            if(t) { db.ref(path).push({u:this.user.nome, t:t}); document.getElementById(id).value=""; }
         },
 
-        setLock(val) { db.ref('config/lock').set(val); },
-        postAnn() { db.ref('config/ann').set(document.getElementById('ann-input').value); },
-        reservar() {
-            const eq = document.getElementById('res-eq').value, dt = document.getElementById('res-dt').value;
-            if(dt) db.ref('reservas').push({u: this.user.nome, eq: eq, dt: dt.replace('T',' ')});
-        }
+        setLock(v) { db.ref('config/lock').set(v); },
+        setAnn() { db.ref('config/ann').set(document.getElementById('ann-text').value); }
     };
 </script>
 </body>
