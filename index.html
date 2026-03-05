@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conect NTI - Gestão Inteligente</title>
+    <title>Programa Conect - NTI CHÁCARA</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -13,158 +13,140 @@
     <style>
         :root {
             --prof: #00adef; --gestao: #f1c40f; --secre: #a55eea; --cad: #2ecc71; --nti: #eb4d4b;
-            --dark-bg: #0a0b10; --panel-bg: rgba(20, 22, 30, 0.95);
+            --bg-dark: rgba(10, 11, 16, 0.9);
         }
 
         body, html { 
-            margin: 0; padding: 0; font-family: 'Poppins', sans-serif; color: white; height: 100vh;
+            margin: 0; padding: 0; font-family: 'Poppins', sans-serif; color: white; min-height: 100vh;
             background: url('https://get.wallhere.com/photo/space-planet-Earth-NASA-blue-marble-atmosphere-outer-space-astronomical-object-82285.jpg') no-repeat center center fixed;
             background-size: cover; overflow: hidden;
         }
 
-        /* LOGIN SCREEN ORGANIZADO */
-        .login-container { display: flex; width: 100%; height: 100vh; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
-        .login-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; border-right: 1px solid rgba(255,255,255,0.05); transition: 0.4s; }
-        .login-col:hover { background: rgba(255,255,255,0.03); }
-        .login-col i { margin-bottom: 20px; opacity: 0.8; }
+        /* Banner */
+        .conect-banner { width: 100%; text-align: center; padding: 15px 0; background: linear-gradient(180deg, rgba(0,173,239,0.2) 0%, transparent 100%); }
+        .conect-banner h1 { font-family: 'Orbitron'; margin: 0; font-size: 1.6rem; color: var(--prof); text-shadow: 0 0 10px var(--prof); }
+
+        /* Login */
+        .login-container { display: flex; width: 100%; height: 100vh; background: var(--bg-dark); position: absolute; z-index: 1000; }
+        .sector-column { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; transition: 0.5s; border-right: 1px solid rgba(255,255,255,0.1); text-align: center; }
+        .sector-column:hover { background: rgba(255,255,255,0.05); }
+
+        /* Layout do Sistema */
+        #main-system { display: none; height: 100vh; background: var(--bg-dark); padding: 10px; }
+        .grid-layout { display: grid; grid-template-columns: 300px 1fr 300px; gap: 15px; height: calc(100vh - 100px); }
+        .panel { background: rgba(22, 27, 34, 0.95); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); padding: 15px; display: flex; flex-direction: column; }
         
-        /* HEADER */
-        .header-main { height: 60px; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; border-bottom: 1px solid rgba(0,173,239,0.3); }
-        .header-main h1 { font-family: 'Orbitron'; font-size: 1.2rem; margin: 0; color: var(--prof); }
+        /* Menu NTI Interno */
+        .nti-nav { display: flex; justify-content: center; gap: 10px; margin-bottom: 10px; }
+        .nav-btn { background: #222; border: 1px solid var(--nti); color: white; padding: 6px 15px; border-radius: 4px; cursor: pointer; font-family: 'Orbitron'; font-size: 10px; }
+        .nav-btn.active { background: var(--nti); }
 
-        /* LAYOUT PRINCIPAL */
-        #main-system { display: none; height: 100vh; }
-        .grid-wrapper { display: grid; grid-template-columns: 280px 1fr 300px; gap: 15px; padding: 15px; height: calc(100vh - 90px); }
+        /* Colunas NTI (Estilo Original Organizado) */
+        .nti-sub-grid { display: flex; gap: 8px; height: 100%; }
+        .nti-col { flex: 1; background: rgba(0,0,0,0.4); border-top: 3px solid var(--nti); border-radius: 6px; padding: 10px; font-size: 11px; overflow-y: auto; }
+        .nti-col h4 { font-family: 'Orbitron'; color: var(--nti); font-size: 9px; margin: 0 0 10px 0; border-bottom: 1px solid rgba(235,77,75,0.2); }
 
-        /* PAINÉIS */
-        .card { background: var(--panel-bg); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); padding: 20px; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .scroll-area { flex: 1; overflow-y: auto; padding-right: 8px; }
-        .scroll-area::-webkit-scrollbar { width: 5px; }
-        .scroll-area::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        /* Dashboards Profissionais */
+        .pro-dash { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; height: 100%; }
+        .chart-card { background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px; border: 1px solid rgba(255,255,255,0.05); }
 
-        /* MENU INTERNO NTI */
-        .nti-nav { display: flex; gap: 10px; margin-bottom: 20px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; }
-        .tab-btn { background: transparent; border: 1px solid var(--nti); color: white; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-family: 'Orbitron'; font-size: 10px; transition: 0.3s; }
-        .tab-btn.active { background: var(--nti); }
+        /* Geral */
+        .scroll { overflow-y: auto; flex: 1; }
+        input, select { width: 100%; padding: 10px; margin: 5px 0; border-radius: 6px; border: 1px solid #444; background: #000; color: white; }
+        .btn { padding: 10px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; text-transform: uppercase; font-size: 11px; }
+        
+        #chat-box { flex: 1; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 10px; overflow-y: auto; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; }
+        .msg { padding: 8px; border-radius: 8px; font-size: 12px; max-width: 85%; }
+        .msg-in { background: #333; align-self: flex-start; }
+        .msg-out { background: #005c4b; align-self: flex-end; }
 
-        /* COMPONENTES */
-        input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #333; background: #000; color: white; font-size: 13px; }
-        .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%; transition: 0.2s; text-transform: uppercase; font-size: 12px; }
-        .btn:active { transform: scale(0.98); }
-
-        /* DASHBOARDS NTI */
-        .nti-grid-cols { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; height: 100%; }
-        .nti-mini-panel { background: rgba(0,0,0,0.4); border-top: 3px solid var(--nti); border-radius: 8px; padding: 10px; }
-        .nti-mini-panel h6 { margin: 0 0 10px 0; font-family: 'Orbitron'; color: var(--nti); font-size: 10px; }
-
-        .pro-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; height: 100%; }
-        .chart-container { background: rgba(0,0,0,0.2); border-radius: 10px; padding: 15px; border: 1px solid rgba(255,255,255,0.05); }
-
-        /* CHAT */
-        #chat-box { flex: 1; display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
-        .msg { padding: 10px; border-radius: 10px; font-size: 12px; max-width: 85%; }
-        .msg-in { background: #1e1e26; align-self: flex-start; border-bottom-left-radius: 2px; }
-        .msg-out { background: #005c4b; align-self: flex-end; border-bottom-right-radius: 2px; }
-
-        #alert-ribbon { background: var(--nti); position: fixed; top: 0; width: 100%; text-align: center; padding: 8px; font-weight: bold; font-size: 13px; z-index: 9999; display: none; }
+        #alert-ribbon { background: var(--nti); position: fixed; top: 0; width: 100%; text-align: center; padding: 5px; font-weight: bold; z-index: 2000; display: none; }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-<div id="alert-ribbon">⚠️ SISTEMA EM MANUTENÇÃO: <span id="alert-text"></span></div>
+<div id="alert-ribbon">⚠️ NTI: <span id="alert-text"></span></div>
 
-<div id="login-screen" class="login-container">
-    <div class="login-col" style="border-top: 5px solid var(--prof)">
-        <i class="fa fa-graduation-cap fa-3x" style="color:var(--prof)"></i>
-        <h2>PROFESSOR</h2>
+<div class="login-container" id="login-screen">
+    <div class="conect-banner" style="position: absolute; top: 0;"><h1>PROGRAMA CONECT</h1><p>CHÁCARA</p></div>
+    <div class="sector-column" style="border-top: 4px solid var(--prof)">
+        <i class="fa fa-graduation-cap fa-3x"></i><h3>PROFESSOR</h3>
         <input type="number" id="p-p" placeholder="Prontuário">
         <input type="password" id="p-s" placeholder="Senha">
-        <button class="btn" style="background:var(--prof); color:white" onclick="app.login('p','Professor')">Acessar</button>
+        <button class="btn" style="background:var(--prof); color:white" onclick="app.login('p','Professor')">Entrar</button>
     </div>
-    <div class="login-col" style="border-top: 5px solid var(--nti)">
-        <i class="fa fa-terminal fa-3x" style="color:var(--nti)"></i>
-        <h2>SISTEMA NTI</h2>
-        <input type="number" id="n-p" placeholder="ID NTI">
+    <div class="sector-column" style="border-top: 4px solid var(--nti)">
+        <i class="fa fa-terminal fa-3x"></i><h3>NTI</h3>
+        <input type="number" id="n-p" placeholder="ID">
         <input type="password" id="n-s" placeholder="Senha">
-        <button class="btn" style="background:var(--nti); color:white" onclick="app.login('n','NTI')">Entrar no Terminal</button>
+        <button class="btn" style="background:var(--nti); color:white" onclick="app.login('n','NTI')">Acessar Painel</button>
     </div>
 </div>
 
 <div id="main-system">
-    <div class="header-main">
-        <h1>PROGRAMA CONECT <span style="font-weight:300; font-size:12px; color:white; margin-left:10px">| CHÁCARA</span></h1>
-        <div id="user-tag" style="font-size: 12px; font-weight: bold"></div>
-    </div>
-
-    <div class="grid-wrapper">
-        <div class="card">
-            <h4 style="margin-top:0"><i class="fa fa-layer-group"></i> Serviços</h4>
-            <div class="scroll-area">
-                <label>Chamado Técnico</label>
-                <input type="text" id="ch-desc" placeholder="Ex: Wi-fi lento">
-                <button class="btn" style="background:var(--nti); color:white" onclick="app.abrirChamado()">Solicitar</button>
-                
-                <hr style="opacity:0.1; margin:20px 0">
-                
-                <label>Reserva de Equipamento</label>
-                <select id="res-tipo"><option>CHROMEBOOKS</option><option>SALA INFO</option><option>TV TOUCH</option></select>
+    <div class="conect-banner"><h1>PROGRAMA CONECT</h1></div>
+    
+    <div class="grid-layout">
+        <div class="panel">
+            <h4 id="u-display" style="color:var(--prof); margin-top:0"></h4>
+            <div class="scroll">
+                <label>Chamado NTI</label>
+                <input type="text" id="ch-desc" placeholder="Qual o problema?">
+                <button class="btn" style="background:var(--nti); color:white" onclick="app.postChamado()">Enviar</button>
+                <hr style="opacity:0.1; margin:15px 0">
+                <label>Reserva</label>
+                <select id="res-tipo"><option>CHROMEBOOKS</option><option>SALA INFO</option></select>
                 <input type="datetime-local" id="res-data">
-                <button class="btn" style="background:var(--prof); color:white" onclick="app.reservar()">Confirmar Reserva</button>
+                <button class="btn" style="background:var(--prof); color:white" onclick="app.postReserva()">Reservar</button>
             </div>
-            
-            <div id="nti-admin" class="hidden" style="border-top: 1px solid #333; padding-top:15px; margin-top:15px">
-                <p style="color:var(--nti); font-size:11px; font-weight:bold">CONTROLE MASTER</p>
-                <button class="btn" style="background:#333; margin-bottom:5px" onclick="app.setLock(true)">TRAVAR SISTEMA</button>
-                <button class="btn" style="background:#333" onclick="app.setLock(false)">LIBERAR</button>
+            <div id="admin-only" class="hidden" style="border-top:1px solid #333; padding-top:10px">
+                <input type="text" id="nti-aviso" placeholder="Aviso Global">
+                <button class="btn" style="background:var(--nti); margin-bottom:5px" onclick="app.sendAviso()">Postar Aviso</button>
+                <button class="btn" style="background:#555" onclick="app.toggleLock()">BLOQUEAR ACESSO</button>
             </div>
-            <button class="btn" style="background:transparent; border:1px solid #444; color:#aaa; margin-top:15px" onclick="location.reload()">Desconectar</button>
+            <button class="btn" style="background:transparent; border:1px solid #444; margin-top:10px" onclick="location.reload()">Sair</button>
         </div>
 
-        <div id="content-center">
-            <div id="view-user" class="card" style="height:100%">
-                <h3>Painel de Monitoramento</h3>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px">
-                    <div class="chart-container"><canvas id="chartUser1"></canvas></div>
-                    <div class="chart-container"><canvas id="chartUser2"></canvas></div>
-                </div>
-                <h4 style="margin-top:20px">Minhas Reservas</h4>
-                <div id="user-res-list" class="scroll-area"></div>
+        <div id="center-content">
+            <div id="nti-nav" class="nti-nav hidden">
+                <button class="nav-btn active" onclick="app.showTab('live')">TERMINAL LIVE (5 COLUNAS)</button>
+                <button class="nav-btn" onclick="app.showTab('dash')">DASHBOARDS PRO</button>
             </div>
 
-            <div id="view-nti" class="hidden" style="height:100%; display:flex; flex-direction:column">
-                <div class="nti-nav">
-                    <button class="tab-btn active" onclick="app.toggleTab('cols')">TERMINAL LIVE</button>
-                    <button class="tab-btn" onclick="app.toggleTab('dash')">ANALYTICS PRO</button>
-                </div>
+            <div id="tab-live" class="nti-sub-grid hidden">
+                <div class="nti-col"><h4>1. USUÁRIOS</h4><div id="list-on"></div></div>
+                <div class="nti-col"><h4>2. TRÁFEGO</h4><canvas id="miniChart1"></canvas></div>
+                <div class="nti-col"><h4>3. TERMINAL</h4><div id="term-logs" style="font-family:monospace; color:#0f0"></div></div>
+                <div class="nti-col"><h4>4. FIREBASE</h4><div id="db-stat" style="color:var(--cad)">Conectado<br>Latência: 18ms</div></div>
+                <div class="nti-col"><h4>5. DISPOSITIVOS</h4><div id="list-dev">SALA INFO: ON<br>CHROME: 32/40</div></div>
+            </div>
 
-                <div id="nti-cols" class="nti-grid-cols">
-                    <div class="nti-mini-panel"><h6>ONLINE</h6><div id="list-on" style="font-size:10px"></div></div>
-                    <div class="nti-mini-panel"><h6>TRÁFEGO</h6><canvas id="chartNti1"></canvas></div>
-                    <div class="nti-mini-panel"><h6>LOGS</h6><div id="term-logs" style="font-family:monospace; color:#0f0; font-size:9px"></div></div>
-                    <div class="nti-mini-panel"><h6>ALERTAS</h6><div id="list-alerts" style="color:var(--gestao); font-size:10px"></div></div>
-                    <div class="nti-mini-panel"><h6>SERVER</h6><div style="font-size:10px">CPU: 12%<br>RAM: 4.2GB</div></div>
-                </div>
+            <div id="tab-dash" class="pro-dash hidden">
+                <div class="chart-card"><h6>Performance da Rede</h6><canvas id="proChart1"></canvas></div>
+                <div class="chart-card"><h6>Saúde dos Servidores</h6><canvas id="proChart2"></canvas></div>
+                <div class="chart-card"><h6>Distribuição de Carga</h6><canvas id="proChart3"></canvas></div>
+                <div class="chart-card"><h6>Uso por Departamento</h6><canvas id="proChart4"></canvas></div>
+            </div>
 
-                <div id="nti-dash" class="pro-charts hidden">
-                    <div class="chart-container"><h6>Acessos Mensais</h6><canvas id="proChart1"></canvas></div>
-                    <div class="chart-container"><h6>Saúde da Rede</h6><canvas id="proChart2"></canvas></div>
-                    <div class="chart-container"><h6>Uso por Setor</h6><canvas id="proChart3"></canvas></div>
-                    <div class="chart-container"><h6>Saturação DB</h6><canvas id="proChart4"></canvas></div>
+            <div id="tab-user" class="panel" style="height:100%">
+                <h3>Monitoramento Geral</h3>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px">
+                    <canvas id="uChart1"></canvas>
+                    <canvas id="uChart2"></canvas>
                 </div>
             </div>
         </div>
 
-        <div class="card">
-            <h4><i class="fa fa-comments"></i> Comunicação</h4>
-            <div id="chat-box" class="scroll-area"></div>
+        <div class="panel">
+            <h4>Chamados Ativos</h4>
+            <div id="list-ch" class="scroll" style="max-height:120px; font-size:10px; background:rgba(0,0,0,0.3); padding:5px; border-radius:6px"></div>
+            <h4 style="margin-top:15px">Chat Conect</h4>
+            <div id="chat-box"></div>
             <div style="display:flex; gap:5px">
-                <input type="text" id="chat-msg" placeholder="Mensagem...">
-                <button onclick="app.sendChat()" class="btn" style="width:50px; background:var(--prof); margin:0"><i class="fa fa-paper-plane"></i></button>
+                <input type="text" id="chat-in" placeholder="Mensagem...">
+                <button onclick="app.sendChat()" class="btn" style="width:40px; margin:0"><i class="fa fa-paper-plane"></i></button>
             </div>
-            
-            <h4 style="margin-top:20px; border-top:1px solid #333; padding-top:15px">Chamados</h4>
-            <div id="chamados-list" class="scroll-area" style="font-size:11px"></div>
         </div>
     </div>
 </div>
@@ -176,6 +158,8 @@
 
     const app = {
         user: null,
+        isLocked: false,
+
         async login(pre, cargo) {
             const p = document.getElementById(pre+'-p').value, s = document.getElementById(pre+'-s').value;
             if(cargo==='NTI' && p==='46690' && s==='nti2026') { 
@@ -183,91 +167,88 @@
                 return this.start(); 
             }
             const snap = await db.ref('usuarios/'+p).once('value');
-            if(snap.exists() && String(snap.val().pass) === String(s)) { 
-                this.user = snap.val(); 
-                this.start(); 
-            } else alert("Acesso Inválido");
+            if(snap.exists() && String(snap.val().pass) === s) { this.user = snap.val(); this.start(); }
+            else alert("Erro de login.");
         },
 
         start() {
-            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('login-screen').style.display = 'none';
             document.getElementById('main-system').style.display = 'block';
-            document.getElementById('user-tag').innerHTML = `<span style="color:var(--prof)">●</span> ${this.user.nome}`;
+            document.getElementById('u-display').innerText = `👤 ${this.user.nome}`;
             
             if(this.user.cargo === 'NTI') {
-                document.getElementById('nti-admin').classList.remove('hidden');
-                document.getElementById('view-user').classList.add('hidden');
-                document.getElementById('view-nti').classList.remove('hidden');
-                this.initNtiMode();
+                document.getElementById('nti-nav').classList.remove('hidden');
+                document.getElementById('admin-only').classList.remove('hidden');
+                document.getElementById('tab-user').classList.add('hidden');
+                this.showTab('live');
+                this.initNtiCharts();
             }
             this.sync();
-            this.initCharts();
         },
 
-        toggleTab(tab) {
-            document.getElementById('nti-cols').classList.add('hidden');
-            document.getElementById('nti-dash').classList.add('hidden');
-            document.getElementById('nti-'+tab).classList.remove('hidden');
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        showTab(tab) {
+            document.getElementById('tab-live').classList.add('hidden');
+            document.getElementById('tab-dash').classList.add('hidden');
+            document.getElementById('tab-'+tab).classList.remove('hidden');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             event.target.classList.add('active');
         },
 
         sync() {
-            // Chat Realtime
+            // Presença
+            db.ref('online/'+this.user.pront).set({nome: this.user.nome});
+            db.ref('online/'+this.user.pront).onDisconnect().remove();
+            db.ref('online').on('value', s => {
+                const list = document.getElementById('list-on'); if(list) { list.innerHTML = ""; s.forEach(u => list.innerHTML += `● ${u.val().nome}<br>`); }
+            });
+
+            // Chat
             db.ref('chat').limitToLast(15).on('value', s => {
                 const box = document.getElementById('chat-box'); box.innerHTML = "";
                 s.forEach(m => {
-                    const type = m.val().n === this.user.nome ? 'msg-out' : 'msg-in';
-                    box.innerHTML += `<div class="msg ${type}"><b>${m.val().n}</b><br>${m.val().t}</div>`;
+                    const side = m.val().n === this.user.nome ? 'msg-out' : 'msg-in';
+                    box.innerHTML += `<div class="msg ${side}"><b>${m.val().n}:</b><br>${m.val().t}</div>`;
                 });
                 box.scrollTop = box.scrollHeight;
             });
 
-            // Online Users
-            db.ref('online').on('value', s => {
-                const list = document.getElementById('list-on'); if(!list) return;
-                list.innerHTML = "";
-                s.forEach(u => list.innerHTML += `> ${u.val().nome}<br>`);
-            });
-
             // Chamados
             db.ref('chamados').on('value', s => {
-                const list = document.getElementById('chamados-list');
-                list.innerHTML = "";
-                s.forEach(c => list.innerHTML += `<div style="margin-bottom:8px; border-left:2px solid var(--nti); padding-left:5px"><b>${c.val().u}</b>: ${c.val().t}</div>`);
+                const list = document.getElementById('list-ch'); list.innerHTML = "";
+                s.forEach(c => list.innerHTML += `<div style="padding:2px; border-bottom:1px solid #333">${c.val().u}: ${c.val().t}</div>`);
             });
 
-            // Online presence
-            db.ref('online/'+this.user.pront).set({nome: this.user.nome});
-            db.ref('online/'+this.user.pront).onDisconnect().remove();
+            // Alertas
+            db.ref('aviso').on('value', s => {
+                const rib = document.getElementById('alert-ribbon');
+                if(s.val()) { rib.style.display = 'block'; document.getElementById('alert-text').innerText = s.val(); }
+                else rib.style.display = 'none';
+            });
         },
 
-        initCharts() {
-            // Simples para User
-            new Chart(document.getElementById('chartUser1'), { type: 'line', data: { labels: ['08h','12h','16h'], datasets: [{ label: 'Atividade', data: [5, 12, 8], borderColor: '#00adef' }] } });
-            new Chart(document.getElementById('chartUser2'), { type: 'doughnut', data: { labels: ['Uso','Livre'], datasets: [{ data: [70, 30], backgroundColor: ['#a55eea','#222'] }] } });
-        },
-
-        initNtiMode() {
-            // Terminal Logs
-            const logs = document.getElementById('term-logs');
-            setInterval(() => {
-                const msg = ["> SYNC_OK", "> PING_24ms", "> DB_REFRESH", "> AUTH_VALID"];
-                logs.innerHTML += msg[Math.floor(Math.random()*msg.length)] + "<br>";
-                if(logs.childElementCount > 15) logs.innerHTML = "";
-            }, 2000);
-
+        initNtiCharts() {
+            const ctx = (id) => document.getElementById(id).getContext('2d');
             // Gráficos Pro
-            const ctxConfig = (color) => ({ type: 'line', data: { labels: ['S1','S2','S3','S4'], datasets: [{ data: [10, 50, 20, 40], borderColor: color, fill: true, backgroundColor: color+'22' }] }, options: { maintainAspectRatio: false } });
-            new Chart(document.getElementById('proChart1'), ctxConfig('#00adef'));
-            new Chart(document.getElementById('proChart2'), ctxConfig('#eb4d4b'));
-            new Chart(document.getElementById('proChart3'), { type: 'bar', data: { labels: ['ADM','PROF','SEC'], datasets: [{ data: [40, 90, 30], backgroundColor: '#f1c40f' }] } });
-            new Chart(document.getElementById('proChart4'), { type: 'radar', data: { labels: ['CPU','RAM','DISK','NET'], datasets: [{ label: 'Status', data: [20, 80, 40, 60], borderColor: '#2ecc71' }] } });
+            new Chart(ctx('proChart1'), { type: 'line', data: { labels: ['1h','2h','3h','4h'], datasets: [{ label:'Mbps', data:[10,80,45,90], borderColor: '#00adef', fill: true, backgroundColor: 'rgba(0,173,239,0.1)' }] } });
+            new Chart(ctx('proChart2'), { type: 'radar', data: { labels: ['CPU','RAM','NET','TEMP'], datasets: [{ label:'Server', data:[20,40,90,30], borderColor: '#eb4d4b' }] } });
+            new Chart(ctx('proChart3'), { type: 'doughnut', data: { labels: ['Livre','Uso'], datasets: [{ data:[30,70], backgroundColor:['#2ecc71','#222'] }] } });
+            new Chart(ctx('proChart4'), { type: 'bar', data: { labels: ['ADM','SEC','PROF'], datasets: [{ data:[40,20,100], backgroundColor: '#f1c40f' }] } });
+            
+            // Terminal Log Simulation
+            setInterval(() => {
+                const logs = document.getElementById('term-logs');
+                if(logs) {
+                    const line = ["> SYNCING...", "> DB_OK", "> CACHE_CLR", "> PING_12MS"];
+                    logs.innerHTML += line[Math.floor(Math.random()*4)] + "<br>";
+                    if(logs.innerText.length > 200) logs.innerHTML = "";
+                }
+            }, 2000);
         },
 
-        sendChat() { const t = document.getElementById('chat-msg').value; if(t) db.ref('chat').push({n: this.user.nome, t: t}); document.getElementById('chat-msg').value=""; },
-        abrirChamado() { const t = document.getElementById('ch-desc').value; if(t) db.ref('chamados').push({u: this.user.nome, t: t}); },
-        setLock(v) { db.ref('lock').set(v); }
+        sendChat() { const t = document.getElementById('chat-in').value; if(t) db.ref('chat').push({n: this.user.nome, t: t}); document.getElementById('chat-in').value=""; },
+        postChamado() { const t = document.getElementById('ch-desc').value; if(t) db.ref('chamados').push({u: this.user.nome, t: t}); },
+        sendAviso() { db.ref('aviso').set(document.getElementById('nti-aviso').value); },
+        toggleLock() { this.isLocked = !this.isLocked; db.ref('lock').set(this.isLocked); }
     };
 </script>
 </body>
