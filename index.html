@@ -35,10 +35,8 @@
         .sector-column { flex: 1; min-width: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; transition: 0.5s; border-right: 1px solid rgba(255,255,255,0.1); text-align: center; }
         .sector-column:hover { flex: 1.4; background: rgba(255,255,255,0.05); }
 
-        /* Informativo de Senha no Cadastro */
         .pass-info { font-size: 10px; background: rgba(255,255,255,0.1); padding: 5px; border-radius: 5px; margin: 5px 0; border: 1px dashed var(--cad); color: #ccc; }
-        .pass-info b { color: var(--cad); font-family: monospace; }
-
+        
         #main-system { display: none; padding: 20px; background: var(--bg-overlay); min-height: 100vh; }
         .grid-layout { display: grid; grid-template-columns: 320px 1fr 320px; gap: 20px; }
         
@@ -47,11 +45,7 @@
         input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: rgba(0,0,0,0.6); color: white; box-sizing: border-box; }
         .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; text-transform: uppercase; margin-top: 5px; }
 
-        #chat-box { 
-            height: 300px; overflow-y: auto; background: rgba(0,0,0,0.4); 
-            padding: 15px; border-radius: 12px; margin-bottom: 10px;
-            display: flex; flex-direction: column; gap: 10px;
-        }
+        #chat-box { height: 300px; overflow-y: auto; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 10px; }
         .msg { max-width: 80%; padding: 8px 12px; border-radius: 12px; font-size: 13px; line-height: 1.4; position: relative; word-wrap: break-word; }
         .msg-in { align-self: flex-start; background: #333; border-bottom-left-radius: 2px; }
         .msg-out { align-self: flex-end; background: #005c4b; border-bottom-right-radius: 2px; }
@@ -60,13 +54,20 @@
         .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
         .chart-card { background: rgba(255,255,255,0.03); padding: 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); }
 
+        /* ESTILO EXCLUSIVO NTI DENTRO DO GRID */
+        .nti-sub-grid { display: flex; gap: 10px; height: 100%; }
+        .nti-mini-col { flex: 1; background: rgba(0,0,0,0.5); border-top: 3px solid var(--nti); padding: 10px; border-radius: 8px; transition: 0.4s; font-size: 11px; overflow: hidden; }
+        .nti-mini-col:hover { flex: 1.8; background: rgba(255,255,255,0.05); }
+        .nti-mini-col h4 { font-family: 'Orbitron'; color: var(--nti); font-size: 9px; margin: 0 0 10px 0; border-bottom: 1px solid rgba(235,77,75,0.2); }
+        .terminal-text { font-family: monospace; color: #0f0; font-size: 10px; height: 350px; overflow-y: auto; line-height: 1.2; }
+
         #lock-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 999999; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div id="alert-ribbon">⚠️ AVISO NTI: <span id="alert-text">Carregando informações...</span></div>
+    <div id="alert-ribbon">⚠️ AVISO NTI: <span id="alert-text">Carregando...</span></div>
 
     <div id="lock-overlay">
         <i class="fa fa-radiation fa-5x fa-spin" style="color:var(--nti); margin-bottom:20px"></i>
@@ -82,7 +83,6 @@
         <div class="sector-column col-prof"><i class="fa fa-graduation-cap fa-3x"></i><h2>PROFESSOR</h2><input type="number" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof); color:white" onclick="app.login('p','Professor')">Entrar</button></div>
         <div class="sector-column col-gestao"><i class="fa fa-user-tie fa-3x"></i><h2>GESTÃO</h2><input type="number" id="g-p" placeholder="Prontuário"><input type="password" id="g-s" placeholder="Senha"><button class="btn" style="background:var(--gestao)" onclick="app.login('g','Gestão')">Entrar</button></div>
         <div class="sector-column col-secre"><i class="fa fa-building-columns fa-3x"></i><h2>SECRETARIA</h2><input type="number" id="s-p" placeholder="Prontuário"><input type="password" id="s-s" placeholder="Senha"><button class="btn" style="background:var(--secre); color:white" onclick="app.login('s','Secretaria')">Entrar</button></div>
-        
         <div class="sector-column col-cad">
             <i class="fa fa-user-plus fa-3x"></i>
             <h2>CADASTRO</h2>
@@ -96,7 +96,6 @@
             <div class="pass-info">Sua senha será: <b id="hint-pass">pmspmudar123</b></div>
             <button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Criar Conta</button>
         </div>
-
         <div class="sector-column col-nti"><i class="fa fa-terminal fa-3x"></i><h2>NTI</h2><input type="number" id="n-p" placeholder="ID"><input type="password" id="n-s" placeholder="Senha"><button class="btn" style="background:var(--nti); color:white" onclick="app.login('n','NTI')">Painel</button></div>
     </div>
 
@@ -105,45 +104,59 @@
             <h1>PROGRAMA CONECT</h1>
             <p>Construindo uma geração de vencedores</p>
         </div>
+        
         <div class="grid-layout">
             <div class="panel">
-                <h3><i class="fa fa-tools"></i> Painel de Controle</h3>
+                <h3><i class="fa fa-tools"></i> Painel</h3>
                 <div id="user-info" style="margin-bottom:15px; font-size:12px; border-bottom:1px solid #333; padding-bottom:10px"></div>
-                <h4>Abrir Chamado NTI</h4>
+                
+                <h4>Chamado NTI</h4>
                 <input type="text" id="chamado-desc" placeholder="Qual o problema?">
-                <button class="btn" style="background:var(--nti); color:white" onclick="app.abrirChamado()">Enviar ao NTI</button>
+                <button class="btn" style="background:var(--nti); color:white" onclick="app.abrirChamado()">Enviar</button>
                 <hr style="opacity:0.1">
-                <h4>Reservar Equipamento</h4>
-                <select id="res-eq"><option>SALA INFO</option><option>CHROMEBOOKS</option><option>TV 1</option><option>TV 2</option><option>TV TOUCH</option></select>
-                <input type="text" id="res-sl" placeholder="Sala Destino">
+                
+                <h4>Reserva</h4>
+                <select id="res-eq"><option>SALA INFO</option><option>CHROMEBOOKS</option><option>TV TOUCH</option></select>
+                <input type="text" id="res-sl" placeholder="Sala">
                 <input type="datetime-local" id="res-dt">
-                <button class="btn" style="background:var(--prof); color:white" onclick="app.reservar()">Confirmar Reserva</button>
-                <div id="nti-panel" class="hidden" style="margin-top:20px; border-top:2px solid var(--nti); padding-top:15px">
-                    <h3 style="color:var(--nti)">Master NTI</h3>
-                    <input type="text" id="nti-aviso" placeholder="Enviar aviso global...">
+                <button class="btn" style="background:var(--prof); color:white" onclick="app.reservar()">Reservar</button>
+
+                <div id="nti-master-panel" class="hidden" style="margin-top:20px; border-top:2px solid var(--nti); padding-top:15px">
+                    <h3 style="color:var(--nti)">NTI MASTER</h3>
+                    <input type="text" id="nti-aviso" placeholder="Aviso global...">
                     <button class="btn" style="background:var(--nti); color:white" onclick="app.postAviso()">Postar Aviso</button>
                     <div style="display:flex; gap:5px; margin-top:5px">
-                        <button class="btn" style="background:red; color:white" onclick="app.setLock(true)">TRAVAR SITE</button>
-                        <button class="btn" style="background:green; color:white" onclick="app.setLock(false)">LIBERAR</button>
+                        <button class="btn" style="background:red; color:white; font-size:10px" onclick="app.setLock(true)">TRAVAR</button>
+                        <button class="btn" style="background:green; color:white; font-size:10px" onclick="app.setLock(false)">LIBERAR</button>
                     </div>
                 </div>
                 <button class="btn" style="background:#444; color:white; margin-top:15px" onclick="location.reload()">Sair</button>
             </div>
-            <div class="panel">
-                <h3><i class="fa fa-tachometer-alt"></i> Monitoramento</h3>
-                <div class="charts-grid">
-                    <div class="chart-card"><canvas id="chartStatus"></canvas></div>
-                    <div class="chart-card"><canvas id="chartEquip"></canvas></div>
-                    <div class="chart-card"><canvas id="chartUsers"></canvas></div>
-                    <div class="chart-card"><canvas id="chartChamados"></canvas></div>
+
+            <div id="center-zone">
+                <div id="view-user" class="panel">
+                    <h3><i class="fa fa-tachometer-alt"></i> Monitoramento</h3>
+                    <div class="charts-grid">
+                        <div class="chart-card"><canvas id="chartStatus"></canvas></div>
+                        <div class="chart-card"><canvas id="chartUsers"></canvas></div>
+                    </div>
+                    <h4 style="margin-top:20px">Próximas Reservas</h4>
+                    <div id="lista-res" style="max-height: 250px; overflow-y:auto"></div>
                 </div>
-                <h4 style="margin-top:20px">Próximas Reservas</h4>
-                <div id="lista-res" style="max-height: 200px; overflow-y:auto"></div>
+
+                <div id="view-nti" class="nti-sub-grid hidden">
+                    <div class="nti-mini-col"><h4>1. ONLINE</h4><div id="nti-online" style="font-size:9px"></div></div>
+                    <div class="nti-mini-col"><h4>2. TRÁFEGO</h4><canvas id="chartNtiTraffic"></canvas></div>
+                    <div class="nti-mini-col"><h4>3. TERMINAL</h4><div class="terminal-text" id="nti-terminal"></div></div>
+                    <div class="nti-mini-col"><h4>4. FIREBASE</h4><div id="nti-db" style="color:var(--cad)">● Conectado<br>● Latência: 24ms</div></div>
+                    <div class="nti-mini-col"><h4>5. MAPA</h4><div style="font-size:8px">SALA INFO: EM USO<br>CHROME: DISPONÍVEL</div></div>
+                </div>
             </div>
+
             <div class="panel">
                 <h3><i class="fa fa-headset"></i> Chamados Ativos</h3>
-                <div id="lista-chamados" style="height:150px; overflow-y:auto; background:rgba(0,0,0,0.3); border-radius:8px; padding:10px; margin-bottom:15px; font-size:11px"></div>
-                <h3><i class="fa fa-comments"></i> Chat Geral</h3>
+                <div id="lista-chamados" style="height:120px; overflow-y:auto; background:rgba(0,0,0,0.3); border-radius:8px; padding:10px; margin-bottom:15px; font-size:10px"></div>
+                <h3><i class="fa fa-comments"></i> Chat</h3>
                 <div id="chat-box"></div>
                 <div style="display:flex; gap:5px">
                     <input type="text" id="chat-in" placeholder="Mensagem...">
@@ -160,136 +173,86 @@
 
     const app = {
         user: null,
-        charts: {},
-
-        // Atualiza a dica de senha na tela de cadastro
         updatePassHint() {
-            const cargo = document.getElementById('c-c').value;
-            const hint = document.getElementById('hint-pass');
-            if(cargo === "Secretaria") hint.innerText = "secretaria2026";
-            else if(cargo === "Gestão") hint.innerText = "pmspgestores2026";
-            else hint.innerText = "pmspmudar123";
+            const c = document.getElementById('c-c').value;
+            document.getElementById('hint-pass').innerText = (c==="Secretaria") ? "secretaria2026" : (c==="Gestão") ? "pmspgestores2026" : "pmspmudar123";
         },
-
         async login(pre, cargo) {
-            const p = document.getElementById(pre+'-p').value;
-            const s = document.getElementById(pre+'-s').value;
+            const p = document.getElementById(pre+'-p').value, s = document.getElementById(pre+'-s').value;
             if(cargo==='NTI' && p==='46690' && s==='nti2026') { this.user={nome:'Kelvin', cargo:'NTI', pront:'46690'}; return this.start(); }
             const snap = await db.ref('usuarios/'+p).once('value');
             if(snap.exists() && String(snap.val().pass) === String(s)) { this.user = snap.val(); this.start(); }
-            else { alert("Acesso negado! Verifique prontuário e senha."); }
+            else alert("Dados inválidos!");
         },
-
         confirmarCad() {
-            const n = document.getElementById('c-n').value;
-            const p = document.getElementById('c-p').value;
-            const c = document.getElementById('c-c').value;
-            if(!n || !p) return alert("Preencha Nome e Prontuário!");
-
-            // Define a senha padrão baseada no cargo
-            let senhaPadrao = "pmspmudar123";
-            if(c === "Secretaria") senhaPadrao = "secretaria2026";
-            else if(c === "Gestão") senhaPadrao = "pmspgestores2026";
-
-            db.ref('usuarios/'+p).set({ nome: n, pront: p, cargo: c, pass: senhaPadrao })
-                .then(() => alert(`Sucesso! Use a senha: ${senhaPadrao}`))
-                .catch(e => alert("Erro ao cadastrar"));
+            const n = document.getElementById('c-n').value, p = document.getElementById('c-p').value, c = document.getElementById('c-c').value;
+            if(!n || !p) return;
+            let pass = (c==="Secretaria") ? "secretaria2026" : (c==="Gestão") ? "pmspgestores2026" : "pmspmudar123";
+            db.ref('usuarios/'+p).set({ nome: n, pront: p, cargo: c, pass: pass }).then(() => alert("Cadastrado!"));
         },
-
         start() {
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('main-system').style.display = 'block';
             document.getElementById('user-info').innerHTML = `<b>${this.user.nome}</b> [${this.user.cargo}]`;
-            if(this.user.cargo === 'NTI') document.getElementById('nti-panel').classList.remove('hidden');
+            
+            if(this.user.cargo === 'NTI') {
+                document.getElementById('nti-master-panel').classList.remove('hidden');
+                document.getElementById('view-user').classList.add('hidden');
+                document.getElementById('view-nti').classList.remove('hidden');
+                this.runTerminal();
+            }
             this.sync();
             this.initCharts();
         },
-
         sync() {
-            db.ref('lock').on('value', s => {
-                const isLocked = s.val();
-                if(this.user && this.user.cargo !== 'NTI') {
-                    document.getElementById('lock-overlay').style.display = isLocked ? 'flex' : 'none';
-                }
+            db.ref('lock').on('value', s => { if(this.user.cargo !== 'NTI') document.getElementById('lock-overlay').style.display = s.val() ? 'flex' : 'none'; });
+            db.ref('aviso').on('value', s => { 
+                const rib = document.getElementById('alert-ribbon');
+                if(s.val()){ rib.style.display='block'; document.getElementById('alert-text').innerText=s.val(); }
+                else rib.style.display='none';
             });
-
-            db.ref('aviso').on('value', s => {
-                if(s.val()){
-                    document.getElementById('alert-ribbon').style.display = 'block';
-                    document.getElementById('alert-text').innerText = s.val();
-                } else { document.getElementById('alert-ribbon').style.display = 'none'; }
-            });
-
-            db.ref('chamados').limitToLast(10).on('value', snap => {
-                const box = document.getElementById('lista-chamados'); box.innerHTML = "";
-                let count = 0;
-                snap.forEach(c => {
-                    const d = c.val(); count++;
-                    box.innerHTML += `<div style="border-bottom:1px solid #333; padding:5px"><b>${d.u}:</b> ${d.t}</div>`;
-                });
-                this.updateChamadosChart(count);
-            });
-
-            db.ref('reservas').on('value', snap => {
-                const box = document.getElementById('lista-res'); box.innerHTML = "";
-                snap.forEach(r => {
-                    const d = r.val();
-                    const gLink = `https://www.google.com/calendar/render?action=TEMPLATE&text=RESERVA+${d.eq}&dates=${d.dt.replace(/[-:]/g,'')}/${d.dt.replace(/[-:]/g,'')}&details=Sala:${d.sl}`;
-                    box.innerHTML += `<div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:8px; margin-bottom:5px; font-size:12px">
-                        <b>${d.eq}</b> (${d.sl}) - ${new Date(d.dt).toLocaleString()}<br>
-                        <a href="${gLink}" target="_blank" style="color:var(--cad); text-decoration:none; font-size:10px"><i class="fab fa-google"></i> Sincronizar Agenda</a>
-                    </div>`;
-                });
-            });
-
-            db.ref('chat').limitToLast(30).on('value', snap => {
+            db.ref('chat').limitToLast(20).on('value', snap => {
                 const box = document.getElementById('chat-box'); box.innerHTML = "";
-                snap.forEach(m => {
-                    const d = m.val();
-                    const side = (d.n === this.user.nome) ? 'msg-out' : 'msg-in';
-                    box.innerHTML += `<div class="msg ${side}"><b>${d.n}</b>${d.t}</div>`;
-                });
+                snap.forEach(m => { box.innerHTML += `<div class="msg ${(m.val().n===this.user.nome)?'msg-out':'msg-in'}"><b>${m.val().n}</b>${m.val().t}</div>`; });
                 box.scrollTop = box.scrollHeight;
             });
+            db.ref('reservas').on('value', snap => {
+                const box = document.getElementById('lista-res'); box.innerHTML = "";
+                snap.forEach(r => { box.innerHTML += `<div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:5px; margin-bottom:5px; font-size:11px"><b>${r.val().eq}</b> - ${r.val().sl} (${new Date(r.val().dt).toLocaleString()})</div>`; });
+            });
+            db.ref('chamados').on('value', snap => {
+                const box = document.getElementById('lista-chamados'); box.innerHTML = "";
+                snap.forEach(c => { box.innerHTML += `<div style="border-bottom:1px solid #444; padding:3px">${c.val().u}: ${c.val().t}</div>`; });
+            });
+            db.ref('online').on('value', snap => {
+                const box = document.getElementById('nti-online'); if(!box) return; box.innerHTML = "";
+                snap.forEach(u => { box.innerHTML += `● ${u.val().nome}<br>`; });
+            });
+            db.ref('online/'+this.user.pront).set({nome: this.user.nome}).then(() => db.ref('online/'+this.user.pront).onDisconnect().remove());
         },
-
+        runTerminal() {
+            const term = document.getElementById('nti-terminal');
+            setInterval(() => {
+                const codes = ["GET /api/v1/sync", "DB_QUERY_SUCCESS", "PUSH_NOTIFICATION", "SOCKET_RECONNECT", "MEM_CLEANUP"];
+                term.innerHTML += `> ${codes[Math.floor(Math.random()*codes.length)]}<br>`;
+                if(term.childNodes.length > 25) term.removeChild(term.firstChild);
+                term.scrollTop = term.scrollHeight;
+            }, 1500);
+        },
         initCharts() {
-            this.charts.status = new Chart(document.getElementById('chartStatus'), { type: 'doughnut', data: { labels: ['Ativo'], datasets: [{ data: [100], backgroundColor: ['#2ecc71'] }] }, options: { plugins: { title: { display: true, text: 'Status' } } } });
-            this.charts.equip = new Chart(document.getElementById('chartEquip'), { type: 'bar', data: { labels: ['Uso'], datasets: [{ label: '%', data: [65], backgroundColor: '#00adef' }] } });
-            this.charts.users = new Chart(document.getElementById('chartUsers'), { type: 'line', data: { labels: ['08h','12h','16h'], datasets: [{ label: 'Acessos', data: [5, 20, 15], borderColor: '#a55eea' }] } });
-            this.charts.chamados = new Chart(document.getElementById('chartChamados'), { type: 'bar', data: { labels: ['Abertos'], datasets: [{ data: [0], backgroundColor: '#eb4d4b' }] } });
-        },
-
-        updateChamadosChart(val) {
-            if(this.charts.chamados) {
-                this.charts.chamados.data.datasets[0].data[0] = val;
-                this.charts.chamados.update();
+            new Chart(document.getElementById('chartStatus'), { type: 'doughnut', data: { labels: ['OK'], datasets: [{ data: [100], backgroundColor: ['#2ecc71'] }] } });
+            new Chart(document.getElementById('chartUsers'), { type: 'line', data: { labels: ['8h','12h','16h'], datasets: [{ label: 'Acessos', data: [10, 25, 18], borderColor: '#a55eea' }] } });
+            if(this.user.cargo === 'NTI') {
+                new Chart(document.getElementById('chartNtiTraffic'), { type: 'bar', data: { labels: ['S1','S2','S3'], datasets: [{ label: 'Traffic', data: [45, 89, 34], backgroundColor: '#eb4d4b' }] }, options: {plugins:{legend:{display:false}}} });
             }
         },
-
-        abrirChamado() {
-            const t = document.getElementById('chamado-desc').value;
-            if(!t) return;
-            db.ref('chamados').push({u: this.user.nome, t: t});
-            document.getElementById('chamado-desc').value = "";
-        },
-
-        reservar() {
+        abrirChamado() { const t = document.getElementById('chamado-desc').value; if(t) db.ref('chamados').push({u: this.user.nome, t: t}); },
+        reservar() { 
             const eq = document.getElementById('res-eq').value, sl = document.getElementById('res-sl').value, dt = document.getElementById('res-dt').value;
             if(sl && dt) db.ref('reservas').push({eq, sl, dt, u: this.user.nome});
         },
-
-        sendChat() {
-            const t = document.getElementById('chat-in').value; if(!t) return;
-            db.ref('chat').push({n: this.user.nome, t: t});
-            document.getElementById('chat-in').value = "";
-        },
-
-        postAviso() {
-            const av = document.getElementById('nti-aviso').value;
-            db.ref('aviso').set(av);
-        },
-
+        sendChat() { const t = document.getElementById('chat-in').value; if(t) db.ref('chat').push({n: this.user.nome, t: t}); document.getElementById('chat-in').value=""; },
+        postAviso() { db.ref('aviso').set(document.getElementById('nti-aviso').value); },
         setLock(v) { db.ref('lock').set(v); }
     };
 </script>
