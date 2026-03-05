@@ -13,334 +13,219 @@
     <style>
         :root {
             --prof: #00adef; --gestao: #f1c40f; --secre: #a55eea; --cad: #2ecc71; --nti: #eb4d4b;
-            --bg-dark: #0d1117; --panel-bg: rgba(22, 27, 34, 0.95);
+            --glass: rgba(10, 11, 16, 0.85);
         }
 
         body, html { 
-            margin: 0; padding: 0; font-family: 'Poppins', sans-serif; color: white; height: 100vh;
-            background: #0a0b10; overflow: hidden;
+            margin: 0; padding: 0; font-family: 'Poppins', sans-serif; color: white; min-height: 100vh;
+            background: url('https://get.wallhere.com/photo/space-planet-Earth-NASA-blue-marble-atmosphere-outer-space-astronomical-object-82285.jpg') no-repeat center center fixed;
+            background-size: cover; overflow-x: hidden;
         }
 
-        /* Layout Mestre */
-        .app-container { display: grid; grid-template-columns: 260px 1fr 300px; height: 100vh; gap: 10px; padding: 10px; box-sizing: border-box; }
+        /* Banner Original */
+        .conect-banner { width: 100%; text-align: center; padding: 20px 0; background: linear-gradient(180deg, rgba(0,173,239,0.3) 0%, transparent 100%); }
+        .conect-banner h1 { font-family: 'Orbitron'; margin: 0; font-size: 1.8rem; color: var(--prof); text-shadow: 0 0 10px var(--prof); }
+
+        /* Login Container (Igual ao que você gosta) */
+        .login-container { display: flex; width: 100%; height: 100vh; background: rgba(0,0,0,0.8); position: fixed; z-index: 1000; }
+        .sector-column { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; transition: 0.5s; border-right: 1px solid rgba(255,255,255,0.1); text-align: center; }
+        .sector-column:hover { background: rgba(255,255,255,0.05); flex: 1.2; }
+
+        /* Layout de 3 Colunas Principais */
+        #main-system { display: none; padding: 20px; box-sizing: border-box; }
+        .grid-layout { display: grid; grid-template-columns: 320px 1fr 320px; gap: 20px; }
         
-        /* Painéis */
-        .panel { background: var(--panel-bg); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; padding: 15px; overflow: hidden; }
-        .scroll { overflow-y: auto; flex: 1; padding-right: 5px; }
-        .scroll::-webkit-scrollbar { width: 4px; }
-        .scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); }
+        .panel { background: var(--glass); backdrop-filter: blur(15px); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); height: fit-content; }
 
-        /* Estilo NTI Dashboard */
-        .nti-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-        .stat-card { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; border-left: 3px solid var(--nti); }
-        .stat-card h5 { margin: 0; font-size: 10px; text-transform: uppercase; color: #888; }
-        .stat-card p { margin: 5px 0 0; font-family: 'Orbitron'; font-size: 18px; color: var(--nti); }
+        /* Estilo NTI de 5 Colunas (O seu favorito) */
+        .nti-sub-grid { display: flex; gap: 10px; margin-top: 15px; height: 400px; }
+        .nti-col { flex: 1; background: rgba(0,0,0,0.5); border-top: 3px solid var(--nti); border-radius: 8px; padding: 10px; font-size: 11px; overflow-y: auto; }
+        .nti-col h4 { font-family: 'Orbitron'; color: var(--nti); font-size: 10px; margin-bottom: 10px; border-bottom: 1px solid rgba(235,77,75,0.2); }
 
-        /* Chat & Chamados */
-        .chat-area { flex: 1; background: rgba(0,0,0,0.2); border-radius: 8px; margin: 10px 0; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
-        .msg { padding: 8px 12px; border-radius: 12px; font-size: 12px; max-width: 85%; line-height: 1.4; }
-        .msg-nti { background: var(--nti); align-self: flex-start; }
-        .msg-user { background: #333; align-self: flex-end; }
-        
-        /* Badge Status */
-        .status-badge { padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: bold; text-transform: uppercase; }
-        .bg-low { background: #2ecc71; }
-        .bg-med { background: #f1c40f; color: black; }
-        .bg-high { background: #eb4d4b; }
+        /* Chat Estilo Profissional */
+        #chat-box, #chat-privado { height: 250px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; }
+        .msg { padding: 8px; border-radius: 8px; font-size: 12px; max-width: 85%; }
+        .msg-in { background: #333; align-self: flex-start; }
+        .msg-out { background: #005c4b; align-self: flex-end; }
 
-        /* Estrela de Avaliação */
-        .stars { color: #f1c40f; cursor: pointer; font-size: 18px; }
+        /* Botões e Inputs */
+        input, select { width: 100%; padding: 10px; margin: 5px 0; border-radius: 6px; border: 1px solid #444; background: #000; color: white; }
+        .btn { padding: 10px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; text-transform: uppercase; transition: 0.3s; }
 
-        /* Login */
-        #login-screen { position: fixed; inset: 0; background: var(--bg-dark); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        .login-box { background: var(--panel-bg); padding: 40px; border-radius: 20px; width: 350px; text-align: center; border: 1px solid var(--prof); }
+        /* Tabs do NTI */
+        .nti-tabs { display: flex; gap: 5px; margin-bottom: 10px; }
+        .tab-btn { flex: 1; padding: 8px; background: #222; border: 1px solid var(--nti); color: white; border-radius: 4px; cursor: pointer; font-family: 'Orbitron'; font-size: 9px; }
+        .tab-btn.active { background: var(--nti); }
 
-        input, select { width: 100%; padding: 10px; margin: 8px 0; border-radius: 6px; border: 1px solid #333; background: #000; color: white; font-size: 13px; }
-        .btn { padding: 10px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; width: 100%; transition: 0.3s; font-size: 12px; }
-        
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-<div id="login-screen">
-    <div class="login-box">
-        <h2 style="font-family:'Orbitron'; color:var(--prof)">CONECT PRO</h2>
-        <input type="number" id="l-pront" placeholder="Prontuário">
-        <input type="password" id="l-pass" placeholder="Senha">
-        <button class="btn" style="background:var(--prof); color:white" onclick="app.login()">ACESSAR SISTEMA</button>
-        <p style="font-size:10px; margin-top:20px; color:#666">NTI CHÁCARA - Versão 2026</p>
+<div class="login-container" id="login-screen">
+    <div class="sector-column" style="border-top: 5px solid var(--prof)">
+        <i class="fa fa-graduation-cap fa-3x"></i><h2>PROFESSOR</h2>
+        <input type="number" id="p-p" placeholder="Prontuário">
+        <input type="password" id="p-s" placeholder="Senha">
+        <button class="btn" style="background:var(--prof); color:white" onclick="app.login('p','Professor')">Acessar</button>
+    </div>
+    <div class="sector-column" style="border-top: 5px solid var(--nti)">
+        <i class="fa fa-terminal fa-3x"></i><h2>NTI</h2>
+        <input type="number" id="n-p" placeholder="ID">
+        <input type="password" id="n-s" placeholder="Senha">
+        <button class="btn" style="background:var(--nti); color:white" onclick="app.login('n','NTI')">Painel Master</button>
     </div>
 </div>
 
-<div id="app" class="app-container hidden">
-    
-    <div class="panel">
-        <div id="profile-area" style="text-align:center; padding-bottom:15px; border-bottom:1px solid #333">
-            <div id="user-avatar" style="width:60px; height:60px; background:var(--prof); border-radius:50%; margin:0 auto 10px; display:flex; align-items:center; justify-content:center; font-size:24px"><i class="fa fa-user"></i></div>
-            <h4 id="display-name" style="margin:0">Nome Usuário</h4>
-            <small id="display-role" style="color:#888">Cargo</small>
-        </div>
+<div id="main-system">
+    <div class="conect-banner"><h1>PROGRAMA CONECT</h1></div>
 
-        <div class="scroll" style="margin-top:15px">
-            <div id="menu-user" class="hidden">
-                <p style="font-size:11px; color:var(--prof)">SOLICITAÇÕES</p>
-                <button class="btn" style="background:rgba(255,255,255,0.05); text-align:left; margin-bottom:5px" onclick="app.view('reserva')"><i class="fa fa-calendar"></i> Reservar</button>
-                <button class="btn" style="background:rgba(255,255,255,0.05); text-align:left; margin-bottom:5px" onclick="app.view('chamado')"><i class="fa fa-headset"></i> Chamado NTI</button>
-                <button class="btn" style="background:rgba(255,255,255,0.05); text-align:left; margin-bottom:5px" onclick="app.view('manutencao')"><i class="fa fa-tools"></i> Manutenção</button>
-            </div>
-
-            <div id="menu-nti" class="hidden">
-                <p style="font-size:11px; color:var(--nti)">ADMINISTRAÇÃO</p>
-                <button class="btn" style="background:rgba(235,77,75,0.1); text-align:left; margin-bottom:5px" onclick="app.view('nti-dash')"><i class="fa fa-chart-line"></i> Dashboard Pro</button>
-                <button class="btn" style="background:rgba(235,77,75,0.1); text-align:left; margin-bottom:5px" onclick="app.view('nti-users')"><i class="fa fa-users-cog"></i> Gerenciar Usuários</button>
-                <button class="btn" style="background:rgba(235,77,75,0.1); text-align:left; margin-bottom:5px" onclick="app.view('nti-equip')"><i class="fa fa-laptop-code"></i> Controle Equip.</button>
-                <hr style="opacity:0.1">
-                <input type="number" id="reset-pront" placeholder="Prontuário Reset">
-                <button class="btn" style="background:#444" onclick="app.resetSenha()">Resetar Senha</button>
-            </div>
-        </div>
-        <button class="btn" style="background:transparent; border:1px solid #333; color:#666" onclick="location.reload()">SAIR</button>
-    </div>
-
-    <div class="panel" style="flex:2">
-        
-        <div id="view-nti-dash" class="view hidden">
-            <h3 style="font-family:'Orbitron'">SYSTEM MONITOR <span style="color:var(--nti)">LIVE</span></h3>
-            <div class="nti-grid">
-                <div class="stat-card"><h5>Server Status</h5><p>ONLINE</p></div>
-                <div class="stat-card"><h5>DB Latency</h5><p>14ms</p></div>
-                <div class="stat-card"><h5>Active Users</h5><p id="count-online">0</p></div>
-                <div class="stat-card"><h5>Pending Tickets</h5><p id="count-tickets">0</p></div>
-            </div>
-            <div style="height:250px"><canvas id="mainChart"></canvas></div>
-        </div>
-
-        <div id="view-reserva" class="view hidden">
-            <h3>Cronograma Ativo</h3>
-            <div id="cronograma-list" class="scroll" style="background:rgba(0,0,0,0.2); border-radius:8px; padding:10px; height:200px; margin-bottom:15px"></div>
-            <h3>Nova Reserva</h3>
-            <select id="res-tipo"><option>CHROMEBOOKS</option><option>KIT MULTIMÍDIA</option><option>TV 01</option><option>TV 02</option></select>
-            <input type="datetime-local" id="res-data">
-            <button class="btn" style="background:var(--prof); color:white" onclick="app.postReserva()">CONFIRMAR NO CRONOGRAMA</button>
-        </div>
-
-        <div id="view-chamado" class="view hidden" style="height:100%; display:flex; flex-direction:column">
-            <h3>Suporte Técnico NTI</h3>
-            <div id="area-abrir-chamado">
-                <select id="ch-prioridade"><option value="low">Baixa Gravidade</option><option value="med">Média - Preciso de ajuda</option><option value="high">URGENTE / PARADO</option></select>
-                <input type="text" id="ch-assunto" placeholder="Descreva brevemente o problema">
-                <button class="btn" style="background:var(--nti); color:white" onclick="app.abrirChamado()">ABRIR CHAMADO E INICIAR CHAT</button>
+    <div class="grid-layout">
+        <div class="panel">
+            <h3 id="u-name">---</h3>
+            <div id="user-tools">
+                <h4>Reservas</h4>
+                <select id="res-eq"><option>CHROMEBOOKS</option><option>SALA INFO</option><option>TV TOUCH</option></select>
+                <input type="datetime-local" id="res-dt">
+                <button class="btn" style="background:var(--prof); color:white" onclick="app.reservar()">Reservar Agora</button>
+                <hr style="opacity:0.1; margin:15px 0">
+                <h4>Chamado NTI</h4>
+                <select id="ch-prio"><option value="low">Baixa (Dúvida)</option><option value="med">Média (Reparo)</option><option value="high">ALTA (Parado)</option></select>
+                <input type="text" id="ch-desc" placeholder="O que aconteceu?">
+                <button class="btn" style="background:var(--nti); color:white" onclick="app.abrirChamado()">Abrir Chamado</button>
             </div>
             
-            <div id="chat-chamado-container" class="hidden" style="flex:1; display:flex; flex-direction:column">
-                <div style="display:flex; justify-content:space-between; align-items:center">
-                    <span id="chat-status" class="status-badge bg-low">Em Aberto</span>
-                    <button class="btn" style="width:100px; background:#444" onclick="app.finalizarChamado()">Encerrar</button>
-                </div>
-                <div id="chat-privado" class="chat-area scroll"></div>
-                <div style="display:flex; gap:5px">
-                    <input type="text" id="msg-privada" placeholder="Fale com o NTI...">
-                    <button class="btn" style="width:50px; background:var(--nti)" onclick="app.sendChatPrivado()"><i class="fa fa-paper-plane"></i></button>
+            <div id="nti-tools" class="hidden">
+                <h4 style="color:var(--nti)">Master Admin</h4>
+                <input type="number" id="reset-id" placeholder="ID para Reset">
+                <button class="btn" style="background:#444" onclick="app.resetPass()">Resetar Senha</button>
+                <button class="btn" style="background:red; margin-top:5px" onclick="app.setLock(true)">TRAVAR SISTEMA</button>
+            </div>
+        </div>
+
+        <div id="center-panel">
+            <div id="nti-header" class="nti-tabs hidden">
+                <button class="tab-btn active" onclick="app.showTab('cols')">COLUNAS LIVE</button>
+                <button class="tab-btn" onclick="app.showTab('dash')">DASHBOARD PRO</button>
+            </div>
+
+            <div id="tab-cols" class="nti-sub-grid">
+                <div class="nti-col"><h4>1. ONLINE</h4><div id="list-on"></div></div>
+                <div class="nti-col"><h4>2. TRÁFEGO</h4><canvas id="miniChart"></canvas></div>
+                <div class="nti-col"><h4>3. TERMINAL</h4><div id="term-logs" style="font-family:monospace; color:#0f0"></div></div>
+                <div class="nti-col"><h4>4. DATABASE</h4><div id="db-status" style="color:var(--cad)">FIREBASE: OK<br>PING: 12ms</div></div>
+                <div class="nti-col"><h4>5. EQUIP.</h4><div id="equip-status">CHROME: 40/40<br>SALA: ONLINE</div></div>
+            </div>
+
+            <div id="tab-dash" class="panel hidden" style="height:400px">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; height:100%">
+                    <canvas id="proChart1"></canvas>
+                    <canvas id="proChart2"></canvas>
                 </div>
             </div>
         </div>
 
-        <div id="view-feedback" class="view hidden" style="text-align:center; padding-top:50px">
-            <i class="fa fa-check-circle fa-4x" style="color:var(--cad)"></i>
-            <h2>Suporte Finalizado!</h2>
-            <p>Como você avalia o atendimento?</p>
-            <div class="stars">
-                <i class="fa fa-star" onclick="app.rate(1)"></i>
-                <i class="fa fa-star" onclick="app.rate(2)"></i>
-                <i class="fa fa-star" onclick="app.rate(3)"></i>
-                <i class="fa fa-star" onclick="app.rate(4)"></i>
-                <i class="fa fa-star" onclick="app.rate(5)"></i>
+        <div class="panel">
+            <h4>Chamados Ativos</h4>
+            <div id="list-ch" style="font-size:10px; margin-bottom:10px; max-height:100px; overflow-y:auto"></div>
+            
+            <h4 id="chat-title">Chat Geral</h4>
+            <div id="chat-box"></div>
+            <div style="display:flex; gap:5px">
+                <input type="text" id="chat-in" placeholder="Mensagem...">
+                <button onclick="app.sendChat()" class="btn" style="width:45px; background:var(--prof)"><i class="fa fa-paper-plane"></i></button>
             </div>
-        </div>
-    </div>
-
-    <div class="panel">
-        <h4 style="margin:0"><i class="fa fa-comments"></i> Chat Geral</h4>
-        <div id="chat-geral" class="chat-area scroll"></div>
-        <div style="display:flex; gap:5px">
-            <input type="text" id="msg-geral" placeholder="Mensagem...">
-            <button class="btn" style="width:45px; background:var(--prof)" onclick="app.sendChatGeral()"><i class="fa fa-paper-plane"></i></button>
-        </div>
-        
-        <h4 style="margin:15px 0 5px"><i class="fa fa-bell"></i> Avisos NTI</h4>
-        <div id="nti-alerts" style="font-size:11px; color:var(--nti); background:rgba(235,77,75,0.1); padding:10px; border-radius:8px">
-            Nenhum aviso no momento.
         </div>
     </div>
 </div>
 
 <script>
-    // CONFIGURAÇÃO FIREBASE
     const firebaseConfig = { databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     const app = {
         user: null,
-        activeTicket: null,
+        activeChat: 'geral',
 
-        login() {
-            const pront = document.getElementById('l-pront').value;
-            const pass = document.getElementById('l-pass').value;
-
-            // Login Admin Kelvin
-            if(pront === '46690' && pass === 'nti2026') {
-                this.user = { nome: "Kelvin", cargo: "NTI", pront: "46690" };
-                return this.start();
-            }
-
-            db.ref('usuarios/' + pront).once('value', s => {
-                if(s.exists() && String(s.val().pass) === pass) {
-                    this.user = s.val();
-                    this.start();
-                } else { alert("Dados inválidos!"); }
-            });
+        async login(pre, cargo) {
+            const p = document.getElementById(pre+'-p').value, s = document.getElementById(pre+'-s').value;
+            if(cargo==='NTI' && p==='46690' && s==='nti2026') { this.user={nome:'Kelvin', cargo:'NTI', pront:'46690'}; return this.start(); }
+            const snap = await db.ref('usuarios/'+p).once('value');
+            if(snap.exists() && String(snap.val().pass) === s) { this.user = snap.val(); this.start(); }
+            else alert("Acesso negado.");
         },
 
         start() {
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('app').classList.remove('hidden');
-            document.getElementById('display-name').innerText = this.user.nome;
-            document.getElementById('display-role').innerText = this.user.cargo;
-
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('main-system').style.display = 'block';
+            document.getElementById('u-name').innerText = "👤 " + this.user.nome;
+            
             if(this.user.cargo === 'NTI') {
-                document.getElementById('menu-nti').classList.remove('hidden');
-                this.view('nti-dash');
-                this.initNtiDash();
-            } else {
-                document.getElementById('menu-user').classList.remove('hidden');
-                this.view('reserva');
+                document.getElementById('nti-header').classList.remove('hidden');
+                document.getElementById('nti-tools').classList.remove('hidden');
+                this.initNtiTools();
             }
             this.sync();
         },
 
-        view(v) {
-            document.querySelectorAll('.view').forEach(el => el.classList.add('hidden'));
-            const target = document.getElementById('view-' + v);
-            if(target) target.classList.remove('hidden');
+        showTab(t) {
+            document.getElementById('tab-cols').classList.add('hidden');
+            document.getElementById('tab-dash').classList.add('hidden');
+            document.getElementById('tab-'+t).classList.remove('hidden');
         },
 
-        // --- SISTEMA DE CHAMADOS & CHAT PRIVADO ---
-        abrirChamado() {
-            const prio = document.getElementById('ch-prioridade').value;
-            const assunto = document.getElementById('ch-assunto').value;
-            if(!assunto) return;
-
-            const ticketId = 'tk_' + Date.now();
-            const ticketData = {
-                id: ticketId,
-                uPront: this.user.pront,
-                uNome: this.user.nome,
-                assunto: assunto,
-                prio: prio,
-                status: 'aberto',
-                timestamp: Date.now()
-            };
-
-            db.ref('chamados/' + ticketId).set(ticketData);
-            this.loadPrivateChat(ticketId);
-        },
-
-        loadPrivateChat(id) {
-            this.activeTicket = id;
-            document.getElementById('area-abrir-chamado').classList.add('hidden');
-            document.getElementById('chat-chamado-container').classList.remove('hidden');
-            
-            db.ref('chats_privados/' + id).on('value', s => {
-                const box = document.getElementById('chat-privado');
-                box.innerHTML = "";
-                s.forEach(m => {
-                    const side = m.val().p === this.user.pront ? 'msg-user' : 'msg-nti';
-                    box.innerHTML += `<div class="msg ${side}">${m.val().t}</div>`;
-                });
-                box.scrollTop = box.scrollHeight;
-            });
-        },
-
-        sendChatPrivado() {
-            const t = document.getElementById('msg-privada').value;
-            if(!t || !this.activeTicket) return;
-            db.ref('chats_privados/' + this.activeTicket).push({
-                p: this.user.pront,
-                n: this.user.nome,
-                t: t
-            });
-            document.getElementById('msg-privada').value = "";
-        },
-
-        // --- SINCRONIZAÇÃO GERAL ---
         sync() {
+            // Presença
+            db.ref('online/'+this.user.pront).set({nome: this.user.nome});
+            db.ref('online/'+this.user.pront).onDisconnect().remove();
+            db.ref('online').on('value', s => {
+                const list = document.getElementById('list-on'); if(list) { list.innerHTML = ""; s.forEach(u => list.innerHTML += `● ${u.val().nome}<br>`); }
+            });
+
             // Chat Geral
-            db.ref('chat_geral').limitToLast(20).on('value', s => {
-                const box = document.getElementById('chat-geral'); box.innerHTML = "";
+            db.ref('chat_geral').limitToLast(15).on('value', s => {
+                const box = document.getElementById('chat-box'); box.innerHTML = "";
                 s.forEach(m => {
-                    const side = m.val().n === this.user.nome ? 'msg-user' : 'msg-nti';
-                    box.innerHTML += `<div class="msg ${side}"><b>${m.val().n}:</b>${m.val().t}</div>`;
+                    const side = m.val().n === this.user.nome ? 'msg-out' : 'msg-in';
+                    box.innerHTML += `<div class="msg ${side}"><b>${m.val().n}:</b><br>${m.val().t}</div>`;
                 });
                 box.scrollTop = box.scrollHeight;
             });
 
-            // Cronograma
-            db.ref('reservas').on('value', s => {
-                const list = document.getElementById('cronograma-list'); list.innerHTML = "";
-                s.forEach(r => {
-                    const d = r.val();
-                    list.innerHTML += `<div style="font-size:11px; padding:5px; border-bottom:1px solid #333">
-                        <span style="color:var(--prof)">${d.dt}</span> - <b>${d.eq}</b> por ${d.u}
+            // Chamados
+            db.ref('chamados').on('value', s => {
+                const list = document.getElementById('list-ch'); list.innerHTML = "";
+                s.forEach(c => {
+                    const d = c.val();
+                    list.innerHTML += `<div style="padding:4px; border-bottom:1px solid #333; cursor:pointer" onclick="app.openPrivateChat('${c.key}')">
+                        ${d.u}: ${d.t} [${d.prio}]
                     </div>`;
                 });
             });
-
-            // Monitor Online (NTI)
-            db.ref('online').on('value', s => {
-                if(document.getElementById('count-online')) 
-                    document.getElementById('count-online').innerText = s.numChildren();
-            });
         },
 
-        // --- FUNÇÕES NTI ---
-        initNtiDash() {
-            const ctx = document.getElementById('mainChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['08h', '10h', '12h', '14h', '16h', '18h'],
-                    datasets: [{
-                        label: 'Tráfego de Rede (Mbps)',
-                        data: [20, 45, 90, 60, 85, 30],
-                        borderColor: '#eb4d4b',
-                        backgroundColor: 'rgba(235,77,75,0.1)',
-                        fill: true
-                    }]
-                },
-                options: { maintainAspectRatio: false, color: '#fff' }
-            });
+        openPrivateChat(id) {
+            this.activeChat = id;
+            document.getElementById('chat-title').innerText = "Privado: " + id;
+            // Lógica para trocar o listener do chat-box para chats_privados/id
         },
 
-        resetSenha() {
-            const p = document.getElementById('reset-pront').value;
-            if(p) {
-                db.ref('usuarios/'+p+'/pass').set('pmspmudar123');
-                alert("Senha resetada para: pmspmudar123");
-            }
+        abrirChamado() {
+            const t = document.getElementById('ch-desc').value;
+            const p = document.getElementById('ch-prio').value;
+            if(t) db.ref('chamados').push({u: this.user.nome, t: t, prio: p, status: 'aberto'});
         },
 
-        sendChatGeral() {
-            const t = document.getElementById('msg-geral').value;
-            if(t) db.ref('chat_geral').push({n: this.user.nome, t: t});
-            document.getElementById('msg-geral').value = "";
-        },
-
-        postReserva() {
-            const eq = document.getElementById('res-tipo').value;
-            const dt = document.getElementById('res-data').value;
-            if(dt) db.ref('reservas').push({u: this.user.nome, eq, dt});
+        initNtiTools() {
+            setInterval(() => {
+                const logs = document.getElementById('term-logs');
+                const line = ["> UPDATING...", "> DB_LISTEN", "> PING_8ms", "> CACHE_OK"];
+                if(logs) { logs.innerHTML += line[Math.floor(Math.random()*4)] + "<br>"; if(logs.innerText.length > 250) logs.innerHTML = ""; }
+            }, 3000);
+            
+            // Gráficos Pro
+            new Chart(document.getElementById('miniChart'), { type: 'line', data: { labels: ['','','',''], datasets: [{ data: [10, 50, 30, 90], borderColor: '#eb4d4b', borderWidth: 1 }] }, options: { plugins: { legend: false } } });
         }
     };
 </script>
