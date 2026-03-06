@@ -23,27 +23,41 @@
             background-size: cover; overflow-x: hidden;
         }
 
-        /* Slogan Estruturado */
+        /* CENTRALIZAÇÃO E SLOGAN AMPLIADO */
+        .login-container { 
+            display: flex; flex-direction: column; width: 100%; min-height: 100vh; 
+            background: var(--bg-overlay); backdrop-filter: blur(12px); 
+            justify-content: center; align-items: center;
+        }
+
         .slogan-container {
-            width: 100%; text-align: center; padding: 60px 0 20px 0;
-            animation: fadeInDown 1.2s;
+            text-align: center; margin-bottom: 50px; width: 100%;
+            animation: zoomIn 1s;
         }
         .slogan-main { 
-            font-family: 'Orbitron'; font-size: 3.8rem; color: var(--prof); 
-            text-shadow: 0 0 25px rgba(0,173,239,0.8); margin-bottom: 10px; font-weight: 700; letter-spacing: 4px;
+            font-family: 'Orbitron'; font-size: 4.5rem; color: var(--prof); 
+            text-shadow: 0 0 30px rgba(0,173,239,0.8); margin-bottom: 10px; 
+            letter-spacing: 5px; font-weight: 700;
         }
-        .slogan-sub { font-size: 1.2rem; font-weight: 300; letter-spacing: 3px; color: #ddd; font-style: italic; opacity: 0.9; }
+        .slogan-sub { 
+            font-size: 1.5rem; font-weight: 300; letter-spacing: 4px; color: #fff; 
+            font-style: italic; opacity: 0.8;
+        }
 
-        #alert-ribbon { background: var(--nti); color: white; padding: 12px; text-align: center; font-weight: bold; display: none; position: fixed; top: 0; width: 100%; z-index: 10000; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .sectors-grid {
+            display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; width: 95%; max-width: 1400px;
+        }
 
-        .login-container { display: flex; width: 100%; min-height: 100vh; flex-wrap: wrap; background: var(--bg-overlay); backdrop-filter: blur(10px); }
         .sector-column { 
-            flex: 1; min-width: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            padding: 40px 20px; transition: 0.4s; border-right: 1px solid rgba(255,255,255,0.05); text-align: center;
+            width: 260px; display: flex; flex-direction: column; align-items: center; 
+            padding: 30px; transition: 0.4s; background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;
         }
-        .sector-column:hover { background: rgba(255,255,255,0.03); transform: translateY(-5px); }
-        
-        #main-system { display: none; padding: 80px 20px 20px 20px; background: var(--bg-overlay); min-height: 100vh; }
+        .sector-column:hover { background: rgba(255,255,255,0.08); transform: translateY(-10px); border-color: var(--prof); }
+
+        #alert-ribbon { background: var(--nti); color: white; padding: 12px; text-align: center; font-weight: bold; display: none; position: fixed; top: 0; width: 100%; z-index: 10000; }
+
+        #main-system { display: none; padding: 80px 20px 20px 20px; background: var(--bg-overlay); min-height: 100vh; animation: fadeIn 1s; }
         .grid-layout { display: grid; grid-template-columns: 350px 1fr 350px; gap: 20px; max-width: 1600px; margin: 0 auto; }
         
         .panel { 
@@ -51,7 +65,7 @@
             border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px;
         }
         
-        h3 { margin-top: 0; font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; display: flex; align-items: center; gap: 10px; font-family: 'Orbitron'; }
+        h3 { margin-top: 0; font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; font-family: 'Orbitron'; }
         
         input, select { 
             width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; 
@@ -59,57 +73,50 @@
         }
 
         .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; margin-top: 5px; text-transform: uppercase; }
-        .btn:hover { filter: brightness(1.2); transform: scale(1.02); }
+        .btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
 
         #chat-box, #chat-nti-box { height: 250px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; display: flex; flex-direction: column; gap: 10px; }
         .msg { padding: 10px; border-radius: 12px; font-size: 13px; max-width: 85%; }
         .msg-in { background: #3d3d3d; align-self: flex-start; }
         .msg-out { background: #005c4b; align-self: flex-end; }
 
-        /* Overlay Troca de Senha */
-        #password-reset-overlay { 
-            display: none; position: fixed; inset: 0; background: rgba(10, 11, 16, 0.98); 
-            z-index: 20000; flex-direction: column; align-items: center; justify-content: center; 
-        }
+        .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .chart-card { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; }
 
-        #lock-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 999999; flex-direction: column; align-items: center; justify-content: center; }
-        .hidden { display: none !important; }
-
-        .res-item { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid var(--prof); }
+        .res-item { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; border-left: 4px solid var(--prof); }
         .status-badge { padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; }
         .bg-ativo { background: var(--cad); }
         .bg-manutencao { background: var(--nti); }
+        
+        #lock-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 999999; flex-direction: column; align-items: center; justify-content: center; }
+        .hidden { display: none !important; }
+
+        /* Área de Feedback */
+        #feedback-area { background: #1e272e; padding: 15px; border-radius: 10px; margin-top: 10px; border: 1px solid var(--gestao); }
     </style>
 </head>
 <body>
 
-    <div id="alert-ribbon">⚠️ AVISO: <span id="alert-text">Carregando...</span></div>
+    <div id="alert-ribbon">⚠️ AVISO: <span id="alert-text">Carregando informações...</span></div>
 
     <div id="lock-overlay">
         <i class="fa fa-radiation fa-5x fa-spin" style="color:var(--nti); margin-bottom:20px"></i>
         <h1 style="font-family: Orbitron">SISTEMA BLOQUEADO PELO NTI</h1>
     </div>
 
-    <div id="password-reset-overlay">
-        <div class="panel" style="width: 400px; text-align: center">
-            <h2 style="font-family: Orbitron; color: var(--prof)">SEGURANÇA</h2>
-            <p>Este é seu primeiro acesso ou sua senha foi resetada. Por favor, crie uma senha pessoal para continuar.</p>
-            <input type="password" id="new-password" placeholder="Digite sua nova senha">
-            <button class="btn" style="background: var(--cad)" onclick="app.salvarNovaSenha()">DEFINIR SENHA E ENTRAR</button>
-        </div>
-    </div>
-
     <div class="login-container" id="login-screen">
         <div class="slogan-container">
             <div class="slogan-main">PROGRAMA CONECT</div>
-            <div class="slogan-sub">CONSTRUINDO UMA GERAÇÃO DE VENCEDORES</div>
+            <div class="slogan-sub">Construindo uma Geração de Vencedores</div>
         </div>
 
-        <div class="sector-column"><i class="fa fa-graduation-cap fa-3x" style="color:var(--prof)"></i><h2>PROFESSOR</h2><input type="number" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof); color:white" onclick="app.login('p','Professor')">Acessar</button></div>
-        <div class="sector-column"><i class="fa fa-user-tie fa-3x" style="color:var(--gestao)"></i><h2>GESTÃO</h2><input type="number" id="g-p" placeholder="Prontuário"><input type="password" id="g-s" placeholder="Senha"><button class="btn" style="background:var(--gestao)" onclick="app.login('g','Gestão')">Acessar</button></div>
-        <div class="sector-column"><i class="fa fa-building-columns fa-3x" style="color:var(--secre)"></i><h2>SECRETARIA</h2><input type="number" id="s-p" placeholder="Prontuário"><input type="password" id="s-s" placeholder="Senha"><button class="btn" style="background:var(--secre); color:white" onclick="app.login('s','Secretaria')">Acessar</button></div>
-        <div class="sector-column" style="background: rgba(46, 204, 113, 0.05)"><h2>CADASTRO</h2><input type="text" id="c-n" placeholder="Nome Completo"><input type="number" id="c-p" placeholder="Prontuário"><select id="c-c"><option value="Professor">Professor</option><option value="Gestão">Gestão</option><option value="Secretaria">Secretaria</option></select><button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Criar Conta</button></div>
-        <div class="sector-column"><i class="fa fa-terminal fa-3x" style="color:var(--nti)"></i><h2>NTI</h2><input type="number" id="n-p" placeholder="ID"><input type="password" id="n-s" placeholder="Senha"><button class="btn" style="background:var(--nti); color:white" onclick="app.login('n','NTI')">Master Login</button></div>
+        <div class="sectors-grid">
+            <div class="sector-column animate__animated animate__fadeInUp"><i class="fa fa-graduation-cap fa-3x" style="color:var(--prof)"></i><h2>PROFESSOR</h2><input type="number" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof); color:white" onclick="app.login('p','Professor')">Acessar</button></div>
+            <div class="sector-column animate__animated animate__fadeInUp" style="animation-delay: 0.1s"><i class="fa fa-user-tie fa-3x" style="color:var(--gestao)"></i><h2>GESTÃO</h2><input type="number" id="g-p" placeholder="Prontuário"><input type="password" id="g-s" placeholder="Senha"><button class="btn" style="background:var(--gestao)" onclick="app.login('g','Gestão')">Acessar</button></div>
+            <div class="sector-column animate__animated animate__fadeInUp" style="animation-delay: 0.2s"><i class="fa fa-building-columns fa-3x" style="color:var(--secre)"></i><h2>SECRETARIA</h2><input type="number" id="s-p" placeholder="Prontuário"><input type="password" id="s-s" placeholder="Senha"><button class="btn" style="background:var(--secre); color:white" onclick="app.login('s','Secretaria')">Acessar</button></div>
+            <div class="sector-column animate__animated animate__fadeInUp" style="animation-delay: 0.3s"><i class="fa fa-user-plus fa-3x" style="color:var(--cad)"></i><h2>CADASTRO</h2><input type="text" id="c-n" placeholder="Nome Completo"><input type="number" id="c-p" placeholder="Prontuário"><select id="c-c"><option value="Professor">Professor</option><option value="Gestão">Gestão</option><option value="Secretaria">Secretaria</option></select><button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Criar Conta</button></div>
+            <div class="sector-column animate__animated animate__fadeInUp" style="animation-delay: 0.4s"><i class="fa fa-terminal fa-3x" style="color:var(--nti)"></i><h2>NTI</h2><input type="number" id="n-p" placeholder="ID"><input type="password" id="n-s" placeholder="Senha"><button class="btn" style="background:var(--nti); color:white" onclick="app.login('n','NTI')">Master Login</button></div>
+        </div>
     </div>
 
     <div id="main-system">
@@ -138,45 +145,45 @@
                             <input type="text" id="chat-nti-in" placeholder="Mensagem...">
                             <button class="btn" style="width:60px; background:var(--prof)" onclick="app.sendChatNTI()"><i class="fa fa-paper-plane"></i></button>
                         </div>
-                        <button id="btn-finalizar" class="btn hidden" style="background:var(--cad); margin-top:10px" onclick="app.finalizarChamado()">Encerrar e Avaliar</button>
+                        <button id="btn-finalizar-nti" class="btn hidden" style="background:var(--nti); margin-top:10px" onclick="app.finalizarChamado(true)">Baixar Chamado (NTI)</button>
+                        
+                        <div id="feedback-area" class="hidden">
+                            <h4>Avalie o Atendimento:</h4>
+                            <select id="f-nota"><option value="5">⭐⭐⭐⭐⭐ Excelente</option><option value="4">⭐⭐⭐⭐ Bom</option><option value="3">⭐⭐⭐ Regular</option><option value="1">⭐ Ruim</option></select>
+                            <input type="text" id="f-coment" placeholder="Comentário opcional">
+                            <button class="btn" style="background:var(--cad)" onclick="app.enviarFeedback()">Enviar e Fechar</button>
+                        </div>
                     </div>
                 </div>
 
                 <div id="nti-master-panel" class="panel hidden" style="border: 2px solid var(--nti)">
                     <h3 style="color:var(--nti)"><i class="fa fa-shield-halved"></i> NTI MASTER</h3>
-                    <label>📢 Aviso Global:</label>
-                    <input type="text" id="input-aviso">
+                    <input type="text" id="input-aviso" placeholder="Aviso Global">
                     <button class="btn" style="background:var(--nti)" onclick="app.enviarAviso()">Publicar</button>
-                    
-                    <h4 style="margin-top:20px">Gerenciar Suporte</h4>
-                    <div id="nti-tickets-list" style="max-height:150px; overflow-y:auto; background:rgba(0,0,0,0.3); border-radius:5px; padding:5px; font-size:12px"></div>
-
-                    <h4 style="margin-top:20px">Reset Prontuário</h4>
-                    <input type="number" id="reset-pront">
-                    <button class="btn" style="background:#555" onclick="app.resetSenha()">Resetar Senha</button>
-                    
-                    <button class="btn" style="background:red; margin-top:10px" onclick="app.setLock(true)">TRAVAR SISTEMA</button>
-                    <button class="btn" style="background:green" onclick="app.setLock(false)">LIBERAR SISTEMA</button>
+                    <div style="display:flex; gap:10px; margin-top:10px">
+                        <button class="btn" style="background:red" onclick="app.setLock(true)">TRAVAR</button>
+                        <button class="btn" style="background:green" onclick="app.setLock(false)">LIBERAR</button>
+                    </div>
                 </div>
             </div>
 
             <div class="center-col">
                 <div id="nti-charts-area" class="panel hidden">
                     <h3><i class="fa fa-microchip"></i> Telemetria</h3>
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px">
-                        <canvas id="chartUsers" height="150"></canvas>
-                        <canvas id="chartChamados" height="150"></canvas>
+                    <div class="charts-grid">
+                        <div class="chart-card"><canvas id="chartUsers"></canvas></div>
+                        <div class="chart-card"><canvas id="chartChamados"></canvas></div>
                     </div>
                 </div>
 
                 <div class="panel">
                     <h3><i class="fa fa-list-ul"></i> Cronograma</h3>
-                    <div id="lista-res" style="max-height:300px; overflow-y:auto"></div>
+                    <div id="lista-res" style="max-height:400px; overflow-y:auto"></div>
                 </div>
 
                 <div class="panel">
-                    <h3><i class="fa fa-box-open"></i> Equipamentos</h3>
-                    <div id="lista-equipamentos" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px"></div>
+                    <h3><i class="fa fa-box-open"></i> Status Equipamentos</h3>
+                    <div id="lista-equipamentos" style="display:grid; grid-template-columns: 1fr 1fr; gap:15px"></div>
                 </div>
             </div>
 
@@ -185,17 +192,17 @@
                     <h3><i class="fa fa-comments"></i> Mural</h3>
                     <div id="chat-box"></div>
                     <div style="display:flex; gap:5px; margin-top:10px">
-                        <input type="text" id="chat-in" placeholder="Escreva...">
+                        <input type="text" id="chat-in" placeholder="Mensagem...">
                         <button class="btn" style="width:60px; background:var(--prof)" onclick="app.sendChat()"><i class="fa fa-paper-plane"></i></button>
                     </div>
                 </div>
 
                 <div class="panel">
-                    <h3><i class="fa fa-star"></i> Últimos Feedbacks</h3>
-                    <div id="lista-avaliacoes" style="font-size:11px"></div>
+                    <h3><i class="fa fa-star"></i> Feedbacks</h3>
+                    <div id="lista-avaliacoes" style="font-size:12px; max-height:300px; overflow-y:auto"></div>
                 </div>
                 
-                <button class="btn" style="background:#cc4444" onclick="location.reload()">Sair do Sistema</button>
+                <button class="btn" style="background:#cc4444" onclick="location.reload()">Desconectar</button>
             </div>
         </div>
     </div>
@@ -206,184 +213,118 @@
     const db = firebase.database();
 
     const app = {
-        user: null,
-        currentTicket: null,
-        charts: {},
+        user: null, currentTicket: null, charts: {},
 
         async login(pre, cargo) {
-            const p = document.getElementById(pre+'-p').value;
-            const s = document.getElementById(pre+'-s').value;
+            const p = document.getElementById(pre+'-p').value, s = document.getElementById(pre+'-s').value;
             if(cargo==='NTI' && p==='46690' && s==='nti2026') { this.user={nome:'Kelvin (Admin)', cargo:'NTI', pront:'46690'}; return this.start(); }
-            
             const snap = await db.ref('usuarios/'+p).once('value');
-            if(snap.exists() && String(snap.val().pass) === String(s)) {
-                this.user = snap.val();
-                if(this.user.isNew) {
-                    document.getElementById('password-reset-overlay').style.display = 'flex';
-                } else {
-                    this.start();
-                }
-            } else { alert("Acesso Negado."); }
-        },
-
-        salvarNovaSenha() {
-            const nova = document.getElementById('new-password').value;
-            if(nova.length < 4) return alert("Senha muito curta!");
-            db.ref('usuarios/'+this.user.pront).update({ pass: nova, isNew: false }).then(() => {
-                document.getElementById('password-reset-overlay').style.display = 'none';
-                this.start();
-            });
-        },
-
-        confirmarCad() {
-            const n = document.getElementById('c-n').value, p = document.getElementById('c-p').value, c = document.getElementById('c-c').value;
-            if(!n || !p) return alert("Preencha tudo!");
-            let pass = c === "Secretaria" ? "secretaria2026" : (c === "Gestão" ? "pmspgestores2026" : "pmspmudar123");
-            db.ref('usuarios/'+p).set({ nome: n, pront: p, cargo: c, pass: pass, isNew: true }).then(() => alert("Conta criada! Senha padrão: " + pass));
+            if(snap.exists() && String(snap.val().pass) === String(s)) { this.user = snap.val(); this.start(); } else { alert("Erro de login."); }
         },
 
         start() {
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('main-system').style.display = 'block';
-            if(this.user.cargo === 'NTI') {
-                document.getElementById('nti-master-panel').classList.remove('hidden');
+            if(this.user.cargo === 'NTI' || this.user.cargo === 'Gestão') {
                 document.getElementById('nti-charts-area').classList.remove('hidden');
+                if(this.user.cargo === 'NTI') document.getElementById('nti-master-panel').classList.remove('hidden');
                 this.initCharts();
             }
-            if(this.user.cargo === 'Gestão') document.getElementById('nti-charts-area').classList.remove('hidden');
             this.syncData();
             this.carregarEquipamentos();
         },
 
         syncData() {
             db.ref('lock').on('value', s => { if(s.val() && this.user.cargo !== 'NTI') document.getElementById('lock-overlay').style.display='flex'; else document.getElementById('lock-overlay').style.display='none'; });
-            db.ref('aviso_global').on('value', s => {
-                const ribbon = document.getElementById('alert-ribbon');
-                if(s.val()) { ribbon.style.display = 'block'; document.getElementById('alert-text').innerText = s.val(); }
-                else { ribbon.style.display = 'none'; }
-            });
-
-            db.ref('chat').limitToLast(15).on('value', snap => {
+            db.ref('aviso_global').on('value', s => { const r = document.getElementById('alert-ribbon'); if(s.val()){ r.style.display='block'; document.getElementById('alert-text').innerText=s.val(); } else r.style.display='none'; });
+            db.ref('chat').limitToLast(20).on('value', snap => {
                 const box = document.getElementById('chat-box'); box.innerHTML = "";
-                snap.forEach(m => {
-                    let side = m.val().n === this.user.nome ? 'msg-out' : 'msg-in';
-                    box.innerHTML += `<div class="msg ${side}"><b>${m.val().n}:</b><br>${m.val().t}</div>`;
-                });
+                snap.forEach(m => { let d = m.val(); let side = d.n === this.user.nome ? 'msg-out' : 'msg-in'; box.innerHTML += `<div class="msg ${side}"><b>${d.n}:</b><br>${d.t}</div>`; });
                 box.scrollTop = box.scrollHeight;
             });
-
             db.ref('reservas').on('value', snap => {
                 const box = document.getElementById('lista-res'); box.innerHTML = "";
-                snap.forEach(r => {
-                    let d = r.val();
-                    box.innerHTML += `<div class="res-item">
-                        <strong>${d.eq}</strong> - Sala ${d.sl}<br><small>${d.u} | ${new Date(d.dt).toLocaleString()}</small>
-                        <button class="status-badge bg-manutencao" style="border:none; cursor:pointer; float:right" onclick="app.removerReserva('${r.key}')">Liberar</button>
-                    </div>`;
-                });
+                snap.forEach(r => { let d = r.val(); box.innerHTML += `<div class="res-item"><div><strong style="color:var(--prof)">${d.eq}</strong><br><small>${d.u} | Sala ${d.sl}</small></div><button class="status-badge bg-manutencao" style="border:none; cursor:pointer" onclick="app.baixarReserva('${r.key}')">Baixa</button></div>`; });
             });
-
             db.ref('chamados').on('value', snap => {
-                const ntiList = document.getElementById('nti-tickets-list');
-                if(ntiList) ntiList.innerHTML = "";
+                let abertos = 0;
                 snap.forEach(c => {
                     let d = c.val();
-                    if(d.status !== 'resolvido') {
-                        if(this.user.cargo === 'NTI' && ntiList) {
-                            ntiList.innerHTML += `<div style="margin-bottom:5px">${d.u}: ${d.t} <button onclick="app.baixaNTI('${c.key}')">Baixa</button></div>`;
-                        }
-                        if(d.pront === this.user.pront || this.user.cargo === 'NTI') {
-                            this.currentTicket = c.key;
-                            this.exibirTicket(d);
-                        }
+                    if(d.status === 'aberto') {
+                        abertos++;
+                        if(d.pront === this.user.pront || this.user.cargo === 'NTI') { this.currentTicket = c.key; this.abrirInterfaceChamado(d); }
                     }
                 });
+                if(this.charts.chamados) this.updateChart('chamados', [abertos]);
             });
-
-            db.ref('avaliacoes').limitToLast(5).on('value', snap => {
+            db.ref('avaliacoes').limitToLast(10).on('value', snap => {
                 const box = document.getElementById('lista-avaliacoes'); box.innerHTML = "";
-                snap.forEach(a => { box.innerHTML += `<div style="margin-bottom:5px">⭐ ${a.val().nota}/5 - ${a.val().txt}</div>`; });
+                snap.forEach(a => { let d = a.val(); box.innerHTML += `<div style="padding:8px; background:rgba(255,255,255,0.05); border-radius:5px; margin-bottom:5px">⭐ ${d.nota} - ${d.txt}<br><small>${d.autor}</small></div>`; });
             });
         },
 
-        exibirTicket(d) {
+        abrirInterfaceChamado(dados) {
             document.getElementById('active-ticket-area').classList.remove('hidden');
-            const btn = document.getElementById('btn-finalizar');
-            if(d.status === 'atendido' || this.user.cargo === 'NTI') btn.classList.remove('hidden');
+            document.getElementById('chamado-form').classList.add('hidden');
+            if(this.user.cargo === 'NTI') document.getElementById('btn-finalizar-nti').classList.remove('hidden');
             
             db.ref('chat_nti/'+this.currentTicket).on('value', snap => {
                 const box = document.getElementById('chat-nti-box'); box.innerHTML = "";
-                snap.forEach(m => {
-                    let side = m.val().n === this.user.nome ? 'msg-out' : 'msg-in';
-                    box.innerHTML += `<div class="msg ${side}"><b>${m.val().n}:</b><br>${m.val().t}</div>`;
-                });
+                snap.forEach(m => { let d = m.val(); let side = d.n === this.user.nome ? 'msg-out' : 'msg-in'; box.innerHTML += `<div class="msg ${side}"><b>${d.n}:</b><br>${d.t}</div>`; });
                 box.scrollTop = box.scrollHeight;
             });
         },
 
-        abrirChamado() {
-            const t = document.getElementById('chamado-desc').value;
-            if(!t) return;
-            db.ref('chamados').push({ u: this.user.nome, pront: this.user.pront, t: t, status: 'aberto' });
-            document.getElementById('chamado-desc').value = "";
+        finalizarChamado(isNTI) {
+            if(isNTI) {
+                if(confirm("NTI: Deseja realmente dar baixa neste chamado?")) {
+                    db.ref('chat_nti/'+this.currentTicket).push({ n: 'SISTEMA', t: '🔧 O Técnico encerrou o atendimento. Por favor, avalie.' });
+                    document.getElementById('feedback-area').classList.remove('hidden');
+                }
+            } else {
+                document.getElementById('feedback-area').classList.remove('hidden');
+            }
         },
 
-        baixaNTI(id) {
-            db.ref('chamados/'+id).update({ status: 'atendido' });
-            db.ref('chat_nti/'+id).push({ n: 'NTI', t: '✅ Seu chamado foi atendido. Por favor, avalie para encerrar.' });
-        },
-
-        finalizarChamado() {
-            let n = prompt("Nota de 1 a 5:");
-            let c = prompt("Comentário:");
-            db.ref('avaliacoes').push({ nota: n, txt: c, autor: this.user.nome });
-            db.ref('chamados/'+this.currentTicket).update({ status: 'resolvido' });
+        enviarFeedback() {
+            const nota = document.getElementById('f-nota').value, txt = document.getElementById('f-coment').value;
+            db.ref('avaliacoes').push({ nota, txt, autor: this.user.nome, data: Date.now() });
+            db.ref('chamados/'+this.currentTicket+'/status').set('resolvido');
             document.getElementById('active-ticket-area').classList.add('hidden');
-            this.currentTicket = null;
+            document.getElementById('chamado-form').classList.remove('hidden');
+            alert("Atendimento finalizado com sucesso!");
         },
 
+        // Funções Base mantidas
+        sendChat() { const t = document.getElementById('chat-in').value; if(t) db.ref('chat').push({ n: this.user.nome, t }); document.getElementById('chat-in').value=""; },
+        sendChatNTI() { const t = document.getElementById('chat-nti-in').value; if(t) db.ref('chat_nti/'+this.currentTicket).push({ n: this.user.nome, t }); document.getElementById('chat-nti-in').value=""; },
+        reservar() { const eq = document.getElementById('res-eq').value, sl = document.getElementById('res-sl').value, dt = document.getElementById('res-dt').value; if(sl && dt) db.ref('reservas').push({ eq, sl, dt, u: this.user.nome }); },
+        baixarReserva(id) { if(confirm("Liberar equipamento?")) db.ref('reservas/'+id).remove(); },
+        abrirChamado() { const desc = document.getElementById('chamado-desc').value, grau = document.getElementById('chamado-grau').value; if(desc) db.ref('chamados').push({ u: this.user.nome, pront: this.user.pront, t: desc, grau, status: 'aberto' }); document.getElementById('chamado-desc').value=""; },
+        enviarAviso() { db.ref('aviso_global').set(document.getElementById('input-aviso').value); },
+        setLock(v) { db.ref('lock').set(v); },
         carregarEquipamentos() {
             const eqs = ['TV 01', 'TV 02', 'Kit Multimídia', 'Chromebooks', 'Sala Info'];
-            const sel = document.getElementById('res-eq');
-            const lista = document.getElementById('lista-equipamentos');
+            const sel = document.getElementById('res-eq'), lista = document.getElementById('lista-equipamentos');
             sel.innerHTML = ""; lista.innerHTML = "";
             eqs.forEach(e => {
                 sel.innerHTML += `<option value="${e}">${e}</option>`;
                 db.ref('equipamentos/'+e).on('value', snap => {
                     let d = snap.val() || { status: 'ativo' };
-                    let el = document.getElementById('eq-'+e.replace(/\s/g, ''));
-                    let html = `<strong>${e}</strong><br><span class="status-badge ${d.status==='ativo'?'bg-ativo':'bg-manutencao'}">${d.status}</span>
-                                ${this.user.cargo==='NTI'?`<button onclick="app.toggleEq('${e}','${d.status}')">Trocar</button>`:''}`;
-                    if(el) el.innerHTML = html;
-                    else {
-                        let div = document.createElement('div'); div.id = 'eq-'+e.replace(/\s/g, '');
-                        div.style = "padding:10px; background:rgba(0,0,0,0.2); border-radius:8px";
-                        div.innerHTML = html; lista.appendChild(div);
-                    }
+                    let cardId = 'card-'+e.replace(/\s/g, '');
+                    let content = `<strong>${e}</strong><br><span class="status-badge ${d.status==='ativo'?'bg-ativo':'bg-manutencao'}">${d.status.toUpperCase()}</span>`;
+                    if(this.user.cargo==='NTI') content += `<button onclick="app.toggleManutencao('${e}','${d.status}')" style="display:block; font-size:9px">Status</button>`;
+                    let exist = document.getElementById(cardId);
+                    if(exist) exist.innerHTML = content; else { let div = document.createElement('div'); div.id=cardId; div.style="padding:10px; background:rgba(0,0,0,0.2); border-radius:8px"; div.innerHTML=content; lista.appendChild(div); }
                 });
             });
         },
-
-        toggleEq(id, s) { db.ref('equipamentos/'+id).set({ status: s === 'ativo' ? 'manutencao' : 'ativo' }); },
-        reservar() {
-            const eq = document.getElementById('res-eq').value, sl = document.getElementById('res-sl').value, dt = document.getElementById('res-dt').value;
-            if(!sl || !dt) return alert("Dados incompletos");
-            db.ref('reservas').push({ eq, sl, dt, u: this.user.nome });
-        },
-        removerReserva(id) { if(confirm("Liberar este equipamento?")) db.ref('reservas/'+id).remove(); },
-        enviarAviso() { db.ref('aviso_global').set(document.getElementById('input-aviso').value); },
-        setLock(v) { db.ref('lock').set(v); },
-        sendChat() { db.ref('chat').push({ n: this.user.nome, t: document.getElementById('chat-in').value }); document.getElementById('chat-in').value=""; },
-        sendChatNTI() { db.ref('chat_nti/'+this.currentTicket).push({ n: this.user.nome, t: document.getElementById('chat-nti-in').value }); document.getElementById('chat-nti-in').value=""; },
-        resetSenha() { 
-            let p = document.getElementById('reset-pront').value;
-            db.ref('usuarios/'+p).update({ pass: 'pmspmudar123', isNew: true });
-            alert("Resetado para pmspmudar123");
-        },
+        toggleManutencao(id, s) { db.ref('equipamentos/'+id+'/status').set(s==='ativo'?'manutencao':'ativo'); },
         initCharts() {
-            new Chart(document.getElementById('chartUsers'), { type: 'line', data: { labels: ['Manhã', 'Tarde', 'Noite'], datasets: [{ label: 'Acessos', data: [5, 15, 8], borderColor: '#00adef' }] } });
-            new Chart(document.getElementById('chartChamados'), { type: 'doughnut', data: { labels: ['Abertos', 'Finais'], datasets: [{ data: [2, 10], backgroundColor: ['#eb4d4b', '#2ecc71'] }] } });
-        }
+            this.charts.users = new Chart(document.getElementById('chartUsers'), { type: 'line', data: { labels: ['08h','12h','16h','20h'], datasets: [{ label: 'Acessos', data: [12, 45, 30, 10], borderColor: '#00adef' }] } });
+            this.charts.chamados = new Chart(document.getElementById('chartChamados'), { type: 'bar', data: { labels: ['Abertos'], datasets: [{ data: [0], backgroundColor: '#eb4d4b' }] } });
+        },
+        updateChart(id, data) { if(this.charts[id]) { this.charts[id].data.datasets[0].data = data; this.charts[id].update(); } }
     };
 </script>
 </body>
