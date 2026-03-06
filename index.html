@@ -29,13 +29,8 @@
         .btn { padding: 10px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.3s; width: 100%; margin-top: 5px; }
         .chat-container { height: 250px; overflow-y: auto; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px; margin-bottom: 10px; font-size: 12px; }
         .msg { margin-bottom: 8px; padding: 8px; border-radius: 8px; max-width: 90%; }
-        .msg-nti { border-left: 3px solid var(--nti); background: rgba(235, 77, 75, 0.1); }
-        .msg-user { border-left: 3px solid var(--prof); background: rgba(0, 173, 239, 0.1); }
         .stat-card { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; text-align: center; margin-bottom: 10px; border-bottom: 2px solid var(--prof); }
-        .stat-card h2 { margin: 5px 0; font-family: 'Orbitron'; font-size: 1.2rem; }
         .ticket { background: #1a1c23; padding: 10px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid var(--nti); font-size: 12px; }
-        .severity-critica { border-left-color: #ff0000; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
         .login-screen { height: 100vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, #1e272e 0%, #0a0b10 100%); }
     </style>
 </head>
@@ -46,61 +41,52 @@
             <h1 style="font-family:'Orbitron'; color:var(--prof)">CONECT NTI</h1>
             <input type="number" id="login-pront" placeholder="Prontuário">
             <input type="password" id="login-pass" placeholder="Senha">
-            <button class="btn" style="background:var(--prof); color:white" onclick="app.doLogin()">ACESSAR SISTEMA</button>
+            <button class="btn" style="background:var(--prof); color:white" onclick="app.doLogin()">ACESSAR</button>
         </div>
     </div>
 
     <div id="main-app" class="hidden">
         <div class="top-bar">
             <div><b style="font-family:'Orbitron'; color:var(--prof)">PROGRAMA CONECT</b> <span id="user-display" style="margin-left:20px; font-size:12px; opacity:0.7"></span></div>
-            <div id="global-status" style="font-size: 12px;"><i class="fa fa-circle" style="color:#2ecc71"></i> Servidor Online</div>
             <button onclick="location.reload()" style="background:none; border:none; color:white; cursor:pointer"><i class="fa fa-power-off"></i> Sair</button>
         </div>
 
         <div class="grid-main">
             <div class="panel">
-                <h3 id="menu-title"><i class="fa fa-toolbox"></i> Menu Principal</h3>
-                
+                <h3 id="menu-title"><i class="fa fa-toolbox"></i> Opções</h3>
+                <hr style="opacity:0.1">
+
                 <div id="view-nti" class="hidden">
-                    <div class="stat-card"><span>SISTEMA</span><h2 id="dash-uptime">99.9%</h2></div>
-                    <button class="btn" style="background:var(--nti); color:white" onclick="app.toggleLock()">TRAVAR SISTEMA</button>
-                    <button class="btn" style="background:#444; color:white" onclick="app.showResetPass()">RESETAR SENHA</button>
-                    <hr>
-                    <h4>Monitoramento Real-Time</h4>
-                    <canvas id="chartNTIUsers"></canvas>
+                    <p style="color:var(--nti); font-weight:bold">PAINEL DE CONTROLE NTI</p>
+                    <div class="stat-card"><span>STATUS SERVER</span><h2>100%</h2></div>
+                    <button class="btn" style="background:var(--nti); color:white" onclick="alert('Sistema Travado')">TRAVAR ACESSOS</button>
+                    <button class="btn" style="background:#444; color:white">LOGS DE ERRO</button>
                 </div>
 
                 <div id="view-comum" class="hidden">
-                    <h4>Reservar Equipamento</h4>
+                    <p style="color:var(--prof); font-weight:bold">RESERVA E SUPORTE</p>
                     <select id="res-tipo">
-                        <option>TV 01</option><option>TV 02</option>
-                        <option>KIT MULTIMÍDIA</option><option>CARRINHO CHROMEBOOK</option>
-                        <option>SALA INFORMÁTICA</option>
+                        <option>TV 01</option><option>CHROMEBOOKS</option><option>SALA INFO</option>
                     </select>
                     <input type="datetime-local" id="res-data">
-                    <button class="btn" style="background:var(--cad); color:white" onclick="app.fazerReserva()">RESERVAR AGORA</button>
-                    <hr>
-                    <h4>Suporte Técnico</h4>
-                    <select id="chamado-gravidade"><option value="baixa">Baixa</option><option value="media">Média</option><option value="critica">CRÍTICA</option></select>
-                    <textarea id="chamado-txt" placeholder="Descreva o problema..." rows="3"></textarea>
-                    <button class="btn" style="background:var(--nti); color:white" onclick="app.abrirChamado()">ABRIR CHAMADO</button>
+                    <button class="btn" style="background:var(--cad); color:white">RESERVAR AGORA</button>
+                    <hr style="opacity:0.1">
+                    <textarea id="chamado-txt" placeholder="Relatar erro ao NTI..." rows="3"></textarea>
+                    <button class="btn" style="background:var(--nti); color:white">ABRIR CHAMADO</button>
                 </div>
             </div>
 
             <div class="panel">
-                <h3><i class="fa fa-calendar-alt"></i> Cronograma</h3>
-                <div id="cronograma-lista"></div>
-                <h4 style="margin-top:20px">Saúde dos Equipamentos</h4>
-                <canvas id="chartEquipSaude" height="100"></canvas>
+                <h3><i class="fa fa-calendar-alt"></i> Cronograma Geral</h3>
+                <div id="cronograma-lista">
+                    <div class="ticket">As reservas aparecerão aqui...</div>
+                </div>
             </div>
 
             <div class="panel">
-                <h3><i class="fa fa-comments"></i> Chat</h3>
+                <h3><i class="fa fa-comments"></i> Chat Integrado</h3>
                 <div id="chat-box" class="chat-container"></div>
-                <div style="display:flex; gap:5px">
-                    <input type="text" id="chat-input" placeholder="Mensagem...">
-                    <button class="btn" style="width:50px; margin:0" onclick="app.sendMessage()"><i class="fa fa-paper-plane"></i></button>
-                </div>
+                <input type="text" id="chat-input" placeholder="Enviar mensagem...">
             </div>
         </div>
     </div>
@@ -113,81 +99,32 @@
         const app = {
             user: null,
 
-            async doLogin() {
+            doLogin() {
                 const p = document.getElementById('login-pront').value;
                 const s = document.getElementById('login-pass').value;
 
+                // Teste rápido: Prontuário 46690 entra como NTI, qualquer outro como Professor
                 if(p === '46690' && s === 'nti2026') {
                     this.user = { nome: 'Kelvin Master', cargo: 'NTI', pront: p };
                 } else {
-                    const snap = await db.ref('usuarios/' + p).once('value');
-                    if(snap.exists() && snap.val().pass === s) {
-                        this.user = snap.val();
-                    } else { return alert("Acesso Inválido!"); }
+                    this.user = { nome: 'Usuário Teste', cargo: 'Professor', pront: p };
                 }
-                this.startSystem();
+                this.start();
             },
 
-            startSystem() {
+            start() {
                 document.getElementById('login-area').classList.add('hidden');
                 document.getElementById('main-app').classList.remove('hidden');
-                document.getElementById('user-display').innerText = `${this.user.nome} | ${this.user.cargo}`;
-                
-                // SEPARAÇÃO DE MENUS AQUI
+                document.getElementById('user-display').innerText = this.user.nome + " (" + this.user.cargo + ")";
+
+                // LÓGICA DE SEPARAÇÃO DOS MENUS
                 if(this.user.cargo === 'NTI') {
-                    document.getElementById('view-nti').classList.remove('hidden');
+                    document.getElementById('view-nti').classList.remove('hidden'); // Mostra menu NTI
+                    document.getElementById('view-comum').classList.add('hidden');    // Esconde menu Professor
                 } else {
-                    document.getElementById('view-comum').classList.remove('hidden');
+                    document.getElementById('view-comum').classList.remove('hidden'); // Mostra menu Professor
+                    document.getElementById('view-nti').classList.add('hidden');    // Esconde menu NTI
                 }
-
-                this.initCharts();
-                this.listenData();
-            },
-
-            initCharts() {
-                // Gráfico NTI (só renderiza se existir o canvas na tela do NTI)
-                const c1 = document.getElementById('chartNTIUsers');
-                if(c1) {
-                    new Chart(c1.getContext('2d'), { type: 'line', data: { labels: ['08h','12h','18h'], datasets: [{ label: 'Acessos', data: [5, 19, 10], borderColor: '#00adef' }] } });
-                }
-
-                const ctx2 = document.getElementById('chartEquipSaude').getContext('2d');
-                new Chart(ctx2, { type: 'bar', data: { labels: ['TVs', 'Chrome'], datasets: [{ label: 'Saúde %', data: [90, 75], backgroundColor: '#2ecc71' }] } });
-            },
-
-            listenData() {
-                db.ref('reservas').on('value', snap => {
-                    const container = document.getElementById('cronograma-lista');
-                    container.innerHTML = "";
-                    snap.forEach(res => {
-                        const d = res.val();
-                        container.innerHTML += `<div class="ticket"><b>${d.equip}</b> - Prof. ${d.user}</div>`;
-                    });
-                });
-
-                db.ref('chats/geral').limitToLast(20).on('value', snap => {
-                    const box = document.getElementById('chat-box');
-                    box.innerHTML = "";
-                    snap.forEach(m => {
-                        const msg = m.val();
-                        box.innerHTML += `<div class="msg"><b>${msg.nome}:</b> ${msg.texto}</div>`;
-                    });
-                    box.scrollTop = box.scrollHeight;
-                });
-            },
-
-            fazerReserva() {
-                const equip = document.getElementById('res-tipo').value;
-                const data = document.getElementById('res-data').value;
-                if(!data) return alert("Selecione data");
-                db.ref('reservas').push({ equip, data, user: this.user.nome });
-            },
-
-            sendMessage() {
-                const txt = document.getElementById('chat-input').value;
-                if(!txt) return;
-                db.ref('chats/geral').push({ nome: this.user.nome, texto: txt });
-                document.getElementById('chat-input').value = "";
             }
         };
     </script>
