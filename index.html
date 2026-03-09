@@ -22,14 +22,14 @@
             background-size: cover; overflow-x: hidden;
         }
 
-        /* --- TELA DE LOGIN ORIGINAL (MANTIDA IGUAL) --- */
+        /* --- TELA DE LOGIN ORIGINAL (MANTIDA 100%) --- */
         .login-container { display: flex; width: 100%; min-height: 100vh; flex-wrap: wrap; background: var(--bg-overlay); backdrop-filter: blur(10px); }
         .sector-column { 
             flex: 1; min-width: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; 
             padding: 40px 20px; border-right: 1px solid rgba(255,255,255,0.05); text-align: center;
         }
 
-        /* --- DASHBOARD (LAYOUT DA SUA FOTO) --- */
+        /* --- DASHBOARD ORIGINAL (IGUAL À FOTO) --- */
         #main-system { display: none; padding: 20px; background: var(--bg-overlay); min-height: 100vh; }
         .grid-layout { display: grid; grid-template-columns: 320px 1fr 350px; gap: 20px; }
         
@@ -39,67 +39,71 @@
         }
 
         h3 { font-family: 'Orbitron'; font-size: 0.9rem; color: #00adef; border-bottom: 1px solid #333; padding-bottom: 8px; }
-
         input, select { width: 100%; padding: 10px; margin: 5px 0; border-radius: 6px; border: 1px solid #333; background: rgba(0,0,0,0.5); color: white; }
         .btn { padding: 10px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 5px; }
 
-        /* --- OVERLAYS DE SEGURANÇA --- */
+        /* --- NOVAS FUNÇÕES DE SEGURANÇA (SOBREPOSIÇÃO) --- */
         #lock-screen, #pass-change-screen { 
             display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); 
-            z-index: 99999; flex-direction: column; align-items: center; justify-content: center; 
+            z-index: 99999; flex-direction: column; align-items: center; justify-content: center; text-align: center;
         }
 
         .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+        .user-monitor-row { font-size: 11px; padding: 5px; border-bottom: 1px solid #222; display: flex; align-items: center; justify-content: space-between; }
     </style>
 </head>
 <body>
 
     <div id="lock-screen">
-        <h1 style="font-family: Orbitron; color: var(--nti)">ACESSO BLOQUEADO</h1>
-        <p>Aguarde a autorização do NTI (Kelvin) para liberar seu perfil.</p>
-        <button class="btn" style="width:200px; background:#333" onclick="location.reload()">VOLTAR</button>
+        <i class="fa fa-user-lock fa-4x" style="color:var(--nti); margin-bottom:20px"></i>
+        <h1 style="font-family: Orbitron">ACESSO AGUARDANDO LIBERAÇÃO</h1>
+        <p>Kelvin (NTI) precisa autorizar seu prontuário para o primeiro uso.</p>
+        <button class="btn" style="width:200px; background:#444" onclick="location.reload()">VOLTAR</button>
     </div>
 
     <div id="pass-change-screen">
-        <h2 style="font-family: Orbitron; color: var(--gestao)">NOVA SENHA OBRIGATÓRIA</h2>
-        <input type="password" id="new-p-val" placeholder="Crie sua senha pessoal" style="width:300px">
-        <button class="btn" style="width:300px; background:var(--cad)" onclick="app.salvarNovaSenha()">DEFINIR SENHA</button>
+        <h2 style="font-family: Orbitron; color: var(--gestao)">SEGURANÇA: DEFINA SUA SENHA</h2>
+        <p>Você está usando uma senha padrão. Crie uma nova agora:</p>
+        <input type="password" id="new-p-val" placeholder="Nova Senha" style="width:280px">
+        <button class="btn" style="width:280px; background:var(--cad)" onclick="app.forcarTrocaSenha()">SALVAR SENHA</button>
     </div>
 
     <div class="login-container" id="login-screen">
         <div class="sector-column"><i class="fa fa-graduation-cap fa-3x" style="color:var(--prof)"></i><h2>PROFESSOR</h2><input type="number" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof); color:white" onclick="app.login('p','Professor')">Acessar</button></div>
         <div class="sector-column"><i class="fa fa-user-tie fa-3x" style="color:var(--gestao)"></i><h2>GESTÃO</h2><input type="number" id="g-p" placeholder="Prontuário"><input type="password" id="g-s" placeholder="Senha"><button class="btn" style="background:var(--gestao)" onclick="app.login('g','Gestão')">Acessar</button></div>
         <div class="sector-column"><i class="fa fa-building-columns fa-3x" style="color:var(--secre)"></i><h2>SECRETARIA</h2><input type="number" id="s-p" placeholder="Prontuário"><input type="password" id="s-s" placeholder="Senha"><button class="btn" style="background:var(--secre); color:white" onclick="app.login('s','Secretaria')">Acessar</button></div>
-        <div class="sector-column" style="background: rgba(46, 204, 113, 0.05)"><h2>CADASTRO</h2><input type="text" id="c-n" placeholder="Nome Completo"><input type="number" id="c-p" placeholder="Prontuário"><select id="c-c"><option value="Professor">Professor</option><option value="Gestão">Gestão</option></select><button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Solicitar Cadastro</button></div>
+        <div class="sector-column" style="background: rgba(46, 204, 113, 0.05)"><h2>CADASTRO</h2><input type="text" id="c-n" placeholder="Nome Completo"><input type="number" id="c-p" placeholder="Prontuário"><select id="c-c"><option value="Professor">Professor</option><option value="Gestão">Gestão</option></select><button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Solicitar Acesso</button></div>
         <div class="sector-column"><i class="fa fa-terminal fa-3x" style="color:var(--nti)"></i><h2>NTI</h2><input type="number" id="n-p" placeholder="ID"><input type="password" id="n-s" placeholder="Senha"><button class="btn" style="background:var(--nti); color:white" onclick="app.login('n','NTI')">Master Login</button></div>
     </div>
 
     <div id="main-system">
         <div class="grid-layout">
             <div class="left-col">
-                <div class="panel"><h3>Nova Reserva</h3><select id="res-eq"></select><input type="text" placeholder="Sala"><button class="btn" style="background:var(--prof)">RESERVAR</button></div>
+                <div class="panel"><h3>Nova Reserva</h3><select id="res-eq"></select><input type="text" placeholder="Sala"><button class="btn" style="background:var(--prof)">AGENDAR</button></div>
                 
-                <div id="nti-monitor" class="panel" style="display:none; border-color: var(--nti)">
-                    <h3>PAINEL DE CONTROLE NTI</h3>
-                    <div id="user-list-admin" style="max-height: 200px; overflow-y:auto; font-size: 11px;"></div>
-                    <hr>
-                    <input type="number" id="adm-target" placeholder="Prontuário">
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px">
-                        <button class="btn" style="background:var(--cad)" onclick="app.adminAcao('autorizar')">AUTORIZAR</button>
-                        <button class="btn" style="background:var(--nti)" onclick="app.adminAcao('bloquear')">BLOQUEAR/EXCLUIR</button>
+                <div id="nti-monitor-panel" class="panel" style="display:none; border-color: var(--nti)">
+                    <h3>CONTROLE DE ACESSOS (NTI)</h3>
+                    <div id="admin-list" style="max-height: 180px; overflow-y:auto; margin-bottom:10px"></div>
+                    <hr style="border:0; border-top:1px solid #333">
+                    <input type="number" id="adm-pront" placeholder="Prontuário">
+                    <div style="display:flex; gap:5px">
+                        <button class="btn" style="background:var(--cad); font-size:10px" onclick="app.adminAcao('autorizar')">AUTORIZAR</button>
+                        <button class="btn" style="background:var(--nti); font-size:10px" onclick="app.adminAcao('bloquear')">BLOQUEAR</button>
                     </div>
                 </div>
+
+                <div class="panel"><h3>Suporte Técnico</h3><input type="text" placeholder="Problema..."><button class="btn" style="background:var(--nti)">ABRIR CHAMADO</button></div>
             </div>
 
             <div class="center-col">
-                <div class="panel"><h3>Telemetria de Sistema</h3><canvas id="mainChart"></canvas></div>
-                <div class="panel"><h3>Cronograma de Uso</h3><div id="lista-res"></div></div>
+                <div class="panel"><h3>Telemetria de Sistema</h3><canvas id="chart1"></canvas></div>
+                <div class="panel"><h3>Status Equipamentos</h3><div id="list-eq" style="display:grid; grid-template-columns:1fr 1fr; gap:10px"></div></div>
             </div>
 
             <div class="right-col">
                 <div class="panel"><h3>Mural de Avisos</h3><div id="chat-box" style="height:150px; overflow-y:auto"></div><input type="text" id="chat-in"><button class="btn" style="background:var(--prof)" onclick="app.sendChat()">ENVIAR</button></div>
-                <div class="panel"><h3>Feedback de Suporte</h3><div id="feedback-list"></div></div>
-                <button class="btn" style="background:#eb4d4b" onclick="location.reload()">SAIR</button>
+                <div class="panel"><h3>Feedback de Suporte</h3><div id="feed-list"></div></div>
+                <button class="btn" style="background:#ff4757" onclick="location.reload()">DESCONECTAR</button>
             </div>
         </div>
     </div>
@@ -111,13 +115,14 @@
 
     const app = {
         user: null,
+        senhasPadrao: ["pmspmudar123", "secretaria2026", "pmspgestores2026"],
 
         async login(pre, cargo) {
             const p = document.getElementById(pre+'-p').value;
             const s = document.getElementById(pre+'-s').value;
 
             if(cargo==='NTI' && p==='46690' && s==='nti2026') { 
-                this.user={nome:'Kelvin', cargo:'NTI', pront:'46690', aprovado:true}; 
+                this.user={nome:'Kelvin (NTI)', cargo:'NTI', pront:'46690', aprovado:true}; 
                 return this.start(); 
             }
 
@@ -126,22 +131,22 @@
                 const u = snap.val();
                 if(!u.aprovado) return document.getElementById('lock-screen').style.display='flex';
                 this.user = u;
-                // Se a senha for a padrão, obriga a trocar
-                if(u.pass === 'pmspmudar123') document.getElementById('pass-change-screen').style.display='flex';
+                // Troca de senha obrigatória
+                if(this.senhasPadrao.includes(u.pass)) document.getElementById('pass-change-screen').style.display='flex';
                 else this.start();
-            } else { alert("Dados incorretos!"); }
+            } else { alert("Acesso negado!"); }
         },
 
         confirmarCad() {
             const n = document.getElementById('c-n').value, p = document.getElementById('c-p').value, c = document.getElementById('c-c').value;
             if(!n || !p) return alert("Preencha tudo!");
-            db.ref('usuarios/'+p).set({ nome:n, pront:p, cargo:c, pass:'pmspmudar123', aprovado:false, online: false });
-            alert("Cadastro enviado! Kelvin precisa te autorizar.");
+            db.ref('usuarios/'+p).set({ nome:n, pront:p, cargo:c, pass:'pmspmudar123', aprovado:false, status:'off' });
+            alert("Solicitação enviada! Aguarde Kelvin (NTI) autorizar.");
         },
 
-        salvarNovaSenha() {
+        forcarTrocaSenha() {
             const nv = document.getElementById('new-p-val').value;
-            if(nv.length < 4) return alert("Senha muito curta!");
+            if(nv.length < 5) return alert("Senha muito curta!");
             db.ref('usuarios/'+this.user.pront+'/pass').set(nv).then(()=> location.reload());
         },
 
@@ -151,34 +156,38 @@
             document.getElementById('main-system').style.display='block';
 
             if(this.user.cargo === 'NTI') {
-                document.getElementById('nti-monitor').style.display='block';
-                this.iniciarMonitoramento();
+                document.getElementById('nti-monitor-panel').style.display='block';
+                this.monitorarUsuarios();
             }
 
-            // Marca como Online
-            db.ref('usuarios/'+this.user.pront+'/online').set(true);
-            db.ref('usuarios/'+this.user.pront+'/online').onDisconnect().set(false);
+            // Monitor Online/Offline
+            db.ref('usuarios/'+this.user.pront+'/status').set('on');
+            db.ref('usuarios/'+this.user.pront+'/status').onDisconnect().set('off');
 
             this.sync();
         },
 
-        iniciarMonitoramento() {
+        monitorarUsuarios() {
             db.ref('usuarios').on('value', snap => {
-                const box = document.getElementById('user-list-admin');
-                box.innerHTML = "";
+                const list = document.getElementById('admin-list');
+                list.innerHTML = "";
                 snap.forEach(u => {
                     const d = u.val();
-                    box.innerHTML += `<div><span class="status-dot" style="background:${d.online?'#2ecc71':'#555'}"></span><b>${d.nome}</b> (${d.pront}) - ${d.aprovado?'OK':'PENDENTE'}</div>`;
+                    list.innerHTML += `
+                        <div class="user-monitor-row">
+                            <span><span class="status-dot" style="background:${d.status==='on'?'#2ecc71':'#555'}"></span> ${d.nome} (${d.pront})</span>
+                            <b style="color:${d.aprovado?'#2ecc71':''}">[${d.aprovado?'OK':'BLOQ'}]</b>
+                        </div>`;
                 });
             });
         },
 
         adminAcao(tipo) {
-            const p = document.getElementById('adm-target').value;
-            if(!p) return;
+            const p = document.getElementById('adm-pront').value;
+            if(!p) return alert("Digite o prontuário!");
             if(tipo === 'autorizar') db.ref('usuarios/'+p+'/aprovado').set(true);
-            if(tipo === 'bloquear') db.ref('usuarios/'+p).remove(); // Remove e bloqueia
-            alert("Feito!");
+            if(tipo === 'bloquear') db.ref('usuarios/'+p+'/aprovado').set(false);
+            alert("Ação realizada com sucesso!");
         },
 
         sync() {
