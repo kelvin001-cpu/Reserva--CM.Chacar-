@@ -23,6 +23,7 @@
             background-size: cover; overflow-x: hidden;
         }
 
+        /* Estilo da Frase Motivacional */
         .slogan-container {
             width: 100%; text-align: center; padding: 40px 0 10px 0;
             animation: fadeInDown 1.5s;
@@ -55,12 +56,13 @@
             width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; 
             background: rgba(0,0,0,0.4); color: white; box-sizing: border-box; transition: 0.3s;
         }
+        input:focus { border-color: var(--prof); outline: none; background: rgba(0,0,0,0.6); }
 
         .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
         .btn:hover { filter: brightness(1.2); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
 
         #chat-box, #chat-nti-box { height: 250px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; display: flex; flex-direction: column; gap: 10px; border: 1px solid rgba(255,255,255,0.05); }
-        .msg { padding: 10px; border-radius: 12px; font-size: 13px; max-width: 85%; line-height: 1.4; }
+        .msg { padding: 10px; border-radius: 12px; font-size: 13px; max-width: 85%; line-height: 1.4; animation: slideInRight 0.3s; }
         .msg-in { background: #3d3d3d; align-self: flex-start; border-bottom-left-radius: 2px; }
         .msg-out { background: #005c4b; align-self: flex-end; border-bottom-right-radius: 2px; }
 
@@ -137,12 +139,12 @@
                     <input type="text" id="input-aviso" placeholder="Texto do banner superior">
                     <button class="btn" style="background:var(--nti)" onclick="app.enviarAviso()">Publicar Aviso</button>
                     
-                    <h4 style="margin-top:20px">Gestão de Usuários</h4>
-                    <div id="admin-user-list" style="max-height: 150px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 5px; margin-bottom: 10px; font-size: 11px;"></div>
-                    <input type="number" id="reset-pront" placeholder="Prontuário do Usuário">
+                    <h4 style="margin-top:20px">Gerenciamento de Acessos</h4>
+                    <div id="admin-user-list" style="max-height: 150px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 5px; margin-bottom: 10px; font-size: 11px; border-radius: 5px;"></div>
+                    <input type="number" id="reset-pront" placeholder="Prontuário do Alvo">
                     <div style="display:flex; gap:5px">
-                        <button class="btn" style="background:#555" onclick="app.resetSenha()">Reset Senha</button>
-                        <button class="btn" style="background:#c0392b" onclick="app.removerUsuario()">Excluir</button>
+                        <button class="btn" style="background:#555; font-size: 10px;" onclick="app.resetSenha()">Reset Senha</button>
+                        <button class="btn" style="background:var(--nti); font-size: 10px;" onclick="app.removerUsuario()">Excluir Login</button>
                     </div>
                     
                     <h4 style="margin-top:20px">Controle do Sistema</h4>
@@ -159,6 +161,8 @@
                     <div class="charts-grid">
                         <div class="chart-card"><canvas id="chartUsers"></canvas></div>
                         <div class="chart-card"><canvas id="chartChamados"></canvas></div>
+                        <div class="chart-card"><canvas id="chartEquip"></canvas></div>
+                        <div class="chart-card"><canvas id="chartManutencao"></canvas></div>
                     </div>
                 </div>
 
@@ -210,18 +214,18 @@
             const p = document.getElementById(pre+'-p').value;
             const s = document.getElementById(pre+'-s').value;
 
-            // Login Master NTI
+            // Master Login NTI
             if(cargo==='NTI' && p==='46690' && s==='nti2026') { 
                 this.user={nome:'Kelvin (Admin)', cargo:'NTI', pront:'46690'}; 
                 return this.start(); 
             }
             
-            // Verificação de Autorização por Cargo
+            // Verificação Rígida de Autorização
             if(cargo === 'Gestão' && !this.authGestao.includes(p)) {
-                return alert("Acesso Negado: Você não tem autorização para o menu Gestão.");
+                return alert("ACESSO NEGADO: Prontuário não autorizado para GESTÃO.");
             }
             if(cargo === 'Secretaria' && !this.authSecre.includes(p)) {
-                return alert("Acesso Negado: Você não tem autorização para o menu Secretaria.");
+                return alert("ACESSO NEGADO: Prontuário não autorizado para SECRETARIA.");
             }
 
             const snap = await db.ref('usuarios/'+p).once('value');
@@ -229,18 +233,16 @@
                 this.user = snap.val();
                 this.start();
                 this.logAtividade(`Login realizado`);
-            } else { 
-                alert("Acesso Negado: Verifique prontuário e senha."); 
-            }
+            } else { alert("Erro: Prontuário ou Senha incorretos."); }
         },
 
         confirmarCad() {
             const n = document.getElementById('c-n').value, p = document.getElementById('c-p').value, c = document.getElementById('c-c').value;
-            if(!n || !p) return alert("Por favor, preencha todos os campos.");
+            if(!n || !p) return alert("Preencha todos os campos.");
             
-            // Verificação extra no cadastro
-            if(c === 'Gestão' && !this.authGestao.includes(p)) return alert("Este prontuário não está na lista autorizada da Gestão.");
-            if(c === 'Secretaria' && !this.authSecre.includes(p)) return alert("Este prontuário não está na lista autorizada da Secretaria.");
+            // Bloqueio de tentativa de login não autorizado no cadastro
+            if(c === 'Gestão' && !this.authGestao.includes(p)) return alert("CADASTRO NEGADO: Você não pertence à equipe de Gestão.");
+            if(c === 'Secretaria' && !this.authSecre.includes(p)) return alert("CADASTRO NEGADO: Você não pertence à equipe da Secretaria.");
 
             let pass = c === "Secretaria" ? "secretaria2026" : (c === "Gestão" ? "pmspgestores2026" : "pmspmudar123");
             db.ref('usuarios/'+p).set({ nome: n, pront: p, cargo: c, pass: pass }).then(() => alert("Conta criada! Senha padrão: " + pass));
@@ -266,13 +268,11 @@
 
         syncData() {
             db.ref('lock').on('value', s => { if(s.val() && this.user.cargo !== 'NTI') document.getElementById('lock-overlay').style.display='flex'; else document.getElementById('lock-overlay').style.display='none'; });
-            
             db.ref('aviso_global').on('value', s => {
                 const ribbon = document.getElementById('alert-ribbon');
                 if(s.val()) { ribbon.style.display = 'block'; document.getElementById('alert-text').innerText = s.val(); }
                 else { ribbon.style.display = 'none'; }
             });
-
             db.ref('chat').limitToLast(20).on('value', snap => {
                 const box = document.getElementById('chat-box'); box.innerHTML = "";
                 snap.forEach(m => {
@@ -282,39 +282,25 @@
                 });
                 box.scrollTop = box.scrollHeight;
             });
-
             db.ref('reservas').on('value', snap => {
                 const box = document.getElementById('lista-res'); box.innerHTML = "";
                 snap.forEach(r => {
                     let d = r.val();
                     let dataFormat = new Date(d.dt).toLocaleString('pt-BR');
-                    box.innerHTML += `
-                        <div class="res-item">
-                            <div>
-                                <strong style="color:var(--prof)">${d.eq}</strong><br>
-                                <small><i class="fa fa-user"></i> ${d.u} | <i class="fa fa-door-open"></i> Sala: ${d.sl}</small><br>
-                                <small><i class="fa fa-clock"></i> ${dataFormat}</small>
-                            </div>
-                            <button class="status-badge bg-manutencao" style="border:none; cursor:pointer" onclick="app.baixarReserva('${r.key}')">Dar Baixa</button>
-                        </div>`;
+                    box.innerHTML += `<div class="res-item"><div><strong style="color:var(--prof)">${d.eq}</strong><br><small>${d.u} | Sala: ${d.sl}</small><br><small>${dataFormat}</small></div><button class="status-badge bg-manutencao" style="border:none; cursor:pointer" onclick="app.baixarReserva('${r.key}')">Baixa</button></div>`;
                 });
             });
-
             db.ref('chamados').on('value', snap => {
-                let abertos = 0;
                 snap.forEach(c => {
                     let d = c.val();
                     if(d.status === 'aberto') {
-                        abertos++;
                         if(d.pront === this.user.pront || this.user.cargo === 'NTI') {
                             this.currentTicket = c.key;
                             this.abrirInterfaceChamado(d);
                         }
                     }
                 });
-                if(this.charts.chamados) this.updateChart('chamados', [abertos]);
             });
-
             db.ref('avaliacoes').limitToLast(5).on('value', snap => {
                 const box = document.getElementById('lista-avaliacoes'); box.innerHTML = "";
                 snap.forEach(a => {
@@ -326,7 +312,7 @@
 
         abrirInterfaceChamado(dados) {
             document.getElementById('active-ticket-area').classList.remove('hidden');
-            // Agora qualquer um que esteja no chat (NTI ou Dono do Chamado) pode ver o botão
+            // O botão de finalizar aparece tanto para o NTI quanto para o dono do ticket
             document.getElementById('btn-finalizar').classList.remove('hidden');
             
             db.ref('chat_nti/'+this.currentTicket).on('value', snap => {
@@ -340,22 +326,35 @@
             });
         },
 
+        finalizarChamado() {
+            let nota = prompt("Avalie o suporte (1 a 5):", "5");
+            let coment = prompt("Alguma observação sobre o atendimento?");
+            if(!nota) return alert("Avaliação é obrigatória para encerrar.");
+            
+            db.ref('avaliacoes').push({ nota, txt: coment, autor: this.user.nome, chamado: this.currentTicket });
+            db.ref('chamados/'+this.currentTicket+'/status').set('resolvido');
+            document.getElementById('active-ticket-area').classList.add('hidden');
+            this.currentTicket = null;
+            alert("Atendimento encerrado e avaliado com sucesso!");
+        },
+
         listarUsuariosAdmin() {
             db.ref('usuarios').on('value', snap => {
                 const list = document.getElementById('admin-user-list');
                 list.innerHTML = "";
                 snap.forEach(u => {
                     let d = u.val();
-                    list.innerHTML += `<div>[${d.cargo}] ${d.nome} (${d.pront})</div>`;
+                    list.innerHTML += `<div style="border-bottom: 1px solid #333; padding: 2px;">[${d.cargo}] ${d.nome} (${d.pront})</div>`;
                 });
             });
         },
 
         removerUsuario() {
             let p = document.getElementById('reset-pront').value;
-            if(!p) return alert("Digite o prontuário para excluir.");
-            if(confirm("Tem certeza que deseja REMOVER o acesso deste funcionário?")) {
-                db.ref('usuarios/'+p).remove().then(() => alert("Usuário removido do sistema."));
+            if(!p) return alert("Informe o prontuário.");
+            if(confirm("Deseja realmente EXCLUIR este login e revogar o acesso?")) {
+                db.ref('usuarios/'+p).remove().then(() => alert("Acesso removido com sucesso."));
+                document.getElementById('reset-pront').value = "";
             }
         },
 
@@ -363,29 +362,9 @@
             let p = document.getElementById('reset-pront').value;
             if(!p) return;
             db.ref('usuarios/'+p+'/pass').set('pmspmudar123');
-            alert("Senha resetada para o padrão!");
+            alert("Senha resetada!");
         },
 
-        // Restante das funções originais mantidas sem alteração
-        enviarAviso() { const txt = document.getElementById('input-aviso').value; db.ref('aviso_global').set(txt); document.getElementById('input-aviso').value = ""; },
-        baixarReserva(id) { if(confirm("Confirmar que o equipamento já foi utilizado e liberado?")) { db.ref('reservas/'+id).remove(); } },
-        abrirChamado() {
-            const desc = document.getElementById('chamado-desc').value;
-            const grau = document.getElementById('chamado-grau').value;
-            if(!desc) return;
-            const newKey = db.ref('chamados').push().key;
-            db.ref('chamados/'+newKey).set({ u: this.user.nome, pront: this.user.pront, t: desc, grau: grau, status: 'aberto', data: Date.now() });
-            document.getElementById('chamado-desc').value = "";
-        },
-        sendChatNTI() { const t = document.getElementById('chat-nti-in').value; if(!t) return; db.ref('chat_nti/'+this.currentTicket).push({ n: this.user.nome, t: t }); document.getElementById('chat-nti-in').value = ""; },
-        finalizarChamado() {
-            let nota = prompt("Avalie o suporte (1 a 5):", "5");
-            let coment = prompt("Alguma observação?");
-            db.ref('avaliacoes').push({ nota, txt: coment, autor: this.user.nome, chamado: this.currentTicket });
-            db.ref('chamados/'+this.currentTicket+'/status').set('resolvido');
-            document.getElementById('active-ticket-area').classList.add('hidden');
-            this.currentTicket = null;
-        },
         carregarEquipamentos() {
             const eqs = ['TV 01', 'TV 02', 'Kit Multimídia', 'Chromebooks', 'Sala Info'];
             const sel = document.getElementById('res-eq');
@@ -397,7 +376,7 @@
                     let d = snap.val() || { status: 'ativo' };
                     let cardId = 'card-'+e.replace(/\s/g, '');
                     let exist = document.getElementById(cardId);
-                    let content = `<strong>${e}</strong> <br><span class="status-badge ${d.status === 'ativo' ? 'bg-ativo' : 'bg-manutencao'}">${d.status.toUpperCase()}</span>${this.user.cargo === 'NTI' ? `<button onclick="app.toggleManutencao('${e}', '${d.status}')" style="display:block; margin-top:5px; font-size:10px">Status</button>` : ''}`;
+                    let content = `<strong>${e}</strong> <br><span class="status-badge ${d.status === 'ativo' ? 'bg-ativo' : 'bg-manutencao'}">${d.status.toUpperCase()}</span>${this.user.cargo === 'NTI' ? `<button onclick="app.toggleManutencao('${e}', '${d.status}')" style="display:block; margin-top:5px; font-size:10px">Alterar</button>` : ''}`;
                     if(exist) { exist.innerHTML = content; } else {
                         let div = document.createElement('div'); div.id = cardId; div.className = "fade-up"; div.style = "padding:12px; border:1px solid #444; border-radius:8px; background:rgba(0,0,0,0.2)";
                         div.innerHTML = content; lista.appendChild(div);
@@ -405,23 +384,31 @@
                 });
             });
         },
+
         toggleManutencao(id, status) {
             let novo = status === 'ativo' ? 'manutencao' : 'ativo';
             db.ref('equipamentos/'+id+'/status').set(novo);
         },
-        reservar() {
-            const eq = document.getElementById('res-eq').value, sl = document.getElementById('res-sl').value, dt = document.getElementById('res-dt').value;
-            if(!sl || !dt) return alert("Preencha a sala e o horário!");
-            db.ref('reservas').push({ eq, sl, dt, u: this.user.nome });
+
+        enviarAviso() { db.ref('aviso_global').set(document.getElementById('input-aviso').value); document.getElementById('input-aviso').value = ""; },
+        baixarReserva(id) { if(confirm("Liberar equipamento?")) db.ref('reservas/'+id).remove(); },
+        abrirChamado() {
+            const desc = document.getElementById('chamado-desc').value;
+            if(!desc) return;
+            db.ref('chamados').push({ u: this.user.nome, pront: this.user.pront, t: desc, grau: document.getElementById('chamado-grau').value, status: 'aberto', data: Date.now() });
+            document.getElementById('chamado-desc').value = "";
         },
+        sendChatNTI() { const t = document.getElementById('chat-nti-in').value; if(!t) return; db.ref('chat_nti/'+this.currentTicket).push({ n: this.user.nome, t: t }); document.getElementById('chat-nti-in').value = ""; },
+        reservar() { db.ref('reservas').push({ eq: document.getElementById('res-eq').value, sl: document.getElementById('res-sl').value, dt: document.getElementById('res-dt').value, u: this.user.nome }); },
         sendChat() { const t = document.getElementById('chat-in').value; if(!t) return; db.ref('chat').push({ n: this.user.nome, t: t }); document.getElementById('chat-in').value = ""; },
         setLock(v) { db.ref('lock').set(v); },
         logAtividade(acao) { db.ref('logs').push({ u: this.user.nome, acao: acao, time: Date.now() }); },
         initCharts() {
-            this.charts.users = new Chart(document.getElementById('chartUsers'), { type: 'line', data: { labels: ['08h','12h','16h','20h'], datasets: [{ label: 'Acessos', data: [5, 15, 10, 2], borderColor: '#00adef' }] }, options: { plugins: { title: { display: true, text: 'Acessos', color: '#fff' } } } });
-            this.charts.chamados = new Chart(document.getElementById('chartChamados'), { type: 'bar', data: { labels: ['Tickets'], datasets: [{ data: [0], backgroundColor: '#eb4d4b' }] }, options: { plugins: { title: { display: true, text: 'Abertos', color: '#fff' } } } });
-        },
-        updateChart(id, data) { if(this.charts[id]) { this.charts[id].data.datasets[0].data = data; this.charts[id].update(); } }
+            this.charts.users = new Chart(document.getElementById('chartUsers'), { type: 'line', data: { labels: ['08h','12h','16h','20h'], datasets: [{ label: 'Acessos', data: [12, 45, 30, 10], borderColor: '#00adef' }] }, options: { plugins: { title: { display: true, text: 'Acessos', color: '#fff' } } } });
+            this.charts.chamados = new Chart(document.getElementById('chartChamados'), { type: 'bar', data: { labels: ['Tickets'], datasets: [{ data: [0], backgroundColor: '#eb4d4b' }] }, options: { plugins: { title: { display: true, text: 'Chamados', color: '#fff' } } } });
+            this.charts.equip = new Chart(document.getElementById('chartEquip'), { type: 'doughnut', data: { labels: ['Uso', 'Livre'], datasets: [{ data: [40, 60], backgroundColor: ['#f1c40f', '#2ecc71'] }] } });
+            this.charts.manut = new Chart(document.getElementById('chartManutencao'), { type: 'pie', data: { labels: ['OK', 'Reparo'], datasets: [{ data: [90, 10], backgroundColor: ['#2ecc71', '#eb4d4b'] }] } });
+        }
     };
 </script>
 </body>
