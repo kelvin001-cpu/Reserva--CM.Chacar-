@@ -2,106 +2,76 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Programa Conect - NTI CHÁCARA</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-
+    
     <style>
-        /* MANTIDO 100% SEU CSS ORIGINAL */
-        :root {
-            --prof: #00adef; --gestao: #f1c40f; --secre: #a55eea; --cad: #2ecc71; --nti: #eb4d4b;
-            --bg-overlay: rgba(10, 11, 16, 0.92);
-        }
-
-        body, html { 
-            margin: 0; padding: 0; font-family: 'Poppins', sans-serif; color: white; min-height: 100vh;
-            background: url('https://get.wallhere.com/photo/space-planet-Earth-NASA-blue-marble-atmosphere-outer-space-astronomical-object-82285.jpg') no-repeat center center fixed;
-            background-size: cover; overflow-x: hidden;
-        }
-
-        .slogan-container { width: 100%; text-align: center; padding: 40px 0 10px 0; animation: fadeInDown 1.5s; }
-        .slogan-main { font-family: 'Orbitron'; font-size: 2.5rem; color: var(--prof); text-shadow: 0 0 15px rgba(0,173,239,0.6); margin-bottom: 5px; }
-        .slogan-sub { font-weight: 300; letter-spacing: 2px; color: #ccc; font-style: italic; }
-
-        #alert-ribbon { background: var(--nti); color: white; padding: 12px; text-align: center; font-weight: bold; display: none; position: fixed; top: 0; width: 100%; z-index: 10000; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-
-        .login-container { display: flex; width: 100%; min-height: 100vh; flex-wrap: wrap; background: var(--bg-overlay); backdrop-filter: blur(8px); }
-        .sector-column { 
-            flex: 1; min-width: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            padding: 40px 20px; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            border-right: 1px solid rgba(255,255,255,0.05); text-align: center;
-        }
-        .sector-column:hover { background: rgba(255,255,255,0.03); transform: scale(1.02); }
+        :root { --prof: #00adef; --gestao: #f1c40f; --secre: #a55eea; --cad: #2ecc71; --nti: #eb4d4b; }
+        body, html { margin: 0; padding: 0; font-family: 'Poppins', sans-serif; color: white; background: url('https://get.wallhere.com/photo/space-planet-Earth-NASA-blue-marble-atmosphere-outer-space-astronomical-object-82285.jpg') no-repeat center center fixed; background-size: cover; }
         
-        #main-system { display: none; padding: 80px 20px 20px 20px; background: var(--bg-overlay); min-height: 100vh; animation: fadeIn 1s; }
-        .grid-layout { display: grid; grid-template-columns: 350px 1fr 350px; gap: 20px; max-width: 1600px; margin: 0 auto; }
+        /* LOGIN ORIGINAL */
+        .login-container { display: flex; width: 100%; min-height: 100vh; background: rgba(10, 11, 16, 0.94); backdrop-filter: blur(10px); }
+        .sector-column { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; border-right: 1px solid rgba(255,255,255,0.1); text-align: center; }
         
-        .panel { 
-            background: rgba(22, 27, 34, 0.7); backdrop-filter: blur(20px); padding: 20px; border-radius: 15px; 
-            border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; transition: 0.3s;
-        }
+        /* DASHBOARD (LAYOUT DA FOTO) */
+        #main-system { display: none; padding: 20px; background: rgba(10, 11, 16, 0.94); min-height: 100vh; }
+        .grid-layout { display: grid; grid-template-columns: 320px 1fr 350px; gap: 20px; }
+        .panel { background: rgba(22, 27, 34, 0.8); border: 1px solid rgba(0, 173, 239, 0.3); padding: 15px; border-radius: 12px; margin-bottom: 20px; }
         
-        h3 { margin-top: 0; font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; display: flex; align-items: center; gap: 10px; font-family: 'Orbitron'; }
+        /* OVERLAYS */
+        #lock-screen, #pass-change-screen { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 99999; flex-direction: column; align-items: center; justify-content: center; }
         
-        input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: rgba(0,0,0,0.4); color: white; }
-        .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; margin-top: 5px; text-transform: uppercase; }
-
-        /* NOVOS ESTILOS DE SUPORTE */
-        #lock-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 999999; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-        .hidden { display: none !important; }
-        .online-tag { font-size: 10px; background: var(--cad); padding: 2px 5px; border-radius: 4px; margin-left: 5px; }
+        input, select { width: 100%; padding: 10px; margin: 5px 0; border-radius: 6px; border: 1px solid #333; background: rgba(0,0,0,0.5); color: white; }
+        .btn { padding: 10px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 5px; }
     </style>
 </head>
 <body>
 
-    <div id="lock-overlay">
-        <i class="fa fa-user-shield fa-5x" style="color:var(--nti); margin-bottom:20px"></i>
-        <h1 style="font-family: Orbitron">ACESSO PENDENTE</h1>
-        <p>Kelvin (NTI) precisa autorizar seu perfil antes do primeiro acesso.</p>
+    <div id="lock-screen">
+        <h1 style="font-family: Orbitron; color: var(--nti)">ACESSO PENDENTE</h1>
+        <p>Aguarde a liberação do NTI (Kelvin) para acessar o sistema.</p>
         <button class="btn" style="width:200px; background:#444" onclick="location.reload()">VOLTAR</button>
     </div>
 
-    <div id="alert-ribbon">⚠️ AVISO: <span id="alert-text">Carregando informações...</span></div>
+    <div id="pass-change-screen">
+        <h2 style="font-family: Orbitron; color: var(--gestao)">DEFINIR NOVA SENHA</h2>
+        <p>Sua senha atual é padrão. Crie uma senha particular agora:</p>
+        <input type="password" id="new-password" placeholder="Nova Senha" style="width:300px">
+        <button class="btn" style="width:300px; background:var(--cad)" onclick="app.atualizarSenha()">SALVAR E ACESSAR</button>
+    </div>
 
     <div class="login-container" id="login-screen">
-        <div class="slogan-container">
-            <div class="slogan-main">PROGRAMA CONECT</div>
-            <div class="slogan-sub">Construindo uma Geração de Vencedores</div>
-        </div>
-        <div class="sector-column"><i class="fa fa-graduation-cap fa-3x" style="color:var(--prof)"></i><h2>PROFESSOR</h2><input type="number" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof); color:white" onclick="app.login('p','Professor')">Acessar</button></div>
-        <div class="sector-column"><i class="fa fa-user-tie fa-3x" style="color:var(--gestao)"></i><h2>GESTÃO</h2><input type="number" id="g-p" placeholder="Prontuário"><input type="password" id="g-s" placeholder="Senha"><button class="btn" style="background:var(--gestao)" onclick="app.login('g','Gestão')">Acessar</button></div>
-        <div class="sector-column"><i class="fa fa-building-columns fa-3x" style="color:var(--secre)"></i><h2>SECRETARIA</h2><input type="number" id="s-p" placeholder="Prontuário"><input type="password" id="s-s" placeholder="Senha"><button class="btn" style="background:var(--secre); color:white" onclick="app.login('s','Secretaria')">Acessar</button></div>
-        <div class="sector-column" style="background: rgba(46, 204, 113, 0.05)"><h2>CADASTRO</h2><input type="text" id="c-n" placeholder="Nome Completo"><input type="number" id="c-p" placeholder="Prontuário"><select id="c-c"><option value="Professor">Professor</option><option value="Gestão">Gestão</option></select><button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Criar Conta</button></div>
-        <div class="sector-column"><i class="fa fa-terminal fa-3x" style="color:var(--nti)"></i><h2>NTI</h2><input type="number" id="n-p" placeholder="ID"><input type="password" id="n-s" placeholder="Senha"><button class="btn" style="background:var(--nti); color:white" onclick="app.login('n','NTI')">Master Login</button></div>
+        <div class="sector-column"><i class="fa fa-graduation-cap fa-3x" style="color:var(--prof)"></i><h2>PROFESSOR</h2><input type="number" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof)" onclick="app.login('p','Professor')">Entrar</button></div>
+        <div class="sector-column"><i class="fa fa-user-tie fa-3x" style="color:var(--gestao)"></i><h2>GESTÃO</h2><input type="number" id="g-p" placeholder="Prontuário"><input type="password" id="g-s" placeholder="Senha"><button class="btn" style="background:var(--gestao)" onclick="app.login('g','Gestão')">Entrar</button></div>
+        <div class="sector-column"><i class="fa fa-building-columns fa-3x" style="color:var(--secre)"></i><h2>SECRETARIA</h2><input type="number" id="s-p" placeholder="Prontuário"><input type="password" id="s-s" placeholder="Senha"><button class="btn" style="background:var(--secre)" onclick="app.login('s','Secretaria')">Entrar</button></div>
+        <div class="sector-column" style="background: rgba(46, 204, 113, 0.05)"><h2>CADASTRO</h2><input type="text" id="c-n" placeholder="Nome"><input type="number" id="c-p" placeholder="Prontuário"><select id="c-c"><option value="Professor">Professor</option><option value="Gestão">Gestão</option></select><button class="btn" style="background:var(--cad)" onclick="app.cadastrar()">Solicitar</button></div>
+        <div class="sector-column"><i class="fa fa-terminal fa-3x" style="color:var(--nti)"></i><h2>NTI</h2><input type="number" id="n-p" placeholder="ID"><input type="password" id="n-s" placeholder="Senha"><button class="btn" style="background:var(--nti)" onclick="app.login('n','NTI')">Master</button></div>
     </div>
 
     <div id="main-system">
         <div class="grid-layout">
             <div class="left-col">
-                <div class="panel"><h3>Nova Reserva</h3><select id="res-eq"></select><input type="text" id="res-sl" placeholder="Sala"><button class="btn" style="background:var(--prof)" onclick="app.reservar()">Confirmar</button></div>
-                
-                <div id="nti-master-panel" class="panel hidden" style="border: 2px solid var(--nti)">
-                    <h3 style="color:var(--nti)">NTI MASTER</h3>
-                    <div id="admin-user-list" style="max-height: 150px; overflow-y: auto; font-size: 11px;"></div>
-                    <input type="number" id="adm-target" placeholder="Prontuário">
-                    <button class="btn" style="background:var(--cad)" onclick="app.adminAcao('autorizar')">Autorizar</button>
-                    <button class="btn" style="background:var(--nti)" onclick="app.adminAcao('remover')">Remover</button>
+                <div class="panel"><h3>Nova Reserva</h3><select id="res-eq"></select><button class="btn" style="background:var(--prof)">RESERVAR</button></div>
+                <div id="nti-panel" class="panel" style="display:none; border-color:var(--nti)">
+                    <h3 style="color:var(--nti)">Controle NTI</h3>
+                    <div id="user-monitor" style="font-size:11px; max-height:100px; overflow-y:auto"></div>
                 </div>
+                <div class="panel"><h3>Suporte Técnico</h3><button class="btn" style="background:var(--nti)">CHAMADO</button></div>
             </div>
 
             <div class="center-col">
-                <div class="panel"><h3>Telemetria de Sistema</h3><canvas id="chartUsers"></canvas></div>
-                <div class="panel"><h3>Cronograma</h3><div id="lista-res"></div></div>
+                <div class="panel"><h3>Telemetria</h3><canvas id="chart1"></canvas></div>
+                <div class="panel"><h3>Cronograma</h3><div id="cron-list"></div></div>
             </div>
 
             <div class="right-col">
-                <div class="panel"><h3>Mural</h3><div id="chat-box" style="height:200px; overflow-y:auto"></div><input type="text" id="chat-in"><button class="btn" style="background:var(--prof)" onclick="app.sendChat()">Enviar</button></div>
-                <button class="btn" style="background:var(--nti)" onclick="location.reload()">Sair</button>
+                <div class="panel"><h3>Mural</h3><div id="chat-box" style="height:150px; overflow:auto"></div><input type="text" id="chat-in"><button class="btn" style="background:var(--prof)" onclick="app.sendChat()">ENVIAR</button></div>
+                <div class="panel"><h3>Feedback</h3><div id="feed-list"></div></div>
+                <button class="btn" style="background:#ff4757" onclick="location.reload()">SAIR</button>
             </div>
         </div>
     </div>
@@ -113,7 +83,8 @@
 
     const app = {
         user: null,
-        // ADICIONADO: Logica de autorização e monitoramento
+        senhasPadrao: ["pmspmudar123", "secretaria2026", "pmspgestores2026"],
+
         async login(pre, cargo) {
             const p = document.getElementById(pre+'-p').value;
             const s = document.getElementById(pre+'-s').value;
@@ -126,58 +97,44 @@
             const snap = await db.ref('usuarios/'+p).once('value');
             if(snap.exists() && String(snap.val().pass) === String(s)) {
                 const u = snap.val();
-                if(!u.aprovado) return document.getElementById('lock-overlay').style.display='flex';
+                if(!u.aprovado) return document.getElementById('lock-screen').style.display='flex';
                 this.user = u;
-                this.start();
-            } else { alert("Erro de login!"); }
+                if(this.senhasPadrao.includes(u.pass)) document.getElementById('pass-change-screen').style.display='flex';
+                else this.start();
+            } else { alert("Erro de acesso."); }
         },
 
-        confirmarCad() {
+        cadastrar() {
             const n = document.getElementById('c-n').value, p = document.getElementById('c-p').value, c = document.getElementById('c-c').value;
-            db.ref('usuarios/'+p).set({ nome: n, pront: p, cargo: c, pass: 'pmspmudar123', aprovado: false, online: false });
-            alert("Cadastro enviado! Peça para o Kelvin autorizar.");
+            let pass = c === "Gestão" ? "pmspgestores2026" : "pmspmudar123";
+            db.ref('usuarios/'+p).set({ nome:n, pront:p, cargo:c, pass:pass, aprovado:false, online:false });
+            alert("Cadastrado! Kelvin precisa autorizar.");
+        },
+
+        atualizarSenha() {
+            const nv = document.getElementById('new-password').value;
+            if(nv.length < 5) return alert("Senha muito curta!");
+            db.ref('usuarios/'+this.user.pront+'/pass').set(nv).then(()=> location.reload());
         },
 
         start() {
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('main-system').style.display = 'block';
-            
-            // Marca Online
+            document.getElementById('login-screen').style.display='none';
+            document.getElementById('pass-change-screen').style.display='none';
+            document.getElementById('main-system').style.display='block';
+            if(this.user.cargo === 'NTI') {
+                document.getElementById('nti-panel').style.display='block';
+                this.monitor();
+            }
             db.ref('usuarios/'+this.user.pront+'/online').set(true);
             db.ref('usuarios/'+this.user.pront+'/online').onDisconnect().set(false);
-
-            if(this.user.cargo === 'NTI') {
-                document.getElementById('nti-master-panel').classList.remove('hidden');
-                this.listarUsers();
-            }
-            this.sync();
         },
 
-        listarUsers() {
+        monitor() {
             db.ref('usuarios').on('value', snap => {
-                const list = document.getElementById('admin-user-list');
-                list.innerHTML = "";
-                snap.forEach(u => {
-                    const d = u.val();
-                    list.innerHTML += `<div>${d.nome} ${d.online?'<span class="online-tag">ON</span>':''} - ${d.aprovado?'OK':'BLOQ'}</div>`;
-                });
+                const list = document.getElementById('user-monitor'); list.innerHTML = "";
+                snap.forEach(u => { const d = u.val(); list.innerHTML += `<div>${d.online?'🟢':'⚪'} ${d.nome} - ${d.aprovado?'OK':'BLOQ'}</div>`; });
             });
-        },
-
-        adminAcao(tipo) {
-            const p = document.getElementById('adm-target').value;
-            if(tipo === 'autorizar') db.ref('usuarios/'+p+'/aprovado').set(true);
-            if(tipo === 'remover') db.ref('usuarios/'+p).remove();
-        },
-
-        sync() {
-            // Seus códigos originais de chat e reservas entram aqui
-            db.ref('chat').limitToLast(10).on('value', s => {
-                const b = document.getElementById('chat-box'); b.innerHTML = "";
-                s.forEach(m => { b.innerHTML += `<div><b>${m.val().n}:</b> ${m.val().t}</div>`; });
-            });
-        },
-        sendChat() { db.ref('chat').push({ n:this.user.nome, t: document.getElementById('chat-in').value }); }
+        }
     };
 </script>
 </body>
