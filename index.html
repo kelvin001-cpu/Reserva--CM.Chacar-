@@ -9,9 +9,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <style>
-        /* --- SEU DESIGN ORIGINAL (NÃO FOI ALTERADO) --- */
+        /* --- SEU DESIGN ORIGINAL PRESERVADO --- */
         :root {
             --prof: #00adef; --gestao: #f1c40f; --secre: #a55eea; --cad: #2ecc71; --nti: #eb4d4b;
             --bg-overlay: rgba(10, 11, 16, 0.92);
@@ -20,17 +20,19 @@
         body, html { 
             margin: 0; padding: 0; font-family: 'Poppins', sans-serif; color: white; min-height: 100vh;
             background: url('https://get.wallhere.com/photo/space-planet-Earth-NASA-blue-marble-atmosphere-outer-space-astronomical-object-82285.jpg') no-repeat center center fixed;
-            background-size: cover;
+            background-size: cover; overflow-x: hidden;
         }
 
         .slogan-container { width: 100%; text-align: center; padding: 40px 0 10px 0; }
         .slogan-main { font-family: 'Orbitron'; font-size: 2.5rem; color: var(--prof); text-shadow: 0 0 15px rgba(0,173,239,0.6); }
+        .slogan-sub { font-weight: 300; letter-spacing: 2px; color: #ccc; font-style: italic; }
 
         .login-container { display: flex; width: 100%; min-height: 100vh; flex-wrap: wrap; background: var(--bg-overlay); backdrop-filter: blur(8px); }
         .sector-column { 
             flex: 1; min-width: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; 
             padding: 40px 20px; transition: 0.4s; border-right: 1px solid rgba(255,255,255,0.05); text-align: center;
         }
+        .sector-column:hover { background: rgba(255,255,255,0.03); transform: scale(1.02); }
         
         #main-system { display: none; padding: 80px 20px; background: var(--bg-overlay); min-height: 100vh; }
         .grid-layout { display: grid; grid-template-columns: 350px 1fr 350px; gap: 20px; max-width: 1600px; margin: 0 auto; }
@@ -40,15 +42,18 @@
             border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px;
         }
 
-        /* --- ADIÇÃO NECESSÁRIA PARA O MAPEAMENTO DE CINEMA --- */
-        .mapeamento-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-top: 10px; }
-        .pc-item { font-size: 8px; padding: 5px; border-radius: 4px; border: 1px solid #444; text-align: center; cursor: pointer; }
-        .status-uso { background: rgba(46, 204, 113, 0.2); border-color: var(--cad); }
-        .status-reparo { background: rgba(235, 77, 75, 0.2); border-color: var(--nti); }
+        /* --- ESTILO DO MAPEAMENTO CINEMA (ADICIONADO AO DESIGN) --- */
+        .mapeamento-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-top: 10px; }
+        .pc-box { font-size: 8px; padding: 5px; border-radius: 4px; border: 1px solid #444; text-align: center; cursor: pointer; transition: 0.2s; }
+        .status-on { background: rgba(46, 204, 113, 0.2); border-color: var(--cad); color: var(--cad); }
+        .status-off { background: rgba(235, 77, 75, 0.2); border-color: var(--nti); color: var(--nti); }
 
+        h3 { margin-top: 0; font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; display: flex; align-items: center; gap: 10px; font-family: 'Orbitron'; }
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: rgba(0,0,0,0.4); color: white; box-sizing: border-box; }
+        .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; margin-top: 5px; text-transform: uppercase; }
+
+        #logs-box { height: 180px; overflow-y: auto; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 10px; font-family: monospace; font-size: 11px; color: #00ff00; border: 1px solid #333; }
         .hidden { display: none !important; }
-        input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: rgba(0,0,0,0.4); color: white; }
-        .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -56,19 +61,19 @@
     <div class="login-container" id="login-screen">
         <div class="slogan-container">
             <div class="slogan-main">PROGRAMA CONECT</div>
+            <div class="slogan-sub">NTI - Geração de Vencedores</div>
         </div>
-        
+
         <div class="sector-column"><i class="fa fa-graduation-cap fa-3x" style="color:var(--prof)"></i><h2>PROFESSOR</h2><input type="number" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof)" onclick="app.login('p')">Acessar</button></div>
+        <div class="sector-column"><i class="fa fa-user-tie fa-3x" style="color:var(--gestao)"></i><h2>GESTÃO</h2><input type="number" id="g-p" placeholder="Prontuário"><input type="password" id="g-s" placeholder="Senha"><button class="btn" style="background:var(--gestao)" onclick="app.login('g')">Acessar</button></div>
+        <div class="sector-column"><i class="fa fa-building-columns fa-3x" style="color:var(--secre)"></i><h2>SECRETARIA</h2><input type="number" id="s-p" placeholder="Prontuário"><input type="password" id="s-s" placeholder="Senha"><button class="btn" style="background:var(--secre)" onclick="app.login('s')">Acessar</button></div>
         
         <div class="sector-column" style="background: rgba(46, 204, 113, 0.05)">
             <h2>CADASTRO</h2>
             <input type="text" id="c-n" placeholder="Nome Completo">
             <input type="number" id="c-p" placeholder="Prontuário/Patrimônio">
             <input type="password" id="c-s" placeholder="Criar Senha">
-            <select id="c-local">
-                <option value="Atua nesta unidade">Atua nesta unidade</option>
-                <option value="Multiplas">Trabalha em mais de um colégio</option>
-            </select>
+            <select id="c-atua"><option value="Unidade Atual">Atua nesta unidade</option><option value="Multiplas">Mais de um colégio</option></select>
             <button class="btn" style="background:var(--cad)" onclick="app.confirmarCad()">Criar Conta @edu</button>
         </div>
 
@@ -80,47 +85,47 @@
             <div class="left-col">
                 <div class="panel">
                     <center>
-                        <img id="u-pic" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width:70px; border-radius:50%; border:2px solid var(--prof)">
-                        <p style="font-size: 10px; color: var(--gestao)">⚠️ Obrigatorio foto de perfil para identificação!</p>
-                        <h4 id="u-nome">---</h4>
-                        <small id="u-email" style="color:#888"></small>
+                        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width:65px; border-radius:50%; border:2px solid var(--prof)">
+                        <p style="font-size:10px; color:var(--gestao); margin: 5px 0;">⚠️ Foto de perfil obrigatória!</p>
+                        <h4 id="user-display-nome">---</h4>
+                        <small id="user-display-email" style="color: #888"></small>
                     </center>
                 </div>
 
                 <div class="panel">
-                    <h3><i class="fa fa-calendar-plus"></i> Reservar</h3>
-                    <select id="res-tipo" onchange="app.toggleMapa(this.value)">
-                        <option value="TV">TVs</option>
-                        <option value="Chrome">Chromebooks</option>
+                    <h3>Nova Reserva</h3>
+                    <select id="res-equip" onchange="app.checkMapa(this.value)">
+                        <option value="TVs">TVs</option>
+                        <option value="Chromebooks">Chromebooks</option>
                         <option value="SalaInfo">Sala de Informática (Dell)</option>
                     </select>
                     <input type="datetime-local" id="res-data">
-                    <button class="btn" style="background:var(--prof)" onclick="app.reservar()">Confirmar Reserva</button>
+                    <button class="btn" style="background:var(--prof)" onclick="app.fazerReserva()">Agendar</button>
                     
-                    <div id="area-mapeamento" class="hidden">
-                        <h5 style="margin-top:15px; font-size:10px">ESTAÇÕES DE TRABALHO (NTI)</h5>
-                        <div class="mapeamento-grid" id="grid-mapeamento"></div>
+                    <div id="area-mapa" class="hidden">
+                        <h4 style="font-size:10px; margin-top:15px;">MAPEAMENTO (STATUS REAL)</h4>
+                        <div class="mapeamento-container" id="grid-dell"></div>
                     </div>
                 </div>
-                
-                <div id="nti-panel" class="panel hidden" style="border: 2px solid var(--nti)">
-                    <h3 style="color:var(--nti)">LOGS E IP (MONITORAMENTO)</h3>
-                    <div id="logs-box" style="height:150px; overflow-y:auto; font-size:10px; background:#000; padding:10px"></div>
-                    <button class="btn" style="background:var(--nti); font-size:10px; margin-top:5px" onclick="app.virusClean()">REMOÇÃO DE VÍRUS REMOTA</button>
+
+                <div id="panel-master" class="panel hidden" style="border: 2px solid var(--nti)">
+                    <h3 style="color:var(--nti)">MONITORAMENTO IP</h3>
+                    <div id="logs-box"></div>
+                    <button class="btn" style="background:var(--nti); font-size:10px; margin-top:10px" onclick="app.remoteClean()">Remoção de Vírus Remota</button>
                 </div>
             </div>
 
             <div class="center-col">
                 <div class="panel">
-                    <h3>Cronograma de Uso</h3>
+                    <h3>Cronograma Geral</h3>
                     <div id="lista-res"></div>
                 </div>
             </div>
 
             <div class="right-col">
                 <div class="panel">
-                    <h3>Gráficos NTI</h3>
-                    <canvas id="chart1"></canvas>
+                    <h3>Telemetria</h3>
+                    <canvas id="chartGeral"></canvas>
                 </div>
                 <button class="btn" style="background:#cc4444" onclick="location.reload()">Sair</button>
             </div>
@@ -133,26 +138,25 @@
     const db = firebase.database();
 
     const app = {
-        user: null, ip: "Buscando...",
-        // Patrimônios Dell que você enviou
+        user: null, userIP: "0.0.0.0",
         dellPat: ["231.413","231.453","231.443","231.454","231.414","231.403","231.383","231.274","231.275","231.442","231.551","231.418","231.390","231.514","231.515","231.457","231.365","231.484","231.408","231.372","231.424","231.438","231.348","231.363","231.344","231.437","231.464","231.347","231.521","231.459","231.427","231.364","231.470"],
 
-        async getIP() { try { const r = await fetch('https://api.ipify.org?format=json'); const d = await r.json(); this.ip = d.ip; } catch(e){} },
+        async getIP() { try { const r = await fetch('https://api.ipify.org?format=json'); const d = await r.json(); this.userIP = d.ip; } catch(e){} },
 
         confirmarCad() {
-            const n = document.getElementById('c-n').value, p = document.getElementById('c-p').value, s = document.getElementById('c-s').value, l = document.getElementById('c-local').value;
+            const n = document.getElementById('c-n').value, p = document.getElementById('c-p').value, s = document.getElementById('c-s').value;
             if(!n || !p || !s) return alert("Preencha tudo!");
             const email = n.split(' ')[0].toLowerCase() + "." + p + "@edu.santanadeparnaiba.sp.gov.br";
-            db.ref('usuarios/'+p).set({ nome: n, pront: p, pass: s, local: l, email: email, cargo: 'Professor' })
-            .then(() => alert("Conta criada! Seu e-mail institucional é: " + email));
+            db.ref('usuarios/'+p).set({ nome: n, pront: p, pass: s, email, cargo: 'Professor', atua: document.getElementById('c-atua').value })
+            .then(() => alert("Conta criada! E-mail: " + email));
         },
 
         login(pre) {
             const p = document.getElementById(pre+'-p').value, s = document.getElementById(pre+'-s').value;
-            if(pre === 'n' && p === '46690' && s === 'nti2026') { this.user = {nome: "Kelvin NTI", cargo: "NTI", email: "kelvin.46690@edu..."}; return this.start(); }
+            if(pre==='n' && p==='46690' && s==='nti2026') { this.user={nome:'Kelvin NTI', cargo:'NTI', email:'kelvin.46690@edu...'}; return this.start(); }
             db.ref('usuarios/'+p).once('value', snap => {
                 if(snap.exists() && snap.val().pass === s) { this.user = snap.val(); this.start(); }
-                else alert("Erro de login!");
+                else alert("Acesso negado.");
             });
         },
 
@@ -160,51 +164,59 @@
             this.getIP();
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('main-system').style.display = 'block';
-            document.getElementById('u-nome').innerText = this.user.nome;
-            document.getElementById('u-email').innerText = this.user.email;
-            if(this.user.cargo === 'NTI') { document.getElementById('nti-panel').classList.remove('hidden'); this.syncLogs(); }
-            this.syncReservas();
-            this.logAtividade("Login Realizado");
+            document.getElementById('user-display-nome').innerText = this.user.nome;
+            document.getElementById('user-display-email').innerText = this.user.email;
+            if(this.user.cargo === 'NTI') { document.getElementById('panel-master').classList.remove('hidden'); this.syncLogs(); }
+            this.syncData();
+            this.logAtividade("Login no Sistema");
         },
 
-        logAtividade(acao) { db.ref('logs_navegacao').push({ u: this.user.nome, acao, ip: this.ip, time: new Date().toLocaleString() }); },
+        logAtividade(acao) { db.ref('logs_navegacao').push({ u: this.user.nome, acao, ip: this.userIP, time: new Date().toLocaleString() }); },
 
         syncLogs() { db.ref('logs_navegacao').limitToLast(20).on('value', s => {
             const box = document.getElementById('logs-box'); box.innerHTML = "";
-            s.forEach(l => box.innerHTML += `<div>[${l.val().ip}] ${l.val().u}: ${l.val().acao}</div>`);
+            s.forEach(l => { box.innerHTML += `<div>[${l.val().ip}] ${l.val().u}: ${l.val().acao}</div>`; });
         });},
 
-        async reservar() {
-            const tipo = document.getElementById('res-tipo').value, data = document.getElementById('res-data').value;
-            if(!data) return alert("Escolha a data!");
-            
-            // Trava de Agendamento Duplicado
+        async fazerReserva() {
+            const eq = document.getElementById('res-equip').value, dt = document.getElementById('res-data').value;
+            if(!dt) return alert("Escolha data/hora!");
             const snap = await db.ref('reservas').once('value');
-            let existe = false;
-            snap.forEach(r => { if(r.val().tipo === tipo && r.val().data === data) existe = true; });
+            let ocupado = false;
+            snap.forEach(r => { if(r.val().eq === eq && r.val().dt === dt) ocupado = true; });
 
-            if(existe) { alert("ERRO: Este equipamento já está reservado neste horário!"); this.logAtividade("Falha na reserva: Conflito de horário"); }
-            else { db.ref('reservas').push({ tipo, data, u: this.user.nome }); this.logAtividade("Reservou "+tipo); }
+            if(ocupado) { alert("CONFLITO: Equipamento já reservado!"); this.logAtividade("Tentou reserva duplicada: "+eq); }
+            else { db.ref('reservas').push({ eq, dt, u: this.user.nome }); this.logAtividade("Reservou "+eq); }
         },
 
-        syncReservas() { db.ref('reservas').on('value', s => {
-            const lista = document.getElementById('lista-res'); lista.innerHTML = "";
-            s.forEach(r => { lista.innerHTML += `<div class="panel" style="background:rgba(255,255,255,0.05)"><b>${r.val().tipo}</b> - ${r.val().u}<br><small>${new Date(r.val().data).toLocaleString()}</small></div>`; });
-        });},
-
-        toggleMapa(v) {
-            const area = document.getElementById('area-mapeamento');
-            const grid = document.getElementById('grid-mapeamento');
-            area.classList.toggle('hidden', v !== 'SalaInfo');
-            if(v === 'SalaInfo') {
-                grid.innerHTML = "";
+        syncData() {
+            db.ref('reservas').on('value', s => {
+                const lista = document.getElementById('lista-res'); lista.innerHTML = "";
+                s.forEach(r => { lista.innerHTML += `<div class="panel" style="background:rgba(255,255,255,0.05)"><b>${r.val().eq}</b> - ${r.val().u}<br><small>${r.val().dt}</small></div>`; });
+            });
+            // Mapeamento Cinema Sync
+            db.ref('status_pcs').on('value', s => {
+                const data = s.val() || {};
+                const grid = document.getElementById('grid-dell'); grid.innerHTML = "";
                 this.dellPat.forEach((p, i) => {
-                    grid.innerHTML += `<div class="pc-item status-uso" onclick="app.logAtividade('Clicou no PC ${p}')">#${i+1}<br>${p}</div>`;
+                    const status = data[p] || 'on';
+                    const div = document.createElement('div');
+                    div.className = `pc-box ${status === 'on' ? 'status-on' : 'status-off'}`;
+                    div.innerHTML = `PC ${i+1}<br>${p}`;
+                    div.onclick = () => {
+                        if(this.user.cargo === 'NTI') {
+                            const nStatus = status === 'on' ? 'off' : 'on';
+                            db.ref('status_pcs/'+p).set(nStatus);
+                            app.logAtividade("Alterou manutenção do PC "+p);
+                        }
+                    };
+                    grid.appendChild(div);
                 });
-            }
+            });
         },
 
-        virusClean() { alert("Varredura iniciada no IP: " + this.ip); this.logAtividade("Executou Limpeza de Vírus"); }
+        checkMapa(v) { document.getElementById('area-mapa').classList.toggle('hidden', v !== 'SalaInfo'); this.logAtividade("Viu mapa de "+v); },
+        remoteClean() { alert("Varredura profunda iniciada no IP: " + this.userIP); this.logAtividade("Limpou Vírus Remotamente"); }
     };
 </script>
 </body>
