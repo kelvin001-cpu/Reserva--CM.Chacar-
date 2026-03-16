@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Programa Conect - NTI CHÁCARA</title>
+    <title>Programa Conect - NTI CHÁCARA v2.0</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -32,43 +32,42 @@
         .login-container { display: flex; width: 100%; min-height: 100vh; flex-wrap: wrap; background: var(--bg-overlay); backdrop-filter: blur(8px); }
         .sector-column { 
             flex: 1; min-width: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            padding: 40px 20px; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            border-right: 1px solid rgba(255,255,255,0.05); text-align: center;
+            padding: 40px 20px; transition: 0.4s; border-right: 1px solid rgba(255,255,255,0.05); text-align: center;
         }
-        .sector-column:hover { background: rgba(255,255,255,0.03); transform: scale(1.02); }
         
-        #main-system { display: none; padding: 80px 20px 20px 20px; background: var(--bg-overlay); min-height: 100vh; animation: fadeIn 1s; }
+        #main-system { display: none; padding: 80px 20px; background: var(--bg-overlay); min-height: 100vh; }
         .grid-layout { display: grid; grid-template-columns: 350px 1fr 350px; gap: 20px; max-width: 1600px; margin: 0 auto; }
         
         .panel { 
             background: rgba(22, 27, 34, 0.7); backdrop-filter: blur(20px); padding: 20px; border-radius: 15px; 
-            border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px;
         }
-
-        /* Estilo para Mapeamento de Cadeira/PC */
-        .mapeamento-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-top: 10px; }
-        .pc-box { font-size: 9px; padding: 5px; border-radius: 4px; border: 1px solid #444; text-align: center; cursor: pointer; }
-        .pc-on { background: rgba(46, 204, 113, 0.2); border-color: var(--cad); }
-        .pc-off { background: rgba(235, 77, 75, 0.2); border-color: var(--nti); }
-
-        .profile-pic { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--prof); margin-bottom: 10px; }
         
         h3 { margin-top: 0; font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; display: flex; align-items: center; gap: 10px; font-family: 'Orbitron'; }
+        
         input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: rgba(0,0,0,0.4); color: white; box-sizing: border-box; }
-        .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; text-transform: uppercase; }
 
-        #chat-box, #chat-nti-box, #logs-box { height: 200px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; font-size: 12px; }
-        .msg { padding: 10px; border-radius: 12px; font-size: 13px; max-width: 85%; margin-bottom: 5px; }
+        #chat-box, #chat-nti-box, #logs-box { height: 250px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); }
+        .msg { padding: 10px; border-radius: 12px; font-size: 13px; max-width: 85%; margin-bottom: 10px; }
         .msg-in { background: #3d3d3d; align-self: flex-start; }
         .msg-out { background: #005c4b; align-self: flex-end; }
-        
+
+        .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .chart-card { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; }
+
+        .mapeamento-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-top: 10px; background: #000; padding: 10px; border-radius: 8px; }
+        .pc-unit { font-size: 8px; padding: 5px; border: 1px solid #333; text-align: center; border-radius: 3px; cursor: pointer; }
+        .pc-ok { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
+        .pc-warn { background: rgba(235, 77, 75, 0.2); color: #eb4d4b; }
+
         #lock-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 999999; flex-direction: column; align-items: center; justify-content: center; }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div id="alert-ribbon">⚠️ AVISO: <span id="alert-text">Carregando informações...</span></div>
+    <div id="alert-ribbon">⚠️ AVISO: <span id="alert-text">Monitoramento NTI Ativo</span></div>
 
     <div id="lock-overlay">
         <i class="fa fa-radiation fa-5x fa-spin" style="color:var(--nti); margin-bottom:20px"></i>
@@ -80,28 +79,19 @@
             <div class="slogan-main">PROGRAMA CONECT</div>
             <div class="slogan-sub">Construindo uma Geração de Vencedores</div>
         </div>
-
-        <div class="sector-column"><i class="fa fa-graduation-cap fa-3x" style="color:var(--prof)"></i><h2>PROFESSOR</h2><input type="number" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof); color:white" onclick="app.login('p','Professor')">Acessar</button></div>
+        <div class="sector-column"><i class="fa fa-graduation-cap fa-3x" style="color:var(--prof)"></i><h2>PROFESSOR</h2><input type="number" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof)" onclick="app.login('p','Professor')">Acessar</button></div>
         <div class="sector-column"><i class="fa fa-user-tie fa-3x" style="color:var(--gestao)"></i><h2>GESTÃO</h2><input type="number" id="g-p" placeholder="Prontuário"><input type="password" id="g-s" placeholder="Senha"><button class="btn" style="background:var(--gestao)" onclick="app.login('g','Gestão')">Acessar</button></div>
-        <div class="sector-column"><i class="fa fa-building-columns fa-3x" style="color:var(--secre)"></i><h2>SECRETARIA</h2><input type="number" id="s-p" placeholder="Prontuário"><input type="password" id="s-s" placeholder="Senha"><button class="btn" style="background:var(--secre); color:white" onclick="app.login('s','Secretaria')">Acessar</button></div>
-        
+        <div class="sector-column"><i class="fa fa-building-columns fa-3x" style="color:var(--secre)"></i><h2>SECRETARIA</h2><input type="number" id="s-p" placeholder="Prontuário"><input type="password" id="s-s" placeholder="Senha"><button class="btn" style="background:var(--secre)" onclick="app.login('s','Secretaria')">Acessar</button></div>
         <div class="sector-column" style="background: rgba(46, 204, 113, 0.05)">
             <h2>CADASTRO</h2>
             <input type="text" id="c-n" placeholder="Nome Completo">
             <input type="number" id="c-p" placeholder="Prontuário">
             <input type="password" id="c-s" placeholder="Criar Senha">
-            <select id="c-unidade">
-                <option value="Unidade Atual">Atua nesta unidade</option>
-                <option value="Multiplas">Atua em mais unidades</option>
-            </select>
-            <select id="c-c">
-                <option value="Professor">Professor</option>
-                <option value="Gestão">Gestão</option>
-                <option value="Secretaria">Secretaria</option>
-            </select>
-            <button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Criar Conta @edu</button>
+            <select id="c-u"><option value="Unidade Atual">Nesta Unidade</option><option value="Multi">Mais de um colégio</option></select>
+            <select id="c-c"><option value="Professor">Professor</option><option value="Gestão">Gestão</option><option value="Secretaria">Secretaria</option></select>
+            <button class="btn" style="background:var(--cad)" onclick="app.confirmarCad()">Criar Conta @edu</button>
         </div>
-        <div class="sector-column"><i class="fa fa-terminal fa-3x" style="color:var(--nti)"></i><h2>NTI</h2><input type="number" id="n-p" placeholder="ID"><input type="password" id="n-s" placeholder="Senha"><button class="btn" style="background:var(--nti); color:white" onclick="app.login('n','NTI')">Master Login</button></div>
+        <div class="sector-column"><i class="fa fa-terminal fa-3x" style="color:var(--nti)"></i><h2>NTI</h2><input type="number" id="n-p" placeholder="ID"><input type="password" id="n-s" placeholder="Senha"><button class="btn" style="background:var(--nti)" onclick="app.login('n','NTI')">Master Login</button></div>
     </div>
 
     <div id="main-system">
@@ -109,48 +99,76 @@
             <div class="left-col">
                 <div class="panel">
                     <center>
-                        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="profile-pic" id="my-pic">
-                        <div style="font-size: 11px; color: var(--gestao); margin-bottom: 10px;">Lembrete: Mantenha sua foto de perfil atualizada!</div>
-                        <b id="user-nome-display">---</b><br>
-                        <small id="user-email-display" style="color: #888">---</small>
+                        <img id="u-pic" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width:70px; border-radius:50%; border:2px solid var(--prof)">
+                        <div style="font-size:10px; color:var(--gestao); margin:5px 0">⚠️ Atualize sua foto de perfil!</div>
+                        <h4 id="u-nome">---</h4>
+                        <small id="u-email" style="color:#888"></small>
                     </center>
                 </div>
 
                 <div class="panel">
                     <h3><i class="fa fa-calendar-plus"></i> Nova Reserva</h3>
-                    <select id="res-eq" onchange="app.toggleMapVis(this.value)">
-                        <option value="TV 01">TV 01</option>
-                        <option value="TV 02">TV 02</option>
-                        <option value="Chromebooks">Chromebooks (Kit)</option>
-                        <option value="Sala Info">Sala Informática (Dell)</option>
+                    <select id="res-eq" onchange="app.checkMapVis(this.value)">
+                        <option value="TV 01">TV 01</option><option value="TV 02">TV 02</option>
+                        <option value="Chromebooks">Kit Chromebooks</option><option value="Sala Info">Sala Info (Dell)</option>
                     </select>
-                    <input type="text" id="res-sl" placeholder="Número da Sala">
+                    <input type="text" id="res-sl" placeholder="Sala">
                     <input type="datetime-local" id="res-dt">
-                    <button class="btn" style="background:var(--prof); color:white" onclick="app.reservar()">Confirmar Agendamento</button>
+                    <button class="btn" style="background:var(--prof)" onclick="app.reservar()">Confirmar</button>
                     
-                    <div id="map-sala-info" class="hidden">
-                        <h4 style="font-size: 10px; margin-top: 15px;">MAPA DE OCUPAÇÃO - DELL</h4>
-                        <div class="mapeamento-container" id="grid-dell"></div>
+                    <div id="mapa-info" class="hidden">
+                        <h4 style="font-size:10px; margin-top:10px">ESTAÇÕES DELL (MAPA)</h4>
+                        <div class="mapeamento-grid" id="grid-dell"></div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3><i class="fa fa-headset"></i> Suporte Técnico</h3>
+                    <select id="chamado-grau"><option value="Baixa">Prioridade: Baixa</option><option value="Média">Prioridade: Média</option><option value="Alta">Prioridade: Alta</option></select>
+                    <input type="text" id="chamado-desc" placeholder="Qual o problema?">
+                    <button class="btn" style="background:var(--nti)" onclick="app.abrirChamado()">Solicitar Técnico</button>
+                    <div id="active-ticket-area" class="hidden" style="margin-top:15px">
+                        <div id="chat-nti-box"></div>
+                        <input type="text" id="chat-nti-in" placeholder="Falar com NTI...">
+                        <button class="btn" style="background:var(--prof); margin-top:5px" onclick="app.sendChatNTI()">Enviar</button>
+                        <button id="btn-finalizar" class="btn" style="background:var(--cad); margin-top:5px" onclick="app.finalizarChamado()">Finalizar</button>
                     </div>
                 </div>
 
                 <div id="nti-master-panel" class="panel hidden" style="border: 2px solid var(--nti)">
-                    <h3 style="color:var(--nti)"><i class="fa fa-shield-halved"></i> NTI MASTER</h3>
-                    <div id="logs-box" style="margin-bottom: 10px;"></div>
-                    <button class="btn" style="background:var(--nti); font-size: 10px;" onclick="app.limparVirus()">Remoção de Vírus Remota</button>
-                    <button class="btn" style="background:var(--prof); font-size: 10px;" onclick="app.diagnosticar()">Diagnóstico de IP</button>
+                    <h3 style="color:var(--nti)"><i class="fa fa-terminal"></i> NTI MASTER</h3>
+                    <div id="logs-box"></div>
+                    <input type="number" id="reset-pront" placeholder="Prontuário Alvo" style="margin-top:10px">
+                    <div style="display:flex; gap:5px">
+                        <button class="btn" style="background:#555; font-size:10px" onclick="app.resetSenha()">Reset Senha</button>
+                        <button class="btn" style="background:var(--nti); font-size:10px" onclick="app.removerUsuario()">Excluir</button>
+                    </div>
+                    <div style="display:flex; gap:5px; margin-top:5px">
+                        <button class="btn" style="background:red" onclick="app.setLock(true)">TRAVAR</button>
+                        <button class="btn" style="background:green" onclick="app.setLock(false)">LIBERAR</button>
+                    </div>
                 </div>
             </div>
 
             <div class="center-col">
-                <div class="panel">
-                    <h3><i class="fa fa-list-ul"></i> Cronograma de Uso</h3>
-                    <div id="lista-res" style="max-height:400px; overflow-y:auto"></div>
+                <div id="nti-charts-area" class="panel hidden">
+                    <h3><i class="fa fa-microchip"></i> Telemetria</h3>
+                    <div class="charts-grid">
+                        <div class="chart-card"><canvas id="chartUsers"></canvas></div>
+                        <div class="chart-card"><canvas id="chartChamados"></canvas></div>
+                        <div class="chart-card"><canvas id="chartEquip"></canvas></div>
+                        <div class="chart-card"><canvas id="chartManutencao"></canvas></div>
+                    </div>
                 </div>
 
                 <div class="panel">
-                    <h3><i class="fa fa-box-open"></i> Chromebooks Status</h3>
-                    <div id="grid-chrome" class="mapeamento-container"></div>
+                    <h3><i class="fa fa-clock"></i> Cronograma Geral</h3>
+                    <div id="lista-res"></div>
+                </div>
+
+                <div class="panel">
+                    <h3><i class="fa fa-box"></i> Status Chromebooks</h3>
+                    <div id="grid-chrome" class="mapeamento-grid"></div>
                 </div>
             </div>
 
@@ -159,11 +177,10 @@
                     <h3><i class="fa fa-comments"></i> Mural</h3>
                     <div id="chat-box"></div>
                     <div style="display:flex; gap:5px; margin-top:10px">
-                        <input type="text" id="chat-in" placeholder="Mensagem...">
+                        <input type="text" id="chat-in" placeholder="No mural...">
                         <button class="btn" style="width:60px; background:var(--prof)" onclick="app.sendChat()"><i class="fa fa-paper-plane"></i></button>
                     </div>
                 </div>
-                
                 <button class="btn" style="background:#cc4444" onclick="location.reload()">Desconectar</button>
             </div>
         </div>
@@ -175,122 +192,54 @@
     const db = firebase.database();
 
     const app = {
-        user: null,
-        userIP: "0.0.0.0",
+        user: null, currentTicket: null, userIP: "0.0.0.0",
         authGestao: ["44244", "35102", "39966", "46690"],
         authSecre: ["46684", "4236", "46690"],
 
         async login(pre, cargo) {
-            const p = document.getElementById(pre+'-p').value;
-            const s = document.getElementById(pre+'-s').value;
-
+            const p = document.getElementById(pre+'-p').value, s = document.getElementById(pre+'-s').value;
             if(cargo==='NTI' && p==='46690' && s==='nti2026') { 
                 this.user={nome:'Kelvin (Admin)', cargo:'NTI', pront:'46690', email:'kelvin.46690@edu.santanadeparnaiba.sp.gov.br'}; 
                 return this.start(); 
             }
-            
             const snap = await db.ref('usuarios/'+p).once('value');
             if(snap.exists() && String(snap.val().pass) === String(s)) {
-                this.user = snap.val();
-                this.start();
-            } else { alert("Dados incorretos."); }
+                this.user = snap.val(); this.start();
+            } else { alert("Acesso Negado."); }
         },
 
         confirmarCad() {
             const n = document.getElementById('c-n').value, p = document.getElementById('c-p').value, s = document.getElementById('c-s').value, c = document.getElementById('c-c').value;
             if(!n || !p || !s) return alert("Preencha tudo.");
-            
             const email = n.split(' ')[0].toLowerCase() + "." + p + "@edu.santanadeparnaiba.sp.gov.br";
-            db.ref('usuarios/'+p).set({ nome: n, pront: p, cargo: c, pass: s, email: email, unidade: document.getElementById('c-unidade').value })
-            .then(() => alert("Conta criada! E-mail: " + email));
+            db.ref('usuarios/'+p).set({ nome: n, pront: p, cargo: c, pass: s, email: email, unidade: document.getElementById('c-u').value })
+            .then(() => alert("Cadastrado! Senha: " + s + "\nE-mail: " + email));
         },
 
-        async getIP() {
-            try {
-                const res = await fetch('https://api.ipify.org?format=json');
-                const data = await res.json();
-                this.userIP = data.ip;
-            } catch(e) { this.userIP = "Local/VPN"; }
-        },
+        async getIP() { try { const r = await fetch('https://api.ipify.org?format=json'); const d = await r.json(); this.userIP = d.ip; } catch(e){} },
 
         start() {
             this.getIP();
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('main-system').style.display = 'block';
-            document.getElementById('user-nome-display').innerText = this.user.nome;
-            document.getElementById('user-email-display').innerText = this.user.email;
+            document.getElementById('u-nome').innerText = this.user.nome;
+            document.getElementById('u-email').innerText = this.user.email;
             
-            if(this.user.cargo === 'NTI') {
-                document.getElementById('nti-master-panel').classList.remove('hidden');
+            if(this.user.cargo === 'NTI' || this.user.cargo === 'Gestão') {
+                document.getElementById('nti-master-panel').classList.toggle('hidden', this.user.cargo !== 'NTI');
+                document.getElementById('nti-charts-area').classList.remove('hidden');
+                this.initCharts();
                 this.syncLogs();
             }
-            
             this.syncData();
             this.gerarMapas();
-            this.logAtividade("Logou no sistema");
+            this.logAtividade("Entrou no sistema");
         },
 
-        logAtividade(acao) {
-            db.ref('logs_navegacao').push({ u: this.user.nome, acao: acao, ip: this.userIP, time: new Date().toLocaleString() });
-        },
-
-        syncLogs() {
-            db.ref('logs_navegacao').limitToLast(20).on('value', snap => {
-                const box = document.getElementById('logs-box'); box.innerHTML = "";
-                snap.forEach(l => {
-                    const d = l.val();
-                    box.innerHTML += `<div style="border-bottom:1px solid #333; padding:2px"><b>${d.u}:</b> ${d.acao} (${d.ip})</div>`;
-                });
-            });
-        },
-
-        async reservar() {
-            const eq = document.getElementById('res-eq').value;
-            const dt = document.getElementById('res-dt').value;
-            const sl = document.getElementById('res-sl').value;
-            if(!dt) return alert("Escolha a data.");
-
-            const snap = await db.ref('reservas').once('value');
-            let ocupado = false;
-            snap.forEach(r => { if(r.val().eq === eq && r.val().dt === dt) ocupado = true; });
-
-            if(ocupado) {
-                alert("ERRO: Este equipamento já está reservado neste horário!");
-                this.logAtividade("Tentou reservar equipamento ocupado: " + eq);
-            } else {
-                db.ref('reservas').push({ eq, sl, dt, u: this.user.nome });
-                this.logAtividade("Reservou " + eq);
-            }
-        },
-
-        gerarMapas() {
-            // Mapeamento Dell
-            const dells = [
-                "231.413","231.453","231.443","231.454","231.414","231.403","231.383","231.274","231.275","231.442",
-                "231.551","231.418","231.390","231.514","231.515","231.457","231.365","231.484","231.408","231.372",
-                "231.424","231.438","231.348","231.363","231.344","231.437","231.464","231.347","231.521","231.459",
-                "231.427","231.364","231.470"
-            ];
-            const gridDell = document.getElementById('grid-dell');
-            dells.forEach((p, i) => {
-                gridDell.innerHTML += `<div class="pc-box pc-on">#${i+1}<br>${p}</div>`;
-            });
-
-            // Mapeamento Chromebook
-            const chromes = ["259.954","259.972","259.953","259.973","259.971","259.965","259.966","259.952","259.951","259.950"];
-            const gridChrome = document.getElementById('grid-chrome');
-            chromes.forEach((p, i) => {
-                gridChrome.innerHTML += `<div class="pc-box pc-on">CB ${i+1}<br>${p}</div>`;
-            });
-        },
-
-        toggleMapVis(v) {
-            if(v === 'Sala Info') document.getElementById('map-sala-info').classList.remove('hidden');
-            else document.getElementById('map-sala-info').classList.add('hidden');
-            this.logAtividade("Visualizou mapeamento de " + v);
-        },
+        logAtividade(acao) { db.ref('logs_navegacao').push({ u: this.user.nome, acao, ip: this.userIP, time: new Date().toLocaleString() }); },
 
         syncData() {
+            db.ref('lock').on('value', s => { if(s.val() && this.user.cargo !== 'NTI') document.getElementById('lock-overlay').style.display='flex'; else document.getElementById('lock-overlay').style.display='none'; });
             db.ref('reservas').on('value', snap => {
                 const box = document.getElementById('lista-res'); box.innerHTML = "";
                 snap.forEach(r => {
@@ -308,17 +257,54 @@
                 });
                 box.scrollTop = box.scrollHeight;
             });
+            db.ref('chamados').on('value', snap => {
+                snap.forEach(c => { if(c.val().status === 'aberto' && (c.val().pront === this.user.pront || this.user.cargo === 'NTI')) { this.currentTicket = c.key; this.abrirInterfaceChamado(c.val()); } });
+            });
         },
 
-        sendChat() {
-            const t = document.getElementById('chat-in').value;
-            if(!t) return;
-            db.ref('chat').push({ n: this.user.nome, t: t });
-            document.getElementById('chat-in').value = "";
+        async reservar() {
+            const eq = document.getElementById('res-eq').value, dt = document.getElementById('res-dt').value, sl = document.getElementById('res-sl').value;
+            if(!dt) return alert("Escolha a data.");
+            const snap = await db.ref('reservas').once('value');
+            let conflito = false;
+            snap.forEach(r => { if(r.val().eq === eq && r.val().dt === dt) conflito = true; });
+            if(conflito) { alert("ERRO: Já reservado nesse horário!"); this.logAtividade("Tentou reserva duplicada: "+eq); }
+            else { db.ref('reservas').push({ eq, sl, dt, u: this.user.nome }); this.logAtividade("Reservou "+eq); }
         },
 
-        limparVirus() { alert("Comando de Varredura enviado via rede local para todos os dispositivos logados."); this.logAtividade("Executou Limpeza de Vírus"); },
-        diagnosticar() { alert("Analisando integridade dos pacotes do IP: " + this.userIP); this.logAtividade("Diagnóstico de Rede"); }
+        gerarMapas() {
+            const dells = ["231.413","231.453","231.443","231.454","231.414","231.403","231.383","231.274","231.275","231.442","231.551","231.418","231.390","231.514","231.515","231.457","231.365","231.484","231.408","231.372","231.424","231.438","231.348","231.363","231.344","231.437","231.464","231.347","231.521","231.459","231.427","231.364","231.470"];
+            const chromes = ["259.954","259.972","259.953","259.973","259.971","259.965","259.966","259.952","259.951","259.950","259.968","259.949","259.967","259.962","259.961","259.948","259.957","259.967","259.958","259.943"];
+            const gd = document.getElementById('grid-dell'), gc = document.getElementById('grid-chrome');
+            gd.innerHTML = ""; gc.innerHTML = "";
+            dells.forEach((p, i) => gd.innerHTML += `<div class="pc-unit pc-ok" onclick="app.logAtividade('Clicou no PC ${p}')">#${i+1}<br>${p}</div>`);
+            chromes.forEach((p, i) => gc.innerHTML += `<div class="pc-unit pc-ok">CB<br>${p}</div>`);
+        },
+
+        checkMapVis(v) { document.getElementById('mapa-info').classList.toggle('hidden', v !== 'Sala Info'); this.logAtividade("Viu mapa: "+v); },
+        abrirChamado() { db.ref('chamados').push({ u: this.user.nome, pront: this.user.pront, t: document.getElementById('chamado-desc').value, grau: document.getElementById('chamado-grau').value, status: 'aberto' }); },
+        abrirInterfaceChamado(d) {
+            document.getElementById('active-ticket-area').classList.remove('hidden');
+            db.ref('chat_nti/'+this.currentTicket).on('value', snap => {
+                const box = document.getElementById('chat-nti-box'); box.innerHTML = "";
+                snap.forEach(m => { let s = m.val().n === this.user.nome ? 'msg-out' : 'msg-in'; box.innerHTML += `<div class="msg ${s}"><b>${m.val().n}:</b><br>${m.val().t}</div>`; });
+                box.scrollTop = box.scrollHeight;
+            });
+        },
+        sendChatNTI() { db.ref('chat_nti/'+this.currentTicket).push({ n: this.user.nome, t: document.getElementById('chat-nti-in').value }); document.getElementById('chat-nti-in').value=""; },
+        finalizarChamado() { db.ref('chamados/'+this.currentTicket+'/status').set('resolvido'); document.getElementById('active-ticket-area').classList.add('hidden'); },
+        sendChat() { db.ref('chat').push({ n: this.user.nome, t: document.getElementById('chat-in').value }); document.getElementById('chat-in').value=""; },
+        setLock(v) { db.ref('lock').set(v); },
+        syncLogs() { db.ref('logs_navegacao').limitToLast(20).on('value', snap => {
+            const b = document.getElementById('logs-box'); b.innerHTML = "";
+            snap.forEach(l => { b.innerHTML += `<div style="font-size:10px; border-bottom:1px solid #333">${l.val().u}: ${l.val().acao}</div>`; });
+        });},
+        initCharts() {
+            new Chart(document.getElementById('chartUsers'), { type: 'line', data: { labels: ['08h','12h','16h','20h'], datasets: [{ label: 'Acessos', data: [5, 20, 15, 8], borderColor: '#00adef' }] } });
+            new Chart(document.getElementById('chartChamados'), { type: 'bar', data: { labels: ['Tickets'], datasets: [{ data: [3], backgroundColor: '#eb4d4b' }] } });
+            new Chart(document.getElementById('chartEquip'), { type: 'doughnut', data: { labels: ['Uso', 'Livre'], datasets: [{ data: [30, 70], backgroundColor: ['#f1c40f', '#2ecc71'] }] } });
+            new Chart(document.getElementById('chartManutencao'), { type: 'pie', data: { labels: ['OK', 'Reparo'], datasets: [{ data: [95, 5], backgroundColor: ['#2ecc71', '#eb4d4b'] }] } });
+        }
     };
 </script>
 </body>
