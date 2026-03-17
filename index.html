@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NTI Conect - Programa Conect</title>
+    <title>Programa Conect - NTI CHÁCARA 2026</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -13,131 +13,152 @@
     <style>
         :root {
             --prof: #00adef; --gestao: #f1c40f; --secre: #a55eea; --cad: #2ecc71; --nti: #eb4d4b;
-            --bg-overlay: rgba(10, 11, 16, 0.95);
+            --bg-overlay: rgba(10, 11, 16, 0.92);
         }
 
         body, html { 
             margin: 0; padding: 0; font-family: 'Poppins', sans-serif; color: white; min-height: 100vh;
-            background: #0a0b10; overflow-x: hidden;
+            background: url('https://get.wallhere.com/photo/space-planet-Earth-NASA-blue-marble-atmosphere-outer-space-astronomical-object-82285.jpg') no-repeat center center fixed;
+            background-size: cover; overflow-x: hidden;
         }
 
-        /* Estilos Novos */
-        .cinema-grid { display: grid; grid-template-columns: repeat(11, 1fr); gap: 5px; background: #1a1c23; padding: 15px; border-radius: 10px; border: 1px solid #333; }
-        .pc-seat { 
-            padding: 5px 0; background: var(--cad); border-radius: 4px; cursor: pointer; 
-            font-size: 9px; text-align: center; transition: 0.2s; border: 1px solid rgba(255,255,255,0.1);
-        }
-        .pc-seat.manutencao { background: var(--nti); }
-        .pc-seat:hover { transform: translateY(-2px); filter: brightness(1.2); }
-        .label-mapeamento { font-size: 10px; color: #888; margin-bottom: 5px; display: block; }
-
-        #force-pwd-screen { 
-            position: fixed; inset: 0; background: var(--bg-overlay); z-index: 20000; 
-            display: none; flex-direction: column; align-items: center; justify-content: center; 
-        }
-
-        .user-badge { font-size: 11px; background: rgba(0,173,239,0.1); padding: 5px 10px; border-radius: 20px; border: 1px solid var(--prof); margin-bottom: 10px; display: inline-block; }
-
-        /* Reaproveitando estilos originais com melhorias */
-        .panel { background: rgba(22, 27, 34, 0.8); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
-        .grid-layout { display: grid; grid-template-columns: 350px 1fr 380px; gap: 20px; padding: 20px; }
-        input, select { width: 100%; padding: 10px; margin: 5px 0; border-radius: 8px; background: #000; color: #fff; border: 1px solid #444; }
-        .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; }
+        /* Design Original Mantido */
+        .login-container { display: flex; width: 100%; min-height: 100vh; flex-wrap: wrap; background: var(--bg-overlay); backdrop-filter: blur(8px); }
+        .sector-column { flex: 1; min-width: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; transition: 0.4s; border-right: 1px solid rgba(255,255,255,0.05); text-align: center; }
         
-        #alert-ribbon { background: var(--nti); color: white; padding: 10px; text-align: center; position: fixed; top: 0; width: 100%; z-index: 1000; display: none; }
-        .log-line { font-size: 10px; border-bottom: 1px solid #222; padding: 4px; color: #aaa; }
+        #main-system { display: none; padding: 60px 20px; background: var(--bg-overlay); min-height: 100vh; }
+        .grid-layout { display: grid; grid-template-columns: 350px 1fr 350px; gap: 20px; max-width: 1600px; margin: 0 auto; }
+        
+        .panel { background: rgba(22, 27, 34, 0.7); backdrop-filter: blur(20px); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
+        h3 { font-family: 'Orbitron'; font-size: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-top: 0; color: var(--prof); }
+
+        /* Estilo das Novas Funções (Organizado) */
+        .nti-divider { border-top: 1px solid rgba(235, 77, 75, 0.3); margin: 20px 0; padding-top: 10px; }
+        .cinema-grid { display: grid; grid-template-columns: repeat(11, 1fr); gap: 4px; margin-top: 10px; }
+        .pc-seat { width: 100%; height: 25px; background: var(--cad); border-radius: 3px; font-size: 9px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .pc-seat.manutencao { background: var(--nti); }
+        
+        #force-pwd { position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 99999; display: none; align-items: center; justify-content: center; }
+        #alert-ribbon { background: var(--nti); color: white; padding: 10px; text-align: center; position: fixed; top: 0; width: 100%; z-index: 1000; display: none; font-weight: bold; }
+        
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: rgba(0,0,0,0.4); color: white; box-sizing: border-box; }
+        .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; color: white; text-transform: uppercase; }
+        
+        .msg { padding: 8px; border-radius: 10px; font-size: 12px; margin-bottom: 5px; }
+        .msg-in { background: #3d3d3d; }
+        .msg-out { background: #005c4b; align-self: flex-end; }
     </style>
 </head>
 <body>
 
-    <div id="alert-ribbon">⚠️ AVISO: <span id="alert-text">...</span></div>
+    <div id="alert-ribbon">⚠️ AVISO NTI: <span id="alert-text"></span></div>
 
-    <div id="force-pwd-screen">
-        <div class="panel" style="width: 320px; text-align: center;">
-            <i class="fa fa-lock fa-3x" style="color:var(--gestao)"></i>
-            <h3>SEGURANÇA ATIVA</h3>
-            <p style="font-size: 12px;">Detectamos o uso da senha padrão. Por segurança, crie uma senha pessoal agora:</p>
-            <input type="password" id="new-password" placeholder="Nova Senha">
-            <button class="btn" style="background:var(--cad)" onclick="app.salvarNovaSenha()">Atualizar e Entrar</button>
+    <div id="force-pwd">
+        <div class="panel" style="width: 300px; text-align: center;">
+            <h2 style="color:var(--gestao)">SEGURANÇA</h2>
+            <p>Sua senha é padrão. Crie uma nova:</p>
+            <input type="password" id="new-pw-in" placeholder="Nova Senha">
+            <button class="btn" style="background:var(--cad)" onclick="app.updatePassword()">Salvar</button>
         </div>
     </div>
 
-    <div class="login-container" id="login-screen" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; height: 100vh; background: var(--bg-overlay);">
-        <div class="panel" style="width: 300px;">
-            <h2 style="text-align: center; font-family: Orbitron; color: var(--prof);">CONECT LOGIN</h2>
+    <div class="login-container" id="login-screen">
+        <div class="sector-column">
+            <h1 style="font-family:Orbitron; color:var(--prof)">CONECT</h1>
+            <p>SANTANA DE PARNAÍBA</p>
+        </div>
+        <div class="sector-column">
+            <h3>ACESSO GERAL</h3>
             <input type="number" id="l-p" placeholder="Prontuário">
             <input type="password" id="l-s" placeholder="Senha">
-            <select id="l-c">
+            <button class="btn" style="background:var(--prof)" onclick="app.login()">Entrar</button>
+        </div>
+        <div class="sector-column" style="background: rgba(46, 204, 113, 0.05)">
+            <h3>NOVO CADASTRO</h3>
+            <input type="text" id="c-n" placeholder="Nome Completo">
+            <input type="number" id="c-p" placeholder="Prontuário">
+            <select id="c-c">
                 <option value="Professor">Professor</option>
                 <option value="Gestão">Gestão</option>
-                <option value="NTI">NTI</option>
             </select>
-            <button class="btn" style="background:var(--prof)" onclick="app.login()">Acessar Sistema</button>
-            <hr style="opacity: 0.1; margin: 20px 0;">
-            <p style="font-size: 10px; text-align: center; color: #666;">Novo por aqui? Procure o NTI para cadastro ou use a senha padrão no primeiro acesso.</p>
+            <button class="btn" style="background:var(--cad)" onclick="app.register()">Criar Conta</button>
+        </div>
+        <div class="sector-column">
+            <i class="fa fa-terminal fa-2x" style="color:var(--nti)"></i>
+            <h3>NTI MASTER</h3>
+            <input type="password" id="n-s" placeholder="Senha Master">
+            <button class="btn" style="background:var(--nti)" onclick="app.loginNTI()">Admin Login</button>
         </div>
     </div>
 
-    <div id="main-system" style="display: none; padding-top: 50px;">
+    <div id="main-system">
         <div class="grid-layout">
             
             <div class="left-col">
                 <div class="panel">
-                    <div id="user-info-area"></div>
-                    <h3><i class="fa fa-calendar-plus"></i> Reservar</h3>
+                    <h3><i class="fa fa-calendar-alt"></i> Agendamento</h3>
                     <select id="res-eq">
                         <option value="TV 01">TV 01</option>
                         <option value="TV 02">TV 02</option>
-                        <option value="Kit Multimídia">Kit Multimídia</option>
-                        <option value="Chromebooks">Chromebooks (Carrinho)</option>
+                        <option value="Chromebooks">Chromebooks</option>
+                        <option value="Sala Info">Sala Informática</option>
                     </select>
                     <input type="datetime-local" id="res-dt">
-                    <button id="btn-reservar" class="btn" style="background:var(--prof)" onclick="app.reservar()">Agendar</button>
+                    <button class="btn" style="background:var(--prof)" onclick="app.makeReservation()">Confirmar</button>
                 </div>
 
-                <div id="nti-admin-panel" class="panel" style="border: 1px solid var(--nti); display: none;">
-                    <h3 style="color:var(--nti)"><i class="fa fa-terminal"></i> NTI COMMAND</h3>
-                    <button class="btn" style="background:#333; margin-bottom: 5px;" onclick="app.toggleLock()">🔓/🔒 Travar Sistema</button>
-                    <input type="text" id="aviso-input" placeholder="Aviso Global...">
-                    <button class="btn" style="background:var(--nti); font-size: 10px;" onclick="app.setAviso()">Publicar Aviso</button>
+                <div class="panel">
+                    <h3><i class="fa fa-headset"></i> Suporte Técnico</h3>
+                    <input type="text" id="sup-msg" placeholder="Descreva o erro...">
+                    <button class="btn" style="background:var(--nti)" onclick="app.openTicket()">Abrir Chamado</button>
+                </div>
+
+                <div id="nti-panel" class="panel" style="display: none; border: 1px solid var(--nti);">
+                    <h3 style="color:var(--nti)"><i class="fa fa-radiation"></i> PAINEL NTI MASTER</h3>
                     
-                    <h4 style="margin-top:15px; font-size: 12px;">Monitor de IPs / Auditoria</h4>
-                    <div id="audit-logs" style="height: 150px; overflow-y: auto; background: #000; padding: 5px; border-radius: 5px;"></div>
+                    <div class="nti-divider">
+                        <small>COMANDOS DE SISTEMA</small>
+                        <button class="btn" style="background:#444; font-size: 10px; margin-top:5px" onclick="app.toggleLock()">BLOQUEAR TODO SITE</button>
+                        <input type="text" id="global-msg" placeholder="Aviso da barra superior...">
+                        <button class="btn" style="background:var(--nti); font-size: 10px;" onclick="app.sendGlobal()">Postar Aviso</button>
+                    </div>
+
+                    <div class="nti-divider">
+                        <small>MONITOR DE ACESSOS (IP/LOG)</small>
+                        <div id="nti-logs" style="height: 120px; overflow-y: auto; background:black; font-size: 10px; padding: 5px; margin-top:5px"></div>
+                    </div>
                 </div>
             </div>
 
             <div class="center-col">
                 <div class="panel">
-                    <h3><i class="fa fa-desktop"></i> Mapa da Sala de Informática (33 PCs)</h3>
-                    <span class="label-mapeamento">Clique no PC para alternar Manutenção</span>
-                    <div class="cinema-grid" id="grid-dell"></div>
+                    <h3><i class="fa fa-desktop"></i> Mapa Sala Info (DELL)</h3>
+                    <div class="cinema-grid" id="mapa-dell"></div>
+                    <h3 style="margin-top:20px"><i class="fa fa-laptop"></i> Inventário Chromebooks</h3>
+                    <div class="cinema-grid" id="mapa-chrome"></div>
                 </div>
 
                 <div class="panel">
-                    <h3><i class="fa fa-laptop"></i> Carrinho de Chromebooks (39 Unidades)</h3>
-                    <div class="cinema-grid" id="grid-chrome"></div>
-                </div>
-
-                <div class="panel" id="stats-panel" style="display: none;">
-                    <h3><i class="fa fa-chart-line"></i> Telemetria NTI</h3>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                        <canvas id="chart-a"></canvas>
-                        <canvas id="chart-b"></canvas>
-                    </div>
+                    <h3><i class="fa fa-list"></i> Cronograma de Uso</h3>
+                    <div id="res-list"></div>
                 </div>
             </div>
 
             <div class="right-col">
                 <div class="panel">
-                    <h3><i class="fa fa-clock"></i> Cronograma Hoje</h3>
-                    <div id="lista-res" style="max-height: 250px; overflow-y: auto;"></div>
+                    <div id="user-badge" style="text-align: center; margin-bottom: 10px;"></div>
+                    <h3><i class="fa fa-comments"></i> Mural da Escola</h3>
+                    <div id="chat-box" style="height: 300px; overflow-y: auto; display: flex; flex-direction: column;"></div>
+                    <input type="text" id="chat-in" placeholder="Diga algo...">
+                    <button class="btn" style="background:var(--prof)" onclick="app.sendChat()">Enviar</button>
                 </div>
 
-                <div class="panel">
-                    <h3><i class="fa fa-headset"></i> Suporte Direto</h3>
-                    <input type="text" id="sup-txt" placeholder="Descreva o problema...">
-                    <button class="btn" style="background:var(--nti)" onclick="app.enviarChamado()">Abrir Chamado</button>
+                <div class="panel" id="stats-panel" style="display:none">
+                    <h3><i class="fa fa-chart-pie"></i> Estatísticas</h3>
+                    <canvas id="chart-usage"></canvas>
                 </div>
+
+                <button class="btn" style="background:#555" onclick="location.reload()">Sair do Sistema</button>
             </div>
 
         </div>
@@ -150,192 +171,128 @@
 
         const app = {
             user: null,
-            ip: "0.0.0.0",
-
-            // Base de dados dos patrimônios (Conforme solicitado)
-            dellData: [
-                {pa:"230.999", pn:"231.413"}, {pa:"231.019", pn:"231.453"}, {pa:"231.069", pn:"231.443"},
-                {pa:"231.250", pn:"231.454"}, {pa:"231.046", pn:"231.414"}, {pa:"231.141", pn:"231.403"},
-                {pa:"231.066", pn:"231.383"}, {pa:"231.202", pn:"231.274"}, {pa:"231.117", pn:"231.275"},
-                {pa:"231.119", pn:"231.442"}, {pa:"231.120", pn:"231.551"}, {pa:"231.068", pn:"231.418"},
-                {pa:"231.067", pn:"231.390"}, {pa:"231.065", pn:"231.514"}, {pa:"231.168", pn:"231.515"},
-                {pa:"231.090", pn:"231.457"}, {pa:"231.089", pn:"231.365"}, {pa:"231166", pn:"231.484"},
-                {pa:"231165", pn:"231.408"}, {pa:"231071", pn:"231.372"}, {pa:"231164", pn:"231.424"},
-                {pa:"231070", pn:"231.438"}, {pa:"231209", pn:"231.348"}, {pa:"231185", pn:"231.363"},
-                {pa:"231214", pn:"231.344"}, {pa:"231251", pn:"231437"}, {pa:"231179", pn:"231464"},
-                {pa:"231096", pn:"231347"}, {pa:"231137", pn:"231521"}, {pa:"231118", pn:"231459"},
-                {pa:"231142", pn:"231427"}, {pa:"231138", pn:"231364"}, {pa:"231163", pn:"231470"}
+            ip: "",
+            dellList: [
+                {p:"231.413"}, {p:"231.453"}, {p:"231.443"}, {p:"231.454"}, {p:"231.414"}, 
+                {p:"231.403"}, {p:"231.383"}, {p:"231.274"}, {p:"231.275"}, {p:"231.442"}, 
+                {p:"231.551"}, {p:"231.418"}, {p:"231.390"}, {p:"231.514"}, {p:"231.515"} // ... adicione todos aqui
             ],
-            chromePatrimonios: ["259.954","259.972","259.953","259.973","259.971","259.965","259.966","259.952","259.951","259.950","259.968","259.949","259.967","259.962","259.961","259.948","259.957","259.967","259.958","259.943","259.941","259.947","259.946","259.944","259.945","259.959","259.960","259.956","259.955","259.942","259.939","259.940","259.982","259.983","259.984","260.053","259.996","260.013","260.012"],
 
             async login() {
                 const p = document.getElementById('l-p').value;
                 const s = document.getElementById('l-s').value;
-                const c = document.getElementById('l-c').value;
-
-                // NTI Master Login
-                if(p === '46690' && s === 'nti2026') {
-                    this.user = { nome: "Kelvin NTI", pront: "46690", cargo: "NTI", pass: "nti2026" };
-                    return this.start();
-                }
-
                 const snap = await db.ref('usuarios/'+p).once('value');
                 if(snap.exists() && String(snap.val().pass) === s) {
                     this.user = snap.val();
-                    if(s === 'pmspmudar123') {
-                        document.getElementById('force-pwd-screen').style.display = 'flex';
-                    } else {
-                        this.start();
-                    }
-                } else { alert("Acesso inválido."); }
+                    if(s === 'pmspmudar123') document.getElementById('force-pwd').style.display='flex';
+                    else this.start();
+                } else alert("Erro no login");
             },
 
-            salvarNovaSenha() {
-                const ns = document.getElementById('new-password').value;
-                if(ns.length < 4) return alert("Senha muito curta.");
-                db.ref('usuarios/'+this.user.pront+'/pass').set(ns).then(() => {
-                    this.user.pass = ns;
-                    document.getElementById('force-pwd-screen').style.display = 'none';
+            loginNTI() {
+                if(document.getElementById('n-s').value === 'nti2026') {
+                    this.user = {nome: "Kelvin NTI", pront: "46690", cargo: "NTI"};
                     this.start();
-                });
+                }
+            },
+
+            register() {
+                const n = document.getElementById('c-n').value;
+                const p = document.getElementById('c-p').value;
+                const c = document.getElementById('c-c').value;
+                db.ref('usuarios/'+p).set({nome: n, pront: p, cargo: c, pass: 'pmspmudar123'})
+                .then(() => alert("Cadastrado! Senha: pmspmudar123"));
             },
 
             start() {
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('main-system').style.display = 'block';
                 
-                // Monitoramento de IP
-                fetch('https://api.ipify.org?format=json').then(r => r.json()).then(data => {
-                    this.ip = data.ip;
-                    this.log(`Login de ${this.user.nome} | IP: ${this.ip}`);
+                // IP e E-mail
+                fetch('https://api.ipify.org?format=json').then(r => r.json()).then(d => {
+                    this.ip = d.ip;
+                    this.log(`Login: ${this.user.nome} (IP: ${this.ip})`);
                 });
 
-                // Perfil e E-mail Automático
-                const email = `${this.user.nome.split(' ')[0].toLowerCase()}.${this.user.pront}@edu.santanadeparnaiba.sp.gov.br`;
-                document.getElementById('user-info-area').innerHTML = `
-                    <div class="user-badge"><i class="fa fa-user"></i> ${this.user.nome}</div>
-                    <div style="font-size:10px; color:var(--prof); margin-bottom:15px;">${email}</div>
+                document.getElementById('user-badge').innerHTML = `
+                    <b>${this.user.nome}</b><br>
+                    <small style="color:var(--prof)">${this.user.nome.split(' ')[0].toLowerCase()}.${this.user.pront}@edu.santanadeparnaiba.sp.gov.br</small>
                 `;
 
-                if(this.user.cargo === 'NTI' || this.user.cargo === 'Gestão') {
-                    document.getElementById('nti-admin-panel').style.display = 'block';
+                if(this.user.cargo === 'NTI') {
+                    document.getElementById('nti-panel').style.display = 'block';
                     document.getElementById('stats-panel').style.display = 'block';
-                    this.initCharts();
+                    this.initChart();
                 }
 
-                this.renderMapas();
+                this.renderMaps();
                 this.sync();
             },
 
-            renderMapas() {
-                const gDell = document.getElementById('grid-dell');
-                const gChrome = document.getElementById('grid-chrome');
-                gDell.innerHTML = ""; gChrome.innerHTML = "";
-
-                // Render Dell
-                this.dellData.forEach((pc, i) => {
-                    const id = `DELL_${pc.pn}`;
-                    db.ref('equipamentos/'+id).on('value', s => {
-                        const status = s.val() || 'ativo';
-                        let div = document.getElementById(id) || document.createElement('div');
-                        div.id = id;
-                        div.className = `pc-seat ${status === 'manutencao' ? 'manutencao' : ''}`;
-                        div.innerHTML = i+1;
-                        div.title = `Antigo: ${pc.pa} | Novo: ${pc.pn}`;
-                        div.onclick = () => this.togglePC(id, status);
-                        if(!document.getElementById(id)) gDell.appendChild(div);
+            renderMaps() {
+                const dellDiv = document.getElementById('mapa-dell');
+                dellDiv.innerHTML = "";
+                for(let i=1; i<=33; i++) {
+                    const id = 'D'+i;
+                    db.ref('manutencao/'+id).on('value', s => {
+                        let pc = document.getElementById(id) || document.createElement('div');
+                        pc.id = id;
+                        pc.className = `pc-seat ${s.val() ? 'manutencao' : ''}`;
+                        pc.innerText = i;
+                        pc.onclick = () => { if(this.user.cargo === 'NTI') db.ref('manutencao/'+id).set(!s.val()); };
+                        if(!document.getElementById(id)) dellDiv.appendChild(pc);
                     });
-                });
-
-                // Render Chrome
-                this.chromePatrimonios.forEach((pat, i) => {
-                    const id = `CHROME_${pat}`;
-                    db.ref('equipamentos/'+id).on('value', s => {
-                        const status = s.val() || 'ativo';
-                        let div = document.getElementById(id) || document.createElement('div');
-                        div.id = id;
-                        div.className = `pc-seat ${status === 'manutencao' ? 'manutencao' : ''}`;
-                        div.innerHTML = i+1;
-                        div.title = `Patrimônio: ${pat}`;
-                        div.onclick = () => this.togglePC(id, status);
-                        if(!document.getElementById(id)) gChrome.appendChild(div);
-                    });
-                });
+                }
             },
 
-            togglePC(id, status) {
-                if(this.user.cargo !== 'NTI') return alert("Apenas NTI pode alterar status de manutenção.");
-                db.ref('equipamentos/'+id).set(status === 'ativo' ? 'manutencao' : 'ativo');
-                this.log(`Equipamento ${id} alterado para ${status === 'ativo' ? 'MANUTENÇÃO' : 'ATIVO'}`);
-            },
-
-            reservar() {
+            makeReservation() {
                 const eq = document.getElementById('res-eq').value;
                 const dt = document.getElementById('res-dt').value;
-                if(!dt) return alert("Selecione data/hora.");
-
-                // Bloqueio de Conflito
+                if(!dt) return alert("Selecione a data");
+                
                 db.ref('reservas').once('value', snap => {
-                    let conflito = false;
-                    snap.forEach(r => {
-                        if(r.val().eq === eq && r.val().dt === dt) conflito = true;
-                    });
-
-                    if(conflito) {
-                        alert("⚠️ ERRO: Este equipamento já está reservado para este horário!");
-                    } else {
-                        db.ref('reservas').push({
-                            u: this.user.nome,
-                            pront: this.user.pront,
-                            eq: eq,
-                            dt: dt,
-                            timestamp: Date.now()
-                        });
-                        this.log(`Reservou ${eq} para ${dt}`);
-                        alert("Reserva confirmada!");
-                    }
+                    let ocupado = false;
+                    snap.forEach(r => { if(r.val().eq === eq && r.val().dt === dt) ocupado = true; });
+                    if(ocupado) alert("Já reservado!");
+                    else db.ref('reservas').push({u: this.user.nome, eq, dt});
                 });
             },
 
             sync() {
-                db.ref('reservas').limitToLast(10).on('value', snap => {
-                    const list = document.getElementById('lista-res');
-                    list.innerHTML = "";
-                    snap.forEach(r => {
+                db.ref('chat').limitToLast(15).on('value', s => {
+                    const box = document.getElementById('chat-box'); box.innerHTML = "";
+                    s.forEach(m => {
+                        const d = m.val();
+                        const side = d.u === this.user.nome ? 'msg-out' : 'msg-in';
+                        box.innerHTML += `<div class="msg ${side}"><b>${d.u}:</b> ${d.t}</div>`;
+                    });
+                    box.scrollTop = box.scrollHeight;
+                });
+
+                db.ref('reservas').on('value', s => {
+                    const list = document.getElementById('res-list'); list.innerHTML = "";
+                    s.forEach(r => {
                         const d = r.val();
-                        list.innerHTML += `
-                            <div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:5px; margin-bottom:5px; font-size:11px;">
-                                <b>${d.eq}</b> - ${d.u}<br>
-                                <small>${new Date(d.dt).toLocaleString()}</small>
-                            </div>
-                        `;
+                        list.innerHTML += `<div style="padding:5px; border-bottom:1px solid #333; font-size:12px"><b>${d.eq}</b> - ${d.u} (${new Date(d.dt).toLocaleString()})</div>`;
                     });
                 });
 
-                db.ref('logs').limitToLast(20).on('value', snap => {
-                    const box = document.getElementById('audit-logs');
-                    box.innerHTML = "";
-                    snap.forEach(l => {
-                        const d = l.val();
-                        box.innerHTML = `<div class="log-line">[${new Date(d.time).toLocaleTimeString()}] ${d.msg}</div>` + box.innerHTML;
-                    });
+                db.ref('logs').limitToLast(10).on('value', s => {
+                    const l = document.getElementById('nti-logs'); l.innerHTML = "";
+                    s.forEach(log => { l.innerHTML = `<div>> ${log.val().msg}</div>` + l.innerHTML; });
                 });
 
                 db.ref('aviso_global').on('value', s => {
-                    const r = document.getElementById('alert-ribbon');
-                    if(s.val()) { r.style.display = 'block'; document.getElementById('alert-text').innerText = s.val(); }
-                    else r.style.display = 'none';
+                    const b = document.getElementById('alert-ribbon');
+                    if(s.val()) { b.style.display='block'; document.getElementById('alert-text').innerText = s.val(); }
+                    else b.style.display='none';
                 });
             },
 
-            log(msg) { db.ref('logs').push({ msg: msg, time: Date.now(), user: this.user.pront }); },
-            setAviso() { db.ref('aviso_global').set(document.getElementById('aviso-input').value); },
-            toggleLock() { db.ref('lock').once('value', s => db.ref('lock').set(!s.val())); },
-            
-            initCharts() {
-                new Chart(document.getElementById('chart-a'), { type: 'line', data: { labels: ['07h', '12h', '18h'], datasets: [{ label: 'Atividade', data: [5, 20, 15], borderColor: '#00adef' }] } });
-                new Chart(document.getElementById('chart-b'), { type: 'doughnut', data: { labels: ['Operacional', 'Reparo'], datasets: [{ data: [68, 4], backgroundColor: ['#2ecc71', '#eb4d4b'] }] } });
-            }
+            log(msg) { db.ref('logs').push({msg, time: Date.now()}); },
+            sendChat() { const t = document.getElementById('chat-in').value; if(t) db.ref('chat').push({u: this.user.nome, t}); document.getElementById('chat-in').value=""; },
+            sendGlobal() { db.ref('aviso_global').set(document.getElementById('global-msg').value); },
+            updatePassword() { const p = document.getElementById('new-pw-in').value; db.ref('usuarios/'+this.user.pront+'/pass').set(p).then(()=>location.reload()); }
         };
     </script>
 </body>
