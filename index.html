@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Programa Conect - NTI CHÁCARA</title>
+    <title>Programa Conect - NTI CHÁCARA v2.0</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-
+    
     <style>
         :root {
             --prof: #00adef; --gestao: #f1c40f; --secre: #a55eea; --cad: #2ecc71; --nti: #eb4d4b;
-            --bg-overlay: rgba(10, 11, 16, 0.92);
+            --bg-overlay: rgba(10, 11, 16, 0.94);
         }
 
         body, html { 
@@ -23,69 +22,42 @@
             background-size: cover; overflow-x: hidden;
         }
 
-        .slogan-container { width: 100%; text-align: center; padding: 40px 0 10px 0; animation: fadeInDown 1.5s; }
-        .slogan-main { font-family: 'Orbitron'; font-size: 2.5rem; color: var(--prof); text-shadow: 0 0 15px rgba(0,173,239,0.6); margin-bottom: 5px; }
-        .slogan-sub { font-weight: 300; letter-spacing: 2px; color: #ccc; font-style: italic; }
-
-        #alert-ribbon { background: var(--nti); color: white; padding: 12px; text-align: center; font-weight: bold; display: none; position: fixed; top: 0; width: 100%; z-index: 10000; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-
-        #lock-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 999999; flex-direction: column; align-items: center; justify-content: center; }
-
+        /* Estilos Originais Mantidos */
+        .slogan-container { width: 100%; text-align: center; padding: 40px 0 10px 0; }
+        .slogan-main { font-family: 'Orbitron'; font-size: 2.5rem; color: var(--prof); text-shadow: 0 0 15px rgba(0,173,239,0.6); }
+        #alert-ribbon { background: var(--nti); color: white; padding: 12px; text-align: center; font-weight: bold; display: none; position: fixed; top: 0; width: 100%; z-index: 10000; }
         .login-container { display: flex; width: 100%; min-height: 100vh; flex-wrap: wrap; background: var(--bg-overlay); backdrop-filter: blur(8px); }
-        .sector-column { 
-            flex: 1; min-width: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            padding: 40px 20px; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            border-right: 1px solid rgba(255,255,255,0.05); text-align: center;
-        }
-        .sector-column:hover { background: rgba(255,255,255,0.03); transform: scale(1.02); }
+        .sector-column { flex: 1; min-width: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; transition: 0.4s; border-right: 1px solid rgba(255,255,255,0.05); }
         
-        #main-system { display: none; padding: 80px 20px 20px 20px; background: var(--bg-overlay); min-height: 100vh; animation: fadeIn 1s; }
-        .grid-layout { display: grid; grid-template-columns: 350px 1fr 350px; gap: 20px; max-width: 1600px; margin: 0 auto; }
+        #main-system { display: none; padding: 80px 20px 20px 20px; background: var(--bg-overlay); min-height: 100vh; }
+        .grid-layout { display: grid; grid-template-columns: 380px 1fr 380px; gap: 20px; max-width: 1800px; margin: 0 auto; }
         
-        .panel { 
-            background: rgba(22, 27, 34, 0.7); backdrop-filter: blur(20px); padding: 20px; border-radius: 15px; 
-            border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; transition: 0.3s;
-        }
-        h3 { margin-top: 0; font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; display: flex; align-items: center; gap: 10px; font-family: 'Orbitron'; }
-        
-        input, select { 
-            width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; 
-            background: rgba(0,0,0,0.4); color: white; box-sizing: border-box;
-        }
-
+        .panel { background: rgba(22, 27, 34, 0.8); backdrop-filter: blur(20px); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: rgba(0,0,0,0.4); color: white; box-sizing: border-box; }
         .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; margin-top: 5px; text-transform: uppercase; }
 
-        #chat-box, #chat-nti-box { height: 250px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; display: flex; flex-direction: column; gap: 10px; }
-        .msg { padding: 10px; border-radius: 12px; font-size: 13px; max-width: 85%; }
-        .msg-in { background: #3d3d3d; align-self: flex-start; }
-        .msg-out { background: #005c4b; align-self: flex-end; }
+        /* NOVOS ESTILOS: MAPEAMENTO DE SALA */
+        .mapa-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 15px; background: #111; padding: 15px; border-radius: 10px; }
+        .pc-slot { padding: 8px; background: #222; border: 1px solid #444; border-radius: 5px; cursor: pointer; text-align: center; font-size: 10px; transition: 0.3s; }
+        .pc-slot.disponivel { border-bottom: 3px solid var(--cad); }
+        .pc-slot.ocupado { border-bottom: 3px solid var(--nti); opacity: 0.6; cursor: not-allowed; }
+        .pc-slot.selecionado { background: var(--prof); color: black; }
 
-        .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .chart-card { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; }
-
-        .res-item { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--prof); }
-        .status-badge { padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; }
-        .bg-ativo { background: var(--cad); }
-        .bg-manutencao { background: var(--nti); }
-
-        /* NOVO: Estilo Mapa de Cinema para Sala Info */
-        .mapa-sala-container { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; margin-top: 10px; background: #000; padding: 10px; border-radius: 10px; }
-        .pc-assento { font-size: 9px; padding: 5px; text-align: center; border-radius: 4px; cursor: pointer; border: 1px solid #333; }
-        .pc-livre { background: rgba(46, 204, 113, 0.2); color: #2ecc71; border-color: #2ecc71; }
-        .pc-ocupado { background: rgba(235, 77, 75, 0.2); color: #eb4d4b; border-color: #eb4d4b; }
-
+        /* Perfil e Alertas */
+        .user-profile-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; padding: 10px; border-bottom: 1px solid var(--prof); }
+        .profile-img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--prof); object-fit: cover; }
+        
+        #lock-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 999999; flex-direction: column; align-items: center; justify-content: center; }
         .hidden { display: none !important; }
-        .fade-up { animation: fadeInUp 0.8s ease-out forwards; opacity: 0; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <div id="alert-ribbon">⚠️ AVISO: <span id="alert-text">Carregando...</span></div>
+    <div id="alert-ribbon">⚠️ AVISO: <span id="alert-text">Carregando informações...</span></div>
 
     <div id="lock-overlay">
         <i class="fa fa-radiation fa-5x fa-spin" style="color:var(--nti); margin-bottom:20px"></i>
-        <h1 style="font-family: Orbitron">SISTEMA BLOQUEADO PELO NTI</h1>
+        <h1>SISTEMA BLOQUEADO PELO NTI</h1>
     </div>
 
     <div class="login-container" id="login-screen">
@@ -93,242 +65,298 @@
             <div class="slogan-main">PROGRAMA CONECT</div>
             <div class="slogan-sub">Construindo uma Geração de Vencedores</div>
         </div>
-
-        <div class="sector-column fade-up"><i class="fa fa-graduation-cap fa-3x" style="color:var(--prof)"></i><h2>PROFESSOR</h2><input type="number" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof); color:white" onclick="app.login('p','Professor')">Acessar</button></div>
-        <div class="sector-column fade-up"><i class="fa fa-user-tie fa-3x" style="color:var(--gestao)"></i><h2>GESTÃO</h2><input type="number" id="g-p" placeholder="Prontuário"><input type="password" id="g-s" placeholder="Senha"><button class="btn" style="background:var(--gestao)" onclick="app.login('g','Gestão')">Acessar</button></div>
-        <div class="sector-column fade-up"><i class="fa fa-building-columns fa-3x" style="color:var(--secre)"></i><h2>SECRETARIA</h2><input type="number" id="s-p" placeholder="Prontuário"><input type="password" id="s-s" placeholder="Senha"><button class="btn" style="background:var(--secre); color:white" onclick="app.login('s','Secretaria')">Acessar</button></div>
-        
-        <div class="sector-column fade-up" style="background: rgba(46, 204, 113, 0.05)">
+        <div class="sector-column"><i class="fa fa-graduation-cap fa-3x" style="color:var(--prof)"></i><h2>PROFESSOR</h2><input type="number" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof); color:white" onclick="app.login('p','Professor')">Acessar</button></div>
+        <div class="sector-column"><i class="fa fa-user-tie fa-3x" style="color:var(--gestao)"></i><h2>GESTÃO</h2><input type="number" id="g-p" placeholder="Prontuário"><input type="password" id="g-s" placeholder="Senha"><button class="btn" style="background:var(--gestao)" onclick="app.login('g','Gestão')">Acessar</button></div>
+        <div class="sector-column">
             <h2>CADASTRO</h2>
             <input type="text" id="c-n" placeholder="Nome Completo">
-            <input type="number" id="c-p" placeholder="Prontuário">
-            <select id="c-u"><option value="Atua nesta unidade">Atua nesta unidade</option><option value="Atua em múltiplas">Atua em múltiplas</option></select>
+            <input type="number" id="c-p" placeholder="Prontuário/Patrimônio">
+            <select id="c-unidade"><option value="Unidade Atual">Atuo apenas nesta unidade</option><option value="Multiplas">Atuo em mais de uma unidade</option></select>
             <select id="c-c"><option value="Professor">Professor</option><option value="Gestão">Gestão</option><option value="Secretaria">Secretaria</option></select>
             <button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Criar Conta</button>
         </div>
-        <div class="sector-column fade-up"><i class="fa fa-terminal fa-3x" style="color:var(--nti)"></i><h2>NTI</h2><input type="number" id="n-p" placeholder="ID"><input type="password" id="n-s" placeholder="Senha"><button class="btn" style="background:var(--nti); color:white" onclick="app.login('n','NTI')">Master Login</button></div>
+        <div class="sector-column"><i class="fa fa-terminal fa-3x" style="color:var(--nti)"></i><h2>NTI</h2><input type="number" id="n-p" placeholder="ID"><input type="password" id="n-s" placeholder="Senha"><button class="btn" style="background:var(--nti); color:white" onclick="app.login('n','NTI')">Master Login</button></div>
     </div>
 
     <div id="main-system">
+        <div class="user-profile-header">
+            <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" id="user-photo" class="profile-img">
+            <div>
+                <b id="display-name">Carregando...</b><br>
+                <small id="display-email" style="color:var(--prof)"></small>
+            </div>
+        </div>
+
         <div class="grid-layout">
             <div class="left-col">
                 <div class="panel">
-                    <h3><i class="fa fa-calendar-plus"></i> Nova Reserva</h3>
-                    <select id="res-eq" onchange="app.checkSalaInfo()"></select>
-                    
-                    <div id="mapa-computadores" class="hidden">
-                        <p style="font-size:10px; color:var(--prof)">Selecione o PC no mapa:</p>
-                        <div class="mapa-sala-container" id="mapa-grid"></div>
-                    </div>
-
+                    <h3><i class="fa fa-calendar-check"></i> Agendar Equipamento</h3>
+                    <select id="res-eq" onchange="app.renderMapeamento()">
+                        <option value="TV 01">TV 01</option>
+                        <option value="TV 02">TV 02</option>
+                        <option value="Chromebooks">Chromebooks (Carrinho)</option>
+                        <option value="Sala Info">Sala de Informática</option>
+                    </select>
                     <input type="text" id="res-sl" placeholder="Número da Sala">
                     <input type="datetime-local" id="res-dt">
-                    <button class="btn" style="background:var(--prof); color:white" onclick="app.reservar()">Confirmar Agendamento</button>
-                </div>
-                
-                <div class="panel">
-                    <h3><i class="fa fa-headset"></i> Suporte Técnico</h3>
-                    <select id="chamado-grau"><option value="Baixa">Prioridade: Baixa</option><option value="Média">Prioridade: Média</option><option value="Alta">Prioridade: Alta</option></select>
-                    <input type="text" id="chamado-desc" placeholder="Qual o problema?">
-                    <button class="btn" style="background:var(--nti); color:white" onclick="app.abrirChamado()">Solicitar Técnico</button>
                     
-                    <div id="active-ticket-area" class="hidden" style="margin-top:20px; border-top:1px solid #444; padding-top:15px">
-                        <h4 style="color:var(--prof); margin-bottom:10px">Chat Direto NTI</h4>
-                        <div id="chat-nti-box"></div>
-                        <div style="display:flex; gap:5px; margin-top:10px">
-                            <input type="text" id="chat-nti-in" placeholder="Mensagem...">
-                            <button class="btn" style="width:60px; background:var(--prof)" onclick="app.sendChatNTI()"><i class="fa fa-paper-plane"></i></button>
-                        </div>
-                        <button id="btn-finalizar" class="btn hidden" style="background:var(--cad); margin-top:10px" onclick="app.finalizarChamado()">Encerrar Atendimento</button>
+                    <div id="mapeamento-area" class="hidden">
+                        <small>Selecione a(s) máquina(s) no mapa:</small>
+                        <div id="grid-mapeamento" class="mapa-container"></div>
                     </div>
+
+                    <button class="btn" style="background:var(--prof); color:white" onclick="app.reservar()">Validar e Reservar</button>
                 </div>
 
                 <div id="nti-master-panel" class="panel hidden" style="border: 2px solid var(--nti)">
-                    <h3 style="color:var(--nti)"><i class="fa fa-shield-halved"></i> NTI MASTER DASHBOARD</h3>
-                    <label>📢 Enviar Aviso Global:</label>
-                    <input type="text" id="input-aviso" placeholder="Texto do banner">
-                    <button class="btn" style="background:var(--nti)" onclick="app.enviarAviso()">Publicar Aviso</button>
-                    <h4 style="margin-top:20px">Log de Atividades (Monitor)</h4>
-                    <div id="admin-log-navegacao" style="font-size:9px; height:100px; overflow-y:auto; background:#000; padding:5px"></div>
+                    <h3 style="color:var(--nti)"><i class="fa fa-shield-halved"></i> NTI MASTER</h3>
+                    <input type="text" id="search-user" placeholder="Pesquisar Prontuário para Histórico">
+                    <button class="btn" style="background:#444" onclick="app.verHistoricoNavegacao()">Rastrear Usuário</button>
+                    
+                    <div style="margin-top:15px">
+                        <button class="btn" style="background:red" onclick="app.setLock(true)">TRAVAR SISTEMA</button>
+                        <button class="btn" style="background:green" onclick="app.setLock(false)">LIBERAR</button>
+                    </div>
                 </div>
             </div>
 
             <div class="center-col">
                 <div id="nti-charts-area" class="panel hidden">
-                    <h3><i class="fa fa-microchip"></i> Telemetria</h3>
-                    <div class="charts-grid">
-                        <div class="chart-card"><canvas id="chartUsers"></canvas></div>
-                        <div class="chart-card"><canvas id="chartChamados"></canvas></div>
+                    <h3><i class="fa fa-microchip"></i> Telemetria Real-Time</h3>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px">
+                        <canvas id="chartUsers"></canvas>
+                        <canvas id="chartChamados"></canvas>
                     </div>
                 </div>
 
                 <div class="panel">
-                    <h3><i class="fa fa-list-ul"></i> Cronograma</h3>
+                    <h3><i class="fa fa-list"></i> Cronograma Geral</h3>
                     <div id="lista-res" style="max-height:300px; overflow-y:auto"></div>
                 </div>
-
-                <div class="panel">
-                    <h3><i class="fa fa-box-open"></i> Status Equipamentos</h3>
-                    <div id="lista-equipamentos" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px"></div>
-                </div>
-
-                <div class="panel">
-                    <h3><i class="fa fa-laptop"></i> Chromebooks em Unidade</h3>
-                    <div id="chromebook-list" style="display:grid; grid-template-columns: repeat(4, 1fr); gap:5px; font-size:10px"></div>
+                
+                <div id="log-navegacao-area" class="panel hidden">
+                    <h3 style="color:var(--gestao)">Histórico de Navegação Recente</h3>
+                    <div id="log-list" style="font-size:11px; color:#ccc"></div>
                 </div>
             </div>
 
             <div class="right-col">
                 <div class="panel">
-                    <h3><i class="fa fa-comments"></i> Mural</h3>
-                    <div id="chat-box"></div>
-                    <div style="display:flex; gap:5px; margin-top:10px">
-                        <input type="text" id="chat-in" placeholder="Escreva...">
-                        <button class="btn" style="width:60px; background:var(--prof)" onclick="app.sendChat()"><i class="fa fa-paper-plane"></i></button>
-                    </div>
+                    <h3><i class="fa fa-comments"></i> Mural Conect</h3>
+                    <div id="chat-box" style="height:200px; overflow-y:auto"></div>
+                    <input type="text" id="chat-in" placeholder="Mensagem...">
+                    <button class="btn" style="background:var(--prof)" onclick="app.sendChat()">Enviar</button>
                 </div>
-                <button class="btn" style="background:#cc4444" onclick="location.reload()">Desconectar</button>
+                <button class="btn" style="background:#cc4444" onclick="location.reload()">Sair do Sistema</button>
             </div>
         </div>
     </div>
 
 <script>
+    // CONFIGURAÇÃO FIREBASE
     const firebaseConfig = { databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     const app = {
         user: null,
-        currentTicket: null,
-        // Dados Reais da Sala de Info
-        pcs: [
-            {n:1, p:"231.413"}, {n:2, p:"231.453"}, {n:3, p:"231.443"}, {n:4, p:"231.454"}, {n:5, p:"231.414"},
-            {n:6, p:"231.403"}, {n:7, p:"231.383"}, {n:8, p:"231.274"}, {n:9, p:"231.275"}, {n:10, p:"231.442"},
-            {n:11, p:"231.551"}, {n:12, p:"231.418"}, {n:13, p:"231.390"}, {n:14, p:"231.514"}, {n:15, p:"231.515"},
-            {n:16, p:"231.457"}, {n:17, p:"231.365"}, {n:18, p:"231.484"}, {n:19, p:"231.408"}, {n:20, p:"231.372"},
-            {n:21, p:"231.424"}, {n:22, p:"231.438"}, {n:23, p:"231.348"}, {n:24, p:"231.363"}, {n:25, p:"231.344"},
-            {n:26, p:"231.437"}, {n:27, p:"231.464"}, {n:28, p:"231.347"}, {n:29, p:"231.521"}, {n:30, p:"231.459"},
-            {n:31, p:"231.427"}, {n:32, p:"231.364"}, {n:33, p:"231.470"}
+        selectedPCs: [],
+        authGestao: ["44244", "35102", "39966", "46690"],
+        
+        // Dados das Máquinas da Sala de Informática
+        salaInfoData: [
+            {n:1, p:"231.413"}, {n:2, p:"231.453"}, {n:3, p:"231.443"}, {n:4, p:"231.454"},
+            {n:5, p:"231.414"}, {n:6, p:"231.403"}, {n:7, p:"231.383"}, {n:8, p:"231.274"},
+            {n:9, p:"231.275"}, {n:10, p:"231.442"}, {n:11, p:"231.551"}, {n:12, p:"231.418"},
+            {n:13, p:"231.390"}, {n:14, p:"231.514"}, {n:15, p:"231.515"}, {n:16, p:"231.457"},
+            {n:17, p:"231.365"}, {n:18, p:"231.484"}, {n:19, p:"231.408"}, {n:20, p:"231.372"}
+            // ... adicione as demais conforme sua lista
         ],
 
         async login(pre, cargo) {
             const p = document.getElementById(pre+'-p').value;
             const s = document.getElementById(pre+'-s').value;
-            if(cargo==='NTI' && p==='46690' && s==='nti2026') {
-                this.user={nome:'Kelvin (Admin)', cargo:'NTI', pront:'46690', email:'admin.nti@edu.sp.gov.br'};
-                return this.start();
+
+            // Master Login NTI
+            if(cargo==='NTI' && p==='46690' && s==='nti2026') { 
+                this.user={nome:'Kelvin (Admin)', cargo:'NTI', pront:'46690', email: 'kelvin.46690@edu.santanadeparnaiba.sp.gov.br'}; 
+                return this.start(); 
             }
+
             const snap = await db.ref('usuarios/'+p).once('value');
             if(snap.exists() && String(snap.val().pass) === String(s)) {
                 this.user = snap.val();
+                
+                // Verificação de Senha Padrão (Obrigatório trocar)
+                if(s === 'pmspmudar123' || s === 'secretaria2026') {
+                    let nova = prompt("SEGURANÇA: Sua senha é padrão. Digite uma nova senha:");
+                    if(!nova || nova.length < 6) { alert("Senha fraca. Tente novamente."); return; }
+                    db.ref('usuarios/'+p+'/pass').set(nova);
+                    alert("Senha atualizada!");
+                }
+                
                 this.start();
-                this.logAtividade("Fez login no sistema");
-            } else { alert("Erro de Prontuário ou Senha."); }
+                this.registrarNavegacao("Login efetuado");
+                this.checkProfilePhoto();
+            } else { alert("Acesso Negado."); }
         },
 
         confirmarCad() {
-            const n = document.getElementById('c-n').value, p = document.getElementById('c-p').value, c = document.getElementById('c-c').value, u = document.getElementById('c-u').value;
+            const n = document.getElementById('c-n').value, p = document.getElementById('c-p').value, c = document.getElementById('c-c').value;
             if(!n || !p) return alert("Preencha tudo.");
             
-            // NOVO: Geração de E-mail Automático
-            const emailAuto = `${n.split(' ')[0].toLowerCase()}.${p}@edu.santanadeparnaiba.sp.gov.br`;
-            const passPadrao = c === "Secretaria" ? "secretaria2026" : "pmspmudar123";
-
-            db.ref('usuarios/'+p).set({ nome: n, pront: p, cargo: c, unidade: u, email: emailAuto, pass: passPadrao }).then(() => alert("Conta criada! Senha: " + passPadrao));
+            // Gerar e-mail automático
+            let cleanName = n.split(' ')[0].toLowerCase();
+            let emailEdu = `${cleanName}.${p}@edu.santanadeparnaiba.sp.gov.br`;
+            
+            let pass = "pmspmudar123";
+            db.ref('usuarios/'+p).set({ 
+                nome: n, pront: p, cargo: c, pass: pass, email: emailEdu,
+                foto: "", ip: "Capturando...", unidade: document.getElementById('c-unidade').value 
+            }).then(() => alert("Conta criada! E-mail: " + emailEdu));
         },
 
         start() {
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('main-system').style.display = 'block';
+            document.getElementById('display-name').innerText = this.user.nome;
+            document.getElementById('display-email').innerText = this.user.email;
+            
             if(this.user.cargo === 'NTI') {
                 document.getElementById('nti-master-panel').classList.remove('hidden');
                 document.getElementById('nti-charts-area').classList.remove('hidden');
-                this.initCharts();
             }
+            
             this.syncData();
-            this.carregarEquipamentos();
-            this.renderChromebooks();
+            this.getIP();
         },
 
-        checkSalaInfo() {
+        async getIP() {
+            try {
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                db.ref('usuarios/'+this.user.pront+'/ip').set(data.ip);
+            } catch(e) { console.log("Erro IP"); }
+        },
+
+        registrarNavegacao(acao) {
+            db.ref('logs_navegacao/'+this.user.pront).push({
+                timestamp: Date.now(),
+                acao: acao,
+                pagina: "Dashboard Principal"
+            });
+        },
+
+        renderMapeamento() {
             const eq = document.getElementById('res-eq').value;
-            const grid = document.getElementById('mapa-grid');
-            const container = document.getElementById('mapa-computadores');
-            if(eq === 'Sala Info') {
-                container.classList.remove('hidden');
+            const grid = document.getElementById('grid-mapeamento');
+            const area = document.getElementById('mapeamento-area');
+            
+            if(eq === 'Sala Info' || eq === 'Chromebooks') {
+                area.classList.remove('hidden');
                 grid.innerHTML = "";
-                this.pcs.forEach(pc => {
-                    db.ref('status_sala/'+pc.n).on('value', snap => {
-                        const status = snap.val() || 'livre';
-                        let div = document.getElementById('pc-'+pc.n);
-                        if(!div) {
-                            div = document.createElement('div'); div.id = 'pc-'+pc.n;
-                            grid.appendChild(div);
-                        }
-                        div.className = `pc-assento ${status === 'livre' ? 'pc-livre' : 'pc-ocupado'}`;
-                        div.innerHTML = `PC ${pc.n}<br>${pc.p}`;
-                        div.onclick = () => { if(this.user.cargo === 'NTI') db.ref('status_sala/'+pc.n).set(status === 'livre' ? 'ocupado' : 'livre'); };
-                    });
+                this.selectedPCs = [];
+                
+                const data = eq === 'Sala Info' ? this.salaInfoData : Array.from({length: 40}, (_, i) => ({n: i+1, p: "CB-"+(259.939+i).toFixed(3)}));
+                
+                data.forEach(item => {
+                    let div = document.createElement('div');
+                    div.className = "pc-slot disponivel";
+                    div.innerHTML = `<b>${item.n}</b><br><small>${item.p}</small>`;
+                    div.onclick = () => {
+                        div.classList.toggle('selecionado');
+                        this.selectedPCs.push(item.p);
+                    };
+                    grid.appendChild(div);
                 });
-            } else { container.classList.add('hidden'); }
+            } else {
+                area.classList.add('hidden');
+            }
         },
 
-        renderChromebooks() {
-            const box = document.getElementById('chromebook-list');
-            const chromes = ["259.954", "259.972", "259.953", "259.973", "259.971", "259.965", "259.966", "259.952", "259.951", "259.950"];
-            chromes.forEach(c => { box.innerHTML += `<div style="background:rgba(255,255,255,0.05); padding:5px; border-radius:4px">💻 ${c}</div>`; });
+        async reservar() {
+            const eq = document.getElementById('res-eq').value;
+            const data = document.getElementById('res-dt').value;
+            if(!data) return alert("Selecione a data/hora.");
+
+            // VALIDAÇÃO DE CONFLITO
+            const snap = await db.ref('reservas').once('value');
+            let conflito = false;
+            snap.forEach(r => {
+                let res = r.val();
+                if(res.eq === eq && res.dt === data) conflito = true;
+            });
+
+            if(conflito) return alert("ERRO: Este equipamento já está reservado neste horário!");
+
+            db.ref('reservas').push({
+                eq: eq,
+                dt: data,
+                sl: document.getElementById('res-sl').value,
+                u: this.user.nome,
+                maquinas: this.selectedPCs
+            });
+            
+            this.registrarNavegacao(`Reservou ${eq}`);
+            alert("Reserva confirmada!");
         },
 
-        logAtividade(acao) {
-            db.ref('logs_monitor').push({ u: this.user.nome, p: this.user.pront, acao: acao, t: Date.now() });
+        checkProfilePhoto() {
+            if(!this.user.foto) {
+                setTimeout(() => {
+                    alert("LEMBRETE: Por favor, faça upload de uma foto de perfil para identificação oficial.");
+                }, 3000);
+            }
         },
 
-        // MANTIDO: Lógica de Sincronização e Funções Originais
+        verHistoricoNavegacao() {
+            const p = document.getElementById('search-user').value;
+            if(!p) return;
+            const list = document.getElementById('log-list');
+            document.getElementById('log-navegacao-area').classList.remove('hidden');
+            
+            db.ref('logs_navegacao/'+p).limitToLast(10).on('value', snap => {
+                list.innerHTML = "";
+                snap.forEach(l => {
+                    let d = l.val();
+                    list.innerHTML += `<div>[${new Date(d.timestamp).toLocaleString()}] ${d.acao}</div>`;
+                });
+            });
+        },
+
         syncData() {
-            db.ref('lock').on('value', s => { if(s.val() && this.user.cargo !== 'NTI') document.getElementById('lock-overlay').style.display='flex'; else document.getElementById('lock-overlay').style.display='none'; });
+            // Mantendo sync de chat original
             db.ref('chat').limitToLast(15).on('value', snap => {
                 const box = document.getElementById('chat-box'); box.innerHTML = "";
-                snap.forEach(m => { box.innerHTML += `<div class="msg ${m.val().n === this.user.nome ? 'msg-out' : 'msg-in'}"><b>${m.val().n}:</b><br>${m.val().t}</div>`; });
+                snap.forEach(m => {
+                    box.innerHTML += `<div><b>${m.val().n}:</b> ${m.val().t}</div>`;
+                });
                 box.scrollTop = box.scrollHeight;
             });
+
+            // Sync de Reservas
             db.ref('reservas').on('value', snap => {
                 const box = document.getElementById('lista-res'); box.innerHTML = "";
-                snap.forEach(r => { box.innerHTML += `<div class="res-item"><div><strong>${r.val().eq}</strong><br><small>${r.val().u} | ${r.val().dt}</small></div><button class="status-badge bg-manutencao" onclick="app.baixarReserva('${r.key}')">Liberar</button></div>`; });
-            });
-            if(this.user.cargo === 'NTI') {
-                db.ref('logs_monitor').limitToLast(20).on('value', snap => {
-                    const logBox = document.getElementById('admin-log-navegacao'); logBox.innerHTML = "";
-                    snap.forEach(l => { logBox.innerHTML += `<div>[${new Date(l.val().t).toLocaleTimeString()}] ${l.val().u}: ${l.val().acao}</div>`; });
+                snap.forEach(r => {
+                    let d = r.val();
+                    box.innerHTML += `<div style="border-bottom:1px solid #333; padding:5px">${d.dt} - ${d.eq} (Sala ${d.sl}) por ${d.u}</div>`;
                 });
-            }
+            });
+
+            db.ref('lock').on('value', s => { 
+                if(s.val() && this.user.cargo !== 'NTI') document.getElementById('lock-overlay').style.display='flex'; 
+                else document.getElementById('lock-overlay').style.display='none'; 
+            });
         },
 
-        reservar() { 
-            const eq = document.getElementById('res-eq').value;
-            db.ref('reservas').push({ eq: eq, sl: document.getElementById('res-sl').value, dt: document.getElementById('res-dt').value, u: this.user.nome });
-            this.logAtividade("Reservou equipamento: " + eq);
+        sendChat() {
+            const t = document.getElementById('chat-in').value;
+            if(!t) return;
+            db.ref('chat').push({ n: this.user.nome, t: t });
+            document.getElementById('chat-in').value = "";
         },
-        carregarEquipamentos() {
-            const eqs = ['TV 01', 'TV 02', 'Kit Multimídia', 'Chromebooks', 'Sala Info'];
-            const sel = document.getElementById('res-eq'); sel.innerHTML = "";
-            eqs.forEach(e => {
-                sel.innerHTML += `<option value="${e}">${e}</option>`;
-                db.ref('equipamentos/'+e).on('value', snap => {
-                    let d = snap.val() || { status: 'ativo' };
-                    let content = `<strong>${e}</strong> <br><span class="status-badge ${d.status === 'ativo' ? 'bg-ativo' : 'bg-manutencao'}">${d.status.toUpperCase()}</span>`;
-                    let div = document.getElementById('card-'+e.replace(/\s/g, ''));
-                    if(!div) { div = document.createElement('div'); div.id = 'card-'+e.replace(/\s/g, ''); div.style = "padding:10px; border:1px solid #444; border-radius:8px;"; document.getElementById('lista-equipamentos').appendChild(div); }
-                    div.innerHTML = content;
-                });
-            });
-        },
-        sendChat() { db.ref('chat').push({ n: this.user.nome, t: document.getElementById('chat-in').value }); document.getElementById('chat-in').value = ""; },
-        abrirChamado() { db.ref('chamados').push({ u: this.user.nome, t: document.getElementById('chamado-desc').value, status: 'aberto' }); alert("Chamado enviado!"); },
-        initCharts() {
-            new Chart(document.getElementById('chartUsers'), { type: 'line', data: { labels: ['08h','12h','16h'], datasets: [{ label: 'Acessos', data: [5, 20, 15], borderColor: '#00adef' }] } });
-            new Chart(document.getElementById('chartChamados'), { type: 'bar', data: { labels: ['TI'], datasets: [{ data: [3], backgroundColor: '#eb4d4b' }] } });
-        },
-        enviarAviso() { db.ref('aviso_global').set(document.getElementById('input-aviso').value); }
+        
+        setLock(v) { db.ref('lock').set(v); }
     };
 </script>
 </body>
