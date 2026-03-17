@@ -39,14 +39,14 @@
         input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: rgba(0,0,0,0.4); color: white; }
         .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; text-transform: uppercase; }
 
-        /* Mapeamento Cinema */
-        .pc-map { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 15px; }
-        .pc-box { padding: 10px; background: #2ecc71; border-radius: 5px; text-align: center; font-size: 10px; font-weight: bold; cursor: pointer; border: 2px solid transparent; }
-        .pc-box.manutencao { background: #eb4d4b; }
-        .pc-box:hover { border-color: white; }
+        /* Mapeamento Estilo Cinema */
+        .cinema-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-top: 15px; }
+        .pc-spot { padding: 10px; background: #2ecc71; border-radius: 5px; text-align: center; cursor: pointer; font-size: 10px; transition: 0.3s; position: relative; }
+        .pc-spot.manutencao { background: var(--nti) !important; }
+        .pc-spot:hover { transform: scale(1.1); z-index: 10; border: 1px solid white; }
 
         #lock-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 999999; flex-direction: column; align-items: center; justify-content: center; }
-        .profile-img { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--prof); object-fit: cover; margin-bottom: 10px; }
+        .profile-img { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--prof); margin-bottom: 10px; object-fit: cover; }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -61,63 +61,79 @@
 
     <div class="login-container" id="login-screen">
         <div class="slogan-container"><div class="slogan-main">PROGRAMA CONECT</div></div>
-        <div class="sector-column"><h2>PROFESSOR</h2><input type="number" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof); color:white" onclick="app.login('p','Professor')">Acessar</button></div>
-        <div class="sector-column"><h2>GESTÃO</h2><input type="number" id="g-p" placeholder="Prontuário"><input type="password" id="g-s" placeholder="Senha"><button class="btn" style="background:var(--gestao)" onclick="app.login('g','Gestão')">Acessar</button></div>
+        
+        <div class="sector-column">
+            <h2>LOGIN</h2>
+            <input type="number" id="l-p" placeholder="Prontuário">
+            <input type="password" id="l-s" placeholder="Senha">
+            <button class="btn" style="background:var(--prof); color:white" onclick="app.login()">Acessar Sistema</button>
+        </div>
+
         <div class="sector-column" style="background: rgba(46, 204, 113, 0.05)">
             <h2>CADASTRO</h2>
             <input type="text" id="c-n" placeholder="Nome Completo">
             <input type="number" id="c-p" placeholder="Prontuário">
-            <select id="c-u"><option value="Sim">Atua nesta unidade</option><option value="Mais">Trabalha em + de um colégio</option></select>
-            <select id="c-c"><option value="Professor">Professor</option><option value="Gestão">Gestão</option></select>
+            <select id="c-u">
+                <option value="Unidade Atual">Atua nesta unidade</option>
+                <option value="Multi-Unidade">Trabalha em mais de um colégio</option>
+            </select>
+            <select id="c-c">
+                <option value="Professor">Professor</option>
+                <option value="Gestão">Gestão</option>
+                <option value="Secretaria">Secretaria</option>
+                <option value="NTI">NTI</option>
+            </select>
             <button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Criar Conta</button>
         </div>
-        <div class="sector-column"><h2>NTI</h2><input type="number" id="n-p" placeholder="ID"><input type="password" id="n-s" placeholder="Senha"><button class="btn" style="background:var(--nti); color:white" onclick="app.login('n','NTI')">Master Login</button></div>
     </div>
 
     <div id="main-system">
         <div class="grid-layout">
             <div class="left-col">
-                <div class="panel" style="text-align:center">
-                    <img id="u-foto" src="https://via.placeholder.com/60" class="profile-img">
-                    <h4 id="u-nome">Usuário</h4>
-                    <p id="u-mail" style="font-size:10px; color:var(--prof)"></p>
+                <div class="panel" style="text-align: center;">
+                    <img id="u-foto" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="profile-img">
+                    <h3 id="u-nome">Usuário</h3>
+                    <p id="u-email" style="font-size: 11px; color: var(--prof)"></p>
+                    <small id="u-ip" style="color: #666"></small>
                 </div>
 
                 <div class="panel">
-                    <h3><i class="fa fa-calendar"></i> Reservar</h3>
+                    <h3><i class="fa fa-clock"></i> Reservar Equipamento</h3>
                     <select id="res-eq"></select>
                     <input type="text" id="res-sl" placeholder="Sala">
                     <input type="datetime-local" id="res-dt">
-                    <button class="btn" style="background:var(--prof); color:white" onclick="app.reservar()">Confirmar</button>
+                    <button class="btn" style="background:var(--prof); color:white" onclick="app.reservar()">Agendar</button>
                 </div>
 
-                <div id="nti-panel" class="panel hidden" style="border: 2px solid var(--nti)">
-                    <h3 style="color:var(--nti)">NTI MASTER</h3>
-                    <input type="text" id="search-p" placeholder="Prontuário para Histórico">
-                    <button class="btn" style="background:#444" onclick="app.getLogs()">Ver Histórico</button>
-                    <div id="log-list" style="font-size:9px; max-height:150px; overflow-y:auto; margin-top:10px"></div>
+                <div id="panel-nti" class="panel hidden" style="border: 2px solid var(--nti)">
+                    <h3 style="color:var(--nti)">ADMINISTRAÇÃO NTI</h3>
+                    <input type="text" id="search-log" placeholder="Prontuário p/ Histórico">
+                    <button class="btn" style="background:#333" onclick="app.verLogs()">Ver Atividade do Site</button>
+                    <div id="log-display" style="font-size:10px; height:100px; overflow-y:auto; margin-top:10px; background:#000; padding:5px"></div>
                 </div>
             </div>
 
             <div class="center-col">
                 <div class="panel">
-                    <h3><i class="fa fa-desktop"></i> Sala de Informática (33 PCs)</h3>
-                    <div class="pc-map" id="map-area"></div>
-                    <div id="pc-info" style="margin-top:10px; font-size:11px; color:var(--prof); background:rgba(0,0,0,0.3); padding:10px; border-radius:5px">Selecione um computador...</div>
+                    <h3><i class="fa fa-desktop"></i> Mapeamento Sala de Informática (33 PCs)</h3>
+                    <div class="cinema-grid" id="pc-grid"></div>
+                    <div id="pc-details" style="margin-top:15px; padding:10px; background:rgba(0,0,0,0.5); border-radius:10px; font-size:12px; border-left: 4px solid var(--prof)">
+                        Clique em um computador para ver os detalhes técnicos...
+                    </div>
                 </div>
 
                 <div class="panel">
                     <h3><i class="fa fa-laptop"></i> Chromebooks (39 Unids)</h3>
-                    <div id="cb-list" style="display:grid; grid-template-columns: repeat(4, 1fr); gap:5px; max-height:150px; overflow-y:auto"></div>
+                    <div id="cb-list" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:5px; font-size:9px"></div>
                 </div>
             </div>
 
             <div class="right-col">
                 <div class="panel">
-                    <h3><i class="fa fa-clock"></i> Cronograma</h3>
-                    <div id="res-lista" style="font-size:12px"></div>
+                    <h3><i class="fa fa-calendar-check"></i> Cronograma Geral</h3>
+                    <div id="lista-reservas" style="max-height: 300px; overflow-y:auto"></div>
                 </div>
-                <button class="btn" style="background:red; color:white" onclick="location.reload()">Sair</button>
+                <button class="btn" style="background:red; color:white" onclick="location.reload()">Sair do Sistema</button>
             </div>
         </div>
     </div>
@@ -127,7 +143,6 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // DADOS TÉCNICOS ENVIADOS
     const pcData = [
         {id:1, g:"DELL", pa:"230.999", pn:"231.413"}, {id:2, g:"DELL", pa:"231.019", pn:"231.453"},
         {id:3, g:"DELL", pa:"231.069", pn:"231.443"}, {id:4, g:"DELL", pa:"231.250", pn:"231.454"},
@@ -137,119 +152,135 @@
         {id:11, g:"DELL", pa:"231.120", pn:"231.551"}, {id:12, g:"DELL", pa:"231.068", pn:"231.418"},
         {id:13, g:"DELL", pa:"231.067", pn:"231.390"}, {id:14, g:"DELL", pa:"231.065", pn:"231.514"},
         {id:15, g:"DELL", pa:"231.168", pn:"231.515"}, {id:16, g:"DELL", pa:"231.090", pn:"231.457"},
-        {id:17, g:"DELL", pa:"231.089", pn:"231.365"}, {id:18, g:"DELL", pa:"231166", pn:"231.484"},
-        {id:19, g:"DELL", pa:"231165", pn:"231.408"}, {id:20, g:"DELL", pa:"231071", pn:"231.372"},
-        {id:21, g:"DELL", pa:"231164", pn:"231.424"}, {id:22, g:"DELL", pa:"231070", pn:"231.438"},
-        {id:23, g:"DELL", pa:"231209", pn:"231.348"}, {id:24, g:"DELL", pa:"231185", pn:"231.363"},
-        {id:25, g:"DELL", pa:"231214", pn:"231.344"}, {id:26, g:"DELL", pa:"231251", pn:"231437"},
-        {id:27, g:"DELL", pa:"231179", pn:"231464"}, {id:28, g:"DELL", pa:"231096", pn:"231347"},
-        {id:29, g:"DELL", pa:"231137", pn:"231521"}, {id:30, g:"DELL", pa:"231118", pn:"231459"},
-        {id:31, g:"DELL", pa:"231142", pn:"231427"}, {id:32, g:"DELL", pa:"231138", pn:"231364"},
-        {id:33, g:"DELL", pa:"231163", pn:"231470"}
+        {id:17, g:"DELL", pa:"231.089", pn:"231.365"}, {id:18, g:"DELL", pa:"231.166", pn:"231.484"},
+        {id:19, g:"DELL", pa:"231.165", pn:"231.408"}, {id:20, g:"DELL", pa:"231.071", pn:"231.372"},
+        {id:21, g:"DELL", pa:"231.164", pn:"231.424"}, {id:22, g:"DELL", pa:"231.070", pn:"231.438"},
+        {id:23, g:"DELL", pa:"231.209", pn:"231.348"}, {id:24, g:"DELL", pa:"231.185", pn:"231.363"},
+        {id:25, g:"DELL", pa:"231.214", pn:"231.344"}, {id:26, g:"DELL", pa:"231.251", pn:"231.437"},
+        {id:27, g:"DELL", pa:"231.179", pn:"231.464"}, {id:28, g:"DELL", pa:"231.096", pn:"231.347"},
+        {id:29, g:"DELL", pa:"231.137", pn:"231.521"}, {id:30, g:"DELL", pa:"231.118", pn:"231.459"},
+        {id:31, g:"DELL", pa:"231.142", pn:"231.427"}, {id:32, g:"DELL", pa:"231.138", pn:"231.364"},
+        {id:33, g:"DELL", pa:"231.163", pn:"231.470"}
     ];
 
     const cbPats = ["259.954","259.972","259.953","259.973","259.971","259.965","259.966","259.952","259.951","259.950","259.968","259.949","259.967","259.962","259.961","259.948","259.957","259.967","259.958","259.943","259.941","259.947","259.946","259.944","259.945","259.959","259.960","259.956","259.955","259.942","259.939","259.940","259.982","259.983","259.984","260.053","259.996","260.013","260.012"];
 
     const app = {
-        user: null, userIP: "0.0.0.0",
+        user: null, ip: "0.0.0.0",
 
-        async login(pre, cargo) {
-            const p = document.getElementById(pre+'-p').value;
-            const s = document.getElementById(pre+'-s').value;
-            
-            if(cargo==='NTI' && p==='46690' && s==='nti2026') { 
-                this.user={nome:'Kelvin (Admin)', cargo:'NTI', pront:'46690', email:'kelvin.46690@edu.santanadeparnaiba.sp.gov.br'};
-                return this.start();
-            }
+        async login() {
+            const p = document.getElementById('l-p').value;
+            const s = document.getElementById('l-s').value;
+            if(!p || !s) return alert("Preencha os campos!");
 
             const snap = await db.ref('usuarios/'+p).once('value');
             if(snap.exists() && String(snap.val().pass) === String(s)) {
                 this.user = snap.val();
-                if(s === 'pmspmudar123' || s === 'secretaria2026') {
-                    let nS = prompt("CRIAR NOVA SENHA (OBRIGATÓRIO):");
-                    if(!nS || nS.length < 4) return alert("Senha fraca!");
-                    db.ref('usuarios/'+p+'/pass').set(nS);
+                
+                // Travas de senha padrão
+                if(s === 'pmspmudar123') {
+                    const nova = prompt("SENHA PADRÃO DETECTADA! Crie uma nova senha agora:");
+                    if(nova && nova.length > 3) {
+                        db.ref('usuarios/'+p+'/pass').set(nova);
+                        this.user.pass = nova;
+                    } else { return alert("Acesso negado. Troca de senha obrigatória."); }
                 }
                 this.start();
-            } else { alert("Dados incorretos."); }
+            } else { alert("Dados incorretos!"); }
         },
 
         confirmarCad() {
-            const n = document.getElementById('c-n').value, p = document.getElementById('c-p').value;
-            if(!n || !p) return alert("Preencha tudo.");
-            let mail = `${n.split(' ')[0].toLowerCase()}.${p}@edu.santanadeparnaiba.sp.gov.br`;
-            db.ref('usuarios/'+p).set({ nome: n, pront: p, cargo: document.getElementById('c-c').value, pass: 'pmspmudar123', email: mail, mult: document.getElementById('c-u').value })
-            .then(() => alert("Cadastrado! Email: " + mail));
+            const n = document.getElementById('c-n').value, p = document.getElementById('c-p').value, c = document.getElementById('c-c').value;
+            if(!n || !p) return alert("Preencha tudo!");
+            const email = `${n.split(' ')[0].toLowerCase()}.${p}@edu.santanadeparnaiba.sp.gov.br`;
+            db.ref('usuarios/'+p).set({ nome: n, pront: p, cargo: c, pass: 'pmspmudar123', email: email, uni: document.getElementById('c-u').value })
+            .then(() => alert("Cadastro ok! Seu e-mail é: " + email));
         },
 
         async start() {
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('main-system').style.display = 'block';
             document.getElementById('u-nome').innerText = this.user.nome;
-            document.getElementById('u-mail').innerText = this.user.email;
+            document.getElementById('u-email').innerText = this.user.email;
             
-            if(this.user.cargo === 'NTI') document.getElementById('nti-panel').classList.remove('hidden');
-            if(!this.user.foto) alert("LEMRETE: Você precisa colocar uma foto de perfil para identificação!");
+            // Captura de IP e Log
+            try { this.ip = await fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>d.ip); } catch(e){ this.ip = "Local/VPN"; }
+            document.getElementById('u-ip').innerText = "IP: " + this.ip;
+            this.log("Entrou no sistema");
 
-            this.userIP = await fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>d.ip).catch(()=>"Local");
-            this.log("Login efetuado");
+            if(this.user.cargo === 'NTI') document.getElementById('panel-nti').classList.remove('hidden');
+            if(!this.user.foto) alert("LEMBRETE: Por favor, adicione uma foto de perfil para identificação oficial!");
+
             this.loadMap();
             this.sync();
         },
 
-        log(acao) { db.ref('logs').push({ u: this.user.nome, p: this.user.pront, acao, ip: this.userIP, time: new Date().toLocaleString() }); },
+        log(acao) { db.ref('monitoramento').push({ u: this.user.nome, p: this.user.pront, acao, ip: this.ip, data: new Date().toLocaleString() }); },
 
         loadMap() {
-            const area = document.getElementById('map-area');
+            const grid = document.getElementById('pc-grid');
             pcData.forEach(pc => {
-                db.ref('mapeamento/pc'+pc.id).on('value', s => {
+                db.ref('manutencao/pc'+pc.id).on('value', s => {
                     let status = s.val() || 'ativo';
-                    let div = document.getElementById('pc-'+pc.id) || document.createElement('div');
-                    div.id = 'pc-'+pc.id;
-                    div.className = `pc-box ${status === 'manutencao' ? 'manutencao' : ''}`;
-                    div.innerText = pc.id;
+                    let div = document.getElementById('pc-box-'+pc.id) || document.createElement('div');
+                    div.id = 'pc-box-'+pc.id;
+                    div.className = `pc-spot ${status === 'reparo' ? 'manutencao' : ''}`;
+                    div.innerHTML = `<i class="fa fa-desktop"></i><br>${pc.id}`;
                     div.onclick = () => {
-                        document.getElementById('pc-info').innerHTML = `<b>Nº:</b> ${pc.id} | <b>Gabinete:</b> ${pc.g} | <b>Antigo:</b> ${pc.pa} | <b>Novo:</b> ${pc.pn}`;
-                        if(this.user.cargo === 'NTI' && confirm("Alterar Manutenção deste PC?")) {
-                            db.ref('mapeamento/pc'+pc.id).set(status === 'ativo' ? 'manutencao' : 'ativo');
-                        }
+                        document.getElementById('pc-details').innerHTML = `
+                            <strong>DETALHES PC ${pc.id}</strong><br>
+                            Gabinete: ${pc.g} | Monitor: Dell<br>
+                            Patrimônio Antigo: ${pc.pa} | Patrimônio Novo: ${pc.pn}<br>
+                            Status: ${status === 'ativo' ? '✅ DISPONÍVEL' : '⚠️ EM MANUTENÇÃO'}
+                            ${this.user.cargo === 'NTI' ? `<br><button class="btn" style="background:orange; padding:5px; font-size:10px" onclick="app.togglePC(${pc.id},'${status}')">Alterar Status</button>` : ''}
+                        `;
                     };
-                    if(!document.getElementById('pc-'+pc.id)) area.appendChild(div);
+                    if(!document.getElementById('pc-box-'+pc.id)) grid.appendChild(div);
                 });
             });
 
-            const cbArea = document.getElementById('cb-list');
+            const cbList = document.getElementById('cb-list');
             cbPats.forEach((pat, i) => {
-                let d = document.createElement('div');
-                d.style = "font-size:8px; background:rgba(255,255,255,0.1); padding:4px; border-radius:3px";
-                d.innerText = `${i+1}: ${pat}`;
-                cbArea.appendChild(d);
+                cbList.innerHTML += `<div style="padding:3px; background:rgba(255,255,255,0.1)">CB ${i+1}: ${pat}</div>`;
             });
+        },
+
+        togglePC(id, atual) {
+            db.ref('manutencao/pc'+id).set(atual === 'ativo' ? 'reparo' : 'ativo');
+            this.log(`Alterou status PC ${id}`);
         },
 
         reservar() {
             const eq = document.getElementById('res-eq').value, dt = document.getElementById('res-dt').value;
-            db.ref('reservas').orderByChild('dt').equalTo(dt).once('value', s => {
-                let block = false;
-                s.forEach(r => { if(r.val().eq === eq) block = true; });
-                if(block) return alert("Indisponível neste horário!");
+            if(!dt) return alert("Selecione data/hora");
+
+            // Validação de Conflito de Horário
+            db.ref('reservas').orderByChild('dt').equalTo(dt).once('value', snap => {
+                let conflito = false;
+                snap.forEach(r => { if(r.val().eq === eq) conflito = true; });
+                
+                if(conflito) return alert("❌ ERRO: Este equipamento já está reservado neste horário por outro professor!");
+                
                 db.ref('reservas').push({ eq, sl: document.getElementById('res-sl').value, dt, u: this.user.nome });
-                this.log("Reservou " + eq);
+                this.log(`Reservou ${eq}`);
+                alert("Reserva confirmada!");
             });
         },
 
-        getLogs() {
-            let p = document.getElementById('search-p').value;
-            db.ref('logs').orderByChild('p').equalTo(p).once('value', s => {
-                let out = document.getElementById('log-list'); out.innerHTML = "";
-                s.forEach(l => { out.innerHTML += `[${l.val().time}] ${l.val().acao} | IP: ${l.val().ip}<br>`; });
+        verLogs() {
+            const p = document.getElementById('search-log').value;
+            db.ref('monitoramento').orderByChild('p').equalTo(p).once('value', s => {
+                const box = document.getElementById('log-display'); box.innerHTML = "";
+                s.forEach(l => { box.innerHTML += `[${l.val().data}] ${l.val().acao} - IP: ${l.val().ip}<br>`; });
             });
         },
 
         sync() {
-            db.ref('reservas').on('value', s => {
-                const list = document.getElementById('res-lista'); list.innerHTML = "";
-                s.forEach(r => { list.innerHTML += `<div style="padding:5px; border-bottom:1px solid #444">${r.val().eq} - ${r.val().u}</div>`; });
+            db.ref('reservas').on('value', snap => {
+                const box = document.getElementById('lista-reservas'); box.innerHTML = "";
+                snap.forEach(r => { 
+                    box.innerHTML += `<div style="padding:10px; border-bottom:1px solid #444">${r.val().dt.replace('T',' ')} - ${r.val().eq} (${r.val().u})</div>`;
+                });
             });
             const eqs = ['TV 01', 'TV 02', 'Multimídia', 'Chromebooks', 'Sala Info'];
             const sel = document.getElementById('res-eq'); sel.innerHTML = "";
