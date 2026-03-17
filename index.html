@@ -9,94 +9,128 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        :root { --prof: #00adef; --gestao: #f1c40f; --secre: #a55eea; --cad: #2ecc71; --nti: #eb4d4b; --bg: rgba(10, 11, 16, 0.95); }
-        body, html { margin: 0; padding: 0; font-family: 'Poppins', sans-serif; color: white; background: url('https://get.wallhere.com/photo/space-planet-Earth-NASA-blue-marble-atmosphere-outer-space-astronomical-object-82285.jpg') no-repeat center center fixed; background-size: cover; }
-        .login-container { display: flex; width: 100%; min-height: 100vh; background: var(--bg); backdrop-filter: blur(10px); }
-        .sector-column { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; border-right: 1px solid rgba(255,255,255,0.1); text-align: center; }
-        #main-system { display: none; padding: 80px 20px; background: var(--bg); min-height: 100vh; }
-        .grid-layout { display: grid; grid-template-columns: 350px 1fr 350px; gap: 20px; max-width: 1600px; margin: 0 auto; }
-        .panel { background: rgba(22, 27, 34, 0.8); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
-        input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: rgba(0,0,0,0.5); color: white; }
-        .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; text-transform: uppercase; }
-        
-        /* Mapeamento Cinema */
-        .map-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: 5px; margin-top: 15px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 10px; }
-        .seat { aspect-ratio: 1; background: #2ecc71; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; transition: 0.2s; }
-        .seat.selected { background: var(--prof); transform: scale(1.1); border: 2px solid white; }
-        .seat.off { background: #555; cursor: not-allowed; }
 
-        #alert-ribbon { background: var(--nti); padding: 12px; text-align: center; position: fixed; top: 0; width: 100%; z-index: 1000; display: none; font-weight: bold; }
-        #force-password-change { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; }
+    <style>
+        :root {
+            --prof: #00adef; --gestao: #f1c40f; --secre: #a55eea; --cad: #2ecc71; --nti: #eb4d4b;
+            --bg-overlay: rgba(10, 11, 16, 0.94);
+        }
+
+        body, html { 
+            margin: 0; padding: 0; font-family: 'Poppins', sans-serif; color: white; min-height: 100vh;
+            background: url('https://get.wallhere.com/photo/space-planet-Earth-NASA-blue-marble-atmosphere-outer-space-astronomical-object-82285.jpg') no-repeat center center fixed;
+            background-size: cover; overflow-x: hidden;
+        }
+
+        /* BANNER SUPERIOR */
+        #alert-ribbon { background: var(--nti); color: white; padding: 12px; text-align: center; font-weight: bold; display: none; position: fixed; top: 0; width: 100%; z-index: 10000; box-shadow: 0 4px 15px rgba(0,0,0,0.5); font-family: 'Orbitron'; }
+
+        .login-container { display: flex; width: 100%; min-height: 100vh; flex-wrap: wrap; background: var(--bg-overlay); backdrop-filter: blur(8px); }
+        .sector-column { flex: 1; min-width: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; transition: 0.4s; border-right: 1px solid rgba(255,255,255,0.05); text-align: center; }
+        
+        #main-system { display: none; padding: 80px 20px 20px 20px; background: var(--bg-overlay); min-height: 100vh; }
+        .grid-layout { display: grid; grid-template-columns: 350px 1fr 350px; gap: 20px; max-width: 1600px; margin: 0 auto; }
+        
+        .panel { background: rgba(22, 27, 34, 0.7); backdrop-filter: blur(20px); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
+        
+        /* ESTILO DO PRINT (NTI MASTER DASHBOARD) */
+        .nti-master-panel { border: 2px solid var(--nti) !important; box-shadow: 0 0 15px rgba(235, 77, 75, 0.2); }
+        .nti-title { font-family: 'Orbitron'; color: var(--nti); text-transform: uppercase; font-size: 1.2rem; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: rgba(0,0,0,0.4); color: white; box-sizing: border-box; }
+        .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; margin-top: 5px; text-transform: uppercase; font-family: 'Orbitron'; font-size: 0.8rem; }
+
+        /* MAPEAMENTO ESTILO CINEMA */
+        .map-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: 5px; margin-top: 15px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; }
+        .seat { aspect-ratio: 1; background: #2ecc71; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; transition: 0.2s; }
+        .seat.selected { background: var(--prof); border: 2px solid white; transform: scale(1.1); }
+        .seat.maintenance { background: #555 !important; cursor: not-allowed; opacity: 0.5; }
+
+        #force-password-change { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000001; display: none; align-items: center; justify-content: center; }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div id="alert-ribbon">⚠️ AVISO NTI: <span id="alert-text"></span></div>
+    <div id="alert-ribbon">⚠️ AVISO GLOBAL: <span id="alert-text"></span></div>
 
     <div id="force-password-change">
         <div class="panel" style="width: 350px; text-align: center; border: 2px solid var(--nti)">
-            <h2 style="color: var(--nti)">ALTERAR SENHA</h2>
-            <p>Sua senha é padrão. Crie uma nova:</p>
+            <h2 style="font-family: Orbitron; color: var(--nti)">SEGURANÇA</h2>
+            <p>Você está usando uma senha padrão. Crie uma nova para acessar o sistema.</p>
             <input type="password" id="new-secure-pass" placeholder="Nova Senha">
-            <button class="btn" style="background: var(--cad)" onclick="app.updatePass()">SALVAR</button>
+            <button class="btn" style="background: var(--cad)" onclick="app.processPasswordChange()">Salvar Senha</button>
         </div>
     </div>
 
     <div class="login-container" id="login-screen">
-        <div class="sector-column"><h2>PROFESSOR</h2><input type="number" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof)" onclick="app.login('p','Professor')">Entrar</button></div>
-        <div class="sector-column"><h2>GESTÃO</h2><input type="number" id="g-p" placeholder="Prontuário"><input type="password" id="g-s" placeholder="Senha"><button class="btn" style="background:var(--gestao)" onclick="app.login('g','Gestão')">Entrar</button></div>
-        <div class="sector-column"><h2>NTI</h2><input type="number" id="n-p" placeholder="ID"><input type="password" id="n-s" placeholder="Senha"><button class="btn" style="background:var(--nti)" onclick="app.login('n','NTI')">Master</button></div>
+        <div class="sector-column"><h2>PROFESSOR</h2><input type="number" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof)" onclick="app.login('p','Professor')">Acessar</button></div>
+        <div class="sector-column"><h2>NTI</h2><input type="number" id="n-p" placeholder="ID"><input type="password" id="n-s" placeholder="Senha"><button class="btn" style="background:var(--nti)" onclick="app.login('n','NTI')">Master Login</button></div>
     </div>
 
     <div id="main-system">
         <div class="grid-layout">
+            
             <div class="left-col">
                 <div class="panel">
-                    <h3><i class="fa fa-calendar-alt"></i> RESERVA</h3>
+                    <h3><i class="fa fa-calendar-plus"></i> Reservar</h3>
                     <select id="res-eq" onchange="app.renderMap()"></select>
-                    <div id="manut-info" style="color: var(--nti); font-size: 12px; margin: 5px 0;"></div>
-                    <input type="text" id="res-sl" placeholder="Nº da Sala">
+                    <input type="text" id="res-sl" placeholder="Sala">
                     <input type="datetime-local" id="res-dt">
-                    <div id="map-container"></div>
-                    <button id="btn-reserva" class="btn" style="background:var(--prof)" onclick="app.reservar()">Confirmar</button>
+                    <div id="visual-map-container"></div>
+                    <button class="btn" style="background:var(--prof)" onclick="app.reservar()">Confirmar Reserva</button>
                 </div>
-                
-                <div id="nti-panel" class="panel hidden" style="border: 2px solid var(--nti)">
-                    <h3 style="color:var(--nti)">NTI MASTER</h3>
-                    <input type="text" id="aviso-input" placeholder="Banner de Aviso">
-                    <button class="btn" style="background:var(--nti)" onclick="app.setAviso()">Postar Aviso</button>
-                    <hr>
-                    <h4>Buscar Histórico (IP/Prontuário)</h4>
-                    <input type="text" id="search-input" placeholder="Digite o prontuário..." oninput="app.searchLogs()">
-                    <div id="log-results" style="max-height: 150px; overflow-y: auto; font-size: 11px;"></div>
+
+                <div id="nti-master-panel" class="panel nti-master-panel hidden">
+                    <div class="nti-title"><i class="fa fa-shield-halved"></i> NTI Master Dashboard</div>
+                    
+                    <label style="font-size: 12px;"><i class="fa fa-bullhorn"></i> Enviar Aviso Global:</label>
+                    <input type="text" id="input-aviso" placeholder="Texto do banner superior">
+                    <button class="btn" style="background:var(--nti); margin-bottom: 20px;" onclick="app.enviarAviso()">Publicar Aviso</button>
+
+                    <label style="font-size: 12px;">Gerenciamento de Acessos:</label>
+                    <div id="lista-usuarios-nti" style="background:rgba(0,0,0,0.3); height: 120px; overflow-y:auto; border-radius:8px; padding:10px; font-size:11px; margin-bottom:10px;">
+                        </div>
+                    
+                    <input type="number" id="target-pront" placeholder="Prontuário do Alvo">
+                    <div style="display:flex; gap:5px">
+                        <button class="btn" style="background:#555" onclick="app.resetSenha()">Reset Senha</button>
+                        <button class="btn" style="background:var(--nti)" onclick="app.excluirLogin()">Excluir Login</button>
+                    </div>
+
+                    <h4 style="font-family: Orbitron; font-size: 0.9rem; margin-top:20px">Controle do Sistema</h4>
+                    <div style="display:flex; gap:5px">
+                        <button class="btn" style="background:var(--nti)" onclick="app.travarSistema(true)">Travar</button>
+                        <button class="btn" style="background:var(--cad)" onclick="app.travarSistema(false)">Liberar</button>
+                    </div>
                 </div>
             </div>
 
             <div class="center-col">
                 <div class="panel">
-                    <h3>Status dos Equipamentos</h3>
-                    <div id="equip-cards" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;"></div>
+                    <h3 style="font-family: Orbitron;"><i class="fa fa-desktop"></i> Status dos Equipamentos</h3>
+                    <div id="lista-equipamentos" style="display:grid; grid-template-columns: 1fr 1fr; gap:15px">
+                        </div>
                 </div>
+                
                 <div class="panel">
-                    <h3>Cronograma</h3>
-                    <div id="lista-res"></div>
+                    <h3><i class="fa fa-clock"></i> Próximas Reservas</h3>
+                    <div id="lista-res" style="font-size: 12px;"></div>
                 </div>
             </div>
 
             <div class="right-col">
                 <div class="panel">
-                    <h3>Mural</h3>
-                    <div id="chat-box" style="height: 300px; overflow-y: auto;"></div>
-                    <div style="display: flex; gap: 5px; margin-top: 10px;">
-                        <input type="text" id="chat-in" placeholder="Mensagem...">
-                        <button class="btn" style="width: 50px; background: var(--prof)" onclick="app.sendMural()"><i class="fa fa-paper-plane"></i></button>
+                    <h3><i class="fa fa-comments"></i> Mural Global</h3>
+                    <div id="chat-box" style="height: 300px; overflow-y:auto; background:rgba(0,0,0,0.2); padding:10px; border-radius:10px; font-size:12px"></div>
+                    <div style="display:flex; gap:5px; margin-top:10px">
+                        <input type="text" id="chat-in" placeholder="Escreva...">
+                        <button class="btn" style="width:60px; background:var(--prof)" onclick="app.sendChat()"><i class="fa fa-paper-plane"></i></button>
                     </div>
                 </div>
-                <button class="btn" style="background: #444" onclick="location.reload()">Sair</button>
+                <button class="btn" style="background:#cc4444" onclick="location.reload()">Sair do Sistema</button>
             </div>
+
         </div>
     </div>
 
@@ -108,25 +142,27 @@
     const app = {
         user: null,
         selectedSeat: null,
-        equipStatuses: {},
+        equipData: {},
 
         async login(pre, cargo) {
             const p = document.getElementById(pre+'-p').value;
             const s = document.getElementById(pre+'-s').value;
-            if(cargo==='NTI' && p==='46690' && s==='nti2026') {
-                this.user = {nome: 'NTI Master', cargo: 'NTI', pront: '46690'};
-                return this.start();
+
+            if(cargo==='NTI' && p==='46690' && s==='nti2026') { 
+                this.user={nome:'Equipe NTI', cargo:'NTI', pront:'46690'}; 
+                return this.start(); 
             }
+
             const snap = await db.ref('usuarios/'+p).once('value');
-            if(snap.exists() && snap.val().pass == s) {
+            if(snap.exists() && String(snap.val().pass) === String(s)) {
                 this.user = snap.val();
-                if(['pmspmudar123', 'pmspgestores2026'].includes(s)) {
+                if(['pmspmudar123', 'secretaria2026', 'pmspgestores2026'].includes(s)) {
                     document.getElementById('force-password-change').style.display = 'flex';
                 } else { this.start(); }
-            } else alert("Erro de login");
+            } else alert("Acesso Negado");
         },
 
-        updatePass() {
+        processPasswordChange() {
             const nv = document.getElementById('new-secure-pass').value;
             if(nv.length < 6) return alert("Mínimo 6 caracteres");
             db.ref('usuarios/'+this.user.pront+'/pass').set(nv).then(() => location.reload());
@@ -135,94 +171,83 @@
         start() {
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('main-system').style.display = 'block';
-            if(this.user.cargo === 'NTI') document.getElementById('nti-panel').classList.remove('hidden');
-            
+            if(this.user.cargo === 'NTI') document.getElementById('nti-master-panel').classList.remove('hidden');
+
+            // Log de IP e Foto Check
             fetch('https://api.ipify.org?format=json').then(r => r.json()).then(d => {
-                db.ref('logs').push({u: this.user.pront, n: this.user.nome, ip: d.ip, time: Date.now()});
+                db.ref('logs/'+this.user.pront).set({nome: this.user.nome, ip: d.ip, cargo: this.user.cargo, time: Date.now()});
             });
 
             this.sync();
         },
 
         sync() {
-            // Status dos Equipamentos (O que você viu no print)
+            // Monitorar Trava e Aviso
+            db.ref('config/lock').on('value', s => { if(s.val() && this.user.cargo !== 'NTI') location.reload(); });
+            db.ref('config/aviso').on('value', s => {
+                const b = document.getElementById('alert-ribbon');
+                if(s.val()){ b.style.display='block'; document.getElementById('alert-text').innerText=s.val(); }
+                else b.style.display='none';
+            });
+
+            // Status Equipamentos (IGUAL AO PRINT)
             const eqs = ['TV 01', 'TV 02', 'Kit Multimídia', 'Chromebooks', 'Sala Info'];
             const sel = document.getElementById('res-eq'); sel.innerHTML = "";
             
-            eqs.forEach(e => {
-                sel.innerHTML += `<option value="${e}">${e}</option>`;
-                db.ref('equip_status/'+e).on('value', snap => {
-                    const status = snap.val() || {state: 'ATIVO', motivo: ''};
-                    this.equipStatuses[e] = status;
-                    this.renderEquipCards();
-                    if(document.getElementById('res-eq').value === e) this.renderMap();
+            eqs.forEach(name => {
+                sel.innerHTML += `<option value="${name}">${name}</option>`;
+                db.ref('equipamentos/'+name).on('value', snap => {
+                    const data = snap.val() || {status: 'ATIVO', motivo: ''};
+                    this.equipData[name] = data;
+                    this.drawEquipCards();
+                });
+            });
+
+            // Lista de Usuários no Painel NTI
+            db.ref('logs').on('value', s => {
+                const box = document.getElementById('lista-usuarios-nti'); box.innerHTML = "";
+                s.forEach(u => {
+                    box.innerHTML += `<div>[${u.val().cargo}] ${u.val().nome} (${u.val().ip})</div>`;
                 });
             });
 
             // Mural
-            db.ref('mural').limitToLast(15).on('value', s => {
+            db.ref('chat').limitToLast(20).on('value', s => {
                 const box = document.getElementById('chat-box'); box.innerHTML = "";
-                s.forEach(m => { box.innerHTML += `<div><b>${m.val().u}:</b> ${m.val().t}</div>`; });
+                s.forEach(m => { box.innerHTML += `<div><b>${m.val().n}:</b> ${m.val().t}</div>`; });
                 box.scrollTop = box.scrollHeight;
-            });
-
-            // Banner e Trava
-            db.ref('config/aviso').on('value', s => {
-                document.getElementById('alert-ribbon').style.display = s.val() ? 'block' : 'none';
-                document.getElementById('alert-text').innerText = s.val();
-            });
-
-            // Lista Reservas
-            db.ref('reservas').on('value', s => {
-                const box = document.getElementById('lista-res'); box.innerHTML = "";
-                s.forEach(r => {
-                    box.innerHTML += `<div style="padding:5px; border-bottom:1px solid #333">${r.val().dt.split('T')[1]} - ${r.val().eq} (${r.val().seat}) - ${r.val().u}</div>`;
-                });
             });
         },
 
-        renderEquipCards() {
-            const container = document.getElementById('equip-cards'); container.innerHTML = "";
-            for(let e in this.equipStatuses) {
-                const s = this.equipStatuses[e];
+        drawEquipCards() {
+            const container = document.getElementById('lista-equipamentos');
+            container.innerHTML = "";
+            for(let name in this.equipData) {
+                const info = this.equipData[name];
                 container.innerHTML += `
-                    <div class="panel" style="padding:10px; margin:0">
-                        <b>${e}</b><br>
-                        <span style="color:${s.state === 'ATIVO' ? '#2ecc71' : '#eb4d4b'}">${s.state}</span>
-                        ${this.user.cargo === 'NTI' ? `<br><button class="btn" style="padding:4px; font-size:10px; background:#555; width:auto" onclick="app.toggleEquip('${e}')">ALTERAR</button>` : ''}
+                    <div class="panel" style="margin:0; padding:15px; background: rgba(255,255,255,0.03)">
+                        <div style="font-family:Orbitron; font-size:13px">${name}</div>
+                        <div style="background:${info.status==='ATIVO'?'#2ecc71':'#eb4d4b'}; display:inline-block; padding:2px 8px; border-radius:4px; font-size:9px; font-weight:bold; margin:5px 0">
+                            ${info.status}
+                        </div>
+                        ${this.user.cargo==='NTI' ? `<br><button class="btn" style="width:auto; padding:3px 10px; font-size:10px; background:#444" onclick="app.alterarStatus('${name}')">Alterar</button>` : ''}
+                        ${info.status === 'MANUTENÇÃO' ? `<div style="font-size:9px; color:#aaa">${info.motivo}</div>` : ''}
                     </div>`;
             }
         },
 
-        toggleEquip(e) {
-            const novoEstado = confirm(`Deseja colocar ${e} em MANUTENÇÃO?`) ? 'MANUTENÇÃO' : 'ATIVO';
+        alterarStatus(name) {
+            const acao = confirm(`Colocar ${name} em MANUTENÇÃO?`) ? 'MANUTENÇÃO' : 'ATIVO';
             let motivo = "";
-            if(novoEstado === 'MANUTENÇÃO') motivo = prompt("Motivo da manutenção:");
-            db.ref('equip_status/'+e).set({state: novoEstado, motivo: motivo || ''});
+            if(acao === 'MANUTENÇÃO') motivo = prompt("Qual o problema técnico?");
+            db.ref('equipamentos/'+name).set({status: acao, motivo: motivo || ''});
         },
 
         renderMap() {
             const eq = document.getElementById('res-eq').value;
-            const info = this.equipStatuses[eq];
-            const container = document.getElementById('map-container');
-            const btn = document.getElementById('btn-reserva');
-            const manutTxt = document.getElementById('manut-info');
-            
+            const container = document.getElementById('visual-map-container');
             container.innerHTML = "";
-            this.selectedSeat = null;
-
-            if(info && info.state === 'MANUTENÇÃO') {
-                manutTxt.innerText = "🛑 EM MANUTENÇÃO: " + info.motivo;
-                btn.disabled = true;
-                btn.style.opacity = "0.3";
-                return;
-            } else {
-                manutTxt.innerText = "";
-                btn.disabled = false;
-                btn.style.opacity = "1";
-            }
-
-            if(['Sala Info', 'Chromebooks'].includes(eq)) {
+            if(['Chromebooks', 'Sala Info'].includes(eq)) {
                 const total = eq === 'Sala Info' ? 33 : 39;
                 container.innerHTML = `<div class="map-grid"></div>`;
                 const grid = container.querySelector('.map-grid');
@@ -241,27 +266,23 @@
 
         reservar() {
             const eq = document.getElementById('res-eq').value, sl = document.getElementById('res-sl').value, dt = document.getElementById('res-dt').value;
-            if(!dt || !sl) return alert("Preencha tudo");
+            if(this.equipData[eq].status === 'MANUTENÇÃO') return alert("BLOQUEADO: Equipamento em manutenção!");
+            if(!dt || !sl) return alert("Preencha os dados");
             db.ref('reservas').push({eq, sl, dt, seat: this.selectedSeat || 'Geral', u: this.user.nome});
-            alert("Sucesso!");
+            alert("Reservado com sucesso!");
         },
 
-        searchLogs() {
-            const q = document.getElementById('search-input').value;
-            if(!q) return;
-            db.ref('logs').on('value', s => {
-                const res = document.getElementById('log-results'); res.innerHTML = "";
-                s.forEach(l => {
-                    const d = l.val();
-                    if(d.u.includes(q) || d.ip.includes(q)) {
-                        res.innerHTML += `<div>${new Date(d.time).toLocaleDateString()} - ${d.n} (${d.ip})</div>`;
-                    }
-                });
-            });
+        enviarAviso() { db.ref('config/aviso').set(document.getElementById('input-aviso').value); },
+        travarSistema(v) { db.ref('config/lock').set(v); },
+        resetSenha() { 
+            const p = document.getElementById('target-pront').value;
+            if(p) db.ref('usuarios/'+p+'/pass').set('pmspmudar123').then(() => alert("Senha Resetada!"));
         },
-
-        setAviso() { db.ref('config/aviso').set(document.getElementById('aviso-input').value); },
-        sendMural() { const t = document.getElementById('chat-in').value; if(t) db.ref('mural').push({u: this.user.nome, t}); document.getElementById('chat-in').value=""; }
+        excluirLogin() {
+            const p = document.getElementById('target-pront').value;
+            if(p && confirm("Excluir permanentemente?")) db.ref('usuarios/'+p).remove().then(() => alert("Excluído!"));
+        },
+        sendChat() { const t = document.getElementById('chat-in').value; if(t) db.ref('chat').push({n:this.user.nome, t}); document.getElementById('chat-in').value=""; }
     };
 </script>
 </body>
