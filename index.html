@@ -2,291 +2,220 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Programa Conect - NTI CHÁCARA</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-
     <style>
-        :root {
-            --prof: #00adef; --gestao: #f1c40f; --secre: #a55eea; --cad: #2ecc71; --nti: #eb4d4b;
-            --bg-overlay: rgba(10, 11, 16, 0.92);
-        }
-
-        body, html { 
-            margin: 0; padding: 0; font-family: 'Poppins', sans-serif; color: white; min-height: 100vh;
-            background: url('https://get.wallhere.com/photo/space-planet-Earth-NASA-blue-marble-atmosphere-outer-space-astronomical-object-82285.jpg') no-repeat center center fixed;
-            background-size: cover; overflow-x: hidden;
-        }
-
-        .slogan-container { width: 100%; text-align: center; padding: 40px 0 10px 0; animation: fadeInDown 1.5s; }
-        .slogan-main { font-family: 'Orbitron'; font-size: 2.5rem; color: var(--prof); text-shadow: 0 0 15px rgba(0,173,239,0.6); }
-
-        #alert-ribbon { background: var(--nti); color: white; padding: 12px; text-align: center; font-weight: bold; display: none; position: fixed; top: 0; width: 100%; z-index: 10000; }
-
-        .login-container { display: flex; width: 100%; min-height: 100vh; flex-wrap: wrap; background: var(--bg-overlay); backdrop-filter: blur(8px); }
-        .sector-column { flex: 1; min-width: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; border-right: 1px solid rgba(255,255,255,0.05); }
+        :root { --prof: #00adef; --nti: #eb4d4b; --bg: #0b0e14; --panel: #1c2128; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; }
+        .dashboard { display: grid; grid-template-columns: 320px 1fr 340px; gap: 20px; }
+        .panel { background: var(--panel); border: 1px solid #30363d; border-radius: 10px; padding: 15px; margin-bottom: 15px; }
+        h3 { font-size: 13px; text-transform: uppercase; border-bottom: 1px solid #333; padding-bottom: 8px; display: flex; align-items: center; gap: 8px; }
         
-        #main-system { display: none; padding: 80px 20px 20px 20px; background: var(--bg-overlay); min-height: 100vh; }
-        .grid-layout { display: grid; grid-template-columns: 350px 1fr 350px; gap: 20px; max-width: 1600px; margin: 0 auto; }
-        
-        .panel { background: rgba(22, 27, 34, 0.7); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
-        
-        input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: rgba(0,0,0,0.4); color: white; }
-        .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; text-transform: uppercase; }
+        /* Cinema Grid */
+        .cinema-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; background: #000; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .seat { font-size: 9px; padding: 5px; text-align: center; border-radius: 3px; cursor: pointer; border: 1px solid #444; }
+        .seat.ok { background: #2ecc71; color: #000; }
+        .seat.manutencao { background: #e74c3c; color: #fff; pointer-events: none; opacity: 0.6; }
+        .seat.selected { border: 2px solid var(--prof); transform: scale(1.1); }
 
-        /* Mapeamento Estilo Cinema */
-        .cinema-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-top: 15px; }
-        .pc-spot { padding: 10px; background: #2ecc71; border-radius: 5px; text-align: center; cursor: pointer; font-size: 10px; transition: 0.3s; position: relative; }
-        .pc-spot.manutencao { background: var(--nti) !important; }
-        .pc-spot:hover { transform: scale(1.1); z-index: 10; border: 1px solid white; }
-
-        #lock-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 999999; flex-direction: column; align-items: center; justify-content: center; }
-        .profile-img { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--prof); margin-bottom: 10px; object-fit: cover; }
-        .hidden { display: none !important; }
+        /* NTI Monitor */
+        #nti-log-view { height: 150px; background: #000; color: #0f0; font-family: monospace; font-size: 10px; padding: 10px; overflow-y: auto; border: 1px solid #333; }
+        input, select { width: 100%; background: #0d1117; border: 1px solid #444; color: white; padding: 10px; border-radius: 5px; margin: 5px 0; box-sizing: border-box; }
+        .btn { border: none; padding: 12px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 5px; }
+        
+        /* Modal de Foto/Senha */
+        #modal-security { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; display: flex; align-items: center; justify-content: center; visibility: hidden; }
+        #modal-security.active { visibility: visible; }
     </style>
 </head>
 <body>
 
-    <div id="alert-ribbon">⚠️ AVISO NTI: <span id="alert-text">Monitoramento Ativo</span></div>
-
-    <div id="lock-overlay">
-        <i class="fa fa-radiation fa-5x fa-spin" style="color:var(--nti); margin-bottom:20px"></i>
-        <h1 style="font-family: Orbitron">SISTEMA BLOQUEADO</h1>
+<div id="modal-security">
+    <div class="panel" style="width: 400px; text-align: center;">
+        <h2 style="color:var(--prof)">AÇÃO NECESSÁRIA</h2>
+        <p>Para continuar, você deve atualizar sua foto de perfil e criar uma senha pessoal.</p>
+        <input type="file" id="up-foto" accept="image/*">
+        <input type="password" id="new-pass" placeholder="Nova Senha">
+        <button class="btn" style="background:var(--prof)" onclick="app.updateSecurity()">SALVAR E ACESSAR</button>
     </div>
+</div>
 
-    <div class="login-container" id="login-screen">
-        <div class="slogan-container"><div class="slogan-main">PROGRAMA CONECT</div></div>
+<div class="dashboard">
+    <div class="col">
+        <div class="panel">
+            <h3><i class="fa fa-plus-circle"></i> Nova Reserva</h3>
+            <select id="res-eq" onchange="app.buildMap(this.value)">
+                <option value="">Selecione...</option>
+                <option value="Sala Info">Sala de Informática (Dell)</option>
+                <option value="Chromebooks">Chromebooks</option>
+                <option value="TV 01">TV 01</option>
+            </select>
+            <input type="text" id="res-sala" placeholder="Sala de Aula (Ex: Sala 05)">
+            <input type="datetime-local" id="res-data">
+            
+            <div id="map-area" style="display:none">
+                <p style="font-size: 10px; color: #aaa;">Clique para escolher a máquina:</p>
+                <div id="grid-cinema" class="cinema-grid"></div>
+            </div>
+            
+            <button class="btn" style="background:var(--prof); color:#fff" onclick="app.confirmarReserva()">AGENDAR</button>
+        </div>
         
-        <div class="sector-column">
-            <h2>LOGIN</h2>
-            <input type="number" id="l-p" placeholder="Prontuário">
-            <input type="password" id="l-s" placeholder="Senha">
-            <button class="btn" style="background:var(--prof); color:white" onclick="app.login()">Acessar Sistema</button>
-        </div>
-
-        <div class="sector-column" style="background: rgba(46, 204, 113, 0.05)">
-            <h2>CADASTRO</h2>
-            <input type="text" id="c-n" placeholder="Nome Completo">
-            <input type="number" id="c-p" placeholder="Prontuário">
-            <select id="c-u">
-                <option value="Unidade Atual">Atua nesta unidade</option>
-                <option value="Multi-Unidade">Trabalha em mais de um colégio</option>
-            </select>
-            <select id="c-c">
-                <option value="Professor">Professor</option>
-                <option value="Gestão">Gestão</option>
-                <option value="Secretaria">Secretaria</option>
-                <option value="NTI">NTI</option>
-            </select>
-            <button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Criar Conta</button>
+        <div class="panel">
+            <h3><i class="fa fa-headset"></i> Suporte NTI</h3>
+            <input type="text" id="ticket-msg" placeholder="Descreva o problema...">
+            <button class="btn" style="background:var(--nti); color:#fff" onclick="app.abrirChamado()">ABRIR TICKET</button>
         </div>
     </div>
 
-    <div id="main-system">
-        <div class="grid-layout">
-            <div class="left-col">
-                <div class="panel" style="text-align: center;">
-                    <img id="u-foto" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="profile-img">
-                    <h3 id="u-nome">Usuário</h3>
-                    <p id="u-email" style="font-size: 11px; color: var(--prof)"></p>
-                    <small id="u-ip" style="color: #666"></small>
-                </div>
-
-                <div class="panel">
-                    <h3><i class="fa fa-clock"></i> Reservar Equipamento</h3>
-                    <select id="res-eq"></select>
-                    <input type="text" id="res-sl" placeholder="Sala">
-                    <input type="datetime-local" id="res-dt">
-                    <button class="btn" style="background:var(--prof); color:white" onclick="app.reservar()">Agendar</button>
-                </div>
-
-                <div id="panel-nti" class="panel hidden" style="border: 2px solid var(--nti)">
-                    <h3 style="color:var(--nti)">ADMINISTRAÇÃO NTI</h3>
-                    <input type="text" id="search-log" placeholder="Prontuário p/ Histórico">
-                    <button class="btn" style="background:#333" onclick="app.verLogs()">Ver Atividade do Site</button>
-                    <div id="log-display" style="font-size:10px; height:100px; overflow-y:auto; margin-top:10px; background:#000; padding:5px"></div>
-                </div>
-            </div>
-
-            <div class="center-col">
-                <div class="panel">
-                    <h3><i class="fa fa-desktop"></i> Mapeamento Sala de Informática (33 PCs)</h3>
-                    <div class="cinema-grid" id="pc-grid"></div>
-                    <div id="pc-details" style="margin-top:15px; padding:10px; background:rgba(0,0,0,0.5); border-radius:10px; font-size:12px; border-left: 4px solid var(--prof)">
-                        Clique em um computador para ver os detalhes técnicos...
-                    </div>
-                </div>
-
-                <div class="panel">
-                    <h3><i class="fa fa-laptop"></i> Chromebooks (39 Unids)</h3>
-                    <div id="cb-list" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:5px; font-size:9px"></div>
-                </div>
-            </div>
-
-            <div class="right-col">
-                <div class="panel">
-                    <h3><i class="fa fa-calendar-check"></i> Cronograma Geral</h3>
-                    <div id="lista-reservas" style="max-height: 300px; overflow-y:auto"></div>
-                </div>
-                <button class="btn" style="background:red; color:white" onclick="location.reload()">Sair do Sistema</button>
+    <div class="col">
+        <div class="panel">
+            <h3><i class="fa fa-microchip"></i> Telemetria de Sistema</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <canvas id="c1"></canvas><canvas id="c2"></canvas>
+                <canvas id="c3"></canvas><canvas id="c4"></canvas>
             </div>
         </div>
+        <div class="panel">
+            <h3><i class="fa fa-list"></i> Cronograma de Uso</h3>
+            <div id="lista-res" style="max-height: 250px; overflow-y: auto;"></div>
+        </div>
     </div>
+
+    <div class="col">
+        <div class="panel" style="border-color: var(--nti)">
+            <h3 style="color:var(--nti)"><i class="fa fa-shield-alt"></i> NTI MASTER DASHBOARD</h3>
+            <div id="nti-log-view">> Sistema pronto...</div>
+            <input type="text" id="search-p" placeholder="Pesquisar Prontuário..." onkeyup="app.searchLogs(this.value)">
+            <div style="display:flex; gap:5px">
+                <button class="btn" style="background:#444" onclick="app.remote()">ACESSO REMOTO</button>
+                <button class="btn" style="background:var(--nti)" onclick="app.virusScan()">VIRUS SCAN</button>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h3><i class="fa fa-comments"></i> Mural de Avisos</h3>
+            <div id="mural" style="height: 150px; overflow-y: auto; font-size: 11px;"></div>
+            <input type="text" id="msg-mural" placeholder="Escrever no mural...">
+        </div>
+        
+        <button class="btn" style="background: #e74c3c; color: white;" onclick="location.reload()">DESCONECTAR</button>
+    </div>
+</div>
 
 <script>
     const firebaseConfig = { databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    const pcData = [
-        {id:1, g:"DELL", pa:"230.999", pn:"231.413"}, {id:2, g:"DELL", pa:"231.019", pn:"231.453"},
-        {id:3, g:"DELL", pa:"231.069", pn:"231.443"}, {id:4, g:"DELL", pa:"231.250", pn:"231.454"},
-        {id:5, g:"DELL", pa:"231.046", pn:"231.414"}, {id:6, g:"DELL", pa:"231.141", pn:"231.403"},
-        {id:7, g:"DELL", pa:"231.066", pn:"231.383"}, {id:8, g:"DELL", pa:"231.202", pn:"231.274"},
-        {id:9, g:"DELL", pa:"231.117", pn:"231.275"}, {id:10, g:"DELL", pa:"231.119", pn:"231.442"},
-        {id:11, g:"DELL", pa:"231.120", pn:"231.551"}, {id:12, g:"DELL", pa:"231.068", pn:"231.418"},
-        {id:13, g:"DELL", pa:"231.067", pn:"231.390"}, {id:14, g:"DELL", pa:"231.065", pn:"231.514"},
-        {id:15, g:"DELL", pa:"231.168", pn:"231.515"}, {id:16, g:"DELL", pa:"231.090", pn:"231.457"},
-        {id:17, g:"DELL", pa:"231.089", pn:"231.365"}, {id:18, g:"DELL", pa:"231.166", pn:"231.484"},
-        {id:19, g:"DELL", pa:"231.165", pn:"231.408"}, {id:20, g:"DELL", pa:"231.071", pn:"231.372"},
-        {id:21, g:"DELL", pa:"231.164", pn:"231.424"}, {id:22, g:"DELL", pa:"231.070", pn:"231.438"},
-        {id:23, g:"DELL", pa:"231.209", pn:"231.348"}, {id:24, g:"DELL", pa:"231.185", pn:"231.363"},
-        {id:25, g:"DELL", pa:"231.214", pn:"231.344"}, {id:26, g:"DELL", pa:"231.251", pn:"231.437"},
-        {id:27, g:"DELL", pa:"231.179", pn:"231.464"}, {id:28, g:"DELL", pa:"231.096", pn:"231.347"},
-        {id:29, g:"DELL", pa:"231.137", pn:"231.521"}, {id:30, g:"DELL", pa:"231.118", pn:"231.459"},
-        {id:31, g:"DELL", pa:"231.142", pn:"231.427"}, {id:32, g:"DELL", pa:"231.138", pn:"231.364"},
-        {id:33, g:"DELL", pa:"231.163", pn:"231.470"}
-    ];
-
-    const cbPats = ["259.954","259.972","259.953","259.973","259.971","259.965","259.966","259.952","259.951","259.950","259.968","259.949","259.967","259.962","259.961","259.948","259.957","259.967","259.958","259.943","259.941","259.947","259.946","259.944","259.945","259.959","259.960","259.956","259.955","259.942","259.939","259.940","259.982","259.983","259.984","260.053","259.996","260.013","260.012"];
-
     const app = {
-        user: null, ip: "0.0.0.0",
+        user: { nome: "Kelvin", pront: "46690", cargo: "NTI", pass: "pmspmudar123" }, // Simulação de login
+        selectedPat: null,
+        patsDell: ["231.413","231.453","231.443","231.454","231.414","231.403","231.383","231.274","231.275","231.442","231.551","231.418","231.390","231.514","231.515","231.457","231.365","231.484","231.408","231.372","231.424","231.438","231.348","231.363","231.344","231.437","231.464","231.347","231.521","231.459","231.427","231.364","231.470"],
 
-        async login() {
-            const p = document.getElementById('l-p').value;
-            const s = document.getElementById('l-s').value;
-            if(!p || !s) return alert("Preencha os campos!");
-
-            const snap = await db.ref('usuarios/'+p).once('value');
-            if(snap.exists() && String(snap.val().pass) === String(s)) {
-                this.user = snap.val();
-                
-                // Travas de senha padrão
-                if(s === 'pmspmudar123') {
-                    const nova = prompt("SENHA PADRÃO DETECTADA! Crie uma nova senha agora:");
-                    if(nova && nova.length > 3) {
-                        db.ref('usuarios/'+p+'/pass').set(nova);
-                        this.user.pass = nova;
-                    } else { return alert("Acesso negado. Troca de senha obrigatória."); }
-                }
-                this.start();
-            } else { alert("Dados incorretos!"); }
-        },
-
-        confirmarCad() {
-            const n = document.getElementById('c-n').value, p = document.getElementById('c-p').value, c = document.getElementById('c-c').value;
-            if(!n || !p) return alert("Preencha tudo!");
-            const email = `${n.split(' ')[0].toLowerCase()}.${p}@edu.santanadeparnaiba.sp.gov.br`;
-            db.ref('usuarios/'+p).set({ nome: n, pront: p, cargo: c, pass: 'pmspmudar123', email: email, uni: document.getElementById('c-u').value })
-            .then(() => alert("Cadastro ok! Seu e-mail é: " + email));
-        },
-
-        async start() {
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('main-system').style.display = 'block';
-            document.getElementById('u-nome').innerText = this.user.nome;
-            document.getElementById('u-email').innerText = this.user.email;
-            
-            // Captura de IP e Log
-            try { this.ip = await fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>d.ip); } catch(e){ this.ip = "Local/VPN"; }
-            document.getElementById('u-ip').innerText = "IP: " + this.ip;
-            this.log("Entrou no sistema");
-
-            if(this.user.cargo === 'NTI') document.getElementById('panel-nti').classList.remove('hidden');
-            if(!this.user.foto) alert("LEMBRETE: Por favor, adicione uma foto de perfil para identificação oficial!");
-
-            this.loadMap();
+        init() {
+            this.checkSecurity();
             this.sync();
+            this.initCharts();
+            this.logAtividade("Acessou o Dashboard");
         },
 
-        log(acao) { db.ref('monitoramento').push({ u: this.user.nome, p: this.user.pront, acao, ip: this.ip, data: new Date().toLocaleString() }); },
+        checkSecurity() {
+            if(this.user.pass === "pmspmudar123") {
+                document.getElementById('modal-security').classList.add('active');
+            }
+        },
 
-        loadMap() {
-            const grid = document.getElementById('pc-grid');
-            pcData.forEach(pc => {
-                db.ref('manutencao/pc'+pc.id).on('value', s => {
-                    let status = s.val() || 'ativo';
-                    let div = document.getElementById('pc-box-'+pc.id) || document.createElement('div');
-                    div.id = 'pc-box-'+pc.id;
-                    div.className = `pc-spot ${status === 'reparo' ? 'manutencao' : ''}`;
-                    div.innerHTML = `<i class="fa fa-desktop"></i><br>${pc.id}`;
+        buildMap(tipo) {
+            const area = document.getElementById('map-area');
+            const grid = document.getElementById('grid-cinema');
+            grid.innerHTML = "";
+            if(!tipo) return area.style.display = "none";
+            area.style.display = "block";
+
+            const lista = (tipo === "Sala Info") ? this.patsDell : Array.from({length:39}, (_, i) => "259."+(939+i));
+            
+            lista.forEach(p => {
+                db.ref('status_equip/'+p).on('value', s => {
+                    const status = s.val() || 'ok';
+                    const div = document.createElement('div');
+                    div.className = `seat ${status}`;
+                    div.innerText = p.split('.')[1] || p;
                     div.onclick = () => {
-                        document.getElementById('pc-details').innerHTML = `
-                            <strong>DETALHES PC ${pc.id}</strong><br>
-                            Gabinete: ${pc.g} | Monitor: Dell<br>
-                            Patrimônio Antigo: ${pc.pa} | Patrimônio Novo: ${pc.pn}<br>
-                            Status: ${status === 'ativo' ? '✅ DISPONÍVEL' : '⚠️ EM MANUTENÇÃO'}
-                            ${this.user.cargo === 'NTI' ? `<br><button class="btn" style="background:orange; padding:5px; font-size:10px" onclick="app.togglePC(${pc.id},'${status}')">Alterar Status</button>` : ''}
-                        `;
+                        if(this.user.cargo === 'NTI') {
+                            const n = confirm("Alternar Manutenção para " + p + "?");
+                            if(n) db.ref('status_equip/'+p).set(status === 'ok' ? 'manutencao' : 'ok');
+                        } else {
+                            document.querySelectorAll('.seat').forEach(x => x.classList.remove('selected'));
+                            div.classList.add('selected');
+                            this.selectedPat = p;
+                        }
                     };
-                    if(!document.getElementById('pc-box-'+pc.id)) grid.appendChild(div);
+                    grid.appendChild(div);
                 });
             });
-
-            const cbList = document.getElementById('cb-list');
-            cbPats.forEach((pat, i) => {
-                cbList.innerHTML += `<div style="padding:3px; background:rgba(255,255,255,0.1)">CB ${i+1}: ${pat}</div>`;
-            });
         },
 
-        togglePC(id, atual) {
-            db.ref('manutencao/pc'+id).set(atual === 'ativo' ? 'reparo' : 'ativo');
-            this.log(`Alterou status PC ${id}`);
+        async confirmarReserva() {
+            const eq = document.getElementById('res-eq').value;
+            const dt = document.getElementById('res-data').value;
+            if(!dt || !eq) return alert("Preencha data e equipamento!");
+
+            // TRAVA DE CONFLITO
+            const snap = await db.ref('reservas').once('value');
+            let existe = false;
+            snap.forEach(r => {
+                if(r.val().dt === dt && r.val().eq === eq) existe = true;
+            });
+
+            if(existe) return alert("ERRO: Já existe uma reserva para este item neste horário!");
+
+            db.ref('reservas').push({
+                u: this.user.nome, pront: this.user.pront, 
+                eq: eq, pat: this.selectedPat || "Geral",
+                dt: dt, sala: document.getElementById('res-sala').value
+            });
+            this.logAtividade(`Reservou ${eq} para ${dt}`);
+            alert("Reservado com sucesso!");
         },
 
-        reservar() {
-            const eq = document.getElementById('res-eq').value, dt = document.getElementById('res-dt').value;
-            if(!dt) return alert("Selecione data/hora");
-
-            // Validação de Conflito de Horário
-            db.ref('reservas').orderByChild('dt').equalTo(dt).once('value', snap => {
-                let conflito = false;
-                snap.forEach(r => { if(r.val().eq === eq) conflito = true; });
-                
-                if(conflito) return alert("❌ ERRO: Este equipamento já está reservado neste horário por outro professor!");
-                
-                db.ref('reservas').push({ eq, sl: document.getElementById('res-sl').value, dt, u: this.user.nome });
-                this.log(`Reservou ${eq}`);
-                alert("Reserva confirmada!");
-            });
-        },
-
-        verLogs() {
-            const p = document.getElementById('search-log').value;
-            db.ref('monitoramento').orderByChild('p').equalTo(p).once('value', s => {
-                const box = document.getElementById('log-display'); box.innerHTML = "";
-                s.forEach(l => { box.innerHTML += `[${l.val().data}] ${l.val().acao} - IP: ${l.val().ip}<br>`; });
-            });
+        logAtividade(acao) {
+            const log = {
+                pront: this.user.pront, u: this.user.nome,
+                acao: acao, ip: "10.15.20." + Math.floor(Math.random()*255),
+                time: new Date().toLocaleString()
+            };
+            db.ref('logs_navegacao').push(log);
+            const view = document.getElementById('nti-log-view');
+            view.innerHTML += `<div>> [${log.pront}] ${log.acao}</div>`;
+            view.scrollTop = view.scrollHeight;
         },
 
         sync() {
             db.ref('reservas').on('value', snap => {
-                const box = document.getElementById('lista-reservas'); box.innerHTML = "";
-                snap.forEach(r => { 
-                    box.innerHTML += `<div style="padding:10px; border-bottom:1px solid #444">${r.val().dt.replace('T',' ')} - ${r.val().eq} (${r.val().u})</div>`;
+                const l = document.getElementById('lista-res'); l.innerHTML = "";
+                snap.forEach(r => {
+                    const d = r.val();
+                    l.innerHTML += `<div style="background:#252d38; padding:8px; border-radius:5px; margin-bottom:5px; font-size:11px; border-left:4px solid var(--prof)">
+                        <b>${d.eq}</b> - ${d.u}<br>${new Date(d.dt).toLocaleString()} | Sala ${d.sala}
+                    </div>`;
                 });
             });
-            const eqs = ['TV 01', 'TV 02', 'Multimídia', 'Chromebooks', 'Sala Info'];
-            const sel = document.getElementById('res-eq'); sel.innerHTML = "";
-            eqs.forEach(e => sel.innerHTML += `<option value="${e}">${e}</option>`);
+        },
+
+        initCharts() {
+            const ctx = { type: 'line', data: { labels: ['A','B','C'], datasets: [{data:[10,20,15], borderColor: '#00adef'}] }, options: {plugins:{legend:{display:false}}} };
+            new Chart(document.getElementById('c1'), ctx);
+            new Chart(document.getElementById('c2'), {...ctx, type: 'bar'});
+            new Chart(document.getElementById('c3'), {...ctx, type: 'doughnut'});
+            new Chart(document.getElementById('c4'), {...ctx, type: 'pie'});
         }
     };
+
+    app.init();
 </script>
 </body>
 </html>
