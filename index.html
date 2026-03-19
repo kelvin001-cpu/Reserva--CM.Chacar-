@@ -3,132 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Programa Conect - NTI CHÁCARA</title>
+    <title>SISTEMA NTI - MASTER DASHBOARD</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        :root {
-            --prof: #00adef; --gestao: #f1c40f; --secre: #a55eea; --cad: #2ecc71; --nti: #eb4d4b;
-            --bg-overlay: rgba(10, 11, 16, 0.94);
-        }
-
-        body, html { 
-            margin: 0; padding: 0; font-family: 'Poppins', sans-serif; color: white; min-height: 100vh;
-            background: url('https://get.wallhere.com/photo/space-planet-Earth-NASA-blue-marble-atmosphere-outer-space-astronomical-object-82285.jpg') no-repeat center center fixed;
-            background-size: cover; overflow-x: hidden;
-        }
-
-        /* BANNER SUPERIOR */
-        #alert-ribbon { background: var(--nti); color: white; padding: 12px; text-align: center; font-weight: bold; display: none; position: fixed; top: 0; width: 100%; z-index: 10000; box-shadow: 0 4px 15px rgba(0,0,0,0.5); font-family: 'Orbitron'; }
-
-        .login-container { display: flex; width: 100%; min-height: 100vh; flex-wrap: wrap; background: var(--bg-overlay); backdrop-filter: blur(8px); }
-        .sector-column { flex: 1; min-width: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; transition: 0.4s; border-right: 1px solid rgba(255,255,255,0.05); text-align: center; }
+        :root { --prof: #00adef; --gestao: #f1c40f; --nti: #eb4d4b; --cad: #2ecc71; --bg: rgba(10, 11, 16, 0.96); }
         
-        #main-system { display: none; padding: 80px 20px 20px 20px; background: var(--bg-overlay); min-height: 100vh; }
-        .grid-layout { display: grid; grid-template-columns: 350px 1fr 350px; gap: 20px; max-width: 1600px; margin: 0 auto; }
+        body, html { margin: 0; padding: 0; font-family: 'Poppins', sans-serif; color: white; background: url('https://get.wallhere.com/photo/space-planet-Earth-NASA-blue-marble-atmosphere-outer-space-astronomical-object-82285.jpg') no-repeat center center fixed; background-size: cover; }
         
-        .panel { background: rgba(22, 27, 34, 0.7); backdrop-filter: blur(20px); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
-        
-        /* ESTILO DO PRINT (NTI MASTER DASHBOARD) */
-        .nti-master-panel { border: 2px solid var(--nti) !important; box-shadow: 0 0 15px rgba(235, 77, 75, 0.2); }
-        .nti-title { font-family: 'Orbitron'; color: var(--nti); text-transform: uppercase; font-size: 1.2rem; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-        
-        input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: rgba(0,0,0,0.4); color: white; box-sizing: border-box; }
-        .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; margin-top: 5px; text-transform: uppercase; font-family: 'Orbitron'; font-size: 0.8rem; }
+        #alert-ribbon { background: var(--nti); padding: 12px; text-align: center; position: fixed; top: 0; width: 100%; z-index: 9999; display: none; font-family: 'Orbitron'; font-weight: bold; box-shadow: 0 2px 15px rgba(235, 77, 75, 0.5); }
 
-        /* MAPEAMENTO ESTILO CINEMA */
-        .map-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: 5px; margin-top: 15px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; }
-        .seat { aspect-ratio: 1; background: #2ecc71; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; transition: 0.2s; }
+        .login-container { display: flex; width: 100%; min-height: 100vh; background: var(--bg); backdrop-filter: blur(10px); }
+        .sector-column { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; border-right: 1px solid rgba(255,255,255,0.1); }
+
+        #main-system { display: none; padding: 70px 20px 20px 20px; background: var(--bg); min-height: 100vh; }
+        .grid-layout { display: grid; grid-template-columns: 320px 1fr 320px; gap: 20px; max-width: 1600px; margin: 0 auto; }
+        
+        .panel { background: rgba(22, 27, 34, 0.8); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; position: relative; }
+        
+        /* ESTILO ESPECÍFICO DO SEU PRINT (BORDA VERMELHA) */
+        .nti-border { border: 2px solid #ff4d4d !important; box-shadow: 0 0 10px rgba(255, 77, 77, 0.2); }
+        .nti-header { color: #ff4d4d; font-family: 'Orbitron'; text-transform: uppercase; font-size: 0.9rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+
+        input, select { width: 100%; padding: 10px; margin: 5px 0; border-radius: 6px; border: 1px solid #333; background: rgba(0,0,0,0.4); color: white; font-size: 0.85rem; }
+        
+        .btn { padding: 10px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; font-family: 'Orbitron'; font-size: 0.75rem; margin-top: 5px; }
+        .btn-red { background: #ff4d4d; color: white; }
+        .btn-green { background: #2ecc71; color: white; }
+        .btn-gray { background: #444; color: white; }
+
+        /* MAPEAMENTO CINEMA */
+        .map-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(35px, 1fr)); gap: 4px; margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px; }
+        .seat { aspect-ratio: 1; background: #2ecc71; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 9px; cursor: pointer; transition: 0.2s; }
         .seat.selected { background: var(--prof); border: 2px solid white; transform: scale(1.1); }
-        .seat.maintenance { background: #555 !important; cursor: not-allowed; opacity: 0.5; }
+        .seat.busy { background: #555; cursor: not-allowed; }
 
-        #force-password-change { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000001; display: none; align-items: center; justify-content: center; }
+        .status-card { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); }
+        .badge { padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
+        
         .hidden { display: none !important; }
+        #chat-box { height: 250px; overflow-y: auto; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
-    <div id="alert-ribbon">⚠️ AVISO GLOBAL: <span id="alert-text"></span></div>
-
-    <div id="force-password-change">
-        <div class="panel" style="width: 350px; text-align: center; border: 2px solid var(--nti)">
-            <h2 style="font-family: Orbitron; color: var(--nti)">SEGURANÇA</h2>
-            <p>Você está usando uma senha padrão. Crie uma nova para acessar o sistema.</p>
-            <input type="password" id="new-secure-pass" placeholder="Nova Senha">
-            <button class="btn" style="background: var(--cad)" onclick="app.processPasswordChange()">Salvar Senha</button>
-        </div>
-    </div>
+    <div id="alert-ribbon">⚠️ AVISO GLOBAL: <span id="msg-aviso"></span></div>
 
     <div class="login-container" id="login-screen">
-        <div class="sector-column"><h2>PROFESSOR</h2><input type="number" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof)" onclick="app.login('p','Professor')">Acessar</button></div>
-        <div class="sector-column"><h2>NTI</h2><input type="number" id="n-p" placeholder="ID"><input type="password" id="n-s" placeholder="Senha"><button class="btn" style="background:var(--nti)" onclick="app.login('n','NTI')">Master Login</button></div>
+        <div class="sector-column">
+            <h2 style="font-family:Orbitron; color:var(--prof)">PROFESSOR</h2>
+            <input type="number" id="p-pront" placeholder="Prontuário">
+            <input type="password" id="p-pass" placeholder="Senha">
+            <button class="btn" style="background:var(--prof)" onclick="app.login('p')">ENTRAR</button>
+        </div>
+        <div class="sector-column">
+            <h2 style="font-family:Orbitron; color:var(--nti)">NTI MASTER</h2>
+            <input type="number" id="n-pront" placeholder="ID NTI">
+            <input type="password" id="n-pass" placeholder="Senha">
+            <button class="btn" style="background:var(--nti)" onclick="app.login('n')">LOGIN MASTER</button>
+        </div>
     </div>
 
     <div id="main-system">
         <div class="grid-layout">
             
             <div class="left-col">
-                <div class="panel">
-                    <h3><i class="fa fa-calendar-plus"></i> Reservar</h3>
-                    <select id="res-eq" onchange="app.renderMap()"></select>
-                    <input type="text" id="res-sl" placeholder="Sala">
-                    <input type="datetime-local" id="res-dt">
-                    <div id="visual-map-container"></div>
-                    <button class="btn" style="background:var(--prof)" onclick="app.reservar()">Confirmar Reserva</button>
+                <div class="panel nti-border">
+                    <div class="nti-header"><i class="fa fa-shield-virus"></i> NTI Master Dashboard</div>
+                    
+                    <label style="font-size: 0.7rem;">📢 Enviar Aviso Global:</label>
+                    <input type="text" id="aviso-txt" placeholder="Texto do banner superior">
+                    <button class="btn btn-red" onclick="app.setAviso()">PUBLICAR AVISO</button>
+
+                    <h4 style="font-size: 0.75rem; margin-top: 20px;">Gerenciamento de Acessos</h4>
+                    <div id="lista-acessos" style="height: 100px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 5px; font-size: 10px; margin-bottom: 10px;">
+                        </div>
+
+                    <input type="text" id="alvo-pront" placeholder="Prontuário do Alvo">
+                    <div style="display: flex; gap: 5px;">
+                        <button class="btn btn-gray" onclick="app.resetSenha()">RESET SENHA</button>
+                        <button class="btn btn-red" onclick="app.excluirLogin()">EXCLUIR LOGIN</button>
+                    </div>
+
+                    <h4 style="font-size: 0.75rem; margin-top: 20px;">Controle do Sistema</h4>
+                    <div style="display: flex; gap: 5px;">
+                        <button class="btn btn-red" onclick="app.travar(true)">TRAVAR</button>
+                        <button class="btn btn-green" onclick="app.travar(false)">LIBERAR</button>
+                    </div>
                 </div>
 
-                <div id="nti-master-panel" class="panel nti-master-panel hidden">
-                    <div class="nti-title"><i class="fa fa-shield-halved"></i> NTI Master Dashboard</div>
-                    
-                    <label style="font-size: 12px;"><i class="fa fa-bullhorn"></i> Enviar Aviso Global:</label>
-                    <input type="text" id="input-aviso" placeholder="Texto do banner superior">
-                    <button class="btn" style="background:var(--nti); margin-bottom: 20px;" onclick="app.enviarAviso()">Publicar Aviso</button>
-
-                    <label style="font-size: 12px;">Gerenciamento de Acessos:</label>
-                    <div id="lista-usuarios-nti" style="background:rgba(0,0,0,0.3); height: 120px; overflow-y:auto; border-radius:8px; padding:10px; font-size:11px; margin-bottom:10px;">
-                        </div>
-                    
-                    <input type="number" id="target-pront" placeholder="Prontuário do Alvo">
-                    <div style="display:flex; gap:5px">
-                        <button class="btn" style="background:#555" onclick="app.resetSenha()">Reset Senha</button>
-                        <button class="btn" style="background:var(--nti)" onclick="app.excluirLogin()">Excluir Login</button>
-                    </div>
-
-                    <h4 style="font-family: Orbitron; font-size: 0.9rem; margin-top:20px">Controle do Sistema</h4>
-                    <div style="display:flex; gap:5px">
-                        <button class="btn" style="background:var(--nti)" onclick="app.travarSistema(true)">Travar</button>
-                        <button class="btn" style="background:var(--cad)" onclick="app.travarSistema(false)">Liberar</button>
-                    </div>
+                <div class="panel">
+                    <h3 style="font-family:Orbitron; font-size: 0.9rem;"><i class="fa fa-calendar-check"></i> Reservar</h3>
+                    <select id="res-equip" onchange="app.renderMap()"></select>
+                    <div id="msg-manutencao" style="color:var(--nti); font-size: 10px; margin: 5px 0;"></div>
+                    <input type="text" id="res-sala" placeholder="Sala de Destino">
+                    <input type="datetime-local" id="res-data">
+                    <div id="container-mapa"></div>
+                    <button id="btn-confirmar" class="btn" style="background:var(--prof)" onclick="app.confirmarReserva()">CONFIRMAR</button>
                 </div>
             </div>
 
             <div class="center-col">
                 <div class="panel">
-                    <h3 style="font-family: Orbitron;"><i class="fa fa-desktop"></i> Status dos Equipamentos</h3>
-                    <div id="lista-equipamentos" style="display:grid; grid-template-columns: 1fr 1fr; gap:15px">
+                    <h3 style="font-family:Orbitron;"><i class="fa fa-microchip"></i> Status dos Equipamentos</h3>
+                    <div id="grid-status" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                         </div>
                 </div>
-                
+
                 <div class="panel">
-                    <h3><i class="fa fa-clock"></i> Próximas Reservas</h3>
-                    <div id="lista-res" style="font-size: 12px;"></div>
+                    <h3><i class="fa fa-list-ul"></i> Cronograma de Hoje</h3>
+                    <div id="lista-reservas" style="font-size: 0.8rem;"></div>
                 </div>
             </div>
 
             <div class="right-col">
                 <div class="panel">
-                    <h3><i class="fa fa-comments"></i> Mural Global</h3>
-                    <div id="chat-box" style="height: 300px; overflow-y:auto; background:rgba(0,0,0,0.2); padding:10px; border-radius:10px; font-size:12px"></div>
-                    <div style="display:flex; gap:5px; margin-top:10px">
-                        <input type="text" id="chat-in" placeholder="Escreva...">
-                        <button class="btn" style="width:60px; background:var(--prof)" onclick="app.sendChat()"><i class="fa fa-paper-plane"></i></button>
+                    <h3 style="font-family:Orbitron;"><i class="fa fa-comments"></i> Mural de Avisos</h3>
+                    <div id="chat-box"></div>
+                    <div style="display: flex; gap: 5px; margin-top: 10px;">
+                        <input type="text" id="chat-input" placeholder="Sua mensagem...">
+                        <button class="btn" style="width: 50px; background: var(--prof)" onclick="app.sendMural()"><i class="fa fa-paper-plane"></i></button>
                     </div>
                 </div>
-                <button class="btn" style="background:#cc4444" onclick="location.reload()">Sair do Sistema</button>
+                <button class="btn btn-gray" onclick="location.reload()">SAIR DO SISTEMA</button>
             </div>
 
         </div>
@@ -141,113 +141,115 @@
 
     const app = {
         user: null,
-        selectedSeat: null,
-        equipData: {},
+        equipamentos: {},
+        assentoSelecionado: null,
 
-        async login(pre, cargo) {
-            const p = document.getElementById(pre+'-p').value;
-            const s = document.getElementById(pre+'-s').value;
+        async login(tipo) {
+            const p = document.getElementById(tipo+'-pront').value;
+            const s = document.getElementById(tipo+'-pass').value;
 
-            if(cargo==='NTI' && p==='46690' && s==='nti2026') { 
-                this.user={nome:'Equipe NTI', cargo:'NTI', pront:'46690'}; 
-                return this.start(); 
+            if(tipo === 'n' && p === '46690' && s === 'nti2026') {
+                this.user = {nome: 'NTI Master', cargo: 'NTI', pront: '46690'};
+                return this.iniciar();
             }
 
             const snap = await db.ref('usuarios/'+p).once('value');
-            if(snap.exists() && String(snap.val().pass) === String(s)) {
+            if(snap.exists() && snap.val().pass == s) {
                 this.user = snap.val();
-                if(['pmspmudar123', 'secretaria2026', 'pmspgestores2026'].includes(s)) {
-                    document.getElementById('force-password-change').style.display = 'flex';
-                } else { this.start(); }
-            } else alert("Acesso Negado");
+                this.iniciar();
+            } else alert("Dados incorretos!");
         },
 
-        processPasswordChange() {
-            const nv = document.getElementById('new-secure-pass').value;
-            if(nv.length < 6) return alert("Mínimo 6 caracteres");
-            db.ref('usuarios/'+this.user.pront+'/pass').set(nv).then(() => location.reload());
-        },
-
-        start() {
+        iniciar() {
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('main-system').style.display = 'block';
-            if(this.user.cargo === 'NTI') document.getElementById('nti-master-panel').classList.remove('hidden');
-
-            // Log de IP e Foto Check
+            
+            // Log de IP para o NTI ver
             fetch('https://api.ipify.org?format=json').then(r => r.json()).then(d => {
-                db.ref('logs/'+this.user.pront).set({nome: this.user.nome, ip: d.ip, cargo: this.user.cargo, time: Date.now()});
+                db.ref('logs/'+this.user.pront).set({nome: this.user.nome, cargo: this.user.cargo, ip: d.ip, t: Date.now()});
             });
 
-            this.sync();
+            this.carregarDados();
         },
 
-        sync() {
-            // Monitorar Trava e Aviso
-            db.ref('config/lock').on('value', s => { if(s.val() && this.user.cargo !== 'NTI') location.reload(); });
-            db.ref('config/aviso').on('value', s => {
-                const b = document.getElementById('alert-ribbon');
-                if(s.val()){ b.style.display='block'; document.getElementById('alert-text').innerText=s.val(); }
-                else b.style.display='none';
-            });
-
-            // Status Equipamentos (IGUAL AO PRINT)
-            const eqs = ['TV 01', 'TV 02', 'Kit Multimídia', 'Chromebooks', 'Sala Info'];
-            const sel = document.getElementById('res-eq'); sel.innerHTML = "";
+        carregarDados() {
+            // Monitorar Status Equipamentos
+            const lista = ['TV 01', 'TV 02', 'Kit Multimídia', 'Chromebooks', 'Sala Info'];
+            const sel = document.getElementById('res-equip'); sel.innerHTML = "";
             
-            eqs.forEach(name => {
-                sel.innerHTML += `<option value="${name}">${name}</option>`;
-                db.ref('equipamentos/'+name).on('value', snap => {
-                    const data = snap.val() || {status: 'ATIVO', motivo: ''};
-                    this.equipData[name] = data;
-                    this.drawEquipCards();
-                });
-            });
-
-            // Lista de Usuários no Painel NTI
-            db.ref('logs').on('value', s => {
-                const box = document.getElementById('lista-usuarios-nti'); box.innerHTML = "";
-                s.forEach(u => {
-                    box.innerHTML += `<div>[${u.val().cargo}] ${u.val().nome} (${u.val().ip})</div>`;
+            lista.forEach(eq => {
+                sel.innerHTML += `<option value="${eq}">${eq}</option>`;
+                db.ref('status_equip/'+eq).on('value', snap => {
+                    this.equipamentos[eq] = snap.val() || {estado: 'ATIVO', motivo: ''};
+                    this.renderizarCards();
                 });
             });
 
             // Mural
-            db.ref('chat').limitToLast(20).on('value', s => {
+            db.ref('mural').limitToLast(15).on('value', s => {
                 const box = document.getElementById('chat-box'); box.innerHTML = "";
-                s.forEach(m => { box.innerHTML += `<div><b>${m.val().n}:</b> ${m.val().t}</div>`; });
+                s.forEach(m => { box.innerHTML += `<div><b>${m.val().u}:</b> ${m.val().t}</div>`; });
                 box.scrollTop = box.scrollHeight;
+            });
+
+            // Aviso Global
+            db.ref('config/aviso').on('value', s => {
+                const r = document.getElementById('alert-ribbon');
+                if(s.val()) { r.style.display='block'; document.getElementById('msg-aviso').innerText=s.val(); }
+                else r.style.display='none';
+            });
+
+            // Logs NTI
+            db.ref('logs').on('value', s => {
+                const box = document.getElementById('lista-acessos'); box.innerHTML = "";
+                s.forEach(l => { box.innerHTML += `<div>[${l.val().cargo}] ${l.val().nome} (${l.val().ip})</div>`; });
+            });
+
+            // Reservas
+            db.ref('reservas').on('value', s => {
+                const box = document.getElementById('lista-reservas'); box.innerHTML = "";
+                s.forEach(r => { box.innerHTML += `<div style="border-bottom:1px solid #333; padding:5px">${r.val().dt.split('T')[1]} - ${r.val().eq} - ${r.val().u}</div>`; });
             });
         },
 
-        drawEquipCards() {
-            const container = document.getElementById('lista-equipamentos');
-            container.innerHTML = "";
-            for(let name in this.equipData) {
-                const info = this.equipData[name];
-                container.innerHTML += `
-                    <div class="panel" style="margin:0; padding:15px; background: rgba(255,255,255,0.03)">
-                        <div style="font-family:Orbitron; font-size:13px">${name}</div>
-                        <div style="background:${info.status==='ATIVO'?'#2ecc71':'#eb4d4b'}; display:inline-block; padding:2px 8px; border-radius:4px; font-size:9px; font-weight:bold; margin:5px 0">
-                            ${info.status}
-                        </div>
-                        ${this.user.cargo==='NTI' ? `<br><button class="btn" style="width:auto; padding:3px 10px; font-size:10px; background:#444" onclick="app.alterarStatus('${name}')">Alterar</button>` : ''}
-                        ${info.status === 'MANUTENÇÃO' ? `<div style="font-size:9px; color:#aaa">${info.motivo}</div>` : ''}
+        renderizarCards() {
+            const grid = document.getElementById('grid-status'); grid.innerHTML = "";
+            for(let name in this.equipamentos) {
+                const info = this.equipamentos[name];
+                grid.innerHTML += `
+                    <div class="status-card">
+                        <div style="font-family:Orbitron; font-size:12px; margin-bottom:5px">${name}</div>
+                        <span class="badge" style="background:${info.estado==='ATIVO'?'#2ecc71':'#eb4d4b'}">${info.estado}</span>
+                        ${this.user.cargo === 'NTI' ? `<br><button class="btn" style="width:auto; padding:2px 10px; margin-top:10px; font-size:9px; background:#444" onclick="app.alterarStatus('${name}')">ALTERAR</button>` : ''}
+                        ${info.estado === 'MANUTENÇÃO' ? `<div style="font-size:9px; color:#999; margin-top:5px">Motivo: ${info.motivo}</div>` : ''}
                     </div>`;
             }
+            this.renderMap();
         },
 
         alterarStatus(name) {
-            const acao = confirm(`Colocar ${name} em MANUTENÇÃO?`) ? 'MANUTENÇÃO' : 'ATIVO';
-            let motivo = "";
-            if(acao === 'MANUTENÇÃO') motivo = prompt("Qual o problema técnico?");
-            db.ref('equipamentos/'+name).set({status: acao, motivo: motivo || ''});
+            const novo = confirm("Colocar em MANUTENÇÃO?") ? 'MANUTENÇÃO' : 'ATIVO';
+            let mot = "";
+            if(novo === 'MANUTENÇÃO') mot = prompt("Qual o defeito?");
+            db.ref('status_equip/'+name).set({estado: novo, motivo: mot || ''});
         },
 
         renderMap() {
-            const eq = document.getElementById('res-eq').value;
-            const container = document.getElementById('visual-map-container');
+            const eq = document.getElementById('res-equip').value;
+            const container = document.getElementById('container-mapa');
+            const btn = document.getElementById('btn-confirmar');
+            const msg = document.getElementById('msg-manutencao');
+            
             container.innerHTML = "";
-            if(['Chromebooks', 'Sala Info'].includes(eq)) {
+            this.assentoSelecionado = null;
+
+            if(this.equipamentos[eq]?.estado === 'MANUTENÇÃO') {
+                msg.innerText = "⚠️ BLOQUEADO PELO NTI: " + this.equipamentos[eq].motivo;
+                btn.disabled = true; btn.style.opacity = "0.3";
+                return;
+            } else { msg.innerText = ""; btn.disabled = false; btn.style.opacity = "1"; }
+
+            if(['Sala Info', 'Chromebooks'].includes(eq)) {
                 const total = eq === 'Sala Info' ? 33 : 39;
                 container.innerHTML = `<div class="map-grid"></div>`;
                 const grid = container.querySelector('.map-grid');
@@ -257,32 +259,25 @@
                     seat.onclick = () => {
                         document.querySelectorAll('.seat').forEach(s => s.classList.remove('selected'));
                         seat.classList.add('selected');
-                        this.selectedSeat = i;
+                        this.assentoSelecionado = i;
                     };
                     grid.appendChild(seat);
                 }
             }
         },
 
-        reservar() {
-            const eq = document.getElementById('res-eq').value, sl = document.getElementById('res-sl').value, dt = document.getElementById('res-dt').value;
-            if(this.equipData[eq].status === 'MANUTENÇÃO') return alert("BLOQUEADO: Equipamento em manutenção!");
-            if(!dt || !sl) return alert("Preencha os dados");
-            db.ref('reservas').push({eq, sl, dt, seat: this.selectedSeat || 'Geral', u: this.user.nome});
-            alert("Reservado com sucesso!");
+        confirmarReserva() {
+            const eq = document.getElementById('res-equip').value, sl = document.getElementById('res-sala').value, dt = document.getElementById('res-data').value;
+            if(!dt || !sl) return alert("Preencha data e sala!");
+            db.ref('reservas').push({eq, sl, dt, u: this.user.nome, assento: this.assentoSelecionado || 'Geral'});
+            alert("Reservado!");
         },
 
-        enviarAviso() { db.ref('config/aviso').set(document.getElementById('input-aviso').value); },
-        travarSistema(v) { db.ref('config/lock').set(v); },
-        resetSenha() { 
-            const p = document.getElementById('target-pront').value;
-            if(p) db.ref('usuarios/'+p+'/pass').set('pmspmudar123').then(() => alert("Senha Resetada!"));
-        },
-        excluirLogin() {
-            const p = document.getElementById('target-pront').value;
-            if(p && confirm("Excluir permanentemente?")) db.ref('usuarios/'+p).remove().then(() => alert("Excluído!"));
-        },
-        sendChat() { const t = document.getElementById('chat-in').value; if(t) db.ref('chat').push({n:this.user.nome, t}); document.getElementById('chat-in').value=""; }
+        setAviso() { db.ref('config/aviso').set(document.getElementById('aviso-txt').value); },
+        travar(v) { db.ref('config/lock').set(v); },
+        resetSenha() { const p = document.getElementById('alvo-pront').value; if(p) db.ref('usuarios/'+p+'/pass').set('pmspmudar123'); },
+        excluirLogin() { const p = document.getElementById('alvo-pront').value; if(p && confirm("Excluir?")) db.ref('usuarios/'+p).remove(); },
+        sendMural() { const t = document.getElementById('chat-input').value; if(t) db.ref('mural').push({u: this.user.nome, t}); document.getElementById('chat-input').value=""; }
     };
 </script>
 </body>
