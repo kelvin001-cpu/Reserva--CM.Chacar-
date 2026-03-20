@@ -22,6 +22,11 @@
             background-size: cover; overflow-x: hidden;
         }
 
+        /* Notificação */
+        #notification-container { position: fixed; bottom: 20px; right: 20px; z-index: 10001; }
+        .toast { background: var(--prof); color: white; padding: 15px 25px; border-radius: 8px; margin-top: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: slideIn 0.5s, fadeOut 0.5s 3.5s; border-left: 5px solid white; }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
         .slogan-container { width: 100%; text-align: center; padding: 40px 0 10px 0; }
         .slogan-main { font-family: 'Orbitron'; font-size: 2.5rem; color: var(--prof); text-shadow: 0 0 15px rgba(0,173,239,0.6); }
 
@@ -38,19 +43,19 @@
         .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; margin-top: 5px; text-transform: uppercase; color: white; }
         .btn:hover { transform: translateY(-2px); filter: brightness(1.2); }
 
-        #chat-box, #chat-nti-box { height: 200px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; margin-bottom: 10px; }
+        #chat-box, #chat-nti-box { height: 200px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; margin-bottom: 10px; display: flex; flex-direction: column; }
         .msg { padding: 8px 12px; border-radius: 10px; margin-bottom: 5px; font-size: 13px; width: fit-content; max-width: 80%; }
         .msg-in { background: #3d3d3d; align-self: flex-start; }
-        .msg-out { background: #005c4b; align-self: flex-end; margin-left: auto; }
+        .msg-out { background: #005c4b; align-self: flex-end; }
 
         .res-item { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; }
-        
         #lock-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
+
+    <div id="notification-container"></div>
 
     <div id="lock-overlay">
         <h1 style="font-family: Orbitron; color: var(--nti)">SISTEMA TRAVADO PELO NTI</h1>
@@ -131,12 +136,6 @@
                         <button class="btn" style="background:var(--cad); margin-top:10px" onclick="app.finalizarChamado()">Finalizar</button>
                     </div>
                 </div>
-
-                <div id="nti-master-panel" class="panel hidden">
-                    <h3 style="color:var(--nti)">NTI CONTROLS</h3>
-                    <button class="btn" style="background:red" onclick="app.setLock(true)">TRAVAR SISTEMA</button>
-                    <button class="btn" style="background:green" onclick="app.setLock(false)">DESTRAVAR</button>
-                </div>
             </div>
 
             <div class="center-col">
@@ -178,21 +177,36 @@
     const app = {
         user: null,
         currentTicket: null,
-        // VIPs que entram sem senha
         vipsGestao: ["44244", "35102", "39966", "46690"],
         vipsSecre: ["46684", "4236", "46690"],
+        initialLoad: true, // Para não notificar mensagens antigas ao entrar
+
+        // Sistema de Notificação
+        notify(msg, color = "var(--prof)") {
+            const container = document.getElementById('notification-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.style.background = color;
+            toast.innerHTML = `<i class="fa fa-bell"></i> ${msg}`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+            
+            // Som opcional (beep discreto)
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioCtx.createOscillator();
+            oscillator.type = 'sine'; oscillator.frequency.setValueAtTime(440, audioCtx.currentTime);
+            const gain = audioCtx.createGain(); gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            oscillator.connect(gain); gain.connect(audioCtx.destination);
+            oscillator.start(); oscillator.stop(audioCtx.currentTime + 0.1);
+        },
 
         async login(pre, cargo) {
             const p = document.getElementById(pre+'-p').value;
             const s = document.getElementById(pre+'-s')?.value;
-
-            // Logica Master NTI
             if(cargo==='NTI' && p==='46690' && s==='nti2026') { 
                 this.user={nome:'Kelvin (NTI)', cargo:'NTI', pront:'46690'}; 
                 return this.start(); 
             }
-            
-            // Verifica se é um VIP (Login sem senha)
             if(cargo === 'Gestão' && this.vipsGestao.includes(p)) {
                 this.user={nome:'Gestor VIP', cargo:'Gestão', pront:p};
                 return this.start();
@@ -201,44 +215,38 @@
                 this.user={nome:'Secretaria VIP', cargo:'Secretaria', pront:p};
                 return this.start();
             }
-
-            // Se não for VIP ou for Professor, busca no banco e exige senha
             const snap = await db.ref('usuarios/'+p).once('value');
             if(snap.exists()) {
                 const dados = snap.val();
-                if(String(dados.pass) === String(s)) {
-                    this.user = dados;
-                    this.start();
-                } else { alert("Senha incorreta para este prontuário."); }
-            } else { alert("Usuário não encontrado. Peça para cadastrar."); }
-        },
-
-        cadastrar() {
-            const n = document.getElementById('c-n').value;
-            const p = document.getElementById('c-p').value;
-            const c = document.getElementById('c-c').value;
-            if(!n || !p) return alert("Preencha nome e prontuário.");
-            
-            let padrao = c === "Secretaria" ? "secretaria2026" : (c === "Gestão" ? "pmspgestores2026" : "pmspmudar123");
-            db.ref('usuarios/'+p).set({ nome: n, pront: p, cargo: c, pass: padrao })
-              .then(() => alert("Cadastrado! Senha padrão: " + padrao));
+                if(String(dados.pass) === String(s)) { this.user = dados; this.start(); }
+                else { alert("Senha incorreta."); }
+            } else { alert("Não encontrado."); }
         },
 
         start() {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('main-system').style.display = 'block';
             if(this.user.cargo === 'NTI' || this.user.cargo === 'Gestão') {
-                document.getElementById('nti-master-panel').classList.remove('hidden');
-                document.getElementById('nti-charts-area').classList.remove('hidden');
+                document.getElementById('nti-charts-area')?.classList.remove('hidden');
                 this.initCharts();
             }
             this.syncData();
             this.carregarEquipamentos();
+            this.notify(`Bem-vindo, ${this.user.nome}!`);
+            setTimeout(() => this.initialLoad = false, 2000);
         },
 
         syncData() {
             db.ref('lock').on('value', s => { 
                 document.getElementById('lock-overlay').style.display = (s.val() && this.user.cargo !== 'NTI') ? 'flex' : 'none';
+            });
+
+            // Mural com Notificação
+            db.ref('chat').limitToLast(1).on('child_added', snap => {
+                const d = snap.val();
+                if(!this.initialLoad && d.n !== this.user.nome) {
+                    this.notify(`Mural: ${d.n} enviou uma mensagem`);
+                }
             });
 
             db.ref('chat').limitToLast(15).on('value', snap => {
@@ -254,7 +262,7 @@
                 const box = document.getElementById('lista-res'); box.innerHTML = "";
                 snap.forEach(r => {
                     let d = r.val();
-                    box.innerHTML += `<div class="res-item"><span><b>${d.eq}</b> p/ ${d.u}<br><small>Sala ${d.sl} - ${new Date(d.dt).toLocaleString()}</small></span><button class="btn" style="width:30px; background:red" onclick="app.baixarReserva('${r.key}')">X</button></div>`;
+                    box.innerHTML += `<div class="res-item"><span><b>${d.eq}</b> - ${d.u}</span><button class="btn" style="width:30px; background:red" onclick="app.baixarReserva('${r.key}')">X</button></div>`;
                 });
             });
 
@@ -271,6 +279,12 @@
         },
 
         syncChatNTI() {
+            db.ref('chat_nti/'+this.currentTicket).limitToLast(1).on('child_added', snap => {
+                if(!this.initialLoad && snap.val().n !== this.user.nome) {
+                    this.notify(`Suporte: Nova mensagem do NTI`, "var(--nti)");
+                }
+            });
+
             db.ref('chat_nti/'+this.currentTicket).on('value', snap => {
                 const box = document.getElementById('chat-nti-box'); box.innerHTML = "";
                 snap.forEach(m => {
@@ -284,15 +298,14 @@
             const eqs = ['TV 01', 'TV 02', 'Kit Multimídia', 'Chromebooks', 'Sala Info'];
             const sel = document.getElementById('res-eq');
             const lista = document.getElementById('lista-equipamentos');
-            sel.innerHTML = ""; 
+            sel.innerHTML = ""; lista.innerHTML = "";
             eqs.forEach(e => {
                 sel.innerHTML += `<option value="${e}">${e}</option>`;
                 db.ref('equipamentos/'+e).on('value', snap => {
                     let d = snap.val() || { status: 'ativo' };
                     let id = 'eq-' + e.replace(/\s/g, '');
-                    let html = `<b>${e}</b><br><span class="status-badge ${d.status === 'ativo' ? 'bg-ativo' : 'bg-manutencao'}" style="background:${d.status==='ativo'?'#2ecc71':'#eb4d4b'}">${d.status}</span>`;
-                    if(this.user.cargo === 'NTI') html += `<br><button class="btn" style="padding:2px; font-size:9px; background:#555" onclick="app.toggleManutencao('${e}', '${d.status}')">Alternar</button>`;
-                    
+                    let html = `<b>${e}</b><br><span class="status-badge" style="background:${d.status==='ativo'?'#2ecc71':'#eb4d4b'}">${d.status}</span>`;
+                    if(this.user.cargo === 'NTI') html += `<br><button class="btn" style="padding:2px; font-size:9px; background:#555" onclick="app.toggleManutencao('${e}', '${d.status}')">Trocar</button>`;
                     let el = document.getElementById(id);
                     if(el) el.innerHTML = html;
                     else {
@@ -306,18 +319,24 @@
 
         toggleManutencao(id, st) { db.ref('equipamentos/'+id).set({ status: st === 'ativo' ? 'manutencao' : 'ativo' }); },
         baixarReserva(id) { if(confirm("Liberar recurso?")) db.ref('reservas/'+id).remove(); },
-        abrirChamado() { db.ref('chamados').push({ u: this.user.nome, pront: this.user.pront, t: document.getElementById('chamado-desc').value, status: 'aberto' }); },
-        sendChatNTI() { db.ref('chat_nti/'+this.currentTicket).push({ n: this.user.nome, t: document.getElementById('chat-nti-in').value }); document.getElementById('chat-nti-in').value=""; },
-        finalizarChamado() { db.ref('chamados/'+this.currentTicket+'/status').set('resolvido'); document.getElementById('active-ticket-area').classList.add('hidden'); },
-        reservar() { db.ref('reservas').push({ eq: document.getElementById('res-eq').value, sl: document.getElementById('res-sl').value, dt: document.getElementById('res-dt').value, u: this.user.nome }); },
-        sendChat() { if(!document.getElementById('chat-in').value) return; db.ref('chat').push({ n: this.user.nome, t: document.getElementById('chat-in').value }); document.getElementById('chat-in').value=""; },
-        setLock(v) { db.ref('lock').set(v); },
-        
+        abrirChamado() { db.ref('chamados').push({ u: this.user.nome, pront: this.user.pront, t: document.getElementById('chamado-desc').value, status: 'aberto' }); this.notify("Chamado aberto!"); },
+        sendChatNTI() { 
+            const val = document.getElementById('chat-nti-in').value;
+            if(!val) return;
+            db.ref('chat_nti/'+this.currentTicket).push({ n: this.user.nome, t: val }); 
+            document.getElementById('chat-nti-in').value=""; 
+        },
+        finalizarChamado() { db.ref('chamados/'+this.currentTicket+'/status').set('resolvido'); document.getElementById('active-ticket-area').classList.add('hidden'); this.notify("Atendimento encerrado."); },
+        reservar() { db.ref('reservas').push({ eq: document.getElementById('res-eq').value, sl: document.getElementById('res-sl').value, dt: document.getElementById('res-dt').value, u: this.user.nome }); this.notify("Reserva feita!"); },
+        sendChat() { 
+            const val = document.getElementById('chat-in').value;
+            if(!val) return;
+            db.ref('chat').push({ n: this.user.nome, t: val }); 
+            document.getElementById('chat-in').value=""; 
+        },
         initCharts() {
             const ctx1 = document.getElementById('chartUsers').getContext('2d');
-            new Chart(ctx1, { type: 'line', data: { labels: ['08h','12h','16h'], datasets: [{ label: 'Acessos', data: [10, 25, 12], borderColor: '#00adef', tension: 0.4 }] }, options: { plugins: { legend: { display: false } } } });
-            const ctx2 = document.getElementById('chartEquip').getContext('2d');
-            new Chart(ctx2, { type: 'doughnut', data: { labels: ['Uso','Livre'], datasets: [{ data: [40, 60], backgroundColor: ['#f1c40f', '#2ecc71'] }] }, options: { plugins: { legend: { display: false } } } });
+            new Chart(ctx1, { type: 'line', data: { labels: ['Manhã','Tarde','Noite'], datasets: [{ label: 'Uso', data: [12, 19, 8], borderColor: '#00adef' }] } });
         }
     };
 </script>
