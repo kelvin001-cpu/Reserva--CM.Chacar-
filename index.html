@@ -14,6 +14,7 @@
     <style>
         :root {
             --prof: #00adef; --gestao: #f1c40f; --secre: #a55eea; --cad: #2ecc71; --ntei: #eb4d4b;
+            --smeti: #C0C0C0; /* Prata */
             --hw-color: #e67e22; --sw-color: #3498db; --plat-color: #1dd1a1;
             --bg-overlay: rgba(10, 11, 16, 0.92);
         }
@@ -31,7 +32,7 @@
         #alert-ribbon { background: var(--ntei); color: white; padding: 12px; text-align: center; font-weight: bold; display: none; position: fixed; top: 0; width: 100%; z-index: 10000; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
 
         .login-container { display: flex; width: 100%; min-height: 100vh; flex-wrap: wrap; background: var(--bg-overlay); backdrop-filter: blur(8px); }
-        .sector-column { flex: 1; min-width: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; transition: 0.4s; border-right: 1px solid rgba(255,255,255,0.05); text-align: center; }
+        .sector-column { flex: 1; min-width: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 10px; transition: 0.4s; border-right: 1px solid rgba(255,255,255,0.05); text-align: center; }
         .sector-column:hover { background: rgba(255,255,255,0.03); transform: scale(1.02); }
         
         #main-system { display: none; padding: 80px 20px 20px 20px; background: var(--bg-overlay); min-height: 100vh; animation: fadeIn 1s; }
@@ -48,14 +49,14 @@
         .msg-in { background: #3d3d3d; align-self: flex-start; }
         .msg-out { background: #005c4b; align-self: flex-end; }
 
-        .badge { padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
         #lock-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 999999; flex-direction: column; align-items: center; justify-content: center; }
         .hidden { display: none !important; }
 
-        /* Estilo da Tabela de Alunos */
         .student-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 10px; color: #fff; }
         .student-table th { background: rgba(255,255,255,0.1); padding: 8px; text-align: left; border-bottom: 2px solid var(--prof); }
         .student-table td { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        
+        .chart-container { position: relative; height: 150px; width: 100%; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -75,13 +76,21 @@
         <div class="sector-column"><i class="fa fa-graduation-cap fa-3x" style="color:var(--prof)"></i><h2>PROFESSOR</h2><input type="number" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof); color:white" onclick="app.login('p','Professor')">Acessar</button></div>
         <div class="sector-column"><i class="fa fa-user-tie fa-3x" style="color:var(--gestao)"></i><h2>GESTÃO</h2><input type="number" id="g-p" placeholder="Prontuário"><input type="password" id="g-s" placeholder="Senha"><button class="btn" style="background:var(--gestao)" onclick="app.login('g','Gestão')">Acessar</button></div>
         <div class="sector-column"><i class="fa fa-building-columns fa-3x" style="color:var(--secre)"></i><h2>SECRETARIA</h2><input type="number" id="s-p" placeholder="Prontuário"><input type="password" id="s-s" placeholder="Senha"><button class="btn" style="background:var(--secre); color:white" onclick="app.login('s','Secretaria')">Acessar</button></div>
-        <div class="sector-column" style="background: rgba(46, 204, 113, 0.05)"><h2>CADASTRO</h2><input type="text" id="c-n" placeholder="Nome Completo"><input type="number" id="c-p" placeholder="Prontuário"><select id="c-c"><option value="Professor">Professor</option><option value="Gestão">Gestão</option><option value="Secretaria">Secretaria</option></select><button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Criar Conta</button></div>
+        <div class="sector-column" style="background: rgba(46, 204, 113, 0.05)"><h2>CADASTRO</h2><input type="text" id="c-n" placeholder="Nome Completo"><input type="number" id="c-p" placeholder="Prontuário"><input type="email" id="c-e" placeholder="E-mail @edu"><select id="c-c"><option value="Professor">Professor</option><option value="Gestão">Gestão</option><option value="Secretaria">Secretaria</option></select><button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Criar Conta</button></div>
         <div class="sector-column"><i class="fa fa-terminal fa-3x" style="color:var(--ntei)"></i><h2>NTEi</h2><input type="number" id="n-p" placeholder="ID"><input type="password" id="n-s" placeholder="Senha"><button class="btn" style="background:var(--ntei); color:white" onclick="app.login('n','NTEi')">Master Login</button></div>
+        <div class="sector-column" style="border:none"><i class="fa fa-chart-line fa-3x" style="color:var(--smeti)"></i><h2>SMETi</h2><input type="email" id="sm-e" placeholder="E-mail Institucional"><input type="password" id="sm-s" placeholder="Senha"><button class="btn" style="background:var(--smeti); color:black" onclick="app.login('sm','SMETi')">Gerenciar</button></div>
     </div>
 
     <div id="main-system">
         <div class="grid-layout">
             <div class="left-col">
+                <div id="panel-smeti" class="panel hidden" style="border: 2px solid var(--smeti)">
+                    <h3 style="color:var(--smeti)"><i class="fa fa-briefcase"></i> PAINEL SMETi</h3>
+                    <p id="smeti-welcome" style="font-size:12px"></p>
+                    <div class="chart-container"><canvas id="chart-smeti-colegio"></canvas></div>
+                    <div id="smeti-estagiario" class="chart-container hidden"><canvas id="chart-estagiario"></canvas></div>
+                </div>
+
                 <div class="panel">
                     <h3><i class="fa fa-calendar-plus"></i> Nova Reserva</h3>
                     <select id="res-eq"></select>
@@ -92,6 +101,11 @@
 
                 <div class="panel">
                     <h3><i class="fa fa-book-open"></i> Plataformas</h3>
+                    <div id="plat-links" class="hidden" style="margin-bottom:10px; background:rgba(255,255,255,0.1); padding:10px; border-radius:5px">
+                        <p style="font-size:11px; margin:0">Acesse com os logins cadastrados abaixo:</p>
+                        <a href="https://www.matific.com" target="_blank" style="color:var(--plat-color); font-size:12px">Abrir Matific</a><br>
+                        <a href="https://www.elefanteletrado.com.br" target="_blank" style="color:#54a0ff; font-size:12px">Abrir Elefante Letrado</a>
+                    </div>
                     <div style="display:flex; gap:10px">
                         <button class="btn" style="background:#54a0ff; font-size: 11px" onclick="app.pedirAcesso('Elefante Letrado')">Elefante</button>
                         <button class="btn" style="background:#1dd1a1; font-size: 11px" onclick="app.pedirAcesso('Matific')">Matific</button>
@@ -99,7 +113,8 @@
                 </div>
 
                 <div class="panel">
-                    <h3><i class="fa fa-users-cog"></i> Lista de Alunos</h3>
+                    <h3><i class="fa fa-users-cog"></i> Login dos Alunos</h3>
+                    <p style="font-size:10px; color:#aaa">Traga o papel dos logins, eu cadastro todos aqui.</p>
                     <input type="text" id="al-nome" placeholder="Nome do Aluno">
                     <input type="text" id="al-user" placeholder="Usuário">
                     <input type="text" id="al-pass" placeholder="Senha">
@@ -110,19 +125,14 @@
                         </table>
                     </div>
                 </div>
-
-                <div id="ntei-master-panel" class="panel hidden" style="border: 2px solid var(--ntei)">
-                    <h3 style="color:var(--ntei)"><i class="fa fa-shield-halved"></i> NTEi MASTER</h3>
-                    <input type="text" id="input-aviso" placeholder="Texto do aviso global...">
-                    <button class="btn" style="background:var(--ntei)" onclick="app.enviarAviso()">Publicar Aviso</button>
-                    <div style="display:flex; gap:10px; margin-top:10px">
-                        <button class="btn" style="background:red" onclick="app.setLock(true)">TRAVAR</button>
-                        <button class="btn" style="background:green" onclick="app.setLock(false)">LIBERAR</button>
-                    </div>
-                </div>
             </div>
 
             <div class="center-col">
+                <div id="panel-ntei-graficos" class="panel hidden">
+                    <h3><i class="fa fa-chart-pie"></i> Estatísticas NTEi</h3>
+                    <div class="chart-container"><canvas id="chart-ntei-chamados"></canvas></div>
+                </div>
+
                 <div class="panel">
                     <h3><i class="fa fa-tools"></i> Fila de Chamados NTEi</h3>
                     <div id="lista-chamados-nti" style="max-height:400px; overflow-y:auto"></div>
@@ -140,11 +150,6 @@
                     <input type="text" id="chamado-desc" placeholder="Qual o problema?">
                     <button class="btn" style="background:var(--ntei); color:white" onclick="app.abrirChamado()">Abrir Chamado</button>
                 </div>
-
-                <div class="panel">
-                    <h3><i class="fa fa-list-ul"></i> Cronograma de Uso</h3>
-                    <div id="lista-res" style="max-height:250px; overflow-y:auto"></div>
-                </div>
             </div>
 
             <div class="right-col">
@@ -158,7 +163,7 @@
                 </div>
 
                 <div id="active-ticket-area" class="panel hidden" style="border: 1px solid var(--prof)">
-                    <h3 id="ticket-title"><i class="fa fa-headset"></i> Chat NTEi</h3>
+                    <h3 id="ticket-title"><i class="fa fa-headset"></i> Chat Atendimento</h3>
                     <div id="chat-nti-box"></div>
                     <div style="display:flex; gap:5px; margin-top:10px">
                         <input type="text" id="chat-nti-in" placeholder="Mensagem...">
@@ -182,32 +187,98 @@
         currentTicket: null,
 
         async login(pre, cargo) {
-            const p = document.getElementById(pre+'-p').value, s = document.getElementById(pre+'-s').value;
-            if(cargo==='NTEi' && p==='46690' && s==='nti2026') { this.user={nome:'Kelvin (NTEi)', cargo:'NTEi', pront:'46690'}; return this.start(); }
+            const p = document.getElementById(pre+'-p')?.value || "";
+            const s = document.getElementById(pre+'-s').value;
+            const e = document.getElementById(pre+'-e')?.value || "";
+
+            // Lógica SMETI
+            if(cargo === 'SMETi') {
+                const autorizados = {
+                    "matheus.36308@edu.santanadeparnaiba.sp.gov.br": "Matheus Chefe",
+                    "renato.35040@edu.santanadeparnaiba.sp.gov.br": "Renato Chefe",
+                    "ntei@edu.santanadeparnaiba.sp.gov.br": "NTEi Analista"
+                };
+                if(autorizados[e] && s === "smeti2026") {
+                    this.user = { nome: autorizados[e], cargo: 'SMETi', email: e };
+                    return this.start();
+                }
+                return alert("Acesso restrito ao SMETi.");
+            }
+
+            // Lógica Master NTEi
+            if(cargo==='NTEi' && p==='46690' && s==='nti2026') { 
+                this.user={nome:'Kelvin (NTEi)', cargo:'NTEi', pront:'46690'}; 
+                return this.start(); 
+            }
+
             const snap = await db.ref('usuarios/'+p).once('value');
-            if(snap.exists() && String(snap.val().pass) === String(s)) { this.user = snap.val(); this.start(); } else { alert("Dados incorretos."); }
+            if(snap.exists() && String(snap.val().pass) === String(s)) { 
+                this.user = snap.val(); 
+                this.start(); 
+            } else { alert("Dados incorretos."); }
         },
 
         confirmarCad() {
-            const n = document.getElementById('c-n').value, p = document.getElementById('c-p').value, c = document.getElementById('c-c').value;
+            const n = document.getElementById('c-n').value, p = document.getElementById('c-p').value, 
+                  c = document.getElementById('c-c').value, e = document.getElementById('c-e').value;
             let pass = c === "Secretaria" ? "secretaria2026" : (c === "Gestão" ? "pmspgestores2026" : "pmspmudar123");
-            db.ref('usuarios/'+p).set({ nome: n, pront: p, cargo: c, pass: pass }).then(() => alert("Conta criada! Senha: " + pass));
+            db.ref('usuarios/'+p).set({ nome: n, pront: p, cargo: c, pass: pass, email: e }).then(() => alert("Conta criada! Senha: " + pass));
         },
 
         start() {
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('main-system').style.display = 'block';
-            if(this.user.cargo === 'NTEi') document.getElementById('ntei-master-panel').classList.remove('hidden');
+            
+            if(this.user.cargo === 'NTEi' || this.user.cargo === 'SMETi') {
+                document.getElementById('panel-ntei-graficos').classList.remove('hidden');
+                this.renderChartsNTEi();
+            }
+
+            if(this.user.cargo === 'SMETi') {
+                document.getElementById('panel-smeti').classList.remove('hidden');
+                document.getElementById('smeti-welcome').innerText = `Logado como: ${this.user.nome}`;
+                if(this.user.nome.includes('Chefe')) {
+                    document.getElementById('smeti-estagiario').classList.remove('hidden');
+                }
+                this.renderChartsSMETi();
+            }
+
             this.syncData();
             this.carregarEquipamentos();
             this.carregarAlunos();
         },
 
-        updateSubCategorias() {
-            const t = document.getElementById('chamado-tipo').value, s = document.getElementById('chamado-sub');
-            s.innerHTML = ""; s.classList.remove('hidden');
-            let opts = t==='Hardware' ? ['Chromebook', 'PC', 'Impressora', 'Rede'] : (t==='Software' ? ['Sisgem', 'Siseduc', 'Email'] : ['Reset Email', 'Reset Sisgem', 'Plataformas']);
-            opts.forEach(o => s.innerHTML += `<option value="${o}">${o}</option>`);
+        renderChartsNTEi() {
+            new Chart(document.getElementById('chart-ntei-chamados'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Reservas', 'Chamados', 'Plataformas'],
+                    datasets: [{ data: [12, 19, 7], backgroundColor: ['#00adef', '#eb4d4b', '#1dd1a1'] }]
+                },
+                options: { maintainAspectRatio: false, plugins: { legend: { labels: { color: 'white', font: { size: 10 } } } } }
+            });
+        },
+
+        renderChartsSMETi() {
+            new Chart(document.getElementById('chart-smeti-colegio'), {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Fev', 'Mar', 'Abr'],
+                    datasets: [{ label: 'Andamento Colégio %', data: [65, 78, 82, 90], backgroundColor: '#C0C0C0' }]
+                },
+                options: { maintainAspectRatio: false, scales: { y: { ticks: { color: 'white' } }, x: { ticks: { color: 'white' } } } }
+            });
+
+            if(this.user.nome.includes('Chefe')) {
+                new Chart(document.getElementById('chart-estagiario'), {
+                    type: 'line',
+                    data: {
+                        labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex'],
+                        datasets: [{ label: 'Produtividade Estagiário', data: [5, 8, 4, 9, 10], borderColor: '#2ecc71', tension: 0.4 }]
+                    },
+                    options: { maintainAspectRatio: false }
+                });
+            }
         },
 
         pedirAcesso(plat) {
@@ -217,35 +288,31 @@
             alert("Solicitado ao NTEi!");
         },
 
-        abrirChamado() {
-            db.ref('chamados').push({ u: this.user.nome, pront: this.user.pront, tipo: document.getElementById('chamado-tipo').value, sub: document.getElementById('chamado-sub').value, t: document.getElementById('chamado-desc').value, status: 'aberto', data: Date.now() });
-            document.getElementById('chamado-desc').value = "";
-        },
-
         salvarAluno() {
             const n = document.getElementById('al-nome').value, u = document.getElementById('al-user').value, p = document.getElementById('al-pass').value;
             if(!n || !u) return alert("Preencha Nome e Usuário.");
             db.ref('alunos/'+this.user.pront).push({ n, u, p });
             document.getElementById('al-nome').value=""; document.getElementById('al-user').value=""; document.getElementById('al-pass').value="";
+            document.getElementById('plat-links').classList.remove('hidden');
         },
 
         carregarAlunos() {
             db.ref('alunos/'+this.user.pront).on('value', snap => {
                 const b = document.getElementById('body-alunos'); b.innerHTML = "";
+                if(snap.exists()) document.getElementById('plat-links').classList.remove('hidden');
                 snap.forEach(a => { let d = a.val(); b.innerHTML += `<tr><td><b>${d.n}</b></td><td>${d.u}</td><td>${d.p}</td></tr>`; });
             });
         },
 
         syncData() {
-            db.ref('lock').on('value', s => document.getElementById('lock-overlay').style.display = (s.val() && this.user.cargo !== 'NTEi') ? 'flex' : 'none');
-            db.ref('aviso_global').on('value', s => { 
-                const r = document.getElementById('alert-ribbon'); 
-                if(s.val()){ r.style.display='block'; document.getElementById('alert-text').innerText=s.val(); } else r.style.display='none';
-            });
-
+            db.ref('lock').on('value', s => document.getElementById('lock-overlay').style.display = (s.val() && this.user.cargo !== 'NTEi' && this.user.cargo !== 'SMETi') ? 'flex' : 'none');
+            
             db.ref('chat').limitToLast(15).on('value', snap => {
                 const box = document.getElementById('chat-box'); box.innerHTML = "";
-                snap.forEach(m => { let d = m.val(); box.innerHTML += `<div class="msg ${d.n === this.user.nome ? 'msg-out' : 'msg-in'}"><b>${d.n}:</b><br>${d.t}</div>`; });
+                snap.forEach(m => { 
+                    let d = m.val(); 
+                    box.innerHTML += `<div class="msg ${d.n === this.user.nome ? 'msg-out' : 'msg-in'}"><b>${d.n}:</b><br>${d.t}</div>`; 
+                });
                 box.scrollTop = box.scrollHeight;
             });
 
@@ -254,57 +321,61 @@
                 snap.forEach(c => {
                     let d = c.val();
                     if(d.status === 'aberto') {
-                        let cod = c.key.slice(-5).toUpperCase();
                         let cor = d.isPlat ? 'var(--plat-color)' : (d.tipo === 'Hardware' ? 'var(--hw-color)' : 'var(--sw-color)');
                         box.innerHTML += `
                         <div class="res-item" style="border-left: 5px solid ${cor}; background: rgba(255,255,255,0.05); padding:10px; margin-bottom:8px; border-radius:5px">
-                            <div style="font-size:10px; color:#aaa">#${cod} | ${d.u}</div>
+                            <div style="font-size:10px; color:#aaa">${d.u}</div>
                             <b style="color:${cor}">${d.tipo} > ${d.sub}</b><br>
-                            <div style="font-size:11px; color:#ddd; margin-top:4px">💬 ${d.t}</div>
-                            <div style="display:flex; gap:5px; margin-top:8px">
-                                <button class="btn" style="padding:4px; font-size:9px; background:var(--prof)" onclick="app.atenderChamado('${c.key}')">Chat</button>
-                                ${this.user.cargo==='NTEi' && d.isPlat ? `<button class="btn" style="padding:4px; font-size:9px; background:var(--cad)" onclick="app.autorizarPlat('${c.key}','${d.sub}')">Autorizar</button>` : ''}
-                                ${this.user.cargo==='NTEi' ? `<button class="btn" style="padding:4px; font-size:9px; background:#444" onclick="db.ref('chamados/${c.key}/status').set('resolvido')">Fechar</button>` : ''}
-                            </div>
+                            <div style="font-size:11px; color:#ddd">💬 ${d.t}</div>
+                            <button class="btn" style="padding:4px; font-size:9px; background:var(--prof); width:auto" onclick="app.atenderChamado('${c.key}')">Chat</button>
                         </div>`;
-                        if(d.pront === this.user.pront) { this.currentTicket = c.key; this.abrirInterfaceChamado(d); }
                     }
                 });
             });
+        },
 
-            db.ref('reservas').on('value', snap => {
-                const box = document.getElementById('lista-res'); box.innerHTML = "";
-                snap.forEach(r => { let d = r.val(); box.innerHTML += `<div class="res-item" style="background:rgba(255,255,255,0.05); padding:8px; margin-bottom:5px; border-radius:5px; font-size:12px"><b>${d.eq}</b> - Sala ${d.sl}<br><small>${d.u} | ${new Date(d.dt).toLocaleString()}</small></div>`; });
-            });
+        sendChat() { 
+            const txt = document.getElementById('chat-in').value;
+            if(!txt) return;
+            db.ref('chat').push({ n: this.user.nome, t: txt }); 
+            document.getElementById('chat-in').value = ""; 
         },
 
         atenderChamado(id) { this.currentTicket = id; db.ref('chamados/'+id).once('value', s => this.abrirInterfaceChamado(s.val())); },
+        
         abrirInterfaceChamado(d) {
             document.getElementById('active-ticket-area').classList.remove('hidden');
-            document.getElementById('ticket-title').innerHTML = `<i class="fa fa-comment-dots"></i> Ticket #${this.currentTicket.slice(-5).toUpperCase()}`;
             db.ref('chat_nti/'+this.currentTicket).on('value', snap => {
                 const box = document.getElementById('chat-nti-box'); box.innerHTML = "";
-                snap.forEach(m => { let msg = m.val(); box.innerHTML += `<div class="msg ${msg.n === this.user.nome ? 'msg-out' : 'msg-in'}"><b>${msg.n}:</b><br>${msg.t}</div>`; });
+                snap.forEach(m => { 
+                    let msg = m.val(); 
+                    box.innerHTML += `<div class="msg ${msg.n === this.user.nome ? 'msg-out' : 'msg-in'}"><b>${msg.n}:</b><br>${msg.t}</div>`; 
+                });
                 box.scrollTop = box.scrollHeight;
             });
         },
 
-        autorizarPlat(id, tipo) {
-            const senha = (tipo === 'Matific') ? 'progmatfic2026' : 'profletrado2026';
-            db.ref('chat_nti/'+id).push({ n: 'NTEi MASTER', t: `✅ ACESSO LIBERADO! Senha padrão: ${senha}. Salve os dados de seus alunos na sua "Lista de Alunos" lateral.` });
+        sendChatNTEi() { 
+            db.ref('chat_nti/'+this.currentTicket).push({ n: this.user.nome, t: document.getElementById('chat-nti-in').value }); 
+            document.getElementById('chat-nti-in').value = ""; 
         },
 
         finalizarChamado() { db.ref('chamados/'+this.currentTicket+'/status').set('resolvido'); document.getElementById('active-ticket-area').classList.add('hidden'); },
+        
+        updateSubCategorias() {
+            const t = document.getElementById('chamado-tipo').value, s = document.getElementById('chamado-sub');
+            s.innerHTML = ""; s.classList.remove('hidden');
+            let opts = t==='Hardware' ? ['Chromebook', 'PC', 'Impressora', 'Rede'] : (t==='Software' ? ['Sisgem', 'Siseduc', 'Email'] : ['Reset Email', 'Reset Sisgem', 'Plataformas']);
+            opts.forEach(o => s.innerHTML += `<option value="${o}">${o}</option>`);
+        },
+
         carregarEquipamentos() {
             const eqs = ['TV 01', 'TV 02', 'Kit Multimídia', 'Chromebooks', 'Sala Info'];
             const sel = document.getElementById('res-eq'); sel.innerHTML = "";
             eqs.forEach(e => sel.innerHTML += `<option value="${e}">${e}</option>`);
         },
-        enviarAviso() { db.ref('aviso_global').set(document.getElementById('input-aviso').value); },
-        reservar() { db.ref('reservas').push({ eq: document.getElementById('res-eq').value, sl: document.getElementById('res-sl').value, dt: document.getElementById('res-dt').value, u: this.user.nome }); },
-        sendChat() { db.ref('chat').push({ n: this.user.nome, t: document.getElementById('chat-in').value }); document.getElementById('chat-in').value = ""; },
-        sendChatNTEi() { db.ref('chat_nti/'+this.currentTicket).push({ n: this.user.nome, t: document.getElementById('chat-nti-in').value }); document.getElementById('chat-nti-in').value = ""; },
-        setLock(v) { db.ref('lock').set(v); }
+
+        reservar() { db.ref('reservas').push({ eq: document.getElementById('res-eq').value, sl: document.getElementById('res-sl').value, dt: document.getElementById('res-dt').value, u: this.user.nome }); }
     };
 </script>
 </body>
