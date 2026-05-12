@@ -74,7 +74,6 @@
         .nuvem-footer { padding: 12px; background: rgba(0,0,0,0.4); display: flex; gap: 8px; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(0, 173, 239, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(0, 173, 239, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 173, 239, 0); } }
         
-        /* Estilo para lista de gerenciamento de plataformas */
         .plat-manage-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 8px; border-radius: 5px; margin-bottom: 5px; font-size: 12px; }
         .plat-manage-actions i { cursor: pointer; margin-left: 10px; transition: 0.2s; }
         .plat-manage-actions i:hover { color: var(--prof); }
@@ -98,9 +97,9 @@
         <div class="sector-column"><i class="fa fa-graduation-cap fa-3x" style="color:var(--prof)"></i><h2>PROFESSOR</h2><input type="number" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof); color:white" onclick="app.login('p','Professor')">Acessar</button></div>
         <div class="sector-column"><i class="fa fa-user-tie fa-3x" style="color:var(--gestao)"></i><h2>GESTÃO</h2><input type="number" id="g-p" placeholder="Prontuário"><input type="password" id="g-s" placeholder="Senha"><button class="btn" style="background:var(--gestao)" onclick="app.login('g','Gestão')">Acessar</button></div>
         <div class="sector-column"><i class="fa fa-building-columns fa-3x" style="color:var(--secre)"></i><h2>SECRETARIA</h2><input type="number" id="s-p" placeholder="Prontuário"><input type="password" id="s-s" placeholder="Senha"><button class="btn" style="background:var(--secre); color:white" onclick="app.login('s','Secretaria')">Acessar</button></div>
-        <div class="sector-column" style="background: rgba(46, 204, 113, 0.05)"><h2>CADASTRO</h2><input type="text" id="c-n" placeholder="Nome Completo"><input type="number" id="c-p" placeholder="Prontuário"><input type="email" id="c-e" placeholder="E-mail @edu"><select id="c-c"><option value="Professor">Professor</option><option value="Gestão">Gestão</option><option value="Secretaria">Secretaria</option></select><button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Criar Conta</button></div>
+        <div class="sector-column" style="background: rgba(46, 204, 113, 0.05)"><h2>CADASTRO</h2><input type="text" id="c-n" placeholder="Nome Completo"><input type="number" id="c-p" placeholder="Prontuário"><input type="email" id="c-e" placeholder="E-mail @edu"><select id="c-c"><option value="Professor">Professor</option><option value="Gestão">Gestão</option><option value="Secretaria">Secretaria</option><option value="SMETi">SMETi</option></select><button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Criar Conta</button></div>
         <div class="sector-column"><i class="fa fa-terminal fa-3x" style="color:var(--ntei)"></i><h2>NTEi</h2><input type="number" id="n-p" placeholder="ID"><input type="password" id="n-s" placeholder="Senha"><button class="btn" style="background:var(--ntei); color:white" onclick="app.login('n','NTEi')">Master Login</button></div>
-        <div class="sector-column" style="border:none"><i class="fa fa-chart-line fa-3x" style="color:var(--smeti)"></i><h2>SMETi</h2><input type="email" id="sm-e" placeholder="E-mail Institucional"><input type="password" id="sm-s" placeholder="Senha"><button class="btn" style="background:var(--smeti); color:black" onclick="app.login('sm','SMETi')">Gerenciar</button></div>
+        <div class="sector-column" style="border:none"><i class="fa fa-chart-line fa-3x" style="color:var(--smeti)"></i><h2>SMETi</h2><input type="number" id="sm-p" placeholder="Prontuário"><input type="password" id="sm-s" placeholder="Senha"><button class="btn" style="background:var(--smeti); color:black" onclick="app.login('sm','SMETi')">Gerenciar</button></div>
     </div>
 
     <div id="main-system">
@@ -108,7 +107,7 @@
             <div class="left-col">
                 <div id="panel-smeti" class="panel hidden" style="border: 2px solid var(--smeti)">
                     <h3 style="color:var(--smeti)"><i class="fa fa-briefcase"></i> PAINEL SMETi</h3>
-                    <p id="smeti-welcome" style="font-size:12px"></p>
+                    <p style="font-size:12px">Monitoramento de Desenvolvimento Escolar</p>
                     <div class="chart-container"><canvas id="chart-smeti-colegio"></canvas></div>
                 </div>
                 <div class="panel">
@@ -147,6 +146,15 @@
                         <button class="btn" style="background:#e74c3c" onclick="app.setSystemStatus(true)">BLOQUEAR SITE</button>
                         <button class="btn" style="background:#27ae60" onclick="app.setSystemStatus(false)">LIBERAR SITE</button>
                     </div>
+                    
+                    <div style="margin-top:15px; background:rgba(255,255,255,0.05); padding:10px; border-radius:10px">
+                        <p style="font-size:11px; color:var(--gestao)">RESET DE SENHA POR PRONTUÁRIO:</p>
+                        <div style="display:flex; gap:5px">
+                            <input type="number" id="reset-pront-input" placeholder="Prontuário" style="margin:0">
+                            <button class="btn" style="background:var(--gestao); width:100px; margin:0; color:black" onclick="app.resetarSenhaManual()">RESET</button>
+                        </div>
+                    </div>
+
                     <input type="text" id="input-aviso-geral" placeholder="Escreva um aviso para todos..." style="margin-top:15px">
                     <button class="btn" style="background:var(--prof)" onclick="app.enviarAvisoGeral()">POSTAR AVISO GERAL</button>
                     <hr style="opacity:0.1; margin:15px 0">
@@ -157,7 +165,7 @@
                     <div id="manage-plat-list" style="margin-top:15px; max-height:150px; overflow-y:auto; border-top:1px solid rgba(255,255,255,0.1); padding-top:10px"></div>
                 </div>
                 <div id="panel-ntei-graficos" class="panel hidden">
-                    <h3><i class="fa fa-chart-pie"></i> Monitoramento em Tempo Real</h3>
+                    <h3><i class="fa fa-chart-line"></i> Monitoramento de Tráfego (NTEi)</h3>
                     <div class="chart-container"><canvas id="chart-real-time-chamados"></canvas></div>
                 </div>
                 <div class="panel">
@@ -188,10 +196,10 @@
                     </div>
                 </div>
                 <div id="active-ticket-area" class="panel hidden" style="border: 1px solid var(--prof)">
-                    <h3 id="ticket-title"><i class="fa fa-headset"></i> Chat Atendimento</h3>
+                    <h3 id="ticket-title"><i class="fa fa-headset"></i> Atendimento Privado NTEi</h3>
                     <div id="chat-nti-box"></div>
                     <div style="display:flex; gap:5px; margin-top:10px">
-                        <input type="text" id="chat-nti-in" placeholder="Mensagem...">
+                        <input type="text" id="chat-nti-in" placeholder="Mensagem direta...">
                         <button class="btn" style="width:60px; background:var(--prof)" onclick="app.sendChatNTEi()"><i class="fa fa-paper-plane"></i></button>
                     </div>
                     <button class="btn" style="background:var(--cad); margin-top:10px" onclick="app.finalizarChamado()">Encerrar Atendimento</button>
@@ -237,12 +245,10 @@
             if(!q) return;
             box.innerHTML += `<div class="msg msg-out">${input.value}</div>`;
             input.value = "";
-            let r = "Desculpe, ainda estou aprendendo sobre esse assunto. Tente perguntar sobre 'reservas', 'chamados' ou 'cadastro'.";
-            if(q.includes("reserva")) r = "Para fazer uma reserva, preencha o painel 'Nova Reserva' à esquerda. Escolha o equipamento, a sala e o horário, depois clique em Agendar.";
-            else if(q.includes("chamado") || q.includes("consertar")) r = "Problemas técnicos? Use o painel 'Abrir Chamado' no centro. O NTEi receberá sua solicitação em tempo real!";
-            else if(q.includes("cadastro")) r = "Novos usuários devem usar a aba 'CADASTRO' na tela inicial. A senha padrão inicial para professores é 'pmspmudar123'.";
-            else if(q.includes("aluno")) r = "Você pode organizar as senhas dos seus alunos no painel 'Login dos Alunos' para ter acesso rápido durante as aulas.";
-            else if(q.includes("quem é você") || q.includes("nuvem")) r = "Eu sou a Nuvem AI, a assistente oficial do Programa Conect para facilitar sua navegação!";
+            let r = "Desculpe, ainda estou aprendendo. Tente perguntar sobre 'reservas', 'chamados' ou 'cadastro'.";
+            if(q.includes("reserva")) r = "Para fazer uma reserva, preencha o painel 'Nova Reserva' à esquerda.";
+            else if(q.includes("chamado")) r = "Problemas técnicos? Use o painel 'Abrir Chamado' no centro.";
+            else if(q.includes("cadastro")) r = "Novos usuários devem usar a aba 'CADASTRO'. A senha inicial para professores é 'pmspmudar123'.";
             setTimeout(() => {
                 box.innerHTML += `<div class="msg msg-in"><b>Nuvem:</b> ${r}</div>`;
                 box.scrollTop = box.scrollHeight;
@@ -257,21 +263,24 @@
         charts: {},
 
         async login(pre, cargo) {
-            const p = document.getElementById(pre+'-p')?.value || "";
+            const p = document.getElementById(pre+'-p')?.value;
             const s = document.getElementById(pre+'-s').value;
-            const e = document.getElementById(pre+'-e')?.value || "";
+
+            // Bloqueio de Segurança para SMETi (Requer autorização no banco pelo NTEi)
             if(cargo === 'SMETi') {
-                const autorizados = { "matheus.36308@edu.santanadeparnaiba.sp.gov.br": "Matheus Chefe", "renato.35040@edu.santanadeparnaiba.sp.gov.br": "Renato Chefe" };
-                if(autorizados[e] && s === "smeti2026") {
-                    this.user = { nome: autorizados[e], cargo: 'SMETi', email: e };
-                    return this.start();
+                const authSnap = await db.ref('autorizados_smeti/'+p).once('value');
+                if(!authSnap.exists()) {
+                    alert("Acesso SMETi negado. Entre em contato com o NTEi para autorização de prontuário.");
+                    return;
                 }
-                return alert("Acesso restrito.");
             }
+
+            // Master Login NTEi
             if(cargo==='NTEi' && p==='46690' && s==='nti2026') { 
                 this.user={nome:'Kelvin (NTEi)', cargo:'NTEi', pront:'46690'}; 
                 return this.start(); 
             }
+
             const snap = await db.ref('usuarios/'+p).once('value');
             if(snap.exists() && String(snap.val().pass) === String(s)) { 
                 this.user = snap.val(); 
@@ -289,16 +298,78 @@
         start() {
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('main-system').style.display = 'block';
-            if(this.user.cargo === 'NTEi' || this.user.cargo === 'SMETi') {
+            
+            if(this.user.cargo === 'NTEi') {
                 document.getElementById('panel-ntei-graficos').classList.remove('hidden');
                 document.getElementById('panel-admin-ntei').classList.remove('hidden');
-                this.initRealTimeCharts();
             }
+            if(this.user.cargo === 'SMETi' || this.user.cargo === 'NTEi') {
+                document.getElementById('panel-smeti').classList.remove('hidden');
+            }
+
+            this.initModernCharts();
             this.syncSystemControls();
             this.syncData();
             this.carregarEquipamentos();
             this.carregarAlunos();
             this.carregarPlataformasDinamicas();
+        },
+
+        // GRÁFICO REALISTA "FODA" - ESTILO DASHBOARD JAVA/NEON
+        initModernCharts() {
+            // Gráfico NTEi (Tráfego/Chamados)
+            const ctx1 = document.getElementById('chart-real-time-chamados').getContext('2d');
+            const grad1 = ctx1.createLinearGradient(0, 0, 0, 200);
+            grad1.addColorStop(0, 'rgba(235, 77, 75, 0.4)');
+            grad1.addColorStop(1, 'rgba(235, 77, 75, 0)');
+
+            this.charts.ntei = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: ['-10m', '-8m', '-6m', '-4m', '-2m', 'Agora'],
+                    datasets: [{
+                        label: 'Latência de Suporte',
+                        data: [10, 25, 15, 30, 20, 35],
+                        borderColor: '#eb4d4b',
+                        fill: true,
+                        backgroundColor: grad1,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 0
+                    }]
+                },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false }, ticks: { color: '#666' } } } }
+            });
+
+            // Gráfico SMETi (Desenvolvimento)
+            const ctx2 = document.getElementById('chart-smeti-colegio').getContext('2d');
+            this.charts.smeti = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: ['Matific', 'Elefante', 'Khan', 'Siseduc'],
+                    datasets: [{
+                        label: 'Acesso %',
+                        data: [85, 70, 40, 95],
+                        backgroundColor: ['#2ecc71', '#3498db', '#f1c40f', '#a55eea'],
+                        borderRadius: 5
+                    }]
+                },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100, ticks: { color: '#aaa' } } } }
+            });
+        },
+
+        // FUNÇÃO DE RESET DE SENHA PELO NTEi
+        async resetarSenhaManual() {
+            const pront = document.getElementById('reset-pront-input').value;
+            if(!pront) return alert("Insira o prontuário!");
+            const ref = db.ref('usuarios/'+pront);
+            const snap = await ref.once('value');
+            if(snap.exists()) {
+                await ref.update({ pass: 'pmspmudar123' });
+                alert("Senha do usuário resetada para 'pmspmudar123' com sucesso!");
+            } else {
+                alert("Prontuário não encontrado.");
+            }
         },
 
         setSystemStatus(lock) { db.ref('config/maintenance').set(lock); },
@@ -313,7 +384,6 @@
             const n = document.getElementById('new-plat-name').value;
             const u = document.getElementById('new-plat-url').value;
             if(!n || !u) return alert("Preencha os campos!");
-            
             if(this.editingPlatId) {
                 db.ref('config/links/' + this.editingPlatId).update({ nome: n, url: u });
                 this.editingPlatId = null;
@@ -325,24 +395,10 @@
             document.getElementById('new-plat-url').value = "";
         },
 
-        editPlataforma(id, nome, url) {
-            this.editingPlatId = id;
-            document.getElementById('new-plat-name').value = nome;
-            document.getElementById('new-plat-url').value = url;
-            document.getElementById('btn-save-plat').innerText = "SALVAR ALTERAÇÃO";
-            document.getElementById('new-plat-name').focus();
-        },
-
-        deletePlataforma(id) {
-            if(confirm("Deseja realmente remover esta plataforma?")) {
-                db.ref('config/links/' + id).remove();
-            }
-        },
-
         syncSystemControls() {
             db.ref('config/maintenance').on('value', s => {
                 const isLocked = s.val();
-                if(isLocked && this.user.cargo !== 'NTEi' && this.user.cargo !== 'SMETi') {
+                if(isLocked && this.user.cargo !== 'NTEi') {
                     document.getElementById('lock-overlay').style.display = 'flex';
                 } else {
                     document.getElementById('lock-overlay').style.display = 'none';
@@ -362,50 +418,21 @@
                 const manageDiv = document.getElementById('manage-plat-list');
                 div.innerHTML = "";
                 if(manageDiv) manageDiv.innerHTML = "";
-                
                 snap.forEach(l => {
                     const d = l.val();
-                    const key = l.key;
-                    // Lista pública
                     div.innerHTML += `<a href="${d.url}" target="_blank" style="color:var(--plat-color); display:block; margin:5px 0; font-size:13px; text-decoration:none"><i class="fa fa-external-link"></i> ${d.nome}</a>`;
-                    
-                    // Lista de gerenciamento (apenas para NTEi/Admin)
                     if(manageDiv) {
-                        manageDiv.innerHTML += `
-                        <div class="plat-manage-item">
-                            <span>${d.nome}</span>
-                            <div class="plat-manage-actions">
-                                <i class="fa fa-edit" onclick="app.editPlataforma('${key}', '${d.nome}', '${d.url}')"></i>
-                                <i class="fa fa-trash" style="color:var(--ntei)" onclick="app.deletePlataforma('${key}')"></i>
-                            </div>
-                        </div>`;
+                        manageDiv.innerHTML += `<div class="plat-manage-item"><span>${d.nome}</span><div class="plat-manage-actions"><i class="fa fa-edit" onclick="app.editPlataforma('${l.key}', '${d.nome}', '${d.url}')"></i><i class="fa fa-trash" style="color:var(--ntei)" onclick="app.deletePlataforma('${l.key}')"></i></div></div>`;
                     }
                 });
             });
         },
 
-        initRealTimeCharts() {
-            const ctx1 = document.getElementById('chart-real-time-chamados').getContext('2d');
-            this.charts.chamados = new Chart(ctx1, {
-                type: 'doughnut',
-                data: { labels: ['Abertos', 'Resolvidos'], datasets: [{ data: [0, 0], backgroundColor: ['#eb4d4b', '#2ecc71'] }] },
-                options: { maintainAspectRatio: false, plugins: { legend: { labels: { color: 'white' } } } }
-            });
-            db.ref('chamados').on('value', snap => {
-                let a = 0, r = 0;
-                snap.forEach(c => { c.val().status === 'aberto' ? a++ : r++; });
-                this.charts.chamados.data.datasets[0].data = [a, r];
-                this.charts.chamados.update();
-            });
-        },
-
         abrirChamado() {
-            const t = document.getElementById('chamado-tipo').value, 
-                  s = document.getElementById('chamado-sub').value,
-                  d = document.getElementById('chamado-desc').value;
+            const t = document.getElementById('chamado-tipo').value, d = document.getElementById('chamado-desc').value;
             if(!t || !d) return alert("Preencha o chamado");
-            db.ref('chamados').push({ u: this.user.nome, tipo: t, sub: s, t: d, status: 'aberto', data: Date.now() });
-            alert("Chamado aberto!");
+            db.ref('chamados').push({ u: this.user.nome, tipo: t, t: d, status: 'aberto', data: Date.now() });
+            alert("Chamado enviado ao NTEi!");
         },
 
         syncData() {
@@ -426,7 +453,7 @@
                         <div class="res-item" style="border-left: 5px solid var(--ntei); background: rgba(255,255,255,0.05); padding:10px; margin-bottom:8px; border-radius:5px">
                             <b style="color:var(--ntei)">${d.tipo}</b> - ${d.u}<br>
                             <span style="font-size:11px">${d.t}</span><br>
-                            <button class="btn" style="padding:4px; font-size:9px; background:var(--prof); width:auto" onclick="app.atenderChamado('${c.key}')">Chat</button>
+                            <button class="btn" style="padding:4px; font-size:9px; background:var(--prof); width:auto" onclick="app.atenderChamado('${c.key}')">Atendimento Privado</button>
                         </div>`;
                     }
                 });
@@ -441,7 +468,7 @@
         atenderChamado(id) {
             this.currentTicket = id;
             document.getElementById('active-ticket-area').classList.remove('hidden');
-            db.ref('chat_nti/'+id).on('value', snap => {
+            db.ref('chat_privado_ntei/'+id).on('value', snap => {
                 const box = document.getElementById('chat-nti-box'); box.innerHTML = "";
                 snap.forEach(m => {
                     let d = m.val();
@@ -453,7 +480,7 @@
 
         sendChatNTEi() {
             const txt = document.getElementById('chat-nti-in').value;
-            if(txt) { db.ref('chat_nti/'+this.currentTicket).push({ n: this.user.nome, t: txt }); document.getElementById('chat-nti-in').value = ""; }
+            if(txt) { db.ref('chat_privado_ntei/'+this.currentTicket).push({ n: this.user.nome, t: txt }); document.getElementById('chat-nti-in').value = ""; }
         },
 
         finalizarChamado() {
@@ -492,7 +519,7 @@
         },
 
         pedirAcesso(plat) {
-            db.ref('chamados').push({ u: this.user.nome, tipo: 'Acesso', sub: plat, t: "Solicitação de login para turma", status: 'aberto', data: Date.now() });
+            db.ref('chamados').push({ u: this.user.nome, tipo: 'Acesso', t: "Solicitação de login para turma: " + plat, status: 'aberto', data: Date.now() });
             alert("Pedido enviado!");
         }
     };
