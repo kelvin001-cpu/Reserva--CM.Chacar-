@@ -256,12 +256,12 @@
         }
     };
 
-    const app = {
+        const app = {
         user: null,
         currentTicket: null,
         editingPlatId: null,
+        editingAlunoId: null, // <-- ESSA É A LINHA QUE ESTAVA FALTANDO
         charts: {},
-
         async login(pre, cargo) {
             const p = document.getElementById(pre+'-p')?.value;
             const s = document.getElementById(pre+'-s').value;
@@ -380,19 +380,39 @@
             document.getElementById('input-aviso-geral').value = "";
         },
 
+        // --- GERENCIAMENTO DE PLATAFORMAS (Adicionar, Editar e Excluir) ---
         addPlataformaURL() {
             const n = document.getElementById('new-plat-name').value;
             const u = document.getElementById('new-plat-url').value;
             if(!n || !u) return alert("Preencha os campos!");
+            
             if(this.editingPlatId) {
+                // Se estiver editando, atualiza o link existente
                 db.ref('config/links/' + this.editingPlatId).update({ nome: n, url: u });
                 this.editingPlatId = null;
                 document.getElementById('btn-save-plat').innerText = "ADICIONAR À LISTA";
             } else {
+                // Se não, cria um novo
                 db.ref('config/links').push({ nome: n, url: u });
             }
             document.getElementById('new-plat-name').value = "";
             document.getElementById('new-plat-url').value = "";
+        },
+
+        editPlataforma(id, nome, url) {
+            // Joga os dados de volta para os campos de texto
+            this.editingPlatId = id;
+            document.getElementById('new-plat-name').value = nome;
+            document.getElementById('new-plat-url').value = url;
+            document.getElementById('btn-save-plat').innerText = "SALVAR ALTERAÇÃO";
+            // Rola a página para cima para o usuário ver que abriu para editar
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
+
+        deletePlataforma(id) {
+            if(confirm("Tem certeza que deseja remover este link?")) {
+                db.ref('config/links/' + id).remove();
+            }
         },
 
         syncSystemControls() {
@@ -488,18 +508,79 @@
             document.getElementById('active-ticket-area').classList.add('hidden');
         },
 
-        salvarAluno() {
-            const n = document.getElementById('al-nome').value, u = document.getElementById('al-user').value, p = document.getElementById('al-pass').value;
-            if(n && u) db.ref('alunos/'+this.user.pront).push({ n, u, p });
+      salvarAluno() {
+            const n = document.getElementById('al-nome').value;
+            const u = document.getElementById('al-user').value;
+            const p = document.getElementById('al-pass').value;
+            
+            if(!n || !u) return alert("Preencha o nome e usuário do aluno!");
+
+            // Se existir um ID em 'editingAlunoId', ele atualiza. Se não, ele cria novo.
+            if(this.editingAlunoId) {
+                db.ref('alunos/' + this.user.pront + '/' + this.editingAlunoId).update({ n, u, p })
+                .then(() => {
+                    alert("Dados do aluno atualizados!");
+                    this.editingAlunoId = null; // Reseta o modo de edição
+                    document.querySelector('#panel-prof-alunos button').innerText = "CADASTRAR ALUNO";
+                });
+            } else {
+                // Modo de cadastro normal
+                db.ref('alunos/' + this.user.pront).push({ n, u, p })
+                .then(() => alert("Aluno cadastrado com sucesso!"));
+            }
+
+            // Limpa os campos do formulário
+            document.getElementById('al-nome').value = "";
+            document.getElementById('al-user').value = "";
+            document.getElementById('al-pass').value = "";
         },
 
-        carregarAlunos() {
-            db.ref('alunos/'+this.user.pront).on('value', snap => {
-                const b = document.getElementById('body-alunos'); b.innerHTML = "";
-                snap.forEach(a => { let d = a.val(); b.innerHTML += `<tr><td><b>${d.n}</b></td><td>${d.u}</td><td>${d.p}</td></tr>`; });
+     carregarAlunos() {
+            db.ref('alunos/' + this.user.pront).on('value', snap => {
+                const b = document.getElementById('body-alunos'); 
+                if(!b) return;
+                b.innerHTML = "";
+                
+                snap.forEach(alunoSnap => { 
+                    const d = alunoSnap.val(); 
+                    const key = alunoSnap.key; // Essa é a "identidade" do aluno no banco
+                    
+                    b.innerHTML += `
+                        <tr>
+                            <td><b>${d.n}</b></td>
+                            <td>${d.u}</td>
+                            <td>${d.p}</td>
+                            <td>
+                                <i class="fa fa-edit" style="cursor:pointer; color:#3498db; margin-right:10px" 
+                                   onclick="app.editAluno('${key}', '${d.n}', '${d.u}', '${d.p}')"></i>
+                                
+                                <i class="fa fa-trash" style="cursor:pointer; color:#eb4d4b" 
+                                   onclick="app.deleteAluno('${key}')"></i>
+                            </td>
+                        </tr>`; 
+                });
             });
         },
+        editAluno(id, nome, usuario, senha) {
+            // Guarda o ID do aluno que estamos editando
+            this.editingAlunoId = id; 
+            
+            // Preenche os inputs com os dados para você alterar
+            document.getElementById('al-nome').value = nome;
+            document.getElementById('al-user').value = usuario;
+            document.getElementById('al-pass').value = senha;
+            
+            // Muda o texto do botão de cadastro
+            const btn = document.querySelector('#panel-prof-alunos button');
+            if(btn) btn.innerText = "SALVAR ALTERAÇÕES";
+        },
 
+        deleteAluno(id) {
+            if(confirm("Tem certeza que deseja excluir este aluno?")) {
+                db.ref('alunos/' + this.user.pront + '/' + id).remove()
+                .then(() => alert("Aluno removido com sucesso!"));
+            }
+        },
         updateSubCategorias() {
             const t = document.getElementById('chamado-tipo').value, s = document.getElementById('chamado-sub');
             s.innerHTML = ""; s.classList.remove('hidden');
@@ -518,10 +599,18 @@
             alert("Reservado!");
         },
 
-        pedirAcesso(plat) {
-            db.ref('chamados').push({ u: this.user.nome, tipo: 'Acesso', t: "Solicitação de login para turma: " + plat, status: 'aberto', data: Date.now() });
-            alert("Pedido enviado!");
-        }
+      pedirAcesso(plataforma) {
+            const pedido = {
+                professor: this.user.nome,
+                prontuario: this.user.pront,
+                plataforma: plataforma,
+                status: 'pendente',
+                data: new Date().toLocaleString()
+            };
+            
+            db.ref('solicitacoes_acesso').push(pedido)
+                .then(() => alert("Solicitação enviada! Aguarde a autorização do NTEi."));
+        },
     };
 
     document.getElementById('nuvem-input').addEventListener('keypress', function (e) {
