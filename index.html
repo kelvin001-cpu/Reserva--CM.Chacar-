@@ -256,7 +256,7 @@
         }
     };
 
-        const app = {
+    const app = {
         user: null,
         currentTicket: null,
         editingPlatId: null,
@@ -302,6 +302,7 @@
             if(this.user.cargo === 'NTEi') {
                 document.getElementById('panel-ntei-graficos').classList.remove('hidden');
                 document.getElementById('panel-admin-ntei').classList.remove('hidden');
+                this.syncSolicitacoesAcesso(); // <-- ADICIONADO
             }
             if(this.user.cargo === 'SMETi' || this.user.cargo === 'NTEi') {
                 document.getElementById('panel-smeti').classList.remove('hidden');
@@ -313,6 +314,41 @@
             this.carregarEquipamentos();
             this.carregarAlunos();
             this.carregarPlataformasDinamicas();
+        },
+
+        // --- CONTROLE DE ACESSO SMETi (NTEi ADICIONADO) ---
+        syncSolicitacoesAcesso() {
+            db.ref('solicitacoes_acesso').on('child_added', snap => {
+                const d = snap.val();
+                const box = document.getElementById('lista-chamados-nti');
+                if (!box || d.status !== 'pendente') return;
+
+                const idCard = 'req-' + snap.key;
+                if (!document.getElementById(idCard)) {
+                    const div = document.createElement('div');
+                    div.id = idCard;
+                    div.className = 'res-item';
+                    div.style = "border-left: 5px solid #f1c40f; background: rgba(241,196,15,0.05); padding:10px; margin-bottom:8px; border-radius:5px";
+                    div.innerHTML = `
+                        <b style="color:#f1c40f"><i class="fa fa-key"></i> ACESSO: ${d.plataforma}</b><br>
+                        <small>${d.professor} (${d.prontuario})</small><br>
+                        <div style="margin-top:5px; display:flex; gap:5px;">
+                            <button class="btn" style="background:#2ecc71; padding:3px 10px; width:auto; font-size:10px" onclick="app.decidirAcesso('${snap.key}', 'autorizado', '${d.prontuario}')">LIBERAR</button>
+                            <button class="btn" style="background:#eb4d4b; padding:3px 10px; width:auto; font-size:10px" onclick="app.decidirAcesso('${snap.key}', 'recusado')">RECUSAR</button>
+                        </div>`;
+                    box.prepend(div);
+                }
+            });
+        },
+
+        decidirAcesso(id, decisao, prontuario) {
+            db.ref('solicitacoes_acesso/' + id).update({ status: decisao }).then(() => {
+                if (decisao === 'autorizado' && prontuario) {
+                    db.ref('autorizados_smeti/' + prontuario).set(true);
+                }
+                const card = document.getElementById('req-' + id);
+                if(card) card.remove();
+            });
         },
 
         // GRÁFICO REALISTA "FODA" - ESTILO DASHBOARD JAVA/NEON
