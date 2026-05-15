@@ -175,10 +175,12 @@
                 <div class="panel">
                     <h3><i class="fa fa-headset"></i> Abrir Chamado</h3>
                     <select id="chamado-tipo" onchange="app.updateSubCategorias()">
-                        <option value="">Selecione o Tipo...</option>
-                        <option value="Hardware">🛠️ Hardware</option>
-                        <option value="Software">💻 Software</option>
-                        <option value="Senhas">🔑 Reset de Senhas</option>
+                <option value="">Selecione a Categoria...</option>
+                <option value="Hardware">🛠️ Hardware (Equipamentos)</option>
+                <option value="Software">💻 Software (Erros/Instalação)</option>
+                <option value="Senhas">🔑 Senhas (Sisgem / Siseduc / Email)</option>
+                <option value="Alunos">🎓 Suporte Aluno (Sem conta / Login)</option>
+                <option value="Rede">🌐 Rede e Internet (Wi-Fi / Cabo)</option>
                     </select>
                     <select id="chamado-sub" class="hidden"></select>
                     <input type="text" id="chamado-desc" placeholder="Qual o problema?">
