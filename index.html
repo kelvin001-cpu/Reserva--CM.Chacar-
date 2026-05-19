@@ -72,11 +72,13 @@
         .nuvem-header { background: var(--prof); padding: 15px; font-family: 'Orbitron'; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
         #nuvem-content { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; font-size: 13px; }
         .nuvem-footer { padding: 12px; background: rgba(0,0,0,0.4); display: flex; gap: 8px; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(0, 173, 239, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(0, 173, 239, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 173, 239, 0); } }
         
         .plat-manage-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 8px; border-radius: 5px; margin-bottom: 5px; font-size: 12px; }
         .plat-manage-actions i { cursor: pointer; margin-left: 10px; transition: 0.2s; }
         .plat-manage-actions i:hover { color: var(--prof); }
+
+        .res-card-agenda { background: rgba(255, 255, 255, 0.05); padding: 12px; margin-bottom: 10px; border-radius: 8px; border-left: 5px solid #fff; }
+        .status-badge { font-weight: bold; font-size: 11px; padding: 2px 6px; border-radius: 4px; float: right; }
     </style>
 </head>
 <body>
@@ -97,7 +99,7 @@
         <div class="sector-column"><i class="fa fa-graduation-cap fa-3x" style="color:var(--prof)"></i><h2>PROFESSOR</h2><input type="number" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof); color:white" onclick="app.login('p','Professor')">Acessar</button></div>
         <div class="sector-column"><i class="fa fa-user-tie fa-3x" style="color:var(--gestao)"></i><h2>GESTÃO</h2><input type="number" id="g-p" placeholder="Prontuário"><input type="password" id="g-s" placeholder="Senha"><button class="btn" style="background:var(--gestao)" onclick="app.login('g','Gestão')">Acessar</button></div>
         <div class="sector-column"><i class="fa fa-building-columns fa-3x" style="color:var(--secre)"></i><h2>SECRETARIA</h2><input type="number" id="s-p" placeholder="Prontuário"><input type="password" id="s-s" placeholder="Senha"><button class="btn" style="background:var(--secre); color:white" onclick="app.login('s','Secretaria')">Acessar</button></div>
-        <div class="sector-column" style="background: rgba(46, 204, 113, 0.05)"><h2>CADASTRO</h2><input type="text" id="c-n" placeholder="Nome Completo"><input type="number" id="c-p" placeholder="Prontuário"><input type="email" id="c-e" placeholder="E-mail @edu"><select id="c-c"><option value="Professor">Professor</option><option value="Gestão">Gestão</option><option value="Secretaria">Secretaria</option><option value="SMETi">SMETi</option></select><button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Criar Conta</button></div>
+        <div class="sector-column" style="background: rgba(46, 204, 113, 0.05)"><h2>CADASTRO</h2><input type="text" id="c-n" placeholder="Nome Completo"><input type="number" id="c-p" placeholder="Prontuário"><input type="email" id="c-e" placeholder="E-mail @edu"><select id="c-c"><option value="Professor">Professor</option><option value="Gestão">Gestão</option><option value="Secretaria">Secretaria</option></select><button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Solicitar Cadastro</button></div>
         <div class="sector-column"><i class="fa fa-terminal fa-3x" style="color:var(--ntei)"></i><h2>NTEi</h2><input type="number" id="n-p" placeholder="ID"><input type="password" id="n-s" placeholder="Senha"><button class="btn" style="background:var(--ntei); color:white" onclick="app.login('n','NTEi')">Master Login</button></div>
         <div class="sector-column" style="border:none"><i class="fa fa-chart-line fa-3x" style="color:var(--smeti)"></i><h2>SMETi</h2><input type="number" id="sm-p" placeholder="Prontuário"><input type="password" id="sm-s" placeholder="Senha"><button class="btn" style="background:var(--smeti); color:black" onclick="app.login('sm','SMETi')">Gerenciar</button></div>
     </div>
@@ -116,6 +118,20 @@
                     <input type="text" id="res-sl" placeholder="Número da Sala">
                     <input type="datetime-local" id="res-dt">
                     <button class="btn" style="background:var(--prof); color:white" onclick="app.reservar()">Agendar</button>
+                </div>
+                
+                <div id="panel-questionario" class="panel hidden" style="border: 1px solid var(--gestao)">
+                    <h3 style="color:var(--gestao)"><i class="fa fa-poll-h"></i> Status da Devolução</h3>
+                    <input type="hidden" id="quest-reserva-id">
+                    <input type="hidden" id="quest-equip-id">
+                    <p style="font-size: 12px; margin: 0 0 5px 0;">Equipamento: <b id="quest-nome-eq">-</b></p>
+                    <select id="quest-problema">
+                        <option value="perfeito">✅ Tudo funcionando perfeitamente</option>
+                        <option value="problema_leve">⚠️ Apresentou lentidão / instabilidade leve</option>
+                        <option value="defeito_critico">🚨 Defeito crítico (Necessita Manutenção)</option>
+                    </select>
+                    <input type="text" id="quest-detalhes" placeholder="Observações adicionais (opcional)">
+                    <button class="btn" style="background:var(--gestao); color:black;" onclick="app.salvarQuestionario()">Enviar Feedback e Concluir</button>
                 </div>
                 <div class="panel">
                     <h3><i class="fa fa-book-open"></i> Plataformas</h3>
@@ -147,6 +163,22 @@
                         <button class="btn" style="background:#27ae60" onclick="app.setSystemStatus(false)">LIBERAR SITE</button>
                     </div>
                     
+                    <div style="margin-top:15px; background:rgba(255,255,255,0.05); padding:12px; border-radius:10px">
+                        <p style="font-size:11px; color:var(--prof); margin-top:0">🖨️ CONTROLE DE EQUIPAMENTOS PARA RESERVA:</p>
+                        <input type="text" id="eq-nome" placeholder="Nome (Ex: Chromebook 05)">
+                        <input type="text" id="eq-modelo" placeholder="Modelo (Ex: Samsung v2)">
+                        <input type="text" id="eq-patrimonio" placeholder="Patrimônio (Ex: 123456)">
+                        <button class="btn" style="background:var(--cad); color:white;" id="btn-salvar-equip" onclick="app.cadastrarEquipamento()">Salvar Equipamento</button>
+                        
+                        <p style="font-size:10px; color:#aaa; margin-bottom:5px; margin-top:15px">LISTA DE EQUIPAMENTOS CADASTRADOS:</p>
+                        <div id="lista-inventario-ntei" style="max-height:180px; overflow-y:auto; background:rgba(0,0,0,0.2); padding:5px; border-radius:5px"></div>
+                    </div>
+
+                    <div style="margin-top:15px; background:rgba(255,255,255,0.05); padding:10px; border-radius:10px">
+                        <p style="font-size:11px; color:#2ecc71; font-weight:bold"><i class="fa fa-user-plus"></i> NOVAS CONTAS AGUARDANDO ATIVAÇÃO:</p>
+                        <div id="lista-contas-pendentes"></div>
+                    </div>
+
                     <div style="margin-top:15px; background:rgba(255,255,255,0.05); padding:10px; border-radius:10px">
                         <p style="font-size:11px; color:var(--gestao)">RESET DE SENHA POR PRONTUÁRIO:</p>
                         <div style="display:flex; gap:5px">
@@ -164,6 +196,17 @@
                     <button class="btn" style="background:var(--plat-color)" id="btn-save-plat" onclick="app.addPlataformaURL()">ADICIONAR À LISTA</button>
                     <div id="manage-plat-list" style="margin-top:15px; max-height:150px; overflow-y:auto; border-top:1px solid rgba(255,255,255,0.1); padding-top:10px"></div>
                 </div>
+                
+                <div id="panel-feedbacks-ntei" class="panel hidden" style="border: 1px solid var(--prof)">
+                    <h3><i class="fa fa-comment-dots"></i> Feedbacks de Devolução (Análise)</h3>
+                    <div id="lista-feedbacks-devolucao" style="max-height: 250px; overflow-y: auto;"></div>
+                </div>
+
+                <div id="solicitacoes-acesso-box" class="panel hidden" style="border: 1px solid var(--gestao);">
+                    <h3 style="color:var(--gestao)"><i class="fa fa-key"></i> Solicitações de Acesso Pendentes</h3>
+                    <div id="lista-acessos-nti"></div>
+                </div>
+
                 <div id="panel-ntei-graficos" class="panel hidden">
                     <h3><i class="fa fa-chart-line"></i> Monitoramento de Tráfego (NTEi)</h3>
                     <div class="chart-container"><canvas id="chart-real-time-chamados"></canvas></div>
@@ -175,12 +218,12 @@
                 <div class="panel">
                     <h3><i class="fa fa-headset"></i> Abrir Chamado</h3>
                     <select id="chamado-tipo" onchange="app.updateSubCategorias()">
-                <option value="">Selecione a Categoria...</option>
-                <option value="Hardware">🛠️ Hardware (Equipamentos)</option>
-                <option value="Software">💻 Software (Erros/Instalação)</option>
-                <option value="Senhas">🔑 Senhas (Sisgem / Siseduc / Email)</option>
-                <option value="Alunos">🎓 Suporte Aluno (Sem conta / Login)</option>
-                <option value="Rede">🌐 Rede e Internet (Wi-Fi / Cabo)</option>
+                        <option value="">Selecione a Categoria...</option>
+                        <option value="Hardware">🛠️ Hardware (Equipamentos)</option>
+                        <option value="Software">💻 Software (Erros/Instalação)</option>
+                        <option value="Senhas">🔑 Senhas (Sisgem / Siseduc / Email)</option>
+                        <option value="Alunos">🎓 Suporte Aluno (Sem conta / Login)</option>
+                        <option value="Rede">🌐 Rede e Internet (Wi-Fi / Cabo)</option>
                     </select>
                     <select id="chamado-sub" class="hidden"></select>
                     <input type="text" id="chamado-desc" placeholder="Qual o problema?">
@@ -189,6 +232,11 @@
             </div>
 
             <div class="right-col">
+                <div class="panel">
+                    <h3><i class="fa fa-clock"></i> Reservas Ativas (Chácara)</h3>
+                    <div id="lista-reservas-ativas" style="max-height: 350px; overflow-y: auto;"></div>
+                </div>
+
                 <div class="panel">
                     <h3><i class="fa fa-comments"></i> Mural de Avisos</h3>
                     <div id="chat-box"></div>
@@ -250,7 +298,7 @@
             let r = "Desculpe, ainda estou aprendendo. Tente perguntar sobre 'reservas', 'chamados' ou 'cadastro'.";
             if(q.includes("reserva")) r = "Para fazer uma reserva, preencha o painel 'Nova Reserva' à esquerda.";
             else if(q.includes("chamado")) r = "Problemas técnicos? Use o painel 'Abrir Chamado' no centro.";
-            else if(q.includes("cadastro")) r = "Novos usuários devem usar a aba 'CADASTRO'. A senha inicial para professores é 'pmspmudar123'.";
+            else if(q.includes("cadastro")) r = "Novos usuários devem preencher o cadastro e aguardar ativação do NTEi.";
             setTimeout(() => {
                 box.innerHTML += `<div class="msg msg-in"><b>Nuvem:</b> ${r}</div>`;
                 box.scrollTop = box.scrollHeight;
@@ -262,39 +310,71 @@
         user: null,
         currentTicket: null,
         editingPlatId: null,
-        editingAlunoId: null, // <-- ESSA É A LINHA QUE ESTAVA FALTANDO
+        editingAlunoId: null,
+        editingEquipId: null,
+        padroes: ["pmspmudar123", "pmspgestores2026", "secretaria2026"],
         charts: {},
+
         async login(pre, cargo) {
             const p = document.getElementById(pre+'-p')?.value;
             const s = document.getElementById(pre+'-s').value;
 
-            // Bloqueio de Segurança para SMETi (Requer autorização no banco pelo NTEi)
-            if(cargo === 'SMETi') {
-                const authSnap = await db.ref('autorizados_smeti/'+p).once('value');
-                if(!authSnap.exists()) {
-                    alert("Acesso SMETi negado. Entre em contato com o NTEi para autorização de prontuário.");
-                    return;
-                }
-            }
-
-            // Master Login NTEi
             if(cargo==='NTEi' && p==='46690' && s==='nti2026') { 
                 this.user={nome:'Kelvin (NTEi)', cargo:'NTEi', pront:'46690'}; 
                 return this.start(); 
             }
 
+            if(cargo === 'SMETi') {
+                const authSnap = await db.ref('autorizados_smeti/'+p).once('value');
+                if(!authSnap.exists()) {
+                    alert("Acesso SMETi negado. Prontuário sem permissão.");
+                    return;
+                }
+            }
+
             const snap = await db.ref('usuarios/'+p).once('value');
-            if(snap.exists() && String(snap.val().pass) === String(s)) { 
-                this.user = snap.val(); 
-                this.start(); 
-            } else { alert("Dados incorretos."); }
+            if(snap.exists()) {
+                const userData = snap.val();
+                
+                // Validação de Conta Ativada pelo NTEi
+                if(userData.status === 'pendente') {
+                    alert("Sua conta está aguardando ativação pelo NTEi. Por favor, aguarde.");
+                    return;
+                }
+
+                if(String(userData.pass) === String(s)) { 
+                    this.user = userData; 
+
+                    // REGRA DE FORÇAR ALTERAÇÃO DE SENHA PADRÃO
+                    if(this.padroes.includes(String(s))) {
+                        let novaSenha = "";
+                        while(!novaSenha || novaSenha.trim().length < 4 || this.padroes.includes(novaSenha)) {
+                            novaSenha = prompt("🔒 SEGURANÇA: Você está usando uma senha padrão.\nDigite uma NOVA SENHA personalizada (mínimo 4 caracteres):");
+                        }
+                        await db.ref('usuarios/'+p).update({ pass: novaSenha });
+                        this.user.pass = novaSenha;
+                        alert("Senha atualizada com sucesso! Bem-vindo ao sistema.");
+                    }
+
+                    this.start(); 
+                } else { alert("Senha incorreta."); }
+            } else { alert("Prontuário não cadastrado ou não aprovado."); }
         },
 
+        // CADASTRO ENTRA EM ESTADO PENDENTE DE APROVAÇÃO
         confirmarCad() {
             const n = document.getElementById('c-n').value, p = document.getElementById('c-p').value, 
                   c = document.getElementById('c-c').value, e = document.getElementById('c-e').value;
+            if(!n || !p || !e) return alert("Preencha todos os campos.");
+
             let pass = c === "Secretaria" ? "secretaria2026" : (c === "Gestão" ? "pmspgestores2026" : "pmspmudar123");
-            db.ref('usuarios/'+p).set({ nome: n, pront: p, cargo: c, pass: pass, email: e }).then(() => alert("Conta criada! Senha: " + pass));
+            
+            db.ref('usuarios/'+p).set({ 
+                nome: n, pront: p, cargo: c, pass: pass, email: e, status: 'pendente' 
+            }).then(() => {
+                alert(`Solicitação enviada ao NTEi! Quando Kelvin aprovar, sua senha inicial será: ${pass}`);
+                document.getElementById('c-n').value = ""; document.getElementById('c-p').value = ""; document.getElementById('c-e').value = "";
+            });
         },
 
         start() {
@@ -304,7 +384,12 @@
             if(this.user.cargo === 'NTEi') {
                 document.getElementById('panel-ntei-graficos').classList.remove('hidden');
                 document.getElementById('panel-admin-ntei').classList.remove('hidden');
-                this.syncSolicitacoesAcesso(); // <-- ADICIONADO
+                document.getElementById('solicitacoes-acesso-box').classList.remove('hidden');
+                document.getElementById('panel-feedbacks-ntei').classList.remove('hidden');
+                this.syncSolicitacoesAcesso();
+                this.syncFeedbacks();
+                this.escutarContasPendentes();
+                this.carregarInventarioGerenciável();
             }
             if(this.user.cargo === 'SMETi' || this.user.cargo === 'NTEi') {
                 document.getElementById('panel-smeti').classList.remove('hidden');
@@ -313,23 +398,166 @@
             this.initModernCharts();
             this.syncSystemControls();
             this.syncData();
-            this.carregarEquipamentos();
+            this.carregarEquipamentosDinamicos();
             this.carregarAlunos();
             this.carregarPlataformasDinamicas();
+            this.escutarReservasTempoReal();
         },
 
-        // --- CONTROLE DE ACESSO SMETi (NTEi ADICIONADO) ---
+        // ESCUTA CONTAS AGUARDANDO ATIVAÇÃO
+        escutarContasPendentes() {
+            db.ref('usuarios').on('value', snap => {
+                const box = document.getElementById('lista-contas-pendentes');
+                if(!box) return;
+                box.innerHTML = "";
+                let temPendente = false;
+
+                snap.forEach(userSnap => {
+                    const u = userSnap.val();
+                    if(u.status === 'pendente') {
+                        temPendente = true;
+                        box.innerHTML += `
+                        <div class="plat-manage-item" style="background:rgba(46,204,113,0.1)">
+                            <div style="text-align:left">
+                                <b>👤 ${u.nome}</b> (${u.cargo})<br><small>Pront: ${u.pront} | ${u.email}</small>
+                            </div>
+                            <div>
+                                <button class="btn" style="background:#2ecc71; padding:3px 8px; font-size:10px; width:auto; margin:0" onclick="app.ativarConta('${u.pront}')">Ativar</button>
+                                <button class="btn" style="background:#eb4d4b; padding:3px 8px; font-size:10px; width:auto; margin:0" onclick="app.deletarConta('${u.pront}')">Recusar</button>
+                            </div>
+                        </div>`;
+                    }
+                });
+                if(!temPendente) box.innerHTML = "<p style='font-size:11px; color:#888; margin:0'>Nenhuma solicitação de cadastro pendente.</p>";
+            });
+        },
+
+        ativarConta(pront) { db.ref('usuarios/'+pront).update({ status: 'ativo' }).then(() => alert("Conta ativada!")); },
+        deletarConta(pront) { if(confirm("Remover solicitação de cadastro?")) db.ref('usuarios/'+pront).remove(); },
+
+        // CADASTRO E EDIÇÃO DE EQUIPAMENTOS
+        cadastrarEquipamento() {
+            const nome = document.getElementById('eq-nome').value;
+            const modelo = document.getElementById('eq-modelo').value;
+            const patrimonio = document.getElementById('eq-patrimonio').value;
+
+            if(!nome || !modelo || !patrimonio) return alert("Preencha todos os dados.");
+
+            if(this.editingEquipId) {
+                db.ref('equipamentos/' + this.editingEquipId).update({ nome, modelo, patrimonio })
+                .then(() => {
+                    alert("Equipamento atualizado!");
+                    this.editingEquipId = null;
+                    document.getElementById('btn-salvar-equip').innerText = "Salvar Equipamento";
+                });
+            } else {
+                db.ref('equipamentos').push({ nome, modelo, patrimonio, status: 'disponivel' })
+                .then(() => alert("Equipamento cadastrado com sucesso!"));
+            }
+
+            document.getElementById('eq-nome').value = "";
+            document.getElementById('eq-modelo').value = "";
+            document.getElementById('eq-patrimonio').value = "";
+        },
+
+        carregarInventarioGerenciável() {
+            db.ref('equipamentos').on('value', snap => {
+                const box = document.getElementById('lista-inventario-ntei');
+                if(!box) return;
+                box.innerHTML = "";
+
+                snap.forEach(c => {
+                    const eq = c.val();
+                    box.innerHTML += `
+                    <div class="plat-manage-item">
+                        <div style="text-align:left">
+                            <b>${eq.nome}</b> <small>(${eq.status.toUpperCase()})</small><br>
+                            <span style="font-size:10px; color:#bbb">Mod: ${eq.modelo} | Pat: ${eq.patrimonio}</span>
+                        </div>
+                        <div class="plat-manage-actions">
+                            <i class="fa fa-edit" style="color:#3498db" onclick="app.editarEquipVisual('${c.key}', '${eq.nome}', '${eq.modelo}', '${eq.patrimonio}')"></i>
+                            <i class="fa fa-trash" style="color:var(--ntei)" onclick="app.excluirEquipamento('${c.key}')"></i>
+                        </div>
+                    </div>`;
+                });
+            });
+        },
+
+        editarEquipVisual(id, nome, modelo, patrimonio) {
+            this.editingEquipId = id;
+            document.getElementById('eq-nome').value = nome;
+            document.getElementById('eq-modelo').value = modelo;
+            document.getElementById('eq-patrimonio').value = patrimonio;
+            document.getElementById('btn-salvar-equip').innerText = "ATUALIZAR DADOS";
+        },
+
+        excluirEquipamento(id) {
+            if(confirm("Deseja deletar totalmente este equipamento do sistema?")) {
+                db.ref('equipamentos/' + id).remove().then(() => alert("Equipamento apagado do inventário."));
+            }
+        },
+
+        carregarEquipamentosDinamicos() {
+            db.ref('equipamentos').on('value', snap => {
+                const select = document.getElementById('res-eq');
+                if(!select) return; select.innerHTML = "";
+                let existem = false;
+
+                snap.forEach(child => {
+                    const eq = child.val(); existem = true;
+                    if(eq.status === 'manutencao') {
+                        select.innerHTML += `<option value="${child.key}" disabled>⚠️ ${eq.nome} [EM MANUTENÇÃO]</option>`;
+                    } else {
+                        select.innerHTML += `<option value="${child.key}">💻 ${eq.nome} (PAT: ${eq.patrimonio})</option>`;
+                    }
+                });
+                if(!existem) select.innerHTML = "<option value=''>Nenhum equipamento cadastrado</option>";
+            });
+        },
+
+        syncFeedbacks() {
+            db.ref('reservas').on('value', snap => {
+                const container = document.getElementById('lista-feedbacks-devolucao');
+                if(!container) return; container.innerHTML = "";
+                let temFeedback = false;
+
+                snap.forEach(c => {
+                    const d = c.val();
+                    if(d && d.status === 'aguardando_validation' && d.quest_problema) {
+                        temFeedback = true;
+                        let corBadge = d.quest_problema === 'defeito_critico' ? 'var(--ntei)' : (d.quest_problema === 'problema_leve' ? 'var(--gestao)' : '#2ecc71');
+                        
+                        container.innerHTML += `
+                        <div class="res-item" style="border-left: 5px solid ${corBadge}; background: rgba(255,255,255,0.03); padding:10px; margin-bottom:8px; border-radius:5px; font-size:12px;">
+                            <b>💻 ${d.eq}</b> (Sala ${d.sl})<br>
+                            <span>👤 Prof: ${d.u}</span><br>
+                            <span style="color:#bbb; font-style:italic">💬 Obs: ${d.quest_detalhes || 'Sem observações.'}</span><br>
+                            <div style="margin-top:5px; display:flex; gap:5px;">
+                                <button class="btn" style="padding:4px 8px; font-size:10px; width:auto; background:var(--cad);" onclick="app.validarFeedback('${c.key}', '${d.equip_id}', 'disponivel')">Liberar (OK)</button>
+                                <button class="btn" style="padding:4px 8px; font-size:10px; width:auto; background:var(--ntei);" onclick="app.validarFeedback('${c.key}', '${d.equip_id}', 'manutencao')">Retirar p/ Manutenção</button>
+                            </div>
+                        </div>`;
+                    }
+                });
+                if(!temFeedback) container.innerHTML = `<p style="text-align:center; color:#666; font-size:12px; padding:10px;">🎉 Nenhum alerta técnico pendente nos feedbacks.</p>`;
+            });
+        },
+
+        validarFeedback(reservaId, equipId, novoStatus) {
+            if(confirm("Confirmar triagem técnica do equipamento?")) {
+                if(equipId && equipId !== "undefined") db.ref('equipamentos/' + equipId).update({ status: novoStatus });
+                db.ref('reservas/' + reservaId).update({ status: novoStatus === 'manutencao' ? 'manutencao' : 'concluido' });
+            }
+        },
+
         syncSolicitacoesAcesso() {
             db.ref('solicitacoes_acesso').on('child_added', snap => {
-                const d = snap.val();
-                const box = document.getElementById('lista-chamados-nti');
+                const d = snap.val(); const box = document.getElementById('lista-acessos-nti');
                 if (!box || d.status !== 'pendente') return;
 
                 const idCard = 'req-' + snap.key;
                 if (!document.getElementById(idCard)) {
-                    const div = document.createElement('div');
-                    div.id = idCard;
-                    div.className = 'res-item';
+                    const div = document.createElement('div'); div.id = idCard; div.className = 'res-item';
                     div.style = "border-left: 5px solid #f1c40f; background: rgba(241,196,15,0.05); padding:10px; margin-bottom:8px; border-radius:5px";
                     div.innerHTML = `
                         <b style="color:#f1c40f"><i class="fa fa-key"></i> ACESSO: ${d.plataforma}</b><br>
@@ -345,58 +573,35 @@
 
         decidirAcesso(id, decisao, prontuario) {
             db.ref('solicitacoes_acesso/' + id).update({ status: decisao }).then(() => {
-                if (decisao === 'autorizado' && prontuario) {
-                    db.ref('autorizados_smeti/' + prontuario).set(true);
-                }
-                const card = document.getElementById('req-' + id);
-                if(card) card.remove();
+                if (decisao === 'autorizado' && prontuario) db.ref('autorizados_smeti/' + prontuario).set(true);
+                const card = document.getElementById('req-' + id); if(card) card.remove();
             });
         },
 
-        // GRÁFICO REALISTA "FODA" - ESTILO DASHBOARD JAVA/NEON
         initModernCharts() {
-            // Gráfico NTEi (Tráfego/Chamados)
             const ctx1 = document.getElementById('chart-real-time-chamados').getContext('2d');
             const grad1 = ctx1.createLinearGradient(0, 0, 0, 200);
-            grad1.addColorStop(0, 'rgba(235, 77, 75, 0.4)');
-            grad1.addColorStop(1, 'rgba(235, 77, 75, 0)');
-
+            grad1.addColorStop(0, 'rgba(235, 77, 75, 0.4)'); grad1.addColorStop(1, 'rgba(235, 77, 75, 0)');
             this.charts.ntei = new Chart(ctx1, {
                 type: 'line',
                 data: {
                     labels: ['-10m', '-8m', '-6m', '-4m', '-2m', 'Agora'],
-                    datasets: [{
-                        label: 'Latência de Suporte',
-                        data: [10, 25, 15, 30, 20, 35],
-                        borderColor: '#eb4d4b',
-                        fill: true,
-                        backgroundColor: grad1,
-                        tension: 0.4,
-                        borderWidth: 3,
-                        pointRadius: 0
-                    }]
+                    datasets: [{ label: 'Chamados', data: [10, 25, 15, 30, 20, 35], borderColor: '#eb4d4b', fill: true, backgroundColor: grad1, tension: 0.4, borderWidth: 3, pointRadius: 0 }]
                 },
                 options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false }, ticks: { color: '#666' } } } }
             });
 
-            // Gráfico SMETi (Desenvolvimento)
             const ctx2 = document.getElementById('chart-smeti-colegio').getContext('2d');
             this.charts.smeti = new Chart(ctx2, {
                 type: 'bar',
                 data: {
                     labels: ['Matific', 'Elefante', 'Khan', 'Siseduc'],
-                    datasets: [{
-                        label: 'Acesso %',
-                        data: [85, 70, 40, 95],
-                        backgroundColor: ['#2ecc71', '#3498db', '#f1c40f', '#a55eea'],
-                        borderRadius: 5
-                    }]
+                    datasets: [{ label: 'Uso %', data: [85, 70, 40, 95], backgroundColor: ['#2ecc71', '#3498db', '#f1c40f', '#a55eea'], borderRadius: 5 }]
                 },
                 options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100, ticks: { color: '#aaa' } } } }
             });
         },
 
-        // FUNÇÃO DE RESET DE SENHA PELO NTEi
         async resetarSenhaManual() {
             const pront = document.getElementById('reset-pront-input').value;
             if(!pront) return alert("Insira o prontuário!");
@@ -404,84 +609,53 @@
             const snap = await ref.once('value');
             if(snap.exists()) {
                 await ref.update({ pass: 'pmspmudar123' });
-                alert("Senha do usuário resetada para 'pmspmudar123' com sucesso!");
-            } else {
-                alert("Prontuário não encontrado.");
-            }
+                alert("Senha resetada para 'pmspmudar123' com sucesso!");
+            } else { alert("Prontuário não encontrado."); }
         },
 
         setSystemStatus(lock) { db.ref('config/maintenance').set(lock); },
-        
         enviarAvisoGeral() {
             const txt = document.getElementById('input-aviso-geral').value;
-            db.ref('config/globalAlert').set(txt);
-            document.getElementById('input-aviso-geral').value = "";
+            db.ref('config/globalAlert').set(txt); document.getElementById('input-aviso-geral').value = "";
         },
 
-        // --- GERENCIAMENTO DE PLATAFORMAS (Adicionar, Editar e Excluir) ---
         addPlataformaURL() {
-            const n = document.getElementById('new-plat-name').value;
-            const u = document.getElementById('new-plat-url').value;
+            const n = document.getElementById('new-plat-name').value; const u = document.getElementById('new-plat-url').value;
             if(!n || !u) return alert("Preencha os campos!");
-            
             if(this.editingPlatId) {
-                // Se estiver editando, atualiza o link existente
-                db.ref('config/links/' + this.editingPlatId).update({ nome: n, url: u });
-                this.editingPlatId = null;
+                db.ref('config/links/' + this.editingPlatId).update({ nome: n, url: u }); this.editingPlatId = null;
                 document.getElementById('btn-save-plat').innerText = "ADICIONAR À LISTA";
-            } else {
-                // Se não, cria um novo
-                db.ref('config/links').push({ nome: n, url: u });
-            }
-            document.getElementById('new-plat-name').value = "";
-            document.getElementById('new-plat-url').value = "";
+            } else { db.ref('config/links').push({ nome: n, url: u }); }
+            document.getElementById('new-plat-name').value = ""; document.getElementById('new-plat-url').value = "";
         },
 
         editPlataforma(id, nome, url) {
-            // Joga os dados de volta para os campos de texto
-            this.editingPlatId = id;
-            document.getElementById('new-plat-name').value = nome;
-            document.getElementById('new-plat-url').value = url;
-            document.getElementById('btn-save-plat').innerText = "SALVAR ALTERAÇÃO";
-            // Rola a página para cima para o usuário ver que abriu para editar
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            this.editingPlatId = id; document.getElementById('new-plat-name').value = nome; document.getElementById('new-plat-url').value = url;
+            document.getElementById('btn-save-plat').innerText = "SALVAR ALTERAÇÃO"; window.scrollTo({ top: 0, behavior: 'smooth' });
         },
 
-        deletePlataforma(id) {
-            if(confirm("Tem certeza que deseja remover este link?")) {
-                db.ref('config/links/' + id).remove();
-            }
-        },
+        deletePlataforma(id) { if(confirm("Remover este link?")) db.ref('config/links/' + id).remove(); },
 
         syncSystemControls() {
             db.ref('config/maintenance').on('value', s => {
                 const isLocked = s.val();
-                if(isLocked && this.user.cargo !== 'NTEi') {
-                    document.getElementById('lock-overlay').style.display = 'flex';
-                } else {
-                    document.getElementById('lock-overlay').style.display = 'none';
-                }
+                if(isLocked && this.user && this.user.cargo !== 'NTEi') document.getElementById('lock-overlay').style.display = 'flex';
+                else document.getElementById('lock-overlay').style.display = 'none';
             });
             db.ref('config/globalAlert').on('value', s => {
-                const msg = s.val();
-                const rib = document.getElementById('alert-ribbon');
-                if(msg) { rib.style.display = 'block'; document.getElementById('alert-text').innerText = msg; }
-                else { rib.style.display = 'none'; }
+                const msg = s.val(); const rib = document.getElementById('alert-ribbon');
+                if(msg) { rib.style.display = 'block'; document.getElementById('alert-text').innerText = msg; } else { rib.style.display = 'none'; }
             });
         },
 
         carregarPlataformasDinamicas() {
             db.ref('config/links').on('value', snap => {
-                const div = document.getElementById('dynamic-plat-list');
-                const manageDiv = document.getElementById('manage-plat-list');
-                div.innerHTML = "";
-                if(manageDiv) manageDiv.innerHTML = "";
+                const div = document.getElementById('dynamic-plat-list'); const manageDiv = document.getElementById('manage-plat-list');
+                div.innerHTML = ""; if(manageDiv) manageDiv.innerHTML = "";
                 snap.forEach(l => {
                     const d = l.val();
                     div.innerHTML += `<a href="${d.url}" target="_blank" style="color:var(--plat-color); display:block; margin:5px 0; font-size:13px; text-decoration:none"><i class="fa fa-external-link"></i> ${d.nome}</a>`;
-                    if(manageDiv) {
-                        manageDiv.innerHTML += `<div class="plat-manage-item"><span>${d.nome}</span><div class="plat-manage-actions"><i class="fa fa-edit" onclick="app.editPlataforma('${l.key}', '${d.nome}', '${d.url}')"></i><i class="fa fa-trash" style="color:var(--ntei)" onclick="app.deletePlataforma('${l.key}')"></i></div></div>`;
-                    }
+                    if(manageDiv) manageDiv.innerHTML += `<div class="plat-manage-item"><span>${d.nome}</span><div class="plat-manage-actions"><i class="fa fa-edit" onclick="app.editPlataforma('${l.key}', '${d.nome}', '${d.url}')"></i><i class="fa fa-trash" style="color:var(--ntei)" onclick="app.deletePlataforma('${l.key}')"></i></div></div>`;
                 });
             });
         },
@@ -496,10 +670,7 @@
         syncData() {
             db.ref('chat').limitToLast(15).on('value', snap => {
                 const box = document.getElementById('chat-box'); box.innerHTML = "";
-                snap.forEach(m => { 
-                    let d = m.val(); 
-                    box.innerHTML += `<div class="msg ${d.n === this.user.nome ? 'msg-out' : 'msg-in'}"><b>${d.n}:</b><br>${d.t}</div>`; 
-                });
+                snap.forEach(m => { let d = m.val(); box.innerHTML += `<div class="msg ${this.user && d.n === this.user.nome ? 'msg-out' : 'msg-in'}"><b>${d.n}:</b><br>${d.t}</div>`; });
                 box.scrollTop = box.scrollHeight;
             });
             db.ref('chamados').on('value', snap => {
@@ -509,8 +680,7 @@
                     if(d.status === 'aberto') {
                         box.innerHTML += `
                         <div class="res-item" style="border-left: 5px solid var(--ntei); background: rgba(255,255,255,0.05); padding:10px; margin-bottom:8px; border-radius:5px">
-                            <b style="color:var(--ntei)">${d.tipo}</b> - ${d.u}<br>
-                            <span style="font-size:11px">${d.t}</span><br>
+                            <b style="color:var(--ntei)">${d.tipo}</b> - ${d.u}<br><span style="font-size:11px">${d.t}</span><br>
                             <button class="btn" style="padding:4px; font-size:9px; background:var(--prof); width:auto" onclick="app.atenderChamado('${c.key}')">Atendimento Privado</button>
                         </div>`;
                     }
@@ -524,14 +694,10 @@
         },
 
         atenderChamado(id) {
-            this.currentTicket = id;
-            document.getElementById('active-ticket-area').classList.remove('hidden');
+            this.currentTicket = id; document.getElementById('active-ticket-area').classList.remove('hidden');
             db.ref('chat_privado_ntei/'+id).on('value', snap => {
                 const box = document.getElementById('chat-nti-box'); box.innerHTML = "";
-                snap.forEach(m => {
-                    let d = m.val();
-                    box.innerHTML += `<div class="msg ${d.n === this.user.nome ? 'msg-out' : 'msg-in'}"><b>${d.n}:</b><br>${d.t}</div>`;
-                });
+                snap.forEach(m => { let d = m.val(); box.innerHTML += `<div class="msg ${this.user && d.n === this.user.nome ? 'msg-out' : 'msg-in'}"><b>${d.n}:</b><br>${d.t}</div>`; });
                 box.scrollTop = box.scrollHeight;
             });
         },
@@ -541,119 +707,103 @@
             if(txt) { db.ref('chat_privado_ntei/'+this.currentTicket).push({ n: this.user.nome, t: txt }); document.getElementById('chat-nti-in').value = ""; }
         },
 
-        finalizarChamado() {
-            db.ref('chamados/'+this.currentTicket).update({ status: 'resolvido' });
-            document.getElementById('active-ticket-area').classList.add('hidden');
-        },
+        finalizarChamado() { db.ref('chamados/'+this.currentTicket).update({ status: 'resolvido' }); document.getElementById('active-ticket-area').classList.add('hidden'); },
 
-      salvarAluno() {
-            const n = document.getElementById('al-nome').value;
-            const u = document.getElementById('al-user').value;
-            const p = document.getElementById('al-pass').value;
-            
-            if(!n || !u) return alert("Preencha o nome e usuário do aluno!");
-
-            // Se existir um ID em 'editingAlunoId', ele atualiza. Se não, ele cria novo.
+        salvarAluno() {
+            const n = document.getElementById('al-nome').value, u = document.getElementById('al-user').value, p = document.getElementById('al-pass').value;
+            if(!n || !u) return alert("Preencha nome e usuário.");
             if(this.editingAlunoId) {
-                db.ref('alunos/' + this.user.pront + '/' + this.editingAlunoId).update({ n, u, p })
-                .then(() => {
-                    alert("Dados do aluno atualizados!");
-                    this.editingAlunoId = null; // Reseta o modo de edição
-                    document.querySelector('#panel-prof-alunos button').innerText = "CADASTRAR ALUNO";
-                });
-            } else {
-                // Modo de cadastro normal
-                db.ref('alunos/' + this.user.pront).push({ n, u, p })
-                .then(() => alert("Aluno cadastrado com sucesso!"));
-            }
-
-            // Limpa os campos do formulário
-            document.getElementById('al-nome').value = "";
-            document.getElementById('al-user').value = "";
-            document.getElementById('al-pass').value = "";
+                db.ref('alunos/' + this.user.pront + '/' + this.editingAlunoId).update({ n, u, p }).then(() => { alert("Aluno atualizado!"); this.editingAlunoId = null; });
+            } else { db.ref('alunos/' + this.user.pront).push({ n, u, p }).then(() => alert("Aluno cadastrado!")); }
+            document.getElementById('al-nome').value = ""; document.getElementById('al-user').value = ""; document.getElementById('al-pass').value = "";
         },
 
-     carregarAlunos() {
+        carregarAlunos() {
             db.ref('alunos/' + this.user.pront).on('value', snap => {
-                const b = document.getElementById('body-alunos'); 
-                if(!b) return;
-                b.innerHTML = "";
-                
+                const b = document.getElementById('body-alunos'); if(!b) return; b.innerHTML = "";
                 snap.forEach(alunoSnap => { 
-                    const d = alunoSnap.val(); 
-                    const key = alunoSnap.key; // Essa é a "identidade" do aluno no banco
-                    
-                    b.innerHTML += `
-                        <tr>
-                            <td><b>${d.n}</b></td>
-                            <td>${d.u}</td>
-                            <td>${d.p}</td>
-                            <td>
-                                <i class="fa fa-edit" style="cursor:pointer; color:#3498db; margin-right:10px" 
-                                   onclick="app.editAluno('${key}', '${d.n}', '${d.u}', '${d.p}')"></i>
-                                
-                                <i class="fa fa-trash" style="cursor:pointer; color:#eb4d4b" 
-                                   onclick="app.deleteAluno('${key}')"></i>
-                            </td>
-                        </tr>`; 
+                    const d = alunoSnap.val(); const key = alunoSnap.key;
+                    b.innerHTML += `<tr><td><b>${d.n}</b></td><td>${d.u}</td><td>${d.p}</td><td><i class="fa fa-edit" style="cursor:pointer; color:#3498db; margin-right:10px" onclick="app.editAluno('${key}', '${d.n}', '${d.u}', '${d.p}')"></i><i class="fa fa-trash" style="cursor:pointer; color:#eb4d4b" onclick="app.deleteAluno('${key}')"></i></td></tr>`; 
                 });
             });
         },
-        editAluno(id, nome, usuario, senha) {
-            // Guarda o ID do aluno que estamos editando
-            this.editingAlunoId = id; 
-            
-            // Preenche os inputs com os dados para você alterar
-            document.getElementById('al-nome').value = nome;
-            document.getElementById('al-user').value = usuario;
-            document.getElementById('al-pass').value = senha;
-            
-            // Muda o texto do botão de cadastro
-            const btn = document.querySelector('#panel-prof-alunos button');
-            if(btn) btn.innerText = "SALVAR ALTERAÇÕES";
-        },
-
-        deleteAluno(id) {
-            if(confirm("Tem certeza que deseja excluir este aluno?")) {
-                db.ref('alunos/' + this.user.pront + '/' + id).remove()
-                .then(() => alert("Aluno removido com sucesso!"));
-            }
-        },
+        editAluno(id, nome, usuario, senha) { this.editingAlunoId = id; document.getElementById('al-nome').value = nome; document.getElementById('al-user').value = usuario; document.getElementById('al-pass').value = senha; },
+        deleteAluno(id) { if(confirm("Excluir aluno?")) db.ref('alunos/' + this.user.pront + '/' + id).remove(); },
+        
         updateSubCategorias() {
-            const t = document.getElementById('chamado-tipo').value, s = document.getElementById('chamado-sub');
-            s.innerHTML = ""; s.classList.remove('hidden');
-            let opts = t==='Hardware' ? ['Chromebook', 'PC', 'Impressora'] : (t==='Software' ? ['Sisgem', 'Siseduc'] : ['Reset Email', 'Plataformas']);
+            const t = document.getElementById('chamado-tipo').value, s = document.getElementById('chamado-sub'); s.innerHTML = ""; s.classList.remove('hidden');
+            let opts = t=='Hardware' ? ['Chromebook', 'PC', 'Impressora'] : (t=='Software' ? ['Sisgem', 'Siseduc'] : ['Reset Email', 'Plataformas']);
             opts.forEach(o => s.innerHTML += `<option value="${o}">${o}</option>`);
         },
 
-        carregarEquipamentos() {
-            const eqs = ['TV 01', 'TV 02', 'Chromebooks', 'Sala Info'];
-            const sel = document.getElementById('res-eq'); sel.innerHTML = "";
-            eqs.forEach(e => sel.innerHTML += `<option value="${e}">${e}</option>`);
+        async reservar() {
+            const eqSelect = document.getElementById('res-eq'); const eqId = eqSelect.value; const eqNomeCompleto = eqSelect.options[eqSelect.selectedIndex]?.text;
+            const sl = document.getElementById('res-sl').value; const dt = document.getElementById('res-dt').value;
+            if(!eqId || !sl || !dt) return alert("Preencha todos os campos da reserva!");
+
+            db.ref('equipamentos/' + eqId).update({ status: 'ocupado' });
+            db.ref('reservas').push({ equip_id: eqId, eq: eqNomeCompleto.replace('💻 ', ''), sl: sl, dt: dt, u: this.user.nome, p: this.user.pront, status: 'em_uso' })
+            .then(() => { alert("Reservado!"); document.getElementById('res-sl').value = ""; document.getElementById('res-dt').value = ""; });
         },
 
-        reservar() {
-            db.ref('reservas').push({ eq: document.getElementById('res-eq').value, sl: document.getElementById('res-sl').value, dt: document.getElementById('res-dt').value, u: this.user.nome });
-            alert("Reservado!");
+        escutarReservasTempoReal() {
+            db.ref('reservas').on('value', snap => {
+                const container = document.getElementById('lista-reservas-ativas'); if(!container) return; container.innerHTML = "";
+                let possui = false;
+
+                snap.forEach(c => {
+                    let d = c.val(); if(!d) return;
+                    if(d.status === 'em_uso' || d.status === 'aguardando_validation' || d.status === 'manutencao') {
+                        possui = true; let labelStatus = "", bordaCor = "#fff", btnAcao = "";
+
+                        if(d.status === 'em_uso') {
+                            labelStatus = `<span class="status-badge" style="color:var(--cad)">⚡ Em Uso</span>`; bordaCor = "var(--cad)";
+                            if(this.user && (d.p === this.user.pront || this.user.cargo === 'NTEi')) {
+                                btnAcao = `<button class="btn" style="background:var(--ntei); font-size:10px; padding:4px; height:auto; margin-top:8px" onclick="app.gatilhoDarBaixa('${c.key}', '${d.equip_id}', '${d.eq}')">Dar Baixa / Devolver</button>`;
+                            }
+                        } else if(d.status === 'aguardando_validation') {
+                            labelStatus = `<span class="status-badge" style="color:var(--gestao)">⏳ Devolvido</span>`; bordaCor = "var(--gestao)";
+                        } else if(d.status === 'manutencao') {
+                            labelStatus = `<span class="status-badge" style="color:var(--ntei)">🛠️ Em Manutenção</span>`; bordaCor = "var(--ntei)";
+                            if(this.user && this.user.cargo === 'NTEi') {
+                                btnAcao = `<button class="btn" style="background:var(--cad); font-size:10px; padding:4px; height:auto; margin-top:8px" onclick="app.finalizarManutencaoDireto('${c.key}', '${d.equip_id}')">Concluir Manutenção</button>`;
+                            }
+                        }
+                        container.innerHTML += `<div class="res-card-agenda" style="border-left-color: ${bordaCor}">${labelStatus}<b>${d.eq}</b><br><small>📍 Sala: ${d.sl} | ⏰ ${d.dt.replace('T', ' às ')}</small><br><small>👤 Por: <b>${d.u}</b></small>${btnAcao}</div>`;
+                    }
+                });
+                if(!possui) container.innerHTML = `<p style="text-align:center; color:#666; font-size:12px; padding:10px;">🎉 Nenhum equipamento reservado.</p>`;
+            });
         },
 
-      pedirAcesso(plataforma) {
-            const pedido = {
-                professor: this.user.nome,
-                prontuario: this.user.pront,
-                plataforma: plataforma,
-                status: 'pendente',
-                data: new Date().toLocaleString()
-            };
-            
-            db.ref('solicitacoes_acesso').push(pedido)
-                .then(() => alert("Solicitação enviada! Aguarde a autorização do NTEi."));
+        finalizarManutencaoDireto(reservaId, equipId) {
+            if(confirm("Manutenção concluída?")) {
+                if(equipId) db.ref('equipamentos/' + equipId).update({ status: 'disponivel' });
+                db.ref('reservas/' + reservaId).update({ status: 'concluido' });
+            }
         },
+
+        gatilhoDarBaixa(id, equipId, nomeEq) {
+            document.getElementById('quest-reserva-id').value = id; document.getElementById('quest-equip-id').value = equipId;
+            document.getElementById('quest-nome-eq').innerText = nomeEq; document.getElementById('panel-questionario').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
+
+        salvarQuestionario() {
+            const id = document.getElementById('quest-reserva-id').value, equipId = document.getElementById('quest-equip-id').value;
+            const prob = document.getElementById('quest-problema').value, det = document.getElementById('quest-detalhes').value;
+
+            db.ref('reservas/'+id).update({ status: 'aguardando_validation', equip_id: equipId, quest_problema: prob, quest_detalhes: det })
+            .then(() => { document.getElementById('panel-questionario').classList.add('hidden'); document.getElementById('quest-detalhes').value = ""; });
+        },
+        
+        pedirAcesso(plataforma) {
+            db.ref('solicitacoes_acesso').push({ professor: this.user.nome, prontuario: this.user.pront, plataforma: plataforma, status: 'pendente', data: new Date().toLocaleString() })
+            .then(() => alert("Solicitação de acesso enviada!"));
+        }
     };
 
-    document.getElementById('nuvem-input').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') nuvem.ask();
-    });
+    document.getElementById('nuvem-input').addEventListener('keypress', function (e) { if (e.key === 'Enter') nuvem.ask(); });
 </script>
 </body>
 </html>
