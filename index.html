@@ -99,7 +99,9 @@
         <div class="sector-column"><i class="fa fa-graduation-cap fa-3x" style="color:var(--prof)"></i><h2>PROFESSOR</h2><input type="number" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof); color:white" onclick="app.login('p','Professor')">Acessar</button></div>
         <div class="sector-column"><i class="fa fa-user-tie fa-3x" style="color:var(--gestao)"></i><h2>GESTÃO</h2><input type="number" id="g-p" placeholder="Prontuário"><input type="password" id="g-s" placeholder="Senha"><button class="btn" style="background:var(--gestao)" onclick="app.login('g','Gestão')">Acessar</button></div>
         <div class="sector-column"><i class="fa fa-building-columns fa-3x" style="color:var(--secre)"></i><h2>SECRETARIA</h2><input type="number" id="s-p" placeholder="Prontuário"><input type="password" id="s-s" placeholder="Senha"><button class="btn" style="background:var(--secre); color:white" onclick="app.login('s','Secretaria')">Acessar</button></div>
-        <div class="sector-column" style="background: rgba(46, 204, 113, 0.05)"><h2>CADASTRO</h2><input type="text" id="c-n" placeholder="Nome Completo"><input type="number" id="c-p" placeholder="Prontuário"><input type="email" id="c-e" placeholder="E-mail @edu"><select id="c-c"><option value="Professor">Professor</option><option value="Gestão">Gestão</option><option value="Secretaria">Secretaria</option></select><button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Solicitar Cadastro</button></div>
+        
+        <div class="sector-column" style="background: rgba(46, 204, 113, 0.05)"><h2>CADASTRO</h2><input type="text" id="c-n" placeholder="Nome Completo"><input type="number" id="c-p" placeholder="Prontuário"><input type="email" id="c-e" placeholder="E-mail @edu"><select id="c-c"><option value="Professor">Professor</option><option value="Gestão">Gestão</option><option value="Secretaria">Secretaria</option><option value="SMETi">SMETi</option></select><button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Solicitar Cadastro</button></div>
+        
         <div class="sector-column"><i class="fa fa-terminal fa-3x" style="color:var(--ntei)"></i><h2>NTEi</h2><input type="number" id="n-p" placeholder="ID"><input type="password" id="n-s" placeholder="Senha"><button class="btn" style="background:var(--ntei); color:white" onclick="app.login('n','NTEi')">Master Login</button></div>
         <div class="sector-column" style="border:none"><i class="fa fa-chart-line fa-3x" style="color:var(--smeti)"></i><h2>SMETi</h2><input type="number" id="sm-p" placeholder="Prontuário"><input type="password" id="sm-s" placeholder="Senha"><button class="btn" style="background:var(--smeti); color:black" onclick="app.login('sm','SMETi')">Gerenciar</button></div>
     </div>
@@ -312,7 +314,8 @@
         editingPlatId: null,
         editingAlunoId: null,
         editingEquipId: null,
-        padroes: ["pmspmudar123", "pmspgestores2026", "secretaria2026"],
+        // ADICIONADA A SENHA PADRÃO DA SMETI NA LISTA DE BLOQUEIOS
+        padroes: ["pmspmudar123", "pmspgestores2026", "secretaria2026", "smeti2026"],
         charts: {},
 
         async login(pre, cargo) {
@@ -324,19 +327,10 @@
                 return this.start(); 
             }
 
-            if(cargo === 'SMETi') {
-                const authSnap = await db.ref('autorizados_smeti/'+p).once('value');
-                if(!authSnap.exists()) {
-                    alert("Acesso SMETi negado. Prontuário sem permissão.");
-                    return;
-                }
-            }
-
             const snap = await db.ref('usuarios/'+p).once('value');
             if(snap.exists()) {
                 const userData = snap.val();
                 
-                // Validação de Conta Ativada pelo NTEi
                 if(userData.status === 'pendente') {
                     alert("Sua conta está aguardando ativação pelo NTEi. Por favor, aguarde.");
                     return;
@@ -345,7 +339,7 @@
                 if(String(userData.pass) === String(s)) { 
                     this.user = userData; 
 
-                    // REGRA DE FORÇAR ALTERAÇÃO DE SENHA PADRÃO
+                    // REGRA VALIDA AGORA TODOS OS PERFIS DO MENU (INCLUINDO SMETI)
                     if(this.padroes.includes(String(s))) {
                         let novaSenha = "";
                         while(!novaSenha || novaSenha.trim().length < 4 || this.padroes.includes(novaSenha)) {
@@ -361,13 +355,16 @@
             } else { alert("Prontuário não cadastrado ou não aprovado."); }
         },
 
-        // CADASTRO ENTRA EM ESTADO PENDENTE DE APROVAÇÃO
         confirmarCad() {
             const n = document.getElementById('c-n').value, p = document.getElementById('c-p').value, 
                   c = document.getElementById('c-c').value, e = document.getElementById('c-e').value;
             if(!n || !p || !e) return alert("Preencha todos os campos.");
 
-            let pass = c === "Secretaria" ? "secretaria2026" : (c === "Gestão" ? "pmspgestores2026" : "pmspmudar123");
+            // LOGICA DA SENHA PADRÃO ATUALIZADA PARA INCLUIR A SMETI
+            let pass = "pmspmudar123";
+            if(c === "Secretaria") pass = "secretaria2026";
+            else if(c === "Gestão") pass = "pmspgestores2026";
+            else if(c === "SMETi") pass = "smeti2026";
             
             db.ref('usuarios/'+p).set({ 
                 nome: n, pront: p, cargo: c, pass: pass, email: e, status: 'pendente' 
@@ -404,7 +401,6 @@
             this.escutarReservasTempoReal();
         },
 
-        // ESCUTA CONTAS AGUARDANDO ATIVAÇÃO
         escutarContasPendentes() {
             db.ref('usuarios').on('value', snap => {
                 const box = document.getElementById('lista-contas-pendentes');
@@ -435,7 +431,6 @@
         ativarConta(pront) { db.ref('usuarios/'+pront).update({ status: 'ativo' }).then(() => alert("Conta ativada!")); },
         deletarConta(pront) { if(confirm("Remover solicitação de cadastro?")) db.ref('usuarios/'+pront).remove(); },
 
-        // CADASTRO E EDIÇÃO DE EQUIPAMENTOS
         cadastrarEquipamento() {
             const nome = document.getElementById('eq-nome').value;
             const modelo = document.getElementById('eq-modelo').value;
@@ -446,7 +441,7 @@
             if(this.editingEquipId) {
                 db.ref('equipamentos/' + this.editingEquipId).update({ nome, modelo, patrimonio })
                 .then(() => {
-                    alert("Equipamento atualizado!");
+                    alert("Equipamento updated!");
                     this.editingEquipId = null;
                     document.getElementById('btn-salvar-equip').innerText = "Salvar Equipamento";
                 });
@@ -643,8 +638,8 @@
                 else document.getElementById('lock-overlay').style.display = 'none';
             });
             db.ref('config/globalAlert').on('value', s => {
-                const msg = s.val(); const rib = document.getElementById('alert-ribbon');
-                if(msg) { rib.style.display = 'block'; document.getElementById('alert-text').innerText = msg; } else { rib.style.display = 'none'; }
+                const msg = s.val(); const ribbon = document.getElementById('alert-ribbon');
+                if(msg) { ribbon.style.display = 'block'; document.getElementById('alert-text').innerText = msg; } else { ribbon.style.display = 'none'; }
             });
         },
 
