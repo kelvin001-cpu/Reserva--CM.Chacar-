@@ -192,9 +192,17 @@
                     <input type="text" id="input-aviso-geral" placeholder="Escreva um aviso para todos..." style="margin-top:15px">
                     <button class="btn" style="background:var(--prof)" onclick="app.enviarAvisoGeral()">POSTAR AVISO GERAL</button>
                     <hr style="opacity:0.1; margin:15px 0">
+                    
                     <p style="font-size:11px">GERENCIAR PLATAFORMAS:</p>
                     <input type="text" id="new-plat-name" placeholder="Nome do Site">
                     <input type="text" id="new-plat-url" placeholder="https://link-do-site.com">
+                    <select id="new-plat-publico">
+                        <option value="Todos">🌍 Todos os Perfis</option>
+                        <option value="Professor">🎓 Apenas Professores</option>
+                        <option value="Gestão">💼 Apenas Gestão</option>
+                        <option value="Secretaria">🏢 Apenas Secretaria</option>
+                        <option value="SMETi">📊 Apenas SMETi</option>
+                    </select>
                     <button class="btn" style="background:var(--plat-color)" id="btn-save-plat" onclick="app.addPlataformaURL()">ADICIONAR À LISTA</button>
                     <div id="manage-plat-list" style="margin-top:15px; max-height:150px; overflow-y:auto; border-top:1px solid rgba(255,255,255,0.1); padding-top:10px"></div>
                 </div>
@@ -314,7 +322,6 @@
         editingPlatId: null,
         editingAlunoId: null,
         editingEquipId: null,
-        // ADICIONADA A SENHA PADRÃO DA SMETI NA LISTA DE BLOQUEIOS
         padroes: ["pmspmudar123", "pmspgestores2026", "secretaria2026", "smeti2026"],
         charts: {},
 
@@ -339,7 +346,6 @@
                 if(String(userData.pass) === String(s)) { 
                     this.user = userData; 
 
-                    // REGRA VALIDA AGORA TODOS OS PERFIS DO MENU (INCLUINDO SMETI)
                     if(this.padroes.includes(String(s))) {
                         let novaSenha = "";
                         while(!novaSenha || novaSenha.trim().length < 4 || this.padroes.includes(novaSenha)) {
@@ -360,7 +366,6 @@
                   c = document.getElementById('c-c').value, e = document.getElementById('c-e').value;
             if(!n || !p || !e) return alert("Preencha todos os campos.");
 
-            // LOGICA DA SENHA PADRÃO ATUALIZADA PARA INCLUIR A SMETI
             let pass = "pmspmudar123";
             if(c === "Secretaria") pass = "secretaria2026";
             else if(c === "Gestão") pass = "pmspgestores2026";
@@ -441,7 +446,7 @@
             if(this.editingEquipId) {
                 db.ref('equipamentos/' + this.editingEquipId).update({ nome, modelo, patrimonio })
                 .then(() => {
-                    alert("Equipamento updated!");
+                    alert("Equipamento atualizado!");
                     this.editingEquipId = null;
                     document.getElementById('btn-salvar-equip').innerText = "Salvar Equipamento";
                 });
@@ -614,19 +619,34 @@
             db.ref('config/globalAlert').set(txt); document.getElementById('input-aviso-geral').value = "";
         },
 
+        // LOGICA DE PLATAFORMAS ATUALIZADA COMPATÍVEL COM PÚBLICO ALVO
         addPlataformaURL() {
-            const n = document.getElementById('new-plat-name').value; const u = document.getElementById('new-plat-url').value;
+            const n = document.getElementById('new-plat-name').value; 
+            const u = document.getElementById('new-plat-url').value;
+            const p = document.getElementById('new-plat-publico').value;
+            
             if(!n || !u) return alert("Preencha os campos!");
+            
             if(this.editingPlatId) {
-                db.ref('config/links/' + this.editingPlatId).update({ nome: n, url: u }); this.editingPlatId = null;
+                db.ref('config/links/' + this.editingPlatId).update({ nome: n, url: u, publico: p }); 
+                this.editingPlatId = null;
                 document.getElementById('btn-save-plat').innerText = "ADICIONAR À LISTA";
-            } else { db.ref('config/links').push({ nome: n, url: u }); }
-            document.getElementById('new-plat-name').value = ""; document.getElementById('new-plat-url').value = "";
+            } else { 
+                db.ref('config/links').push({ nome: n, url: u, publico: p }); 
+            }
+            
+            document.getElementById('new-plat-name').value = ""; 
+            document.getElementById('new-plat-url').value = "";
+            document.getElementById('new-plat-publico').value = "Todos";
         },
 
-        editPlataforma(id, nome, url) {
-            this.editingPlatId = id; document.getElementById('new-plat-name').value = nome; document.getElementById('new-plat-url').value = url;
-            document.getElementById('btn-save-plat').innerText = "SALVAR ALTERAÇÃO"; window.scrollTo({ top: 0, behavior: 'smooth' });
+        editPlataforma(id, nome, url, publico) {
+            this.editingPlatId = id; 
+            document.getElementById('new-plat-name').value = nome; 
+            document.getElementById('new-plat-url').value = url;
+            document.getElementById('new-plat-publico').value = publico || "Todos";
+            document.getElementById('btn-save-plat').innerText = "SALVAR ALTERAÇÃO"; 
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         },
 
         deletePlataforma(id) { if(confirm("Remover este link?")) db.ref('config/links/' + id).remove(); },
@@ -645,12 +665,31 @@
 
         carregarPlataformasDinamicas() {
             db.ref('config/links').on('value', snap => {
-                const div = document.getElementById('dynamic-plat-list'); const manageDiv = document.getElementById('manage-plat-list');
-                div.innerHTML = ""; if(manageDiv) manageDiv.innerHTML = "";
+                const div = document.getElementById('dynamic-plat-list'); 
+                const manageDiv = document.getElementById('manage-plat-list');
+                
+                div.innerHTML = ""; 
+                if(manageDiv) manageDiv.innerHTML = "";
+                
                 snap.forEach(l => {
                     const d = l.val();
-                    div.innerHTML += `<a href="${d.url}" target="_blank" style="color:var(--plat-color); display:block; margin:5px 0; font-size:13px; text-decoration:none"><i class="fa fa-external-link"></i> ${d.nome}</a>`;
-                    if(manageDiv) manageDiv.innerHTML += `<div class="plat-manage-item"><span>${d.nome}</span><div class="plat-manage-actions"><i class="fa fa-edit" onclick="app.editPlataforma('${l.key}', '${d.nome}', '${d.url}')"></i><i class="fa fa-trash" style="color:var(--ntei)" onclick="app.deletePlataforma('${l.key}')"></i></div></div>`;
+                    const publicoAlvo = d.publico || "Todos";
+                    
+                    // FILTRO DE EXIBIÇÃO POR PERFIL DO USUÁRIO LOGADO
+                    if(publicoAlvo === "Todos" || (this.user && this.user.cargo === publicoAlvo)) {
+                        div.innerHTML += `<a href="${d.url}" target="_blank" style="color:var(--plat-color); display:block; margin:5px 0; font-size:13px; text-decoration:none"><i class="fa fa-external-link"></i> ${d.nome} <small style="font-size:10px; color:#aaa">(${publicoAlvo})</small></a>`;
+                    }
+                    
+                    if(manageDiv) {
+                        manageDiv.innerHTML += `
+                        <div class="plat-manage-item">
+                            <span>${d.nome} <small style="color:#aaa">(${publicoAlvo})</small></span>
+                            <div class="plat-manage-actions">
+                                <i class="fa fa-edit" onclick="app.editPlataforma('${l.key}', '${d.nome}', '${d.url}', '${publicoAlvo}')"></i>
+                                <i class="fa fa-trash" style="color:var(--ntei)" onclick="app.deletePlataforma('${l.key}')"></i>
+                            </div>
+                        </div>`;
+                    }
                 });
             });
         },
