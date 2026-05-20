@@ -182,11 +182,18 @@
                     </div>
 
                     <div style="margin-top:15px; background:rgba(255,255,255,0.05); padding:10px; border-radius:10px">
-                        <p style="font-size:11px; color:var(--gestao)">RESET DE SENHA POR PRONTUÁRIO:</p>
-                        <div style="display:flex; gap:5px">
-                            <input type="number" id="reset-pront-input" placeholder="Prontuário" style="margin:0">
-                            <button class="btn" style="background:var(--gestao); width:100px; margin:0; color:black" onclick="app.resetarSenhaManual()">RESET</button>
+                        <p style="font-size:11px; color:var(--gestao); font-weight:bold; margin-top:0;"><i class="fa fa-user-shield"></i> GERENCIAR CONTAS & RESET DE SENHA:</p>
+                        <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+                            <small style="color: #ccc; font-size: 11px;">Resetar Manual:</small>
+                            <div style="display:flex; flex-direction: column; gap:5px; margin-top:5px;">
+                                <input type="number" id="reset-pront-input" placeholder="Prontuário do Usuário" style="margin:0">
+                                <input type="text" id="reset-pass-input" placeholder="Nova Senha Customizada" style="margin:0">
+                                <button class="btn" style="background:var(--gestao); margin:5px 0 0 0; color:black" onclick="app.resetarSenhaManual()">EXECUTAR RESET</button>
+                            </div>
                         </div>
+
+                        <p style="font-size:10px; color:#aaa; margin-bottom:5px;">PAINEL DE USUÁRIOS DO SISTEMA:</p>
+                        <div id="lista-usuarios-ativos" style="max-height:250px; overflow-y:auto; background:rgba(0,0,0,0.2); padding:5px; border-radius:5px"></div>
                     </div>
 
                     <input type="text" id="input-aviso-geral" placeholder="Escreva um aviso para todos..." style="margin-top:15px">
@@ -343,6 +350,19 @@
                     return;
                 }
 
+                if(userData.status === 'bloqueado_permanente') {
+                    alert("⚠️ ACESSO NEGADO: Esta conta foi bloqueada permanentemente pelo NTEi.");
+                    return;
+                }
+
+                if(userData.status === 'bloqueado_temporario' && userData.bloqueado_ate) {
+                    const hoje = new Date().toISOString().split('T')[0];
+                    if(hoje <= userData.bloqueado_ate) {
+                        alert(`⚠️ ACESSO NEGADO: Usuário bloqueado pelo NTEi até o dia ${userData.bloqueado_ate.split('-').reverse().join('/')}.`);
+                        return;
+                    }
+                }
+
                 if(String(userData.pass) === String(s)) { 
                     this.user = userData; 
 
@@ -351,9 +371,9 @@
                         while(!novaSenha || novaSenha.trim().length < 4 || this.padroes.includes(novaSenha)) {
                             novaSenha = prompt("🔒 SEGURANÇA: Você está usando uma senha padrão.\nDigite uma NOVA SENHA personalizada (mínimo 4 caracteres):");
                         }
-                        await db.ref('usuarios/'+p).update({ pass: novaSenha });
+                        await db.ref('usuarios/'+p).update({ pass: novaSenha, status: 'ativo' });
                         this.user.pass = novaSenha;
-                        alert("Senha atualizada com sucesso! Bem-vindo ao sistema.");
+                        alert("Senha updated com sucesso! Bem-vindo ao sistema.");
                     }
 
                     this.start(); 
@@ -392,6 +412,7 @@
                 this.syncFeedbacks();
                 this.escutarContasPendentes();
                 this.carregarInventarioGerenciável();
+                this.escutarUsuariosSistema();
             }
             if(this.user.cargo === 'SMETi' || this.user.cargo === 'NTEi') {
                 document.getElementById('panel-smeti').classList.remove('hidden');
@@ -415,16 +436,17 @@
 
                 snap.forEach(userSnap => {
                     const u = userSnap.val();
-                    if(u.status === 'pendente') {
+                    // Valida se o registro pendente possui os dados mínimos obrigatórios
+                    if(u && u.status === 'pendente' && u.nome && u.pront) {
                         temPendente = true;
                         box.innerHTML += `
                         <div class="plat-manage-item" style="background:rgba(46,204,113,0.1)">
                             <div style="text-align:left">
-                                <b>👤 ${u.nome}</b> (${u.cargo})<br><small>Pront: ${u.pront} | ${u.email}</small>
+                                <b>👤 ${u.nome}</b> (${u.cargo})<br><small>Pront: ${u.pront} | ${u.email || 'Sem e-mail'}</small>
                             </div>
                             <div>
-                                <button class="btn" style="background:#2ecc71; padding:3px 8px; font-size:10px; width:auto; margin:0" onclick="app.ativarConta('${u.pront}')">Ativar</button>
-                                <button class="btn" style="background:#eb4d4b; padding:3px 8px; font-size:10px; width:auto; margin:0" onclick="app.deletarConta('${u.pront}')">Recusar</button>
+                                <button class="btn" style="background:#2ecc71; padding:3px 8px; font-size:10px; width:auto; margin:0" onclick="app.ativarConta('${userSnap.key}')">Ativar</button>
+                                <button class="btn" style="background:#eb4d4b; padding:3px 8px; font-size:10px; width:auto; margin:0" onclick="app.deletarConta('${userSnap.key}')">Recusar</button>
                             </div>
                         </div>`;
                     }
@@ -433,8 +455,104 @@
             });
         },
 
-        ativarConta(pront) { db.ref('usuarios/'+pront).update({ status: 'ativo' }).then(() => alert("Conta ativada!")); },
-        deletarConta(pront) { if(confirm("Remover solicitação de cadastro?")) db.ref('usuarios/'+pront).remove(); },
+        ativarConta(key) { db.ref('usuarios/'+key).update({ status: 'ativo' }).then(() => alert("Conta ativada!")); },
+        
+        // DeletarConta agora usa a KEY raiz do Firebase. Isso limpa qualquer registro mesmo que os dados internos sejam undefined.
+        deletarConta(key) { 
+            if(!key || key === "undefined") return alert("Erro ao identificar o registro.");
+            if(confirm(`Deseja remover permanentemente o registro da chave [${key}] do banco de dados?`)) {
+                db.ref('usuarios/'+key).remove().then(() => alert("Registro removido com sucesso!"));
+            } 
+        },
+
+        /* CORREÇÃO DO PAINEL DE USUÁRIOS ATIVOS (FILTRAGEM DE UNDEFINED) */
+        escutarUsuariosSistema() {
+            db.ref('usuarios').on('value', snap => {
+                const box = document.getElementById('lista-usuarios-ativos');
+                if(!box) return;
+                box.innerHTML = "";
+                let total = 0;
+
+                snap.forEach(uSnap => {
+                    const u = uSnap.val();
+                    const firebaseKey = uSnap.key; // Guarda a ID real do Firebase (útil para apagar lixo)
+
+                    // FILTRO ULTRA SEGURO: Se o registro não tiver nome ou prontuário, ele é tratado como lixo eletrônico.
+                    // Mostramos um card especial para você poder deletar de vez o registro "undefined" do banco!
+                    if(!u || !u.nome || !u.pront) {
+                        total++;
+                        box.innerHTML += `
+                        <div class="plat-manage-item" style="background: rgba(235, 77, 75, 0.15); border-left: 5px solid var(--ntei);">
+                            <div style="text-align:left">
+                                <b style="color:var(--ntei)">⚠️ REGISTRO CORROMPIDO (LIXO)</b><br>
+                                <small style="color:#aaa">ID Firebase: ${firebaseKey}</small>
+                            </div>
+                            <div>
+                                <button class="btn" style="padding:4px 8px; font-size:10px; margin:0; background:#e74c3c; color:white; width:auto;" onclick="app.deletarConta('${firebaseKey}')">LIMPAR DO BANCO</button>
+                            </div>
+                        </div>`;
+                        return; // Pula para o próximo loop
+                    }
+
+                    // Se for um usuário real e válido, renderiza normalmente:
+                    if(u.status !== 'pendente') {
+                        total++;
+                        let statusTxt = `<span style="color:#2ecc71">● Ativo</span>`;
+                        if(u.status === 'bloqueado_permanente') statusTxt = `<span style="color:#eb4d4b">❌ Bloq. Perm.</span>`;
+                        if(u.status === 'bloqueado_temporario') statusTxt = `<span style="color:#f1c40f">⏳ Bloq até ${u.bloqueado_ate ? u.bloqueado_ate.split('-').reverse().join('/') : '?'}</span>`;
+
+                        box.innerHTML += `
+                        <div class="plat-manage-item" style="flex-direction:column; align-items:flex-start; gap:5px; background: rgba(255,255,255,0.03);">
+                            <div style="width:100%; display:flex; justify-content:space-between;">
+                                <span><b>${u.nome}</b> (${u.cargo})</span>
+                                <b>${statusTxt}</b>
+                            </div>
+                            <span style="font-size:10px; color:#aaa;">Prontuário: ${u.pront} | E-mail: ${u.email || 'Não informado'}</span>
+                            <div style="display:flex; gap:3px; width:100%; margin-top:3px;">
+                                <button class="btn" style="padding:3px; font-size:9px; margin:0; background:#f1c40f; color:black;" onclick="app.bloquearUsuarioTemporario('${firebaseKey}')">Bloq. Temp</button>
+                                <button class="btn" style="padding:3px; font-size:9px; margin:0; background:#e74c3c; color:white;" onclick="app.alterarStatusUsuario('${firebaseKey}', 'bloqueado_permanente')">Bloq. Perm</button>
+                                <button class="btn" style="padding:3px; font-size:9px; margin:0; background:#2ecc71; color:white;" onclick="app.alterarStatusUsuario('${firebaseKey}', 'ativo')">Desbloquear</button>
+                                <button class="btn" style="padding:3px; font-size:9px; margin:0; background:#3d3d3d; color:white;" onclick="app.deletarConta('${firebaseKey}')">Apagar</button>
+                            </div>
+                        </div>`;
+                    }
+                });
+                if(total === 0) box.innerHTML = "<p style='font-size:11px; color:#888; margin:0'>Nenhum usuário cadastrado.</p>";
+            });
+        },
+
+        alterarStatusUsuario(key, novoStatus) {
+            db.ref('usuarios/'+key).update({ status: novoStatus, bloqueado_ate: null })
+            .then(() => alert("Status do usuário atualizado com sucesso!"));
+        },
+
+        bloquearUsuarioTemporario(key) {
+            const dataLimite = prompt("Defina a data final do bloqueio:\nUse o formato AAAA-MM-DD (Exemplo: 2026-12-31)");
+            if(!dataLimite || !/\d{4}-\d{2}-\d{2}/.test(dataLimite)) return alert("Data em formato inválido ou cancelada.");
+            
+            db.ref('usuarios/'+key).update({
+                status: 'bloqueado_temporario',
+                bloqueado_ate: dataLimite
+            }).then(() => alert(`Usuário bloqueado até ${dataLimite.split('-').reverse().join('/')}`));
+        },
+
+        async resetarSenhaManual() {
+            const pront = document.getElementById('reset-pront-input').value;
+            const novaSenha = document.getElementById('reset-pass-input').value;
+            
+            if(!pront || !novaSenha) return alert("Insira o prontuário E a nova senha que deseja definir!");
+            if(novaSenha.trim().length < 4) return alert("A nova senha precisa ter no mínimo 4 caracteres!");
+
+            const ref = db.ref('usuarios/'+pront);
+            const snap = await ref.once('value');
+            if(snap.exists()) {
+                await ref.update({ pass: novaSenha.trim() });
+                alert(`Senha do prontuário ${pront} alterada com sucesso para: ${novaSenha}`);
+                document.getElementById('reset-pront-input').value = "";
+                document.getElementById('reset-pass-input').value = "";
+            } else { alert("Prontuário não encontrado no banco de dados."); }
+        },
+        /* FIM DOS MÉTODOS DO GERENCIADOR */
 
         cadastrarEquipamento() {
             const nome = document.getElementById('eq-nome').value;
@@ -602,24 +720,12 @@
             });
         },
 
-        async resetarSenhaManual() {
-            const pront = document.getElementById('reset-pront-input').value;
-            if(!pront) return alert("Insira o prontuário!");
-            const ref = db.ref('usuarios/'+pront);
-            const snap = await ref.once('value');
-            if(snap.exists()) {
-                await ref.update({ pass: 'pmspmudar123' });
-                alert("Senha resetada para 'pmspmudar123' com sucesso!");
-            } else { alert("Prontuário não encontrado."); }
-        },
-
         setSystemStatus(lock) { db.ref('config/maintenance').set(lock); },
         enviarAvisoGeral() {
             const txt = document.getElementById('input-aviso-geral').value;
             db.ref('config/globalAlert').set(txt); document.getElementById('input-aviso-geral').value = "";
         },
 
-        // LOGICA DE PLATAFORMAS ATUALIZADA COMPATÍVEL COM PÚBLICO ALVO
         addPlataformaURL() {
             const n = document.getElementById('new-plat-name').value; 
             const u = document.getElementById('new-plat-url').value;
@@ -675,7 +781,6 @@
                     const d = l.val();
                     const publicoAlvo = d.publico || "Todos";
                     
-                    // FILTRO DE EXIBIÇÃO POR PERFIL DO USUÁRIO LOGADO
                     if(publicoAlvo === "Todos" || (this.user && this.user.cargo === publicoAlvo)) {
                         div.innerHTML += `<a href="${d.url}" target="_blank" style="color:var(--plat-color); display:block; margin:5px 0; font-size:13px; text-decoration:none"><i class="fa fa-external-link"></i> ${d.nome} <small style="font-size:10px; color:#aaa">(${publicoAlvo})</small></a>`;
                     }
