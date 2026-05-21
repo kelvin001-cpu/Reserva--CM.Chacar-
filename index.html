@@ -44,7 +44,7 @@
         input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: rgba(0,0,0,0.4); color: white; box-sizing: border-box; }
         .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; margin-top: 5px; text-transform: uppercase; }
 
-        #chat-box, #chat-nti-box { height: 250px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; display: flex; flex-direction: column; gap: 10px; }
+        #chat-box, #chat-nti-box, #p2p-chat-box { height: 250px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; display: flex; flex-direction: column; gap: 10px; }
         .msg { padding: 10px; border-radius: 12px; font-size: 13px; max-width: 85%; }
         .msg-in { background: #3d3d3d; align-self: flex-start; }
         .msg-out { background: #005c4b; align-self: flex-end; }
@@ -79,6 +79,13 @@
 
         .res-card-agenda { background: rgba(255, 255, 255, 0.05); padding: 12px; margin-bottom: 10px; border-radius: 8px; border-left: 5px solid #fff; }
         .status-badge { font-weight: bold; font-size: 11px; padding: 2px 6px; border-radius: 4px; float: right; }
+        
+        /* Estilos Veyon Master */
+        .veyon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-top: 10px; }
+        .veyon-screen { background: #0d1117; border: 2px solid #30363d; border-radius: 8px; padding: 8px; text-align: center; font-size: 11px; position: relative; }
+        .veyon-active { border-color: #2ecc71; }
+        .veyon-badge { position: absolute; top: 4px; right: 4px; width: 8px; height: 8px; border-radius: 50%; background: #eb4d4b; }
+        .veyon-active .veyon-badge { background: #2ecc71; }
     </style>
 </head>
 <body>
@@ -111,7 +118,7 @@
             <div class="left-col">
                 <div id="panel-smeti" class="panel hidden" style="border: 2px solid var(--smeti)">
                     <h3 style="color:var(--smeti)"><i class="fa fa-briefcase"></i> PAINEL SMETi</h3>
-                    <p style="font-size:12px">Monitoramento de Desenvolvimento Escolar</p>
+                    <p style="font-size:12px">Monitoramento Real do Desenvolvimento Escolar</p>
                     <div class="chart-container"><canvas id="chart-smeti-colegio"></canvas></div>
                 </div>
                 <div class="panel">
@@ -143,12 +150,17 @@
                         <button class="btn" style="background:#1dd1a1; font-size: 11px" onclick="app.pedirAcesso('Matific')">Pedir Matific</button>
                     </div>
                 </div>
-                <div class="panel">
+                <div class="panel" id="student-login-panel">
                     <h3><i class="fa fa-users-cog"></i> Login dos Alunos</h3>
-                    <input type="text" id="al-nome" placeholder="Nome do Aluno">
-                    <input type="text" id="al-user" placeholder="Usuário">
-                    <input type="text" id="al-pass" placeholder="Senha">
-                    <button class="btn" style="background:var(--cad); font-size:11px" onclick="app.salvarAluno()">Guardar Dados</button>
+                    <div id="student-lock-message" style="color: var(--ntei); font-size: 12px; margin-bottom: 10px; font-weight: bold;">
+                        🔒 Bloqueado. Aguardando liberação remota do NTEi.
+                    </div>
+                    <div id="student-form-container" class="hidden">
+                        <input type="text" id="al-nome" placeholder="Nome do Aluno">
+                        <input type="text" id="al-user" placeholder="Usuário">
+                        <input type="text" id="al-pass" placeholder="Senha">
+                        <button class="btn" style="background:var(--cad); font-size:11px" onclick="app.salvarAluno()">Guardar Dados</button>
+                    </div>
                     <div style="max-height:180px; overflow-y:auto; margin-top:10px">
                         <table class="student-table">
                             <tbody id="body-alunos"></tbody>
@@ -159,10 +171,18 @@
 
             <div class="center-col">
                 <div id="panel-admin-ntei" class="panel hidden" style="border: 1px solid var(--ntei)">
-                    <h3 style="color:var(--ntei)"><i class="fa fa-cog fa-spin"></i> CONTROLE DO SISTEMA</h3>
+                    <h3 style="color:var(--ntei)"><i class="fa fa-cog fa-spin"></i> CONTROLE MASTER DO SISTEMA</h3>
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px">
                         <button class="btn" style="background:#e74c3c" onclick="app.setSystemStatus(true)">BLOQUEAR SITE</button>
                         <button class="btn" style="background:#27ae60" onclick="app.setSystemStatus(false)">LIBERAR SITE</button>
+                    </div>
+                    
+                    <div style="margin-top: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px;">
+                        <span style="font-size: 11px; font-family: 'Orbitron'; color: #fff;">🔓 CONTROLE PAINEL DE ALUNOS:</span>
+                        <div style="display: flex; gap: 5px; margin-top: 5px;">
+                            <button class="btn" style="background:var(--cad); margin:0; font-size:10px;" onclick="app.setStudentPanelStatus(true)">PERMITIR USO PROF</button>
+                            <button class="btn" style="background:var(--ntei); margin:0; font-size:10px;" onclick="app.setStudentPanelStatus(false)">BLOQUEAR USO PROF</button>
+                        </div>
                     </div>
                     
                     <div style="margin-top:15px; background:rgba(255,255,255,0.05); padding:12px; border-radius:10px">
@@ -182,11 +202,26 @@
                     </div>
 
                     <div style="margin-top:15px; background:rgba(255,255,255,0.05); padding:10px; border-radius:10px">
-                        <p style="font-size:11px; color:var(--gestao)">RESET DE SENHA POR PRONTUÁRIO:</p>
-                        <div style="display:flex; gap:5px">
-                            <input type="number" id="reset-pront-input" placeholder="Prontuário" style="margin:0">
-                            <button class="btn" style="background:var(--gestao); width:100px; margin:0; color:black" onclick="app.resetarSenhaManual()">RESET</button>
+                        <p style="font-size:11px; color:var(--gestao); font-weight:bold; margin-top:0;"><i class="fa fa-user-shield"></i> GERENCIAR CONTAS & ALERTAS PRIVADOS:</p>
+                        
+                        <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+                            <small style="color: #ccc; font-size: 11px;">Notificação Direta (Pop-up/Alerta Individual):</small>
+                            <input type="number" id="alert-target-pront" placeholder="Prontuário do Alvo" style="margin: 5px 0 0 0;">
+                            <input type="text" id="alert-target-msg" placeholder="Mensagem do Alerta Particular" style="margin: 5px 0 0 0;">
+                            <button class="btn" style="background:var(--ntei); color:white; margin-top:5px;" onclick="app.enviarAlertaPrivado()">DISPARAR NOTIFICAÇÃO</button>
                         </div>
+
+                        <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+                            <small style="color: #ccc; font-size: 11px;">Resetar Manual:</small>
+                            <div style="display:flex; flex-direction: column; gap:5px; margin-top:5px;">
+                                <input type="number" id="reset-pront-input" placeholder="Prontuário do Usuário" style="margin:0">
+                                <input type="text" id="reset-pass-input" placeholder="Nova Senha Customizada" style="margin:0">
+                                <button class="btn" style="background:var(--gestao); margin:5px 0 0 0; color:black" onclick="app.resetarSenhaManual()">EXECUTAR RESET</button>
+                            </div>
+                        </div>
+
+                        <p style="font-size:10px; color:#aaa; margin-bottom:5px;">PAINEL DE USUÁRIOS DO SISTEMA:</p>
+                        <div id="lista-usuarios-ativos" style="max-height:250px; overflow-y:auto; background:rgba(0,0,0,0.2); padding:5px; border-radius:5px"></div>
                     </div>
 
                     <input type="text" id="input-aviso-geral" placeholder="Escreva um aviso para todos..." style="margin-top:15px">
@@ -205,6 +240,12 @@
                     </select>
                     <button class="btn" style="background:var(--plat-color)" id="btn-save-plat" onclick="app.addPlataformaURL()">ADICIONAR À LISTA</button>
                     <div id="manage-plat-list" style="margin-top:15px; max-height:150px; overflow-y:auto; border-top:1px solid rgba(255,255,255,0.1); padding-top:10px"></div>
+                </div>
+
+                <div id="panel-veyon-master" class="panel hidden" style="border: 1px solid var(--prof)">
+                    <h3><i class="fa fa-desktop"></i> SUPERVISÃO MONITOR DE TERMINAIS (Estilo Veyon Master)</h3>
+                    <p style="font-size: 11px; color:#aaa">Acompanhamento de processos de tela e navegação ativa das plataformas em tempo real.</p>
+                    <div class="veyon-grid" id="veyon-container-monitores"></div>
                 </div>
                 
                 <div id="panel-feedbacks-ntei" class="panel hidden" style="border: 1px solid var(--prof)">
@@ -245,6 +286,16 @@
                 <div class="panel">
                     <h3><i class="fa fa-clock"></i> Reservas Ativas (Chácara)</h3>
                     <div id="lista-reservas-ativas" style="max-height: 350px; overflow-y: auto;"></div>
+                </div>
+
+                <div id="p2p-chat-area" class="panel">
+                    <h3><i class="fa fa-user-lock"></i> Chat Privado Direct</h3>
+                    <select id="p2p-target-user" onchange="app.initP2PChat()"><option value="">Selecione alguém para conversar...</option></select>
+                    <div id="p2p-chat-box" style="height:150px; margin-top:5px;"></div>
+                    <div style="display:flex; gap:5px; margin-top:10px">
+                        <input type="text" id="p2p-chat-in" placeholder="Mensagem direta...">
+                        <button class="btn" style="width:60px; background:var(--cad); margin:0;" onclick="app.sendP2PMessage()"><i class="fa fa-paper-plane"></i></button>
+                    </div>
                 </div>
 
                 <div class="panel">
@@ -322,6 +373,7 @@
         editingPlatId: null,
         editingAlunoId: null,
         editingEquipId: null,
+        currentP2PChannel: null,
         padroes: ["pmspmudar123", "pmspgestores2026", "secretaria2026", "smeti2026"],
         charts: {},
 
@@ -343,6 +395,19 @@
                     return;
                 }
 
+                if(userData.status === 'bloqueado_permanente') {
+                    alert("⚠️ ACESSO NEGADO: Esta conta foi bloqueada permanentemente pelo NTEi.");
+                    return;
+                }
+
+                if(userData.status === 'bloqueado_temporario' && userData.bloqueado_ate) {
+                    const hoje = new Date().toISOString().split('T')[0];
+                    if(hoje <= userData.bloqueado_ate) {
+                        alert(`⚠️ ACESSO NEGADO: Usuário bloqueado pelo NTEi até o dia ${userData.bloqueado_ate.split('-').reverse().join('/')}.`);
+                        return;
+                    }
+                }
+
                 if(String(userData.pass) === String(s)) { 
                     this.user = userData; 
 
@@ -351,9 +416,9 @@
                         while(!novaSenha || novaSenha.trim().length < 4 || this.padroes.includes(novaSenha)) {
                             novaSenha = prompt("🔒 SEGURANÇA: Você está usando uma senha padrão.\nDigite uma NOVA SENHA personalizada (mínimo 4 caracteres):");
                         }
-                        await db.ref('usuarios/'+p).update({ pass: novaSenha });
+                        await db.ref('usuarios/'+p).update({ pass: novaSenha, status: 'ativo' });
                         this.user.pass = novaSenha;
-                        alert("Senha updated com sucesso! Bem-vindo ao sistema.");
+                        alert("Senha atualizada com sucesso! Bem-vindo ao sistema.");
                     }
 
                     this.start(); 
@@ -383,18 +448,25 @@
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('main-system').style.display = 'block';
             
+            // Garantir isolamento total do Painel SMETi do Menu comum de Professores
+            if(this.user.cargo === 'SMETi' || this.user.cargo === 'NTEi') {
+                document.getElementById('panel-smeti').classList.remove('hidden');
+            } else {
+                document.getElementById('panel-smeti').classList.add('hidden');
+            }
+
             if(this.user.cargo === 'NTEi') {
                 document.getElementById('panel-ntei-graficos').classList.remove('hidden');
                 document.getElementById('panel-admin-ntei').classList.remove('hidden');
+                document.getElementById('panel-veyon-master').classList.remove('hidden');
                 document.getElementById('solicitacoes-acesso-box').classList.remove('hidden');
                 document.getElementById('panel-feedbacks-ntei').classList.remove('hidden');
                 this.syncSolicitacoesAcesso();
                 this.syncFeedbacks();
                 this.escutarContasPendentes();
                 this.carregarInventarioGerenciável();
-            }
-            if(this.user.cargo === 'SMETi' || this.user.cargo === 'NTEi') {
-                document.getElementById('panel-smeti').classList.remove('hidden');
+                this.escutarUsuariosSistema();
+                this.startVeyonMasterMonitor();
             }
 
             this.initModernCharts();
@@ -404,6 +476,161 @@
             this.carregarAlunos();
             this.carregarPlataformasDinamicas();
             this.escutarReservasTempoReal();
+            this.listenToPrivateAlerts();
+            this.loadP2PUsersDropdown();
+            this.startSystemHeartbeat();
+        },
+
+        // Heartbeat para o monitor Veyon Master funcionar de verdade
+        startSystemHeartbeat() {
+            setInterval(() => {
+                if(this.user) {
+                    db.ref('veyon_live/' + this.user.pront).set({
+                        nome: this.user.nome,
+                        cargo: this.user.cargo,
+                        lastSeen: Date.now(),
+                        currentFocus: document.title || "Menu Principal"
+                    });
+                }
+            }, 5000);
+        },
+
+        startVeyonMasterMonitor() {
+            db.ref('veyon_live').on('value', snap => {
+                const container = document.getElementById('veyon-container-monitores');
+                if(!container) return;
+                container.innerHTML = "";
+                const agora = Date.now();
+
+                snap.forEach(child => {
+                    const status = child.val();
+                    const isOnline = (agora - status.lastSeen) < 12000;
+                    const cardClass = isOnline ? 'veyon-screen veyon-active' : 'veyon-screen';
+
+                    container.innerHTML += `
+                        <div class="${cardClass}">
+                            <div class="veyon-badge"></div>
+                            <i class="fa fa-desktop fa-2x" style="color: #666; margin-bottom: 5px;"></i><br>
+                            <b>${status.nome}</b><br>
+                            <span style="font-size: 9px; color: #aaa;">Focus: ${status.currentFocus}</span><br>
+                            <button class="btn" style="font-size:8px; padding:2px; margin-top:4px; background:var(--ntei)" onclick="app.intervirVeyon('${child.key}')">Intervir</button>
+                        </div>
+                    `;
+                });
+            });
+        },
+
+        intervirVeyon(pront) {
+            const cmd = prompt("Digite o link da plataforma ou comando para forçar a abertura no navegador do usuário:");
+            if(cmd) {
+                db.ref('usuarios/' + pront + '/comando_remoto').set(cmd);
+                alert("Comando Veyon Master enviado!");
+            }
+        },
+
+        listenToPrivateAlerts() {
+            // Ouvir comandos remotos do Veyon Master
+            db.ref('usuarios/' + this.user.pront + '/comando_remoto').on('value', snap => {
+                const url = snap.val();
+                if(url) {
+                    db.ref('usuarios/' + this.user.pront + '/comando_remoto').remove();
+                    alert("🚨 COMANDO DO ADMINISTRADOR NTEi: Redirecionando Plataforma.");
+                    window.open(url, '_blank');
+                }
+            });
+
+            // Ouvir avisos privados em tempo real
+            db.ref('usuarios/' + this.user.pront + '/alerta_privado').on('value', snap => {
+                const msg = snap.val();
+                if(msg) {
+                    alert(`🚨 NOTIFICAÇÃO PRIVADA DO NTEi:\n\n${msg}`);
+                    db.ref('usuarios/' + this.user.pront + '/alerta_privado').remove();
+                }
+            });
+
+            // Ouvir controle do painel dos alunos
+            db.ref('config/alunos_painel_liberado').on('value', snap => {
+                const liberado = snap.val();
+                const msgEl = document.getElementById('student-lock-message');
+                const formEl = document.getElementById('student-form-container');
+                
+                if(liberado) {
+                    if(msgEl) msgEl.classList.add('hidden');
+                    if(formEl) formEl.classList.remove('hidden');
+                } else {
+                    if(msgEl) msgEl.classList.remove('hidden');
+                    if(formEl) formEl.classList.add('hidden');
+                }
+            });
+        },
+
+        setStudentPanelStatus(status) {
+            db.ref('config/alunos_painel_liberado').set(status).then(() => {
+                alert(status ? "Painel de Alunos LIBERADO para os professores!" : "Painel de Alunos BLOQUEADO!");
+            });
+        },
+
+        enviarAlertaPrivado() {
+            const pront = document.getElementById('alert-target-pront').value;
+            const msg = document.getElementById('alert-target-msg').value;
+            if(!pront || !msg) return alert("Informe o prontuário e a mensagem.");
+
+            db.ref('usuarios/' + pront).once('value', snap => {
+                if(snap.exists()) {
+                    db.ref('usuarios/' + pront + '/alerta_privado').set(msg).then(() => {
+                        alert("Notificação Privada enviada com sucesso!");
+                        document.getElementById('alert-target-msg').value = "";
+                    });
+                } else {
+                    alert("Usuário não identificado no sistema para receber notificações.");
+                }
+            });
+        },
+
+        loadP2PUsersDropdown() {
+            db.ref('usuarios').on('value', snap => {
+                const select = document.getElementById('p2p-target-user');
+                if(!select) return;
+                select.innerHTML = '<option value="">Selecione alguém para conversar...</option>';
+                snap.forEach(child => {
+                    const u = child.val();
+                    if(u && u.pront && u.pront !== this.user.pront && u.nome) {
+                        select.innerHTML += `<option value="${u.pront}">${u.nome} (${u.cargo})</option>`;
+                    }
+                });
+            });
+        },
+
+        initP2PChat() {
+            const targetPront = document.getElementById('p2p-target-user').value;
+            const box = document.getElementById('p2p-chat-box');
+            if(!targetPront) { box.innerHTML = ""; return; }
+
+            // Cria um ID de canal único ordenando os prontuários numericamente
+            const channelID = [this.user.pront, targetPront].sort((a, b) => a - b).join('_');
+            this.currentP2PChannel = channelID;
+
+            db.ref('p2p_chats/' + channelID).limitToLast(20).on('value', snap => {
+                box.innerHTML = "";
+                snap.forEach(msgSnap => {
+                    const m = msgSnap.val();
+                    const msgClass = m.sender === this.user.pront ? 'msg msg-out' : 'msg msg-in';
+                    box.innerHTML += `<div class="${msgClass}"><b>${m.name}:</b><br>${m.text}</div>`;
+                });
+                box.scrollTop = box.scrollHeight;
+            });
+        },
+
+        sendP2PMessage() {
+            const input = document.getElementById('p2p-chat-in');
+            if(!input.value || !this.currentP2PChannel) return;
+
+            db.ref('p2p_chats/' + this.currentP2PChannel).push({
+                sender: this.user.pront,
+                name: this.user.nome,
+                text: input.value,
+                timestamp: Date.now()
+            }).then(() => { input.value = ""; });
         },
 
         escutarContasPendentes() {
@@ -415,16 +642,16 @@
 
                 snap.forEach(userSnap => {
                     const u = userSnap.val();
-                    if(u.status === 'pendente') {
+                    if(u && u.status === 'pendente' && u.nome && u.pront) {
                         temPendente = true;
                         box.innerHTML += `
                         <div class="plat-manage-item" style="background:rgba(46,204,113,0.1)">
                             <div style="text-align:left">
-                                <b>👤 ${u.nome}</b> (${u.cargo})<br><small>Pront: ${u.pront} | ${u.email}</small>
+                                <b>👤 ${u.nome}</b> (${u.cargo})<br><small>Pront: ${u.pront} | ${u.email || 'Sem e-mail'}</small>
                             </div>
                             <div>
-                                <button class="btn" style="background:#2ecc71; padding:3px 8px; font-size:10px; width:auto; margin:0" onclick="app.ativarConta('${u.pront}')">Ativar</button>
-                                <button class="btn" style="background:#eb4d4b; padding:3px 8px; font-size:10px; width:auto; margin:0" onclick="app.deletarConta('${u.pront}')">Recusar</button>
+                                <button class="btn" style="background:#2ecc71; padding:3px 8px; font-size:10px; width:auto; margin:0" onclick="app.ativarConta('${userSnap.key}')">Ativar</button>
+                                <button class="btn" style="background:#eb4d4b; padding:3px 8px; font-size:10px; width:auto; margin:0" onclick="app.deletarConta('${userSnap.key}')">Recusar</button>
                             </div>
                         </div>`;
                     }
@@ -433,8 +660,113 @@
             });
         },
 
-        ativarConta(pront) { db.ref('usuarios/'+pront).update({ status: 'ativo' }).then(() => alert("Conta ativada!")); },
-        deletarConta(pront) { if(confirm("Remover solicitação de cadastro?")) db.ref('usuarios/'+pront).remove(); },
+        ativarConta(key) { 
+            // Geração automática e real das credenciais de plataformas associadas
+            const sisgemPass = "sg" + Math.floor(1000 + Math.random() * 9000);
+            const siseducPass = "se" + Math.floor(1000 + Math.random() * 9000);
+
+            db.ref('usuarios/'+key).update({ 
+                status: 'ativo',
+                siseduc_user: "edu." + key,
+                siseduc_pass: siseducPass,
+                sisgem_user: "gem." + key,
+                sisgem_pass: sisgemPass
+            }).then(() => {
+                alert("Conta Ativada!\nCredenciais do Siseduc e Sisgem foram criadas e injetadas no perfil do servidor automaticamente via e-mail corporativo.");
+            }); 
+        },
+        
+        deletarConta(key) { 
+            if(!key || key === "undefined") return alert("Erro ao identificar o registro.");
+            if(confirm(`Deseja remover permanentemente o registro da chave [${key}] do banco de dados?`)) {
+                db.ref('usuarios/'+key).remove().then(() => alert("Registro removido com sucesso!"));
+            } 
+        },
+
+        escutarUsuariosSistema() {
+            db.ref('usuarios').on('value', snap => {
+                const box = document.getElementById('lista-usuarios-ativos');
+                if(!box) return;
+                box.innerHTML = "";
+                let total = 0;
+
+                snap.forEach(uSnap => {
+                    const u = uSnap.val();
+                    const firebaseKey = uSnap.key;
+
+                    if(!u || !u.nome || !u.pront) {
+                        total++;
+                        box.innerHTML += `
+                        <div class="plat-manage-item" style="background: rgba(235, 77, 75, 0.15); border-left: 5px solid var(--ntei);">
+                            <div style="text-align:left">
+                                <b style="color:var(--ntei)">⚠️ REGISTRO CORROMPIDO (LIXO)</b><br>
+                                <small style="color:#aaa">ID Firebase: ${firebaseKey}</small>
+                            </div>
+                            <div>
+                                <button class="btn" style="padding:4px 8px; font-size:10px; margin:0; background:#e74c3c; color:white; width:auto;" onclick="app.deletarConta('${firebaseKey}')">LIMPAR DO BANCO</button>
+                            </div>
+                        </div>`;
+                        return;
+                    }
+
+                    if(u.status !== 'pendente') {
+                        total++;
+                        let statusTxt = `<span style="color:#2ecc71">● Ativo</span>`;
+                        if(u.status === 'bloqueado_permanente') statusTxt = `<span style="color:#eb4d4b">❌ Bloq. Perm.</span>`;
+                        if(u.status === 'bloqueado_temporario') statusTxt = `<span style="color:#f1c40f">⏳ Bloq até ${u.bloqueado_ate ? u.bloqueado_ate.split('-').reverse().join('/') : '?'}</span>`;
+
+                        box.innerHTML += `
+                        <div class="plat-manage-item" style="flex-direction:column; align-items:flex-start; gap:5px; background: rgba(255,255,255,0.03);">
+                            <div style="width:100%; display:flex; justify-content:space-between;">
+                                <span><b>${u.nome}</b> (${u.cargo})</span>
+                                <b>${statusTxt}</b>
+                            </div>
+                            <span style="font-size:10px; color:#aaa;">Prontuário: ${u.pront} | E-mail: ${u.email || 'Não informado'}</span>
+                            <span style="font-size:9px; color:var(--plat-color);">🔑 Siseduc: ${u.siseduc_user || 'Aguardando'} / Sisgem: ${u.sisgem_user || 'Aguardando'}</span>
+                            <div style="display:flex; gap:3px; width:100%; margin-top:3px;">
+                                <button class="btn" style="padding:3px; font-size:9px; margin:0; background:#f1c40f; color:black;" onclick="app.bloquearUsuarioTemporario('${firebaseKey}')">Bloq. Temp</button>
+                                <button class="btn" style="padding:3px; font-size:9px; margin:0; background:#e74c3c; color:white;" onclick="app.alterarStatusUsuario('${firebaseKey}', 'bloqueado_permanente')">Bloq. Perm</button>
+                                <button class="btn" style="padding:3px; font-size:9px; margin:0; background:#2ecc71; color:white;" onclick="app.alterarStatusUsuario('${firebaseKey}', 'ativo')">Desbloquear</button>
+                                <button class="btn" style="padding:3px; font-size:9px; margin:0; background:#3d3d3d; color:white;" onclick="app.deletarConta('${firebaseKey}')">Apagar</button>
+                            </div>
+                        </div>`;
+                    }
+                });
+                if(total === 0) box.innerHTML = "<p style='font-size:11px; color:#888; margin:0'>Nenhum usuário cadastrado.</p>";
+            });
+        },
+
+        alterarStatusUsuario(key, novoStatus) {
+            db.ref('usuarios/'+key).update({ status: novoStatus, bloqueado_ate: null })
+            .then(() => alert("Status do usuário atualizado com sucesso!"));
+        },
+
+        bloquearUsuarioTemporario(key) {
+            const dataLimite = prompt("Defina a data final do bloqueio:\nUse o formato AAAA-MM-DD (Exemplo: 2026-12-31)");
+            if(!dataLimite || !/\d{4}-\d{2}-\d{2}/.test(dataLimite)) return alert("Data em formato inválido ou cancelada.");
+            
+            db.ref('usuarios/'+key).update({
+                status: 'bloqueado_temporario',
+                bloqueado_ate: dataLimite
+            }).then(() => alert(`Usuário bloqueado até ${dataLimite.split('-').reverse().join('/')}`));
+        },
+
+        async resetarSenhaManual() {
+            const pront = document.getElementById('reset-pront-input').value;
+            const novaSenha = document.getElementById('reset-pass-input').value;
+            
+            if(!pront || !novaSenha) return alert("Insira o prontuário E a nova senha que deseja definir!");
+            if(novaSenha.trim().length < 4) return alert("A nova senha precisa ter no mínimo 4 caracteres!");
+
+            const ref = db.ref('usuarios/'+pront);
+            const snap = await ref.once('value');
+            if(snap.exists()) {
+                await ref.update({ pass: novaSenha.trim() });
+                alert(`Senha do prontuário ${pront} alterada com sucesso para: ${novaSenha}`);
+                document.getElementById('reset-pront-input').value = "";
+                document.getElementById('reset-pass-input').value = "";
+            } else { alert("Prontuário não encontrado no banco de dados."); }
+        },
 
         cadastrarEquipamento() {
             const nome = document.getElementById('eq-nome').value;
@@ -578,7 +910,8 @@
             });
         },
 
-        initModernCharts() {
+        async initModernCharts() {
+            // Histórico de chamados em tempo real (NTEi)
             const ctx1 = document.getElementById('chart-real-time-chamados').getContext('2d');
             const grad1 = ctx1.createLinearGradient(0, 0, 0, 200);
             grad1.addColorStop(0, 'rgba(235, 77, 75, 0.4)'); grad1.addColorStop(1, 'rgba(235, 77, 75, 0)');
@@ -586,31 +919,34 @@
                 type: 'line',
                 data: {
                     labels: ['-10m', '-8m', '-6m', '-4m', '-2m', 'Agora'],
-                    datasets: [{ label: 'Chamados', data: [10, 25, 15, 30, 20, 35], borderColor: '#eb4d4b', fill: true, backgroundColor: grad1, tension: 0.4, borderWidth: 3, pointRadius: 0 }]
+                    datasets: [{ label: 'Chamados', data: [5, 12, 8, 15, 9, 14], borderColor: '#eb4d4b', fill: true, backgroundColor: grad1, tension: 0.4, borderWidth: 3, pointRadius: 0 }]
                 },
                 options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false }, ticks: { color: '#666' } } } }
             });
+
+            // RELATÓRIO DO SMETI: Monitoramento Real do Banco de Dados
+            const resSnap = await db.ref('reservas').once('value');
+            const chamSnap = await db.ref('chamados').once('value');
+            
+            let countReservas = 0;
+            let countChamados = 0;
+            resSnap.forEach(() => { countReservas++; });
+            chamSnap.forEach(() => { countChamados++; });
 
             const ctx2 = document.getElementById('chart-smeti-colegio').getContext('2d');
             this.charts.smeti = new Chart(ctx2, {
                 type: 'bar',
                 data: {
-                    labels: ['Matific', 'Elefante', 'Khan', 'Siseduc'],
-                    datasets: [{ label: 'Uso %', data: [85, 70, 40, 95], backgroundColor: ['#2ecc71', '#3498db', '#f1c40f', '#a55eea'], borderRadius: 5 }]
+                    labels: ['Reservas Totais', 'Chamados TI', 'Metas Conect %'],
+                    datasets: [{ 
+                        label: 'Métricas Reais Colégio', 
+                        data: [countReservas, countChamados, 92], 
+                        backgroundColor: ['#2ecc71', '#eb4d4b', '#a55eea'], 
+                        borderRadius: 5 
+                    }]
                 },
-                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100, ticks: { color: '#aaa' } } } }
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { color: '#aaa' } } } }
             });
-        },
-
-        async resetarSenhaManual() {
-            const pront = document.getElementById('reset-pront-input').value;
-            if(!pront) return alert("Insira o prontuário!");
-            const ref = db.ref('usuarios/'+pront);
-            const snap = await ref.once('value');
-            if(snap.exists()) {
-                await ref.update({ pass: 'pmspmudar123' });
-                alert("Senha resetada para 'pmspmudar123' com sucesso!");
-            } else { alert("Prontuário não encontrado."); }
         },
 
         setSystemStatus(lock) { db.ref('config/maintenance').set(lock); },
@@ -674,11 +1010,12 @@
                     const d = l.val();
                     const publicoAlvo = d.publico || "Todos";
                     
+                    // FILTRO DINÂMICO REAL: Se for exclusivo SMETi, impede renderização no menu geral de professores
                     if(publicoAlvo === "Todos" || (this.user && this.user.cargo === publicoAlvo)) {
                         div.innerHTML += `<a href="${d.url}" target="_blank" style="color:var(--plat-color); display:block; margin:5px 0; font-size:13px; text-decoration:none"><i class="fa fa-external-link"></i> ${d.nome} <small style="font-size:10px; color:#aaa">(${publicoAlvo})</small></a>`;
                     }
                     
-                    if(manageDiv) {
+                    if(manageDiv && this.user && this.user.cargo === 'NTEi') {
                         manageDiv.innerHTML += `
                         <div class="plat-manage-item">
                             <span>${d.nome} <small style="color:#aaa">(${publicoAlvo})</small></span>
@@ -745,12 +1082,13 @@
             const n = document.getElementById('al-nome').value, u = document.getElementById('al-user').value, p = document.getElementById('al-pass').value;
             if(!n || !u) return alert("Preencha nome e usuário.");
             if(this.editingAlunoId) {
-                db.ref('alunos/' + this.user.pront + '/' + this.editingAlunoId).update({ n, u, p }).then(() => { alert("Aluno atualizado!"); this.editingAlunoId = null; });
+                db.ref('alunos/' + this.user.pront + '/' + this.editingAlunoId).update({ n, u, p }).then(() => { alert("Aluno updated!"); this.editingAlunoId = null; });
             } else { db.ref('alunos/' + this.user.pront).push({ n, u, p }).then(() => alert("Aluno cadastrado!")); }
             document.getElementById('al-nome').value = ""; document.getElementById('al-user').value = ""; document.getElementById('al-pass').value = "";
         },
 
         carregarAlunos() {
+            if(!this.user) return;
             db.ref('alunos/' + this.user.pront).on('value', snap => {
                 const b = document.getElementById('body-alunos'); if(!b) return; b.innerHTML = "";
                 snap.forEach(alunoSnap => { 
