@@ -324,17 +324,42 @@
             <button class="topbar-btn" onclick="modules.show('formacao')"><i class="fa fa-graduation-cap"></i> Formação</button>
             <button class="topbar-btn" onclick="modules.show('gemeo')"><i class="fa fa-map"></i> Gêmeo Digital</button>
             <button class="topbar-btn" onclick="modules.show('comunicacao')"><i class="fa fa-comments"></i> Comunicação</button>
+            <button class="topbar-btn" onclick="modules.show('editais')"><i class="fa fa-file-contract"></i> Editais</button>
             <button class="topbar-btn" onclick="modules.show('analise')"><i class="fa fa-brain"></i> Análise IA</button>
             <button class="topbar-btn ntei-only hidden" onclick="modules.show('admin')"><i class="fa fa-shield"></i> Admin NTEi</button>
         </div>
         <div class="topbar-right">
             <span class="online-dot"></span>
+            <img id="topbar-avatar" src="" class="hidden" onclick="perfilFoto.abrir()" title="Trocar foto de perfil" style="width:28px; height:28px; border-radius:50%; object-fit:cover; cursor:pointer; border:1px solid var(--border-subtle)">
+            <div id="topbar-avatar-fallback" onclick="perfilFoto.abrir()" title="Adicionar foto de perfil" style="width:28px; height:28px; border-radius:50%; background:var(--prof); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:bold; cursor:pointer">—</div>
             <span class="topbar-user" id="topbar-username">—</span>
             <div class="topbar-badge" onclick="modules.show('comunicacao')" title="Chamados/Alertas">
                 <i class="fa fa-bell" style="font-size:16px; color:var(--text-muted)"></i>
                 <span class="badge-count" id="badge-count" style="display:none">0</span>
             </div>
             <button class="btn" style="width:auto; padding:5px 14px; background:rgba(235,77,75,0.2); color:var(--ntei); margin:0; font-size:11px" onclick="location.reload()">Sair</button>
+        </div>
+    </div>
+
+    <!-- ════════════════════════ MODAL: FOTO DE PERFIL ════════════════════════ -->
+    <div id="perfil-foto-modal" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:200000; display:flex; align-items:center; justify-content:center;">
+        <div class="panel" style="max-width:340px; width:90%">
+            <h3><i class="fa fa-user-circle" style="color:var(--prof)"></i> Foto de Perfil</h3>
+            <div style="display:flex; gap:4px; margin:8px 0">
+                <button type="button" class="btn" id="pf-tab-upload" style="background:var(--prof); margin:0; font-size:10px; padding:8px" onclick="perfilFoto.toggleFonte('upload')">Enviar arquivo</button>
+                <button type="button" class="btn" id="pf-tab-link" style="background:rgba(255,255,255,0.08); margin:0; font-size:10px; padding:8px" onclick="perfilFoto.toggleFonte('link')">Colar link</button>
+            </div>
+            <div id="pf-upload-box">
+                <input type="file" id="pf-file" accept="image/*">
+            </div>
+            <div id="pf-link-box" class="hidden">
+                <input type="url" id="pf-link" placeholder="https://... (link da imagem)">
+            </div>
+            <div style="display:flex; gap:8px; margin-top:10px">
+                <button class="btn" style="background:var(--cad); color:#000" onclick="perfilFoto.salvar()">Salvar</button>
+                <button class="btn" style="background:rgba(255,255,255,0.1)" onclick="perfilFoto.fechar()">Cancelar</button>
+            </div>
+            <div id="pf-status" style="font-size:11px; color:var(--text-muted); margin-top:6px"></div>
         </div>
     </div>
 
@@ -905,7 +930,62 @@
                 </div>
             </div>
 
-            <!-- ══════════ MODULE: ANÁLISE IA ══════════ -->
+            <!-- ══════════ MODULE: CENTRAL DE EDITAIS ══════════ -->
+            <div id="mod-editais" class="module-view">
+                <div class="section-title"><i class="fa fa-file-contract"></i> Central de Editais e Processos</div>
+                <div class="grid-layout">
+                    <div class="left-col">
+                        <div class="panel">
+                            <h3 style="color:var(--gestao)"><i class="fa fa-plus-circle"></i> Cadastrar Edital</h3>
+                            <input type="text" id="ed-titulo" placeholder="Título do edital">
+                            <input type="text" id="ed-numero" placeholder="Número do edital (ex: 012/2026)">
+                            <select id="ed-categoria">
+                                <option value="Geral">Geral</option>
+                                <option value="Seleção de Pessoal">Seleção de Pessoal</option>
+                                <option value="Bolsas e Programas">Bolsas e Programas</option>
+                                <option value="Compras e Licitação">Compras e Licitação</option>
+                                <option value="Chamamento Público">Chamamento Público</option>
+                            </select>
+                            <textarea id="ed-descricao" placeholder="Descrição / resumo do edital..." style="width:100%; height:70px; border-radius:8px; border:1px solid #333; background:rgba(0,0,0,0.4); color:white; padding:8px; resize:none; font-family:'Poppins'; font-size:12px; margin:6px 0;"></textarea>
+                            <label style="font-size:11px; color:var(--text-muted)">Data de encerramento</label>
+                            <input type="date" id="ed-prazo">
+
+                            <label style="font-size:11px; color:var(--text-muted); margin-top:8px; display:block">Documento do edital (PDF)</label>
+                            <div style="display:flex; gap:4px; margin:6px 0">
+                                <button type="button" class="btn" id="ed-tab-upload" style="background:var(--prof); margin:0; font-size:10px; padding:8px" onclick="editais.toggleFonteDoc('upload')">Enviar arquivo</button>
+                                <button type="button" class="btn" id="ed-tab-link" style="background:rgba(255,255,255,0.08); margin:0; font-size:10px; padding:8px" onclick="editais.toggleFonteDoc('link')">Colar link</button>
+                            </div>
+                            <div id="ed-doc-upload-box">
+                                <input type="file" id="ed-doc-file" accept="application/pdf">
+                                <small style="color:var(--text-muted); font-size:10px">Arquivos de até ~8MB (armazenado no banco do sistema).</small>
+                            </div>
+                            <div id="ed-doc-link-box" class="hidden">
+                                <input type="url" id="ed-doc-link" placeholder="https://... (Drive, site da prefeitura, etc.)">
+                            </div>
+
+                            <button class="btn" style="background:var(--gestao); color:black; margin-top:10px" onclick="editais.publicar()"><i class="fa fa-upload"></i> Publicar Edital</button>
+                            <div id="ed-upload-status" style="font-size:11px; color:var(--text-muted); margin-top:6px"></div>
+                        </div>
+                    </div>
+
+                    <div class="center-col" style="grid-column: span 2">
+                        <div class="panel">
+                            <h3><i class="fa fa-folder-open" style="color:var(--prof)"></i> Editais Publicados</h3>
+                            <div style="display:flex; gap:8px; margin-bottom:10px">
+                                <input type="text" id="ed-busca" placeholder="Buscar por título ou número..." oninput="editais.renderLista()" style="margin:0">
+                                <select id="ed-filtro-status" onchange="editais.renderLista()" style="margin:0; max-width:160px">
+                                    <option value="">Todos status</option>
+                                    <option value="Aberto">Aberto</option>
+                                    <option value="Em Andamento">Em Andamento</option>
+                                    <option value="Encerrado">Encerrado</option>
+                                </select>
+                            </div>
+                            <div id="ed-lista" style="max-height:560px; overflow-y:auto"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div id="mod-analise" class="module-view">
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px">
                     <!-- Consulta Natural -->
@@ -1099,6 +1179,7 @@
             if (id === 'dashboard') dashboard.refresh();
             if (id === 'gemeo') gemeoDigital.render();
             if (id === 'patrimonio') inventario.render();
+            if (id === 'editais') editais.renderLista();
         }
     };
 
@@ -1882,6 +1963,220 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
     };
 
     // ═══════════════════════════════════════════════════════
+    //  UTIL: ARQUIVO/IMAGEM (upload → base64, ou link direto)
+    //  Reutilizado por Editais, Comunicados e Perfil.
+    // ═══════════════════════════════════════════════════════
+    const fileUtil = {
+        // Lê um <input type="file"> e devolve uma Promise com o base64 (data URL).
+        lerArquivo(fileInput, limiteMB = 8) {
+            return new Promise((resolve, reject) => {
+                const file = fileInput.files && fileInput.files[0];
+                if (!file) return resolve(null);
+                if (file.size > limiteMB * 1024 * 1024) {
+                    return reject(new Error(`Arquivo muito grande (máx. ${limiteMB}MB).`));
+                }
+                const reader = new FileReader();
+                reader.onload = () => resolve({ nome: file.name, tipo: file.type, dados: reader.result });
+                reader.onerror = () => reject(new Error('Falha ao ler o arquivo.'));
+                reader.readAsDataURL(file);
+            });
+        },
+        validarUrl(url) {
+            if (!url) return false;
+            try { new URL(url); return true; } catch { return false; }
+        }
+    };
+
+    // ═══════════════════════════════════════════════════════
+    //  FOTO DE PERFIL (upload ou link) — exibida no topbar
+    // ═══════════════════════════════════════════════════════
+    const perfilFoto = {
+        fonte: 'upload',
+        abrir() { document.getElementById('perfil-foto-modal').classList.remove('hidden'); },
+        fechar() { document.getElementById('perfil-foto-modal').classList.add('hidden'); },
+        toggleFonte(tipo) {
+            this.fonte = tipo;
+            document.getElementById('pf-upload-box').classList.toggle('hidden', tipo !== 'upload');
+            document.getElementById('pf-link-box').classList.toggle('hidden', tipo !== 'link');
+            document.getElementById('pf-tab-upload').style.background = tipo === 'upload' ? 'var(--prof)' : 'rgba(255,255,255,0.08)';
+            document.getElementById('pf-tab-link').style.background = tipo === 'link' ? 'var(--prof)' : 'rgba(255,255,255,0.08)';
+        },
+        async salvar() {
+            if (!app.user?.pront) return;
+            const status = document.getElementById('pf-status');
+            let fotoUrl = null;
+            try {
+                if (this.fonte === 'upload') {
+                    status.textContent = 'Lendo imagem...';
+                    const arquivo = await fileUtil.lerArquivo(document.getElementById('pf-file'), 4);
+                    if (arquivo) fotoUrl = arquivo.dados;
+                } else {
+                    const link = document.getElementById('pf-link').value.trim();
+                    if (link) {
+                        if (!fileUtil.validarUrl(link)) { status.textContent = ''; alert('Link inválido.'); return; }
+                        fotoUrl = link;
+                    }
+                }
+            } catch (e) {
+                status.textContent = '';
+                alert('Erro: ' + e.message);
+                return;
+            }
+            if (!fotoUrl) { status.textContent = ''; alert('Selecione um arquivo ou cole um link.'); return; }
+
+            status.textContent = 'Salvando...';
+            db.ref('usuarios/' + app.user.pront).update({ foto: fotoUrl }).then(() => {
+                app.user.foto = fotoUrl;
+                this.aplicar(fotoUrl);
+                status.textContent = '';
+                this.fechar();
+            }).catch(e => { status.textContent = ''; alert('Erro ao salvar: ' + e.message); });
+        },
+        aplicar(url) {
+            const img = document.getElementById('topbar-avatar');
+            const fallback = document.getElementById('topbar-avatar-fallback');
+            if (url) {
+                img.src = url; img.classList.remove('hidden'); fallback.classList.add('hidden');
+            } else {
+                img.classList.add('hidden'); fallback.classList.remove('hidden');
+                fallback.textContent = (app.user?.nome || '?').charAt(0).toUpperCase();
+            }
+        }
+    };
+
+    // ═══════════════════════════════════════════════════════
+    //  CENTRAL DE EDITAIS
+    //  Documento pode ser enviado como arquivo (base64 no Realtime
+    //  Database) OU como link externo — escolha do usuário.
+    // ═══════════════════════════════════════════════════════
+    const editais = {
+        fonteDoc: 'upload',
+        toggleFonteDoc(tipo) {
+            this.fonteDoc = tipo;
+            document.getElementById('ed-doc-upload-box').classList.toggle('hidden', tipo !== 'upload');
+            document.getElementById('ed-doc-link-box').classList.toggle('hidden', tipo !== 'link');
+            document.getElementById('ed-tab-upload').style.background = tipo === 'upload' ? 'var(--prof)' : 'rgba(255,255,255,0.08)';
+            document.getElementById('ed-tab-link').style.background = tipo === 'link' ? 'var(--prof)' : 'rgba(255,255,255,0.08)';
+        },
+        async publicar() {
+            const titulo = document.getElementById('ed-titulo').value.trim();
+            const numero = document.getElementById('ed-numero').value.trim();
+            const categoria = document.getElementById('ed-categoria').value;
+            const descricao = document.getElementById('ed-descricao').value.trim();
+            const prazo = document.getElementById('ed-prazo').value;
+            const statusEl = document.getElementById('ed-upload-status');
+
+            if (!titulo || !prazo) { alert('Preencha ao menos o título e a data de encerramento.'); return; }
+
+            let documento = null;
+            try {
+                if (this.fonteDoc === 'upload') {
+                    statusEl.textContent = 'Lendo arquivo...';
+                    const arquivo = await fileUtil.lerArquivo(document.getElementById('ed-doc-file'), 8);
+                    if (arquivo) documento = { tipo: 'upload', nome: arquivo.nome, dados: arquivo.dados };
+                } else {
+                    const link = document.getElementById('ed-doc-link').value.trim();
+                    if (link) {
+                        if (!fileUtil.validarUrl(link)) { statusEl.textContent = ''; alert('Link inválido. Use uma URL completa (https://...).'); return; }
+                        documento = { tipo: 'link', url: link };
+                    }
+                }
+            } catch (e) {
+                statusEl.textContent = '';
+                alert('Erro no documento: ' + e.message);
+                return;
+            }
+
+            statusEl.textContent = 'Publicando...';
+            const hoje = new Date().toISOString().split('T')[0];
+            const status = prazo < hoje ? 'Encerrado' : 'Aberto';
+
+            db.ref('editais').push({
+                titulo, numero, categoria, descricao, prazo, status, documento,
+                autor: app.user?.nome || 'Sistema',
+                cargo_autor: app.user?.cargo || '',
+                criado_em: new Date().toLocaleString('pt-BR')
+            }).then(() => {
+                statusEl.textContent = 'Edital publicado com sucesso!';
+                document.getElementById('ed-titulo').value = '';
+                document.getElementById('ed-numero').value = '';
+                document.getElementById('ed-descricao').value = '';
+                document.getElementById('ed-prazo').value = '';
+                document.getElementById('ed-doc-link').value = '';
+                document.getElementById('ed-doc-file').value = '';
+                setTimeout(() => { statusEl.textContent = ''; }, 3000);
+                auditoria.registrar?.('Editais', `Edital publicado: ${titulo}`);
+            }).catch(e => {
+                statusEl.textContent = '';
+                alert('Erro ao publicar edital: ' + e.message + '\n(Verifique se o arquivo não é grande demais.)');
+            });
+        },
+        _cache: [],
+        renderLista() {
+            const lista = document.getElementById('ed-lista');
+            if (!lista) return;
+            db.ref('editais').off('value');
+            db.ref('editais').on('value', snap => {
+                this._cache = [];
+                snap.forEach(e => this._cache.push({ key: e.key, ...e.val() }));
+                this._desenhar();
+            });
+        },
+        _desenhar() {
+            const lista = document.getElementById('ed-lista');
+            if (!lista) return;
+            const busca = (document.getElementById('ed-busca')?.value || '').toLowerCase();
+            const filtroStatus = document.getElementById('ed-filtro-status')?.value || '';
+            const hoje = new Date().toISOString().split('T')[0];
+
+            let itens = this._cache.filter(d => {
+                const statusAtual = d.prazo < hoje && d.status !== 'Encerrado' ? 'Encerrado' : d.status;
+                if (filtroStatus && statusAtual !== filtroStatus) return false;
+                if (busca && !(`${d.titulo} ${d.numero}`.toLowerCase().includes(busca))) return false;
+                return true;
+            }).sort((a, b) => (b.criado_em || '').localeCompare(a.criado_em || ''));
+
+            if (itens.length === 0) {
+                lista.innerHTML = '<p style="text-align:center; color:#666; font-size:12px; padding:20px;">Nenhum edital encontrado.</p>';
+                return;
+            }
+
+            lista.innerHTML = itens.map(d => {
+                const statusAtual = d.prazo < hoje && d.status !== 'Encerrado' ? 'Encerrado' : d.status;
+                const corStatus = statusAtual === 'Aberto' ? 'var(--cad)' : (statusAtual === 'Em Andamento' ? 'var(--gestao)' : 'var(--ntei)');
+                const diasRestantes = Math.ceil((new Date(d.prazo) - new Date(hoje)) / 86400000);
+                const prazoTxt = statusAtual === 'Encerrado' ? 'Encerrado' : (diasRestantes === 0 ? 'Encerra hoje' : `${diasRestantes} dia(s) restante(s)`);
+
+                let docBtn = '';
+                if (d.documento?.tipo === 'upload' && d.documento.dados) {
+                    docBtn = `<a href="${d.documento.dados}" download="${d.documento.nome || 'edital.pdf'}" class="btn" style="width:auto; display:inline-block; padding:6px 12px; background:var(--prof); color:white; margin-top:8px; text-decoration:none; font-size:10px"><i class="fa fa-download"></i> Baixar PDF</a>`;
+                } else if (d.documento?.tipo === 'link' && d.documento.url) {
+                    docBtn = `<a href="${d.documento.url}" target="_blank" rel="noopener" class="btn" style="width:auto; display:inline-block; padding:6px 12px; background:var(--prof); color:white; margin-top:8px; text-decoration:none; font-size:10px"><i class="fa fa-external-link-alt"></i> Abrir Documento</a>`;
+                }
+
+                const podeExcluir = app.user && (app.user.cargo === 'NTEi' || app.user.cargo === 'Gestão' || app.user.cargo === 'SMETi');
+
+                return `<div class="panel" style="padding:14px; margin-bottom:10px; border-left:4px solid ${corStatus}">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start">
+                        <div>
+                            <span class="status-badge" style="background:${corStatus}; color:#000; float:none; display:inline-block; margin-bottom:5px">${statusAtual}</span>
+                            ${d.numero ? `<span style="font-size:11px; color:var(--text-muted); margin-left:6px">Nº ${d.numero}</span>` : ''}
+                            <h4 style="margin:4px 0; font-size:14px">${d.titulo}</h4>
+                            <small style="color:var(--text-muted); font-size:11px">${d.categoria || 'Geral'} · ${prazoTxt}</small>
+                        </div>
+                        ${podeExcluir ? `<i class="fa fa-trash" style="cursor:pointer; color:var(--ntei)" onclick="editais.excluir('${d.key}')"></i>` : ''}
+                    </div>
+                    ${d.descricao ? `<p style="font-size:12px; color:#ccc; margin:8px 0">${d.descricao}</p>` : ''}
+                    ${docBtn}
+                </div>`;
+            }).join('');
+        },
+        excluir(key) {
+            if (confirm('Excluir este edital?')) db.ref('editais/' + key).remove();
+        }
+    };
+
+    // ═══════════════════════════════════════════════════════
     //  COMUNICADOS
     // ═══════════════════════════════════════════════════════
     const comunicados = {
@@ -2199,35 +2494,49 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             input.value = '';
             box.innerHTML += `<div class="nuvem-thinking" id="nuvem-thinking-dot"><i class="fa fa-circle-notch fa-spin"></i> Pensando...</div>`;
             box.scrollTop = box.scrollHeight;
-            // Coleta contexto rápido
-            const chamSnap = await db.ref('chamados').once('value');
-            let chamAbertos = 0; chamSnap.forEach(c => { if (c.val()?.status === 'aberto') chamAbertos++; });
-            const eqSnap = await db.ref('equipamentos').once('value');
-            let totalEq = 0; eqSnap.forEach(() => totalEq++);
-            const contexto = `Sistema: Programa CONECT - NTEi Chácara. Chamados em aberto: ${chamAbertos}. Total de equipamentos: ${totalEq}. Usuário logado: ${app.user?.nome || 'Desconhecido'} (${app.user?.cargo || '?'}).`;
+
+            // A Nuvem AI roda 100% local (sem depender de API externa, que exigiria
+            // chave secreta no navegador e nunca funcionaria fora do Claude.ai).
+            // Coleta contexto real do banco para responder com números atualizados.
+            let r = "";
+            const ql = q.toLowerCase();
             try {
-                const resp = await fetch('https://api.anthropic.com/v1/messages', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 300, messages: [{ role: 'user', content: `Você é a Nuvem AI, assistente do sistema Programa CONECT.\n${contexto}\n\nPergunta: "${q}"\n\nResponda de forma curta, amigável e útil em português.` }] })
-                });
-                const data = await resp.json();
-                const text = data.content?.[0]?.text || 'Desculpe, não consegui processar.';
-                const dot = document.getElementById('nuvem-thinking-dot');
-                if (dot) dot.remove();
-                box.innerHTML += `<div class="msg msg-in" style="font-size:12px"><b>Nuvem AI:</b><br>${text.replace(/\n/g,'<br>')}</div>`;
-            } catch(e) {
-                const dot = document.getElementById('nuvem-thinking-dot');
-                if (dot) dot.remove();
-                // Fallback local
-                let r = "Desculpe, sem conexão com IA agora. Tente perguntar sobre 'reservas', 'chamados', 'equipamentos' ou 'alunos'.";
-                const ql = q.toLowerCase();
-                if (ql.includes('reserva')) r = "Para fazer uma reserva, vá ao módulo Operacional > Nova Reserva.";
-                else if (ql.includes('chamado')) r = "Para abrir um chamado, use Operacional > Abrir Chamado.";
-                else if (ql.includes('aluno')) r = "Gerencie alunos no módulo Alunos — Perfil 360°, Portfólio e Carteira Digital.";
-                else if (ql.includes('equip')) r = "Veja o inventário de equipamentos em Patrimônio.";
-                else if (ql.includes('relat')) r = "Relatórios inteligentes estão disponíveis em Análise IA.";
-                box.innerHTML += `<div class="msg msg-in" style="font-size:12px"><b>Nuvem AI:</b><br>${r}</div>`;
+                if (ql.includes('reserva')) {
+                    r = "Para fazer uma reserva, vá em <b>Operacional → Nova Reserva</b>, escolha o equipamento, a sala e o horário.";
+                } else if (ql.includes('chamado')) {
+                    const chamSnap = await db.ref('chamados').once('value');
+                    let abertos = 0; chamSnap.forEach(c => { if (c.val()?.status === 'aberto') abertos++; });
+                    r = `Há <b>${abertos}</b> chamado(s) em aberto agora. Para abrir um novo, use <b>Operacional → Abrir Chamado</b>.`;
+                } else if (ql.includes('edital')) {
+                    const edSnap = await db.ref('editais').once('value');
+                    let total = 0, abertos = 0; edSnap.forEach(e => { total++; if (e.val()?.status === 'Aberto') abertos++; });
+                    r = total > 0 ? `Existem <b>${total}</b> edital(is) cadastrado(s), sendo <b>${abertos}</b> em aberto. Veja em <b>Comunicação → Central de Editais</b>.` : "Ainda não há editais cadastrados. Para publicar um, vá em <b>Comunicação → Central de Editais</b>.";
+                } else if (ql.includes('aluno')) {
+                    r = "Gerencie alunos no módulo <b>Alunos</b> — Perfil 360°, Portfólio e Carteira Digital.";
+                } else if (ql.includes('equip') || ql.includes('patrim')) {
+                    const eqSnap = await db.ref('equipamentos').once('value');
+                    let totalEq = 0; eqSnap.forEach(() => totalEq++);
+                    r = `Há <b>${totalEq}</b> equipamento(s) cadastrado(s). Veja o inventário completo em <b>Patrimônio</b>.`;
+                } else if (ql.includes('comunicado') || ql.includes('aviso')) {
+                    r = "Comunicados e avisos ficam em <b>Comunicação → Central de Comunicados</b> e no Mural de Avisos.";
+                } else if (ql.includes('cadastro') || ql.includes('senha') || ql.includes('acesso')) {
+                    r = "Para solicitar acesso, use a opção <b>Cadastro</b> na tela de login. Sua conta fica pendente até o NTEi aprovar.";
+                } else if (ql.includes('relat') || ql.includes('gráfico') || ql.includes('grafico')) {
+                    r = "Relatórios e gráficos inteligentes estão em <b>Análise IA</b> e no <b>Dashboard</b>.";
+                } else if (ql.includes('foto') || ql.includes('imagem') || ql.includes('avatar')) {
+                    r = "Você pode definir uma foto de perfil enviando um arquivo ou colando o link de uma imagem, em <b>Perfil → Foto</b>.";
+                } else if (ql.includes('oi') || ql.includes('olá') || ql.includes('ola') || ql.includes('bom dia') || ql.includes('boa tarde')) {
+                    r = "Olá! 👋 Posso te ajudar com reservas, chamados, editais, comunicados, alunos, equipamentos e relatórios. O que você precisa?";
+                } else {
+                    r = "Posso te ajudar com: <b>reservas</b>, <b>chamados</b>, <b>editais</b>, <b>comunicados</b>, <b>alunos</b>, <b>equipamentos</b> ou <b>relatórios</b>. Pode reformular sua pergunta usando uma dessas palavras?";
+                }
+            } catch (e) {
+                r = "Tive um problema ao consultar os dados agora, mas posso te orientar: tente perguntar sobre 'reservas', 'chamados', 'editais' ou 'equipamentos'.";
             }
+
+            const dot = document.getElementById('nuvem-thinking-dot');
+            if (dot) dot.remove();
+            box.innerHTML += `<div class="msg msg-in" style="font-size:12px"><b>Nuvem AI:</b><br>${r}</div>`;
             box.scrollTop = box.scrollHeight;
         }
     };
@@ -2251,9 +2560,27 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             const s = sEl?.value;
             if (!s) { alert('Informe a senha.'); return; }
 
-            if (cargo === 'NTEi' && p === '46690' && s === 'nti2026') {
-                this.user = { nome: 'Kelvin NTEi', cargo: 'NTEi', pront: '46690' };
-                return this.start();
+            // Login NTEi agora valida pelo banco (Firebase), nunca por senha fixa no código-fonte.
+            // Bootstrap automático: se ainda não existir NENHUM usuário NTEi cadastrado,
+            // cria o primeiro com a credencial de fábrica abaixo (só funciona nesse caso único).
+            if (cargo === 'NTEi') {
+                const ntiSnap = await db.ref('usuarios/' + p).once('value');
+                if (!ntiSnap.exists() && p === '46690') {
+                    const todosUsuarios = await db.ref('usuarios').once('value');
+                    let existeNTEi = false;
+                    todosUsuarios.forEach(u => { if (u.val()?.cargo === 'NTEi') existeNTEi = true; });
+                    if (!existeNTEi && s === 'nti2026') {
+                        let novaSenha = "";
+                        while (!novaSenha || novaSenha.trim().length < 6) {
+                            novaSenha = prompt("🔒 PRIMEIRO ACESSO NTEi: defina a senha definitiva (mínimo 6 caracteres). A senha de fábrica será desativada agora.");
+                            if (!novaSenha) return;
+                        }
+                        await db.ref('usuarios/46690').set({ nome: 'Kelvin NTEi', pront: '46690', cargo: 'NTEi', pass: novaSenha, status: 'ativo' });
+                        this.user = { nome: 'Kelvin NTEi', cargo: 'NTEi', pront: '46690', pass: novaSenha };
+                        alert("Conta NTEi criada e protegida com sua nova senha. Use-a a partir de agora.");
+                        return this.start();
+                    }
+                }
             }
             const snap = await db.ref('usuarios/' + p).once('value');
             if (snap.exists()) {
