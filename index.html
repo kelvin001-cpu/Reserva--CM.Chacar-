@@ -285,7 +285,7 @@
     </style>
 </head>
 <body>
-    <div id="alert-ribbon">⚠️ AVISO NTEi: <span id="alert-text">Sincronizando...</span></div>
+    <div id="alert-ribbon">⚠️ AVISO NTEi: <span id="alert-text">Sincronizando...</span> <i id="alert-ribbon-close" class="fa fa-times hidden" style="cursor:pointer; margin-left:14px" onclick="app.removerAvisoGeral()" title="Remover aviso"></i></div>
 
     <div id="lock-overlay">
         <i class="fa fa-radiation fa-5x fa-spin" style="color:var(--ntei); margin-bottom:20px"></i>
@@ -1137,14 +1137,18 @@
         <div id="nuvem-window">
             <div class="nuvem-header">
                 <span><i class="fa fa-cloud"></i> NUVEM AI · Assistente Universal</span>
-                <i class="fa fa-times" style="cursor:pointer" onclick="nuvem.toggle()"></i>
+                <span>
+                    <i id="nuvem-voz-toggle" class="fa fa-volume-high" style="cursor:pointer; margin-right:14px" onclick="nuvem.toggleVoz()" title="Ativar/desativar voz"></i>
+                    <i class="fa fa-times" style="cursor:pointer" onclick="nuvem.toggle()"></i>
+                </span>
             </div>
             <div id="nuvem-content">
                 <div class="msg msg-in" style="font-size:12px">Olá! Sou a <b>Nuvem AI</b> — seu assistente universal.<br>Posso te guiar sobre <b>reservas, chamados, cadastros, plataformas, alunos, equipamentos</b> e muito mais. O que precisa?</div>
             </div>
             <div class="nuvem-footer">
-                <input type="text" id="nuvem-input" placeholder="Pergunte algo..." style="margin:0; padding:9px; font-size:12px">
-                <button class="btn" style="width:45px; margin:0; background:var(--prof); color:white" onclick="nuvem.ask()"><i class="fa fa-paper-plane"></i></button>
+                <input type="text" id="nuvem-input" placeholder="Pergunte algo ou clique no microfone..." style="margin:0; padding:9px; font-size:12px">
+                <button class="btn" id="nuvem-mic-btn" style="width:42px; margin:0; background:rgba(255,255,255,0.1); color:white" onclick="nuvem.toggleMic()" title="Falar"><i class="fa fa-microphone"></i></button>
+                <button class="btn" style="width:42px; margin:0; background:var(--prof); color:white" onclick="nuvem.ask()"><i class="fa fa-paper-plane"></i></button>
             </div>
         </div>
         <div id="nuvem-btn" onclick="nuvem.toggle()">
@@ -2481,10 +2485,106 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
     //  NUVEM AI ASSISTENTE UNIVERSAL
     // ═══════════════════════════════════════════════════════
     const nuvem = {
+        vozAtiva: true,
+        ouvindo: false,
+        recognition: null,
+        vozesCarregadas: false,
+
         toggle() {
             const win = document.getElementById('nuvem-window');
-            win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
+            const abrindo = win.style.display !== 'flex';
+            win.style.display = abrindo ? 'flex' : 'none';
+            if (abrindo && !this._saudacaoFeita) {
+                this._saudacaoFeita = true;
+                this.saudacaoInicial();
+            }
         },
+
+        toggleVoz() {
+            this.vozAtiva = !this.vozAtiva;
+            const icon = document.getElementById('nuvem-voz-toggle');
+            if (icon) icon.className = this.vozAtiva ? 'fa fa-volume-high' : 'fa fa-volume-xmark';
+            if (!this.vozAtiva) speechSynthesis.cancel();
+        },
+
+        // ── COMANDO DE VOZ (Web Speech API nativa do navegador — sem custo, sem chave) ──
+        toggleMic() {
+            if (this.ouvindo) { this.pararEscuta(); return; }
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert('Seu navegador não suporta comando de voz. Use Chrome ou Edge para essa função.');
+                return;
+            }
+            this.recognition = new SpeechRecognition();
+            this.recognition.lang = 'pt-BR';
+            this.recognition.continuous = false;
+            this.recognition.interimResults = false;
+
+            const micBtn = document.getElementById('nuvem-mic-btn');
+            this.recognition.onstart = () => {
+                this.ouvindo = true;
+                if (micBtn) { micBtn.style.background = 'var(--ntei)'; micBtn.innerHTML = '<i class="fa fa-stop"></i>'; }
+            };
+            this.recognition.onresult = (event) => {
+                const texto = event.results[0][0].transcript;
+                document.getElementById('nuvem-input').value = texto;
+                this.ask();
+            };
+            this.recognition.onerror = () => { this.pararEscuta(); };
+            this.recognition.onend = () => { this.pararEscuta(); };
+            this.recognition.start();
+        },
+        pararEscuta() {
+            this.ouvindo = false;
+            const micBtn = document.getElementById('nuvem-mic-btn');
+            if (micBtn) { micBtn.style.background = 'rgba(255,255,255,0.1)'; micBtn.innerHTML = '<i class="fa fa-microphone"></i>'; }
+            if (this.recognition) { try { this.recognition.stop(); } catch (e) {} }
+        },
+
+        // ── VOZ DE SAÍDA (fala humanizada — escolhe a melhor voz pt-BR disponível) ──
+        falar(texto) {
+            if (!this.vozAtiva) return;
+            speechSynthesis.cancel();
+            const limpo = texto.replace(/<[^>]+>/g, ''); // remove tags HTML antes de falar
+            const utter = new SpeechSynthesisUtterance(limpo);
+            utter.lang = 'pt-BR';
+            utter.rate = 1.02;
+            utter.pitch = 1.05;
+            const vozes = speechSynthesis.getVoices();
+            // Prioriza vozes neurais/naturais do Google ou Microsoft, evitando a "robótica" padrão do sistema
+            const preferida = vozes.find(v => v.lang === 'pt-BR' && /google|natural|online/i.test(v.name))
+                            || vozes.find(v => v.lang === 'pt-BR')
+                            || vozes.find(v => v.lang.startsWith('pt'));
+            if (preferida) utter.voice = preferida;
+            speechSynthesis.speak(utter);
+        },
+
+        saudacaoInicial() {
+            const hora = new Date().getHours();
+            const periodo = hora < 12 ? 'Bom dia' : hora < 18 ? 'Boa tarde' : 'Boa noite';
+            const nome = (app.user?.nome || '').split(' ')[0] || '';
+            const texto = `${periodo}${nome ? ', ' + nome : ''}! Sou a Nuvem AI. Pode me perguntar sobre chamados, editais, clima em Santana de Parnaíba e muito mais — por texto ou clicando no microfone.`;
+            const box = document.getElementById('nuvem-content');
+            box.innerHTML += `<div class="msg msg-in" style="font-size:12px">${texto}</div>`;
+            box.scrollTop = box.scrollHeight;
+            this.falar(texto);
+        },
+
+        // Clima real via Open-Meteo (API pública, sem necessidade de chave) para Santana de Parnaíba.
+        async buscarClima() {
+            try {
+                const resp = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-23.4536&longitude=-46.9176&current=temperature_2m,weather_code&timezone=America/Sao_Paulo');
+                const data = await resp.json();
+                const temp = Math.round(data.current.temperature_2m);
+                const codigo = data.current.weather_code;
+                const condicoes = { 0: 'céu limpo', 1: 'poucas nuvens', 2: 'parcialmente nublado', 3: 'nublado', 45: 'neblina', 51: 'garoa leve', 61: 'chuva leve', 63: 'chuva moderada', 65: 'chuva forte', 80: 'pancadas de chuva', 95: 'tempestade' };
+                const desc = condicoes[codigo] || 'condições variáveis';
+                return `Em Santana de Parnaíba agora está <b>${temp}°C</b>, com ${desc}.`;
+            } catch (e) {
+                return 'Não consegui consultar o clima agora — verifique sua conexão com a internet.';
+            }
+        },
+
         async ask() {
             const input = document.getElementById('nuvem-input');
             const box = document.getElementById('nuvem-content');
@@ -2501,7 +2601,9 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             let r = "";
             const ql = q.toLowerCase();
             try {
-                if (ql.includes('reserva')) {
+                if (ql.includes('clima') || ql.includes('tempo') || ql.includes('temperatura')) {
+                    r = await this.buscarClima();
+                } else if (ql.includes('reserva')) {
                     r = "Para fazer uma reserva, vá em <b>Operacional → Nova Reserva</b>, escolha o equipamento, a sala e o horário.";
                 } else if (ql.includes('chamado')) {
                     const chamSnap = await db.ref('chamados').once('value');
@@ -2510,7 +2612,13 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
                 } else if (ql.includes('edital')) {
                     const edSnap = await db.ref('editais').once('value');
                     let total = 0, abertos = 0; edSnap.forEach(e => { total++; if (e.val()?.status === 'Aberto') abertos++; });
-                    r = total > 0 ? `Existem <b>${total}</b> edital(is) cadastrado(s), sendo <b>${abertos}</b> em aberto. Veja em <b>Comunicação → Central de Editais</b>.` : "Ainda não há editais cadastrados. Para publicar um, vá em <b>Comunicação → Central de Editais</b>.";
+                    r = total > 0 ? `Existem <b>${total}</b> edital(is) cadastrado(s), sendo <b>${abertos}</b> em aberto. Veja em <b>Editais</b>.` : "Ainda não há editais cadastrados. Para publicar um, vá em <b>Editais</b>.";
+                } else if (ql.includes('notícia') || ql.includes('noticia') || ql.includes('prefeitura') || ql.includes('santana')) {
+                    r = `Não tenho acesso direto às notícias da prefeitura em tempo real por aqui, mas você pode consultar o portal oficial: <a href="https://www.santanadeparnaiba.sp.gov.br" target="_blank" rel="noopener" style="color:var(--prof)">santanadeparnaiba.sp.gov.br</a>.`;
+                } else if (ql.includes('biblioteca')) {
+                    r = "A área da <b>Biblioteca</b> está disponível no menu superior, com acervo, empréstimos e materiais digitais.";
+                } else if (ql.includes('atalho') || ql.includes('hub') || ql.includes('workspace')) {
+                    r = "Seus atalhos personalizados (Gmail, Drive, Agenda, SisGEM, etc.) ficam em <b>Hub de Atalhos</b>, no menu superior.";
                 } else if (ql.includes('aluno')) {
                     r = "Gerencie alunos no módulo <b>Alunos</b> — Perfil 360°, Portfólio e Carteira Digital.";
                 } else if (ql.includes('equip') || ql.includes('patrim')) {
@@ -2524,11 +2632,13 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
                 } else if (ql.includes('relat') || ql.includes('gráfico') || ql.includes('grafico')) {
                     r = "Relatórios e gráficos inteligentes estão em <b>Análise IA</b> e no <b>Dashboard</b>.";
                 } else if (ql.includes('foto') || ql.includes('imagem') || ql.includes('avatar')) {
-                    r = "Você pode definir uma foto de perfil enviando um arquivo ou colando o link de uma imagem, em <b>Perfil → Foto</b>.";
-                } else if (ql.includes('oi') || ql.includes('olá') || ql.includes('ola') || ql.includes('bom dia') || ql.includes('boa tarde')) {
-                    r = "Olá! 👋 Posso te ajudar com reservas, chamados, editais, comunicados, alunos, equipamentos e relatórios. O que você precisa?";
+                    r = "Você pode definir uma foto de perfil enviando um arquivo ou colando o link de uma imagem, clicando no seu ícone no topo da tela.";
+                } else if (ql.includes('oi') || ql.includes('olá') || ql.includes('ola') || ql.includes('bom dia') || ql.includes('boa tarde') || ql.includes('boa noite')) {
+                    const hora = new Date().getHours();
+                    const periodo = hora < 12 ? 'Bom dia' : hora < 18 ? 'Boa tarde' : 'Boa noite';
+                    r = `${periodo}! 👋 Posso te ajudar com reservas, chamados, editais, clima, biblioteca, comunicados, alunos, equipamentos e relatórios. O que você precisa?`;
                 } else {
-                    r = "Posso te ajudar com: <b>reservas</b>, <b>chamados</b>, <b>editais</b>, <b>comunicados</b>, <b>alunos</b>, <b>equipamentos</b> ou <b>relatórios</b>. Pode reformular sua pergunta usando uma dessas palavras?";
+                    r = "Posso te ajudar com: <b>reservas</b>, <b>chamados</b>, <b>editais</b>, <b>clima</b>, <b>biblioteca</b>, <b>comunicados</b>, <b>alunos</b>, <b>equipamentos</b> ou <b>relatórios</b>. Pode reformular sua pergunta usando uma dessas palavras?";
                 }
             } catch (e) {
                 r = "Tive um problema ao consultar os dados agora, mas posso te orientar: tente perguntar sobre 'reservas', 'chamados', 'editais' ou 'equipamentos'.";
@@ -2538,8 +2648,11 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             if (dot) dot.remove();
             box.innerHTML += `<div class="msg msg-in" style="font-size:12px"><b>Nuvem AI:</b><br>${r}</div>`;
             box.scrollTop = box.scrollHeight;
+            this.falar(r);
         }
     };
+    // Pré-carrega a lista de vozes do navegador (necessário em alguns browsers antes do primeiro speak)
+    if ('speechSynthesis' in window) { speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices(); }
 
     // ═══════════════════════════════════════════════════════
     //  APP PRINCIPAL (compatibilidade total com v1)
@@ -3033,6 +3146,12 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             auditoria.registrar('Comunicação', 'Aviso geral publicado');
         },
 
+        removerAvisoGeral() {
+            if (!confirm('Remover o aviso geral atual?')) return;
+            db.ref('config/globalAlert').remove();
+            auditoria.registrar('Comunicação', 'Aviso geral removido');
+        },
+
         addPlataformaURL() {
             const n = document.getElementById('new-plat-name').value;
             const u = document.getElementById('new-plat-url').value;
@@ -3066,7 +3185,15 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             });
             db.ref('config/globalAlert').on('value', s => {
                 const msg = s.val(); const ribbon = document.getElementById('alert-ribbon');
-                if (msg) { ribbon.style.display = 'block'; document.getElementById('alert-text').textContent = msg; } else { ribbon.style.display = 'none'; }
+                const closeBtn = document.getElementById('alert-ribbon-close');
+                if (msg) {
+                    ribbon.style.display = 'block';
+                    document.getElementById('alert-text').textContent = msg;
+                    const podeRemover = this.user && ['NTEi', 'Gestão', 'SMETi'].includes(this.user.cargo);
+                    if (closeBtn) closeBtn.classList.toggle('hidden', !podeRemover);
+                } else {
+                    ribbon.style.display = 'none';
+                }
             });
         },
 
