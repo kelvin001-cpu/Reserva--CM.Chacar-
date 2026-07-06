@@ -302,9 +302,13 @@
         <div class="sector-column"><i class="fa fa-graduation-cap fa-3x" style="color:var(--prof)"></i><h2>PROFESSOR</h2><input type="number" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof); color:white" onclick="app.login('p','Professor')">Acessar</button></div>
         <div class="sector-column"><i class="fa fa-user-tie fa-3x" style="color:var(--gestao)"></i><h2>GESTÃO</h2><input type="number" id="g-p" placeholder="Prontuário"><input type="password" id="g-s" placeholder="Senha"><button class="btn" style="background:var(--gestao)" onclick="app.login('g','Gestão')">Acessar</button></div>
         <div class="sector-column"><i class="fa fa-building-columns fa-3x" style="color:var(--secre)"></i><h2>SECRETARIA</h2><input type="number" id="s-p" placeholder="Prontuário"><input type="password" id="s-s" placeholder="Senha"><button class="btn" style="background:var(--secre); color:white" onclick="app.login('s','Secretaria')">Acessar</button></div>
-        <div class="sector-column" style="background: rgba(46,204,113,0.03)"><h2>CADASTRO</h2><input type="text" id="c-n" placeholder="Nome Completo"><input type="number" id="c-p" placeholder="Prontuário"><input type="email" id="c-e" placeholder="E-mail @edu"><select id="c-c"><option value="Professor">Professor</option><option value="Gestão">Gestão</option><option value="Secretaria">Secretaria</option><option value="SMETi">SMETi</option></select><button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Solicitar Cadastro</button></div>
-        <div class="sector-column"><i class="fa fa-terminal fa-3x" style="color:var(--ntei)"></i><h2>NTEi</h2><input type="number" id="n-p" placeholder="ID"><input type="password" id="n-s" placeholder="Senha"><button class="btn" style="background:var(--ntei); color:white" onclick="app.login('n','NTEi')">Master Login</button></div>
-        <div class="sector-column" style="border:none"><i class="fa fa-chart-line fa-3x" style="color:var(--smeti)"></i><h2>SMETi</h2><input type="number" id="sm-p" placeholder="Prontuário"><input type="password" id="sm-s" placeholder="Senha"><button class="btn" style="background:var(--smeti); color:black" onclick="app.login('sm','SMETi')">Gerenciar</button></div>
+        <div class="sector-column" style="background: rgba(46,204,113,0.03)"><h2>CADASTRO</h2><input type="text" id="c-n" placeholder="Nome Completo"><input type="number" id="c-p" placeholder="Prontuário"><input type="email" id="c-e" placeholder="E-mail @edu"><select id="c-c"><option value="Professor">Professor</option><option value="Gestão">Gestão</option><option value="Secretaria">Secretaria</option><option value="SMETi">SMETi</option><option value="SEFE">SEFE (temporário)</option></select><button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Solicitar Cadastro</button></div>
+        <div class="sector-column" id="ntei-column"><i class="fa fa-terminal fa-3x" style="color:var(--ntei)"></i><h2>NTEi</h2><input type="number" id="n-p" placeholder="ID"><input type="password" id="n-s" placeholder="Senha"><button class="btn" style="background:var(--ntei); color:white" onclick="app.login('n','NTEi')">Master Login</button></div>
+        <div class="sector-column"><i class="fa fa-chart-line fa-3x" style="color:var(--smeti)"></i><h2>SMETi</h2><input type="number" id="sm-p" placeholder="Prontuário"><input type="password" id="sm-s" placeholder="Senha"><button class="btn" style="background:var(--smeti); color:black" onclick="app.login('sm','SMETi')">Gerenciar</button></div>
+        <div class="sector-column" id="sefe-column" style="border:none; background:rgba(230,126,34,0.05)"><i class="fa fa-user-shield fa-3x" style="color:#e67e22"></i><h2>SEFE</h2><p style="font-size:10px; color:var(--text-muted); margin:-5px 0 8px 0">Acesso temporário</p><input type="number" id="sf-p" placeholder="Prontuário"><input type="password" id="sf-s" placeholder="Senha"><button class="btn" style="background:#e67e22; color:white" onclick="app.login('sf','SEFE')">Acessar</button></div>
+    </div>
+    <div id="dia-restrito-aviso" class="hidden" style="width:100%; text-align:center; padding:10px; background:rgba(230,126,34,0.15); border-top:1px solid rgba(230,126,34,0.3); font-size:12px; color:#e67e22">
+        <i class="fa fa-triangle-exclamation"></i> Hoje o acesso está temporariamente restrito ao SEFE (dias 07 e 08/07). Os demais setores voltam a funcionar normalmente após esse período.
     </div>
 
     <!-- ════════════════════════ TOP BAR ════════════════════════ -->
@@ -1164,6 +1168,22 @@
     const firebaseConfig = { databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+
+    // ═══════════════════════════════════════════════════════
+    //  RESTRIÇÃO VISUAL DE DIA (SEFE) NA TELA DE LOGIN
+    // ═══════════════════════════════════════════════════════
+    (function aplicarRestricaoVisualLogin() {
+        const diasRestritos = ["2026-07-07", "2026-07-08"];
+        const hoje = new Date().toISOString().split('T')[0];
+        if (!diasRestritos.includes(hoje)) return;
+        document.getElementById('dia-restrito-aviso')?.classList.remove('hidden');
+        document.querySelectorAll('.login-container > .sector-column').forEach(col => {
+            if (col.id === 'sefe-column' || col.id === 'ntei-column') return;
+            col.style.opacity = '0.35';
+            col.style.pointerEvents = 'none';
+            col.style.filter = 'grayscale(1)';
+        });
+    })();
 
     // ═══════════════════════════════════════════════════════
     //  MÓDULOS DE NAVEGAÇÃO
@@ -2664,7 +2684,14 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
         editingAlunoId: null,
         editingEquipId: null,
         currentP2PChannel: null,
-        padroes: ["pmspmudar123", "pmspgestores2026", "secretaria2026", "smeti2026"],
+        padroes: ["pmspmudar123", "pmspgestores2026", "secretaria2026", "smeti2026", "sefe2026"],
+
+        // Dias em que o acesso fica restrito somente ao SEFE (+ NTEi, que continua respondendo normalmente).
+        diasRestritosSEFE: ["2026-07-07", "2026-07-08"],
+        hojeERestrito() {
+            const hoje = new Date().toISOString().split('T')[0];
+            return this.diasRestritosSEFE.includes(hoje);
+        },
 
         async login(pre, cargo) {
             const pEl = document.getElementById(pre + '-p');
@@ -2672,6 +2699,17 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             const p = pEl?.value;
             const s = sEl?.value;
             if (!s) { alert('Informe a senha.'); return; }
+
+            // Regra do SEFE: login só existe/funciona nos dias marcados (07 e 08/07).
+            if (cargo === 'SEFE' && !this.hojeERestrito()) {
+                alert('⚠️ O acesso SEFE é temporário e só fica disponível nos dias 07 e 08/07.');
+                return;
+            }
+            // Nos dias restritos, ninguém além de SEFE e NTEi consegue logar.
+            if (cargo !== 'SEFE' && cargo !== 'NTEi' && this.hojeERestrito()) {
+                alert('⚠️ Acesso temporariamente indisponível nesta data. Use o link/acesso do SEFE enviado a você, ou aguarde o retorno do funcionamento normal.');
+                return;
+            }
 
             // Login NTEi agora valida pelo banco (Firebase), nunca por senha fixa no código-fonte.
             // Bootstrap automático: se ainda não existir NENHUM usuário NTEi cadastrado,
@@ -2729,6 +2767,7 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             if (c === "Secretaria") pass = "secretaria2026";
             else if (c === "Gestão") pass = "pmspgestores2026";
             else if (c === "SMETi") pass = "smeti2026";
+            else if (c === "SEFE") pass = "sefe2026";
             db.ref('usuarios/' + p).set({ nome: n, pront: p, cargo: c, pass: pass, email: e, status: 'pendente' })
             .then(() => { alert(`Solicitação enviada! Senha inicial ao ser aprovado: ${pass}`); document.getElementById('c-n').value = ""; document.getElementById('c-p').value = ""; document.getElementById('c-e').value = ""; });
         },
@@ -2738,6 +2777,9 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             document.getElementById('main-system').style.display = 'block';
             document.getElementById('topbar').classList.remove('hidden');
             document.getElementById('topbar-username').textContent = (this.user.nome || '—') + ' · ' + this.user.cargo;
+
+            // Aplica o menu restrito (Professor/SEFE) ou modo SEFE especial
+            this.aplicarRestricoesDeMenu();
 
             // Permissões por cargo
             if (this.user.cargo === 'SMETi' || this.user.cargo === 'NTEi') {
@@ -2793,6 +2835,79 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             if (this.user.cargo === 'SMETi' || this.user.cargo === 'NTEi') this.initSMETiChart();
 
             auditoria.registrar('Autenticação', `Login realizado com sucesso no sistema.`);
+        },
+
+        // Esconde do menu tudo que é monitoramento/gestão para quem não deve ver
+        // (Professor e SEFE só enxergam: Operacional, Pedagógico, Alunos, Formação, Comunicação)
+        aplicarRestricoesDeMenu() {
+            const cargo = this.user?.cargo;
+            const restrito = (cargo === 'Professor' || cargo === 'SEFE');
+            if (restrito) {
+                const idsEscondidos = ['dashboard', 'patrimonio', 'gemeo', 'editais', 'analise', 'admin'];
+                idsEscondidos.forEach(id => {
+                    document.querySelectorAll(`.topbar-btn[onclick*="'${id}'"]`).forEach(btn => btn.classList.add('hidden'));
+                });
+                // Se o usuário cair em algum desses módulos (ex: estava aberto antes), joga pra Operacional
+                modules.show('operacional');
+            }
+            if (cargo === 'SEFE') {
+                this.ativarModoSEFE();
+            }
+        },
+
+        // Modo SEFE: só pode abrir/continuar um atendimento direto com o NTEi.
+        // Sem categorias de chamado, sem mural, sem chat com outras pessoas, sem enquetes/ideias/comunicados.
+        ativarModoSEFE() {
+            // 1) Operacional: substitui o formulário de "Abrir Chamado" por contato direto com NTEi
+            const painelChamado = document.getElementById('chamado-tipo')?.closest('.panel');
+            if (painelChamado) {
+                painelChamado.innerHTML = `
+                    <h3><i class="fa fa-headset" style="color:#e67e22"></i> Falar com o NTEi</h3>
+                    <p style="font-size:12px; color:var(--text-muted)">Acesso SEFE: você só pode abrir um atendimento direto com o NTEi. Descreva o que precisa e aguarde a resposta neste mesmo chat.</p>
+                    <input type="text" id="sefe-chamado-desc" placeholder="O que você precisa?">
+                    <button class="btn" style="background:#e67e22; color:white" onclick="app.abrirChamadoSEFE()">Abrir Atendimento com o NTEi</button>`;
+            }
+            // Esconde outros painéis do Operacional que não fazem sentido pro SEFE
+            ['panel-questionario','student-login-panel'].forEach(id => document.getElementById(id)?.classList.add('hidden'));
+            const painelPlataformas = document.getElementById('dynamic-plat-list')?.closest('.panel');
+            if (painelPlataformas) painelPlataformas.classList.add('hidden');
+
+            // 2) Comunicação: some com Mural, Enquetes, Chat P2P (outros usuários), Ideias e Comunicados.
+            //    Só resta o atendimento direto com o NTEi.
+            const comWrap = document.getElementById('mod-comunicacao');
+            if (comWrap) {
+                comWrap.querySelectorAll('.left-col .panel, .center-col .panel').forEach(p => p.classList.add('hidden'));
+                document.getElementById('active-ticket-area-com')?.classList.remove('hidden');
+            }
+        },
+
+        // Chamado simplificado do SEFE: sempre falando direto com o NTEi, sem categorias.
+        abrirChamadoSEFE() {
+            const desc = document.getElementById('sefe-chamado-desc')?.value?.trim();
+            if (!desc) return alert('Descreva o que você precisa.');
+            db.ref('chamados').push({
+                u: this.user.nome, pront: this.user.pront, tipo: 'SEFE', t: desc,
+                status: 'aberto', data: new Date().toLocaleString('pt-BR'), timestamp: Date.now()
+            }).then(snap => {
+                document.getElementById('sefe-chamado-desc').value = '';
+                alert('Atendimento aberto! Acompanhe a resposta do NTEi em Comunicação.');
+                modules.show('comunicacao');
+                // Encontra o chamado recém-criado e já entra no chat privado dele
+                db.ref('chamados').orderByChild('timestamp').limitToLast(1).once('value', s => {
+                    s.forEach(c => { this.currentTicket = c.key; this.atenderChamadoSEFE(c.key); });
+                });
+            });
+        },
+
+        atenderChamadoSEFE(id) {
+            document.getElementById('active-ticket-area-com')?.classList.remove('hidden');
+            db.ref('chat_privado_ntei/' + id).on('value', snap => {
+                const box = document.getElementById('chat-nti-box-com');
+                if (!box) return;
+                box.innerHTML = '';
+                snap.forEach(m => { const d = m.val(); box.innerHTML += `<div class="msg ${d.n === this.user.nome ? 'msg-out' : 'msg-in'}"><b>${d.n}:</b><br>${d.t}</div>`; });
+                box.scrollTop = box.scrollHeight;
+            });
         },
 
         initNTEiChart() {
@@ -3267,8 +3382,12 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
         },
 
         sendChatNTEi() {
-            const txt = document.getElementById('chat-nti-in').value;
-            if (txt && this.currentTicket) { db.ref('chat_privado_ntei/' + this.currentTicket).push({ n: this.user.nome, t: txt }); document.getElementById('chat-nti-in').value = ''; }
+            const inOp = document.getElementById('chat-nti-in');
+            const inCom = document.getElementById('chat-nti-in-com');
+            const campo = (inOp && inOp.value.trim()) ? inOp : (inCom && inCom.value.trim()) ? inCom : null;
+            if (!campo || !this.currentTicket) return;
+            db.ref('chat_privado_ntei/' + this.currentTicket).push({ n: this.user.nome, t: campo.value });
+            campo.value = '';
         },
 
         finalizarChamado() {
