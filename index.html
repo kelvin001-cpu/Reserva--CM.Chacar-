@@ -877,7 +877,7 @@
                         </div>
 
                         <!-- Enquetes -->
-                        <div class="panel">
+                        <div class="panel" id="painel-criar-enquete">
                             <h3 style="color:var(--gestao)"><i class="fa fa-poll"></i> Enquetes Institucionais</h3>
                             <input type="text" id="enquete-titulo" placeholder="Título da Enquete">
                             <input type="text" id="enquete-op1" placeholder="Opção 1">
@@ -912,7 +912,7 @@
 
                     <div class="right-col">
                         <!-- Comunicados -->
-                        <div class="panel">
+                        <div class="panel" id="painel-criar-comunicado">
                             <h3 style="color:var(--gestao)"><i class="fa fa-bullhorn"></i> Central de Comunicados</h3>
                             <input type="text" id="comun-titulo" placeholder="Título do Comunicado">
                             <textarea id="comun-corpo" placeholder="Texto do comunicado..." style="width:100%; height:80px; border-radius:8px; border:1px solid #333; background:rgba(0,0,0,0.4); color:white; padding:8px; resize:none; font-family:'Poppins'; font-size:12px; margin:5px 0;"></textarea>
@@ -939,7 +939,7 @@
                 <div class="section-title"><i class="fa fa-file-contract"></i> Central de Editais e Processos</div>
                 <div class="grid-layout">
                     <div class="left-col">
-                        <div class="panel">
+                        <div class="panel" id="painel-criar-edital">
                             <h3 style="color:var(--gestao)"><i class="fa fa-plus-circle"></i> Cadastrar Edital</h3>
                             <input type="text" id="ed-titulo" placeholder="Título do edital">
                             <input type="text" id="ed-numero" placeholder="Número do edital (ex: 012/2026)">
@@ -1947,6 +1947,7 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
     // ═══════════════════════════════════════════════════════
     const enquetes = {
         criar() {
+            if (!app.user || app.user.cargo !== 'NTEi') { alert('⚠️ Apenas o NTEi pode publicar enquetes institucionais.'); return; }
             const titulo = document.getElementById('enquete-titulo').value;
             const op1 = document.getElementById('enquete-op1').value;
             const op2 = document.getElementById('enquete-op2').value;
@@ -1955,7 +1956,7 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             const opcoes = [{ texto: op1, votos: 0 }, { texto: op2, votos: 0 }];
             if (op3) opcoes.push({ texto: op3, votos: 0 });
             db.ref('enquetes').push({ titulo, opcoes, criado_por: app.user?.nome || 'Sistema', data: new Date().toLocaleDateString('pt-BR') })
-            .then(() => { ['enquete-titulo','enquete-op1','enquete-op2','enquete-op3'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; }); });
+            .then(() => { ['enquete-titulo','enquete-op1','enquete-op2','enquete-op3'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; }); auditoria.registrar('Comunicação', `Enquete publicada: ${titulo}`); });
         },
         votar(enqueteId, opIndex) {
             db.ref(`enquetes/${enqueteId}/opcoes/${opIndex}/votos`).transaction(v => (v || 0) + 1);
@@ -2083,6 +2084,7 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             document.getElementById('ed-tab-link').style.background = tipo === 'link' ? 'var(--prof)' : 'rgba(255,255,255,0.08)';
         },
         async publicar() {
+            if (!app.user || app.user.cargo !== 'NTEi') { alert('⚠️ Apenas o NTEi pode publicar editais.'); return; }
             const titulo = document.getElementById('ed-titulo').value.trim();
             const numero = document.getElementById('ed-numero').value.trim();
             const categoria = document.getElementById('ed-categoria').value;
@@ -2205,12 +2207,13 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
     // ═══════════════════════════════════════════════════════
     const comunicados = {
         publicar() {
+            if (!app.user || app.user.cargo !== 'NTEi') { alert('⚠️ Apenas o NTEi pode publicar comunicados.'); return; }
             const titulo = document.getElementById('comun-titulo').value;
             const corpo = document.getElementById('comun-corpo').value;
             const dest = document.getElementById('comun-dest').value;
             if (!titulo || !corpo) { alert('Preencha título e corpo!'); return; }
             db.ref('comunicados').push({ titulo, corpo, dest, autor: app.user?.nome || 'Sistema', data: new Date().toLocaleString('pt-BR') })
-            .then(() => { document.getElementById('comun-titulo').value = ''; document.getElementById('comun-corpo').value = ''; alert('Comunicado publicado!'); });
+            .then(() => { document.getElementById('comun-titulo').value = ''; document.getElementById('comun-corpo').value = ''; auditoria.registrar('Comunicação', `Comunicado publicado: ${titulo}`); });
         },
         sync() {
             db.ref('comunicados').limitToLast(20).on('value', snap => {
@@ -2632,7 +2635,7 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
                 } else if (ql.includes('edital')) {
                     const edSnap = await db.ref('editais').once('value');
                     let total = 0, abertos = 0; edSnap.forEach(e => { total++; if (e.val()?.status === 'Aberto') abertos++; });
-                    r = total > 0 ? `Existem <b>${total}</b> edital(is) cadastrado(s), sendo <b>${abertos}</b> em aberto. Veja em <b>Editais</b>.` : "Ainda não há editais cadastrados. Para publicar um, vá em <b>Editais</b>.";
+                    r = total > 0 ? `Existem <b>${total}</b> edital(is) cadastrado(s), sendo <b>${abertos}</b> em aberto. Veja em <b>Editais</b>.` : "Ainda não há editais cadastrados. Somente o NTEi pode publicar editais.";
                 } else if (ql.includes('notícia') || ql.includes('noticia') || ql.includes('prefeitura') || ql.includes('santana')) {
                     r = `Não tenho acesso direto às notícias da prefeitura em tempo real por aqui, mas você pode consultar o portal oficial: <a href="https://www.santanadeparnaiba.sp.gov.br" target="_blank" rel="noopener" style="color:var(--prof)">santanadeparnaiba.sp.gov.br</a>.`;
                 } else if (ql.includes('biblioteca')) {
@@ -2646,7 +2649,7 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
                     let totalEq = 0; eqSnap.forEach(() => totalEq++);
                     r = `Há <b>${totalEq}</b> equipamento(s) cadastrado(s). Veja o inventário completo em <b>Patrimônio</b>.`;
                 } else if (ql.includes('comunicado') || ql.includes('aviso')) {
-                    r = "Comunicados e avisos ficam em <b>Comunicação → Central de Comunicados</b> e no Mural de Avisos.";
+                    r = "Comunicados e avisos são publicados apenas pelo NTEi. Você pode acompanhá-los em <b>Comunicação → Central de Comunicados</b> e no Mural de Avisos.";
                 } else if (ql.includes('cadastro') || ql.includes('senha') || ql.includes('acesso')) {
                     r = "Para solicitar acesso, use a opção <b>Cadastro</b> na tela de login. Sua conta fica pendente até o NTEi aprovar.";
                 } else if (ql.includes('relat') || ql.includes('gráfico') || ql.includes('grafico')) {
@@ -2781,6 +2784,9 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             // Aplica o menu restrito (Professor/SEFE) ou modo SEFE especial
             this.aplicarRestricoesDeMenu();
 
+            // Restringe painéis de publicação (Editais, Avisos, Comunicados, Enquetes) só ao NTEi
+            this.aplicarRestricaoPublicacoes();
+
             // Permissões por cargo
             if (this.user.cargo === 'SMETi' || this.user.cargo === 'NTEi') {
                 document.getElementById('panel-smeti').classList.remove('hidden');
@@ -2853,6 +2859,25 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             if (cargo === 'SEFE') {
                 this.ativarModoSEFE();
             }
+        },
+
+        // Só o NTEi pode publicar Editais, Avisos Gerais, Comunicados e Enquetes.
+        // Aviso Geral já fica dentro do painel exclusivo do NTEi (#panel-admin-ntei),
+        // então aqui tratamos os três formulários que ficam em telas compartilhadas
+        // com outros cargos (Gestão, Secretaria, SMETi, Professor).
+        aplicarRestricaoPublicacoes() {
+            if (this.user?.cargo === 'NTEi') return; // NTEi vê tudo normalmente
+            const mensagemBloqueio = (titulo) => `
+                <h3><i class="fa fa-lock" style="color:var(--text-muted)"></i> ${titulo}</h3>
+                <p style="font-size:12px; color:var(--text-muted)">
+                    Apenas o <b>NTEi</b> pode publicar aqui. Caso precise de algo publicado, abra um chamado ou fale diretamente com o NTEi.
+                </p>`;
+            const painelEnquete = document.getElementById('painel-criar-enquete');
+            if (painelEnquete) painelEnquete.innerHTML = mensagemBloqueio('Enquetes Institucionais') + '<div id="enquete-lista" style="margin-top:12px; max-height:250px; overflow-y:auto"></div>';
+            const painelComunicado = document.getElementById('painel-criar-comunicado');
+            if (painelComunicado) painelComunicado.innerHTML = mensagemBloqueio('Central de Comunicados') + '<div id="comun-lista" style="margin-top:10px; max-height:250px; overflow-y:auto"></div>';
+            const painelEdital = document.getElementById('painel-criar-edital');
+            if (painelEdital) painelEdital.innerHTML = mensagemBloqueio('Cadastrar Edital');
         },
 
         // Modo SEFE: só pode abrir/continuar um atendimento direto com o NTEi.
@@ -3254,6 +3279,7 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
         setSystemStatus(lock) { db.ref('config/maintenance').set(lock).then(() => { alert(lock ? "SITE BLOQUEADO!" : "SITE LIBERADO!"); auditoria.registrar('Sistema', lock ? 'Site bloqueado para manutenção' : 'Site liberado do modo manutenção'); }); },
 
         enviarAvisoGeral() {
+            if (!this.user || this.user.cargo !== 'NTEi') { alert('⚠️ Apenas o NTEi pode publicar avisos gerais.'); return; }
             const txt = document.getElementById('input-aviso-geral').value;
             if (!txt) return alert("Digite o aviso.");
             db.ref('config/globalAlert').set(txt);
@@ -3517,4 +3543,3 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
     </script>
 </body>
 </html>
-
