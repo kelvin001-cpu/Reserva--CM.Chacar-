@@ -1,0 +1,14 @@
+[
+  { "id": "T01", "name": "Berçário - Sala 1 (Térreo)", "floor": "térreo", "segment": "bercario", "type": "sala" },
+  { "id": "T02", "name": "Berçário - Sala 2 (Térreo)", "floor": "térreo", "segment": "bercario", "type": "sala" },
+  { "id": "S01", "name": "Berçário - Sala 3 (2º Andar)", "floor": "2º andar", "segment": "bercario", "type": "sala" },
+  { "id": "F1-01", "name": "Fundamental I - Sala 1 (2º Andar)", "floor": "2º andar", "segment": "fundamental1", "type": "sala" },
+  { "id": "F2-01", "name": "Fundamental II - Sala 1 (2º Andar)", "floor": "2º andar", "segment": "fundamental2", "type": "sala" },
+  { "id": "BIB", "name": "Biblioteca", "floor": "térreo", "segment": "espacos", "type": "biblioteca" },
+  { "id": "INFO", "name": "Sala de Informática", "floor": "térreo", "segment": "espacos", "type": "sala_informatica" },
+  { "id": "QUAD", "name": "Quadra", "floor": "térreo", "segment": "espacos", "type": "quadra" },
+  { "id": "SEC", "name": "Secretaria", "floor": "térreo", "segment": "terreo", "type": "sala" },
+  { "id": "DIR", "name": "Direção", "floor": "térreo", "segment": "terreo", "type": "sala" },
+  { "id": "PROF", "name": "Sala dos Professores", "floor": "térreo", "segment": "terreo", "type": "sala" },
+  { "id": "COORD", "name": "Coordenação", "floor": "2º andar", "segment": "segundo_andar", "type": "sala" }
+]

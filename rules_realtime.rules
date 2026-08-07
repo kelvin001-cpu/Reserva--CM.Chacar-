@@ -1,0 +1,18 @@
+{
+  "rules": {
+    "/users": {
+      ".read": "auth != null",
+      ".write": "root.child('roles').child(auth.uid).child('isAdmin').val() === true || auth.uid === 'admin'"
+    },
+    "/roles": {
+      ".read": "auth != null",
+      ".write": "root.child('roles').child(auth.uid).child('isAdmin').val() === true"
+    },
+    "/audit": {
+      ".read": "root.child('roles').child(auth.uid).child('isAdmin').val() === true",
+      ".write": "auth != null"
+    },
+    ".read": "auth != null",
+    ".write": "auth != null"
+  }
+}
