@@ -1,126 +1,105 @@
-// src/perm.js
-// Core permissions module using Firebase Realtime Database if available.
-// Usage:
-//  await perm.init();
-//  const user = await perm.loadUser('46690');
-//  perm.canView('mod_pedagogico') => true/false
-
-window.perm = (function(){
-  const state = { inited:false, db:null, currentUser:null, roles:{}, permissionsCatalog:{} };
+// Basic permission system - supports Firebase Realtime DB or localStorage fallback
+const perm = (function(){
+  const state = {
+    roles: {},
+    users: {},
+    currentUser: null,
+    inited: false,
+    useFirebase: false,
+    dbRef: null
+  };
 
   async function init(){
-    if(state.inited) return state;
-    // Initialize Firebase if config present
+    if(state.inited) return;
+    // try to connect to firebase if config exists
     try{
-      if(window.FIREBASE_CONFIG && window.firebase && window.firebase.apps && !window.firebase.apps.length){
+      if(window.FIREBASE_CONFIG && window.firebase && firebase.database){
         firebase.initializeApp(window.FIREBASE_CONFIG);
+        state.dbRef = firebase.database();
+        state.useFirebase = true;
+        // load roles and users once
+        const rolesSnap = await state.dbRef.ref('/roles').once('value');
+        const usersSnap = await state.dbRef.ref('/users').once('value');
+        state.roles = rolesSnap.val() || {};
+        state.users = usersSnap.val() || {};
+      }else{
+        // load from localStorage fallback
+        state.roles = JSON.parse(localStorage.getItem('perm_roles')||'{}');
+        state.users = JSON.parse(localStorage.getItem('perm_users')||'{}');
       }
-      if(window.firebase && window.firebase.database){
-        state.db = firebase.database();
-      } else {
-        console.warn('Firebase Realtime Database not available. Permissions will use localStorage fallback.');
-      }
-    }catch(e){
-      console.warn('perm.init: firebase init failed', e);
+    }catch(err){
+      console.warn('perm.init: firebase unavailable, fallback to localStorage', err);
+      state.roles = JSON.parse(localStorage.getItem('perm_roles')||'{}');
+      state.users = JSON.parse(localStorage.getItem('perm_users')||'{}');
     }
-
-    // load current user from auth wrapper or localStorage
-    if(window.auth && auth.getCurrentUser){
-      state.currentUser = auth.getCurrentUser();
-    } else {
-      try{ state.currentUser = JSON.parse(localStorage.getItem('app_current_user')); }catch(e){ state.currentUser = null; }
-    }
-
-    // load roles and permissions catalog
-    if(state.db){
-      const rolesSnap = await state.db.ref('/roles').once('value');
-      state.roles = rolesSnap.val() || {};
-      const catalogSnap = await state.db.ref('/permissions/list').once('value');
-      state.permissionsCatalog = catalogSnap.val() || {};
-    } else {
-      state.roles = {};
-      state.permissionsCatalog = {};
-    }
-
+    // current user from auth module if available
+    state.currentUser = (window.auth && auth.getCurrentUser && auth.getCurrentUser()) || JSON.parse(localStorage.getItem('app_current_user')||'null');
     state.inited = true;
-    // apply UI enforcement on init
-    enforceUI();
-    return state;
   }
 
-  async function loadUser(prontuario){
-    if(!state.db){
-      const raw = localStorage.getItem('user:'+prontuario);
-      return raw? JSON.parse(raw): null;
-    }
-    const snap = await state.db.ref(`/users/${prontuario}`).once('value');
-    return snap.exists()? snap.val() : null;
+  function _getUser(prontuario){
+    if(!prontuario){ return state.currentUser; }
+    return state.users && state.users[prontuario];
   }
 
-  async function setPermission(prontuario, permKey, value){
-    if(!state.db) {
-      const raw = localStorage.getItem('user:'+prontuario);
-      const user = raw? JSON.parse(raw): {prontuario, permissions:{}};
-      user.permissions = user.permissions || {};
-      user.permissions[permKey] = !!value;
-      localStorage.setItem('user:'+prontuario, JSON.stringify(user));
-      await audit.log('set-permission', (state.currentUser||{}).prontuario||'system', prontuario, {permKey, value});
-      return user;
-    }
-    await state.db.ref(`/users/${prontuario}/permissions/${permKey}`).set(!!value);
-    await audit.log('set-permission', (state.currentUser||{}).prontuario||'system', prontuario, {permKey, value});
-    return await loadUser(prontuario);
-  }
-
-  function _hasPermissionObj(user, key){
-    if(!user) return false;
-    if(user.permissions && typeof user.permissions[key] !== 'undefined') return !!user.permissions[key];
-    // fallback to role defaults
-    if(user.roleId && state.roles[user.roleId] && state.roles[user.roleId].defaultPermissions){
-      return !!state.roles[user.roleId].defaultPermissions[key];
-    }
+  async function canAction(key, user){
+    await init();
+    const u = user || state.currentUser || JSON.parse(localStorage.getItem('app_current_user')||'null');
+    if(!u) return false;
+    // NTEi override
+    if(u.roleId === 'ntei' || u.status === 'ntei') return true;
+    // check explicit user permissions
+    const stored = (state.users && state.users[u.prontuario] && state.users[u.prontuario].permissions) || (u.permissions) || {};
+    if(typeof stored[key] !== 'undefined') return !!stored[key];
+    // check role defaults
+    const role = (state.roles && state.roles[u.roleId]) || {};
+    if(role.defaultPermissions && typeof role.defaultPermissions[key] !== 'undefined') return !!role.defaultPermissions[key];
+    // default deny
     return false;
   }
 
-  async function canView(key){
-    if(!state.inited) await init();
-    // public key
-    if(!key) return true;
-    // If current user is NTEi (status==='ntei' or role has admin) grant all
-    const u = state.currentUser;
-    if(!u) return false;
-    if(u.status === 'ntei' || (u.roleId && state.roles[u.roleId] && state.roles[u.roleId].isAdmin)) return true;
-    return _hasPermissionObj(u, `view:${key}`) || _hasPermissionObj(u, key);
-  }
+  async function canView(key, user){ return canAction('view:'+key, user); }
 
-  async function canAction(actionKey){
-    if(!state.inited) await init();
-    const u = state.currentUser;
-    if(!u) return false;
-    if(u.status==='ntei' || (u.roleId && state.roles[u.roleId] && state.roles[u.roleId].isAdmin)) return true;
-    return _hasPermissionObj(u, `action:${actionKey}`) || _hasPermissionObj(u, actionKey);
-  }
-
-  // Hide or show elements with data-perm attribute
-  async function enforceUI(root=document){
-    if(!state.inited) await init();
+  async function enforceUI(root){
+    await init();
+    root = root || document;
     const els = root.querySelectorAll('[data-perm]');
-    els.forEach(async el=>{
-      const key = el.getAttribute('data-perm');
-      const allowed = await canView(key);
-      if(!allowed) el.style.display = 'none';
-      else el.style.display = '';
-    });
+    for(const el of els){
+      const permKey = el.getAttribute('data-perm');
+      try{
+        const allowed = await canAction(permKey);
+        if(!allowed) el.style.display='none';
+        else el.style.display='inline-block';
+      }catch(e){ console.error('perm.enforceUI', e); }
+    }
   }
 
-  // subscribe to permission changes for a user
-  function onUserPermissionsChange(prontuario, cb){
-    if(!state.db) return () => {};
-    const ref = state.db.ref(`/users/${prontuario}/permissions`);
-    const handler = snap => cb(snap.val()||{});
-    ref.on('value', handler);
-    return () => ref.off('value', handler);
+  async function setUserPermissions(prontuario, permissions){
+    await init();
+    if(state.useFirebase){
+      return state.dbRef.ref('/users/'+prontuario+'/permissions').set(permissions);
+    }else{
+      state.users = state.users || {};
+      state.users[prontuario] = state.users[prontuario] || {};
+      state.users[prontuario].permissions = permissions;
+      localStorage.setItem('perm_users', JSON.stringify(state.users));
+      return Promise.resolve(true);
+    }
   }
 
-  return { init, loadUser, setPermission, canView, canAction, enforceUI, onUserPermissionsChange, _state: state };
+  async function getUser(prontuario){
+    await init();
+    if(state.useFirebase){
+      const snap = await state.dbRef.ref('/users/'+prontuario).once('value');
+      return snap.val();
+    }else{
+      return state.users && state.users[prontuario];
+    }
+  }
+
+  async function listRoles(){ await init(); return state.roles || {}; }
+
+  return { init, canAction, canView, enforceUI, setUserPermissions, getUser, listRoles };
 })();
+
+window.perm = perm;

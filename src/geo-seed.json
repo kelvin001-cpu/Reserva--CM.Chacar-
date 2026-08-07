@@ -1,14 +1,14 @@
 [
-  { "id": "T01", "name": "Berçário - Sala 1 (Térreo)", "floor": "térreo", "segment": "bercario", "type": "sala" },
-  { "id": "T02", "name": "Berçário - Sala 2 (Térreo)", "floor": "térreo", "segment": "bercario", "type": "sala" },
-  { "id": "S01", "name": "Berçário - Sala 3 (2º Andar)", "floor": "2º andar", "segment": "bercario", "type": "sala" },
-  { "id": "F1-01", "name": "Fundamental I - Sala 1 (2º Andar)", "floor": "2º andar", "segment": "fundamental1", "type": "sala" },
-  { "id": "F2-01", "name": "Fundamental II - Sala 1 (2º Andar)", "floor": "2º andar", "segment": "fundamental2", "type": "sala" },
-  { "id": "BIB", "name": "Biblioteca", "floor": "térreo", "segment": "espacos", "type": "biblioteca" },
-  { "id": "INFO", "name": "Sala de Informática", "floor": "térreo", "segment": "espacos", "type": "sala_informatica" },
-  { "id": "QUAD", "name": "Quadra", "floor": "térreo", "segment": "espacos", "type": "quadra" },
-  { "id": "SEC", "name": "Secretaria", "floor": "térreo", "segment": "terreo", "type": "sala" },
-  { "id": "DIR", "name": "Direção", "floor": "térreo", "segment": "terreo", "type": "sala" },
-  { "id": "PROF", "name": "Sala dos Professores", "floor": "térreo", "segment": "terreo", "type": "sala" },
-  { "id": "COORD", "name": "Coordenação", "floor": "2º andar", "segment": "segundo_andar", "type": "sala" }
+  { "id":"bercario-t1", "name":"Berçário - Térreo 1", "floor":"Térreo", "segment":"Berçário", "type":"sala" },
+  { "id":"bercario-t2", "name":"Berçário - Térreo 2", "floor":"Térreo", "segment":"Berçário", "type":"sala" },
+  { "id":"bercario-2a", "name":"Berçário - 2º Andar", "floor":"2º Andar", "segment":"Berçário", "type":"sala" },
+  { "id":"fund1-r1","name":"Fundamental I - Sala 1","floor":"2º Andar","segment":"Fundamental I","type":"sala"},
+  { "id":"fund1-r2","name":"Fundamental I - Sala 2","floor":"2º Andar","segment":"Fundamental I","type":"sala"},
+  { "id":"fund1-r3","name":"Fundamental I - Sala 3","floor":"2º Andar","segment":"Fundamental I","type":"sala"},
+  { "id":"fund2-r1","name":"Fundamental II - Sala 1","floor":"2º Andar","segment":"Fundamental II","type":"sala"},
+  { "id":"fund2-r2","name":"Fundamental II - Sala 2","floor":"2º Andar","segment":"Fundamental II","type":"sala"},
+  { "id":"biblioteca","name":"Biblioteca","floor":"Térreo","segment":"Espaços","type":"espaco" },
+  { "id":"sala-informatica","name":"Sala de Informática","floor":"Térreo","segment":"Espaços","type":"espaco" },
+  { "id":"quadra","name":"Quadra","floor":"Térreo","segment":"Espaços","type":"espaco" },
+  { "id":"secretaria","name":"Secretaria","floor":"Térreo","segment":"Administrativo","type":"espaco" }
 ]

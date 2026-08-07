@@ -1,5 +1,4 @@
-.firebase/
+node_modules
 firebase-config.js
+service-account.json
 .env
-node_modules/
-.DS_Store

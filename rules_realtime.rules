@@ -1,18 +1,20 @@
+# Realtime Database rules (example)
+
 {
   "rules": {
-    "/users": {
-      ".read": "auth != null",
-      ".write": "root.child('roles').child(auth.uid).child('isAdmin').val() === true || auth.uid === 'admin'"
+    "users": {
+      "$uid": {
+        ".read": "auth != null && (auth.token.role == 'ntei' || auth.token.prontuario == $uid)",
+        ".write": "auth != null && auth.token.role == 'ntei'"
+      }
     },
-    "/roles": {
+    "editais": {
       ".read": "auth != null",
-      ".write": "root.child('roles').child(auth.uid).child('isAdmin').val() === true"
+      ".write": "auth != null && auth.token.role == 'ntei'"
     },
-    "/audit": {
-      ".read": "root.child('roles').child(auth.uid).child('isAdmin').val() === true",
+    "audit": {
+      ".read": "auth != null && auth.token.role == 'ntei'",
       ".write": "auth != null"
-    },
-    ".read": "auth != null",
-    ".write": "auth != null"
+    }
   }
 }

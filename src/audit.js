@@ -1,23 +1,25 @@
-// src/audit.js
-// Simple audit logger writing to Realtime Database (/audit/logs) or to localStorage
-
-window.audit = (function(){
-  async function log(action, actorProntuario, target, details){
-    const entry = { action, actorProntuario, target, details: details||{}, timestamp: Date.now() };
+// Simple audit logger: writes to Firebase /audit/logs or localStorage fallback
+const audit = (function(){
+  async function log(action, actor, target, details){
+    const entry = { action, actor, target: target||null, details: details||null, ts: new Date().toISOString() };
     try{
-      if(window.firebase && firebase.database){
+      if(window.firebase && window.FIREBASE_CONFIG){
+        if(!firebase.apps.length) firebase.initializeApp(window.FIREBASE_CONFIG);
         const ref = firebase.database().ref('/audit/logs').push();
         await ref.set(entry);
-        return { ok:true, id: ref.key };
-      } else {
-        const key = 'audit:'+Date.now()+':'+Math.random().toString(36).slice(2,8);
-        localStorage.setItem(key, JSON.stringify(entry));
-        return { ok:true, id: key };
+        return entry;
       }
-    }catch(e){
-      console.warn('audit.log failed', e);
-      return { ok:false, error: String(e) };
-    }
+    }catch(e){ console.warn('audit.log firebase failed', e); }
+    // fallback to localStorage
+    const arr = JSON.parse(localStorage.getItem('audit_logs')||'[]');
+    arr.push(entry);
+    localStorage.setItem('audit_logs', JSON.stringify(arr));
+    return entry;
   }
-  return { log };
+  async function list(){
+    try{ if(window.firebase && window.FIREBASE_CONFIG){ if(!firebase.apps.length) firebase.initializeApp(window.FIREBASE_CONFIG); const snap = await firebase.database().ref('/audit/logs').once('value'); return snap.val()||{}; } }catch(e){}
+    return JSON.parse(localStorage.getItem('audit_logs')||'[]');
+  }
+  return { log, list };
 })();
+window.audit = audit;
