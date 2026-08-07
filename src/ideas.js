@@ -1,0 +1,7 @@
+// Ideas module
+const ideias = (function(){
+  async function enviar(){ const t = document.getElementById('ideia-titulo').value.trim(); const d = document.getElementById('ideia-desc').value.trim(); if(!t||!d) return alert('Preencha título e descrição'); const me = auth.getCurrentUser(); const idea = { id:'idea_'+Date.now(), title:t, desc:d, author:me?me.prontuario:'anon', status:'Proposta', createdAt:new Date().toISOString() }; const arr = JSON.parse(localStorage.getItem('ideias')||'[]'); arr.push(idea); localStorage.setItem('ideias', JSON.stringify(arr)); document.getElementById('ideia-titulo').value=''; document.getElementById('ideia-desc').value=''; renderLista(); await audit.log('idea_create', me?me.prontuario:'unknown', idea.id, idea); }
+  function renderLista(){ const box = document.getElementById('ideias-lista'); if(!box) return; const arr = JSON.parse(localStorage.getItem('ideias')||'[]'); if(arr.length===0){ box.innerHTML='<div class="info-box">Nenhuma ideia cadastrada.</div>'; return; } box.innerHTML=''; arr.slice().reverse().forEach(i=>{ const div = document.createElement('div'); div.className='idea-card'; div.innerHTML = `<b>${i.title}</b><div style="font-size:12px; color:var(--text-muted)">${i.desc}</div><div style="margin-top:6px; font-size:11px">Autor: ${i.author} • ${new Date(i.createdAt).toLocaleString()}</div>`; box.appendChild(div); }); }
+  return { enviar, renderLista, init: renderLista };
+})();
+window.ideias = ideias;
