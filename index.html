@@ -1096,6 +1096,19 @@
                     </div>
 
                     <!-- Usuários & Segurança -->
+                    <div id="panel-dominio-ntei" class="panel hidden" style="border:2px solid var(--prof)">
+                        <h3 style="color:var(--prof)"><i class="fa fa-shield-halved"></i> DOMÍNIO NTEI — Permissões por Prontuário</h3>
+                        <p style="font-size:11px; color:var(--text-muted); margin-top:-6px">Libere ou remova módulos específicos para um prontuário, independente do cargo.</p>
+                        <input type="number" id="dom-pront" placeholder="Prontuário (ex: 46690)">
+                        <div id="dom-checkboxes" style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin:10px 0; font-size:12px"></div>
+                        <div style="display:flex; gap:8px">
+                            <button class="btn" style="background:var(--cad); color:#000" onclick="permissoes.salvarOverride()">Salvar Permissões</button>
+                            <button class="btn" style="background:rgba(255,255,255,0.1)" onclick="permissoes.limparOverride()">Voltar ao padrão do cargo</button>
+                        </div>
+                        <p style="font-size:10px; color:#aaa; margin:14px 0 5px 0">PRONTUÁRIOS COM PERMISSÃO PERSONALIZADA:</p>
+                        <div id="dom-lista-overrides" style="max-height:160px; overflow-y:auto; background:rgba(0,0,0,0.2); padding:6px; border-radius:6px; font-size:11px"></div>
+                    </div>
+
                     <div id="panel-usuarios-ntei" class="panel hidden" style="border:1px solid rgba(235,77,75,0.3)">
                         <h3 style="color:var(--ntei)"><i class="fa fa-user-shield"></i> GERENCIAR CONTAS & SEGURANÇA</h3>
 
@@ -1191,6 +1204,10 @@
     const modules = {
         current: 'dashboard',
         show(id) {
+            if (app.user && !permissoes.pode(id)) {
+                alert('🔒 Você não tem permissão para acessar este módulo. Fale com o NTEi.');
+                return;
+            }
             document.querySelectorAll('.module-view').forEach(m => m.classList.remove('active'));
             document.querySelectorAll('.topbar-btn').forEach(b => b.classList.remove('active'));
             const modEl = document.getElementById('mod-' + id);
@@ -1346,29 +1363,69 @@
     //  GÊMEO DIGITAL
     // ═══════════════════════════════════════════════════════
     const gemeoDigital = {
-        salas: ['Sala 1', 'Sala 2', 'Sala 3', 'Sala 4', 'Sala 5', 'Lab. Info.', 'Sala 6', 'Sala 7', 'Sala 8', 'Sala 9', 'Quadra', 'Biblioteca', 'Sala 10', 'Lab. Ciências', 'Auditório'],
+        // 12 salas de aula reais: Berçário (3, sendo 2 no térreo e 1 no 2º andar),
+        // Fundamental I (1º ao 5º ano, 2º andar) e Fundamental II (6º ao 9º ano, 2º andar).
+        salas: [
+            {nome:'Berçário 1', seg:'Berçário', andar:'Térreo', icon:'fa-baby'},
+            {nome:'Berçário 2', seg:'Berçário', andar:'Térreo', icon:'fa-baby'},
+            {nome:'Berçário 3', seg:'Berçário', andar:'2º Andar', icon:'fa-baby'},
+            {nome:'1º Ano', seg:'Fundamental I', andar:'2º Andar', icon:'fa-chalkboard'},
+            {nome:'2º Ano', seg:'Fundamental I', andar:'2º Andar', icon:'fa-chalkboard'},
+            {nome:'3º Ano', seg:'Fundamental I', andar:'2º Andar', icon:'fa-chalkboard'},
+            {nome:'4º Ano', seg:'Fundamental I', andar:'2º Andar', icon:'fa-chalkboard'},
+            {nome:'5º Ano', seg:'Fundamental I', andar:'2º Andar', icon:'fa-chalkboard'},
+            {nome:'6º Ano', seg:'Fundamental II', andar:'2º Andar', icon:'fa-chalkboard'},
+            {nome:'7º Ano', seg:'Fundamental II', andar:'2º Andar', icon:'fa-chalkboard'},
+            {nome:'8º Ano', seg:'Fundamental II', andar:'2º Andar', icon:'fa-chalkboard'},
+            {nome:'9º Ano', seg:'Fundamental II', andar:'2º Andar', icon:'fa-chalkboard'}
+        ],
+        // Demais ambientes reais da unidade (não são salas de aula, ficam à parte no filtro).
+        ambientes: [
+            {nome:'Biblioteca', seg:'Ambiente', andar:'Térreo', icon:'fa-book'},
+            {nome:'Lab. Informática', seg:'Ambiente', andar:'Térreo', icon:'fa-computer'},
+            {nome:'Quadra', seg:'Ambiente', andar:'Térreo', icon:'fa-volleyball'},
+            {nome:'Secretaria', seg:'Ambiente', andar:'Térreo', icon:'fa-folder-open'},
+            {nome:'Direção', seg:'Ambiente', andar:'Térreo', icon:'fa-user-tie'},
+            {nome:'Sala dos Professores', seg:'Ambiente', andar:'Térreo', icon:'fa-chalkboard-user'},
+            {nome:'Coordenação', seg:'Ambiente', andar:'2º Andar', icon:'fa-user-graduate'}
+        ],
+        filtro: 'Todos',
+        setFiltro(f) { this.filtro = f; this.render(); },
         async render() {
             const grid = document.getElementById('gemeo-grid');
             if (!grid) return;
             const resSnap = await db.ref('reservas').once('value');
             const occupied = new Set();
             resSnap.forEach(r => { const d = r.val(); if (d && d.status === 'em_uso' && d.sl) occupied.add(d.sl); });
+
+            let todos = [...this.salas, ...this.ambientes];
+            const listaFiltrada = this.filtro === 'Todos' ? todos : todos.filter(s => s.seg === this.filtro);
+
             grid.innerHTML = '';
-            const icons = ['fa-chalkboard','fa-chalkboard','fa-chalkboard','fa-chalkboard','fa-chalkboard','fa-computer','fa-chalkboard','fa-chalkboard','fa-chalkboard','fa-chalkboard','fa-volleyball','fa-book','fa-chalkboard','fa-flask','fa-volume-high'];
-            this.salas.forEach((sala, i) => {
-                const isOcup = occupied.has(String(i+1)) || occupied.has(sala);
-                grid.innerHTML += `<div class="gemeo-room ${isOcup ? 'ocupado' : 'disponivel'}" onclick="gemeoDigital.detalhe('${sala}')">
-                    <i class="fa ${icons[i] || 'fa-door-open'}"></i>
-                    <b style="font-size:11px">${sala}</b><br>
+            listaFiltrada.forEach(sala => {
+                const isOcup = occupied.has(sala.nome);
+                grid.innerHTML += `<div class="gemeo-room ${isOcup ? 'ocupado' : 'disponivel'}" onclick="gemeoDigital.detalhe('${sala.nome}')">
+                    <i class="fa ${sala.icon}"></i>
+                    <b style="font-size:11px">${sala.nome}</b><br>
+                    <span style="font-size:9px; color:var(--text-muted)">${sala.andar}</span><br>
                     <span class="tag ${isOcup ? 'tag-red' : 'tag-green'}" style="margin-top:4px">${isOcup ? 'Ocupada' : 'Livre'}</span>
                 </div>`;
             });
-            const livre = this.salas.length - occupied.size;
-            document.getElementById('gem-salas').textContent = this.salas.length;
+            const livre = todos.length - occupied.size;
+            document.getElementById('gem-salas').textContent = todos.length;
             document.getElementById('gem-livre').textContent = Math.max(0, livre);
             document.getElementById('gem-ocup').textContent = occupied.size;
         },
-        detalhe(sala) { alert(`Sala: ${sala}\nClique em "Operacional" para ver reservas e detalhes desta sala.`); }
+        detalhe(sala) { alert(`${sala}\nClique em "Operacional" para ver reservas e detalhes deste espaço.`); },
+        // Permite ao NTEi cadastrar novos ambientes sem mexer no código.
+        async adicionarAmbiente() {
+            const nome = prompt('Nome do novo ambiente/sala:');
+            if (!nome) return;
+            const andar = prompt('Andar (ex: Térreo, 2º Andar):', 'Térreo') || 'Térreo';
+            this.ambientes.push({ nome, seg:'Ambiente', andar, icon:'fa-door-open' });
+            await db.ref('gemeo_ambientes_extra').push({ nome, andar });
+            this.render();
+        }
     };
 
     // ═══════════════════════════════════════════════════════
@@ -2678,6 +2735,102 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
     if ('speechSynthesis' in window) { speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices(); }
 
     // ═══════════════════════════════════════════════════════
+    //  DOMÍNIO NTEI — MOTOR REAL DE PERMISSÕES (RBAC)
+    // ═══════════════════════════════════════════════════════
+    const permissoes = {
+        todosModulos: ['dashboard','operacional','pedagogico','alunos','patrimonio','formacao','gemeo','comunicacao','editais','analise','admin'],
+        padraoPorCargo: {
+            'Professor': ['operacional','pedagogico','alunos','formacao','comunicacao'],
+            'SEFE':      ['operacional','pedagogico','alunos','formacao','comunicacao'],
+            'Gestão':      ['dashboard','operacional','pedagogico','alunos','patrimonio','formacao','gemeo','comunicacao','editais','analise'],
+            'Secretaria':  ['dashboard','operacional','pedagogico','alunos','patrimonio','formacao','gemeo','comunicacao','editais','analise'],
+            'SMETi':       ['dashboard','operacional','pedagogico','alunos','patrimonio','formacao','gemeo','comunicacao','editais','analise'],
+            'NTEi':        ['dashboard','operacional','pedagogico','alunos','patrimonio','formacao','gemeo','comunicacao','editais','analise','admin']
+        },
+        overridesAtual: {},
+        async carregar(pront) {
+            const snap = await db.ref('permissoes_custom/' + pront).once('value');
+            this.overridesAtual = snap.exists() ? snap.val() : {};
+        },
+        listaLiberada(cargo) {
+            const base = new Set(this.padraoPorCargo[cargo] || []);
+            Object.entries(this.overridesAtual || {}).forEach(([mod, liberado]) => {
+                if (liberado) base.add(mod); else base.delete(mod);
+            });
+            return base;
+        },
+        pode(id) {
+            if (!app.user) return false;
+            if (app.user.cargo === 'NTEi') return true;
+            return this.listaLiberada(app.user.cargo).has(id);
+        },
+        aplicarNoMenu() {
+            if (!app.user || app.user.cargo === 'NTEi') return;
+            const liberados = this.listaLiberada(app.user.cargo);
+            this.todosModulos.forEach(id => {
+                document.querySelectorAll(`.topbar-btn[onclick*="'${id}'"]`).forEach(btn => {
+                    if (!liberados.has(id)) btn.remove();
+                });
+            });
+        },
+        renderCheckboxes() {
+            const box = document.getElementById('dom-checkboxes');
+            if (!box) return;
+            const nomes = { dashboard:'Dashboard', operacional:'Operacional', pedagogico:'Pedagógico', alunos:'Alunos', patrimonio:'Patrimônio', formacao:'Formação', gemeo:'Gêmeo Digital', comunicacao:'Comunicação', editais:'Editais', analise:'Análise IA' };
+            box.innerHTML = Object.entries(nomes).map(([id, nome]) =>
+                `<label style="display:flex; align-items:center; gap:6px; cursor:pointer">
+                    <input type="checkbox" data-mod="${id}" style="width:auto; margin:0"> ${nome}
+                </label>`).join('');
+        },
+        async carregarParaEdicao() {
+            const pront = document.getElementById('dom-pront')?.value;
+            if (!pront) return;
+            const snap = await db.ref('permissoes_custom/' + pront).once('value');
+            const overrides = snap.exists() ? snap.val() : {};
+            document.querySelectorAll('#dom-checkboxes input[type=checkbox]').forEach(cb => { cb.checked = !!overrides[cb.dataset.mod]; });
+        },
+        async salvarOverride() {
+            const pront = document.getElementById('dom-pront')?.value;
+            if (!pront) return alert('Informe o prontuário.');
+            const overrides = {};
+            document.querySelectorAll('#dom-checkboxes input[type=checkbox]').forEach(cb => { overrides[cb.dataset.mod] = cb.checked; });
+            await db.ref('permissoes_custom/' + pront).set(overrides);
+            alert(`Permissões do prontuário ${pront} atualizadas.`);
+            if (typeof auditoria !== 'undefined') auditoria.registrar('Domínio NTEi', `Permissões personalizadas atualizadas para o prontuário ${pront}`);
+            this.renderListaOverrides();
+        },
+        async limparOverride() {
+            const pront = document.getElementById('dom-pront')?.value;
+            if (!pront) return alert('Informe o prontuário.');
+            if (!confirm(`Remover permissões personalizadas do prontuário ${pront}?`)) return;
+            await db.ref('permissoes_custom/' + pront).remove();
+            document.querySelectorAll('#dom-checkboxes input[type=checkbox]').forEach(cb => cb.checked = false);
+            if (typeof auditoria !== 'undefined') auditoria.registrar('Domínio NTEi', `Permissões personalizadas removidas do prontuário ${pront}`);
+            this.renderListaOverrides();
+        },
+        renderListaOverrides() {
+            const el = document.getElementById('dom-lista-overrides');
+            if (!el) return;
+            db.ref('permissoes_custom').off('value');
+            db.ref('permissoes_custom').on('value', snap => {
+                el.innerHTML = '';
+                if (!snap.exists()) { el.innerHTML = '<p style="color:#666;text-align:center">Nenhum override cadastrado.</p>'; return; }
+                snap.forEach(c => {
+                    const pront = c.key, overrides = c.val();
+                    const ativos = Object.entries(overrides).filter(([,v]) => v).map(([k]) => k);
+                    const negados = Object.entries(overrides).filter(([,v]) => !v).map(([k]) => k);
+                    el.innerHTML += `<div style="padding:6px; border-bottom:1px solid rgba(255,255,255,0.05)">
+                        <b>${pront}</b> —
+                        ${ativos.length ? `<span style="color:var(--cad)">+${ativos.join(', ')}</span>` : ''}
+                        ${negados.length ? ` <span style="color:var(--ntei)">−${negados.join(', ')}</span>` : ''}
+                        <i class="fa fa-pen" style="cursor:pointer; margin-left:8px; color:var(--prof)" onclick="document.getElementById('dom-pront').value='${pront}'; permissoes.carregarParaEdicao();"></i>
+                    </div>`;
+                });
+            });
+        }
+    };
+
+    // ═══════════════════════════════════════════════════════
     //  APP PRINCIPAL (compatibilidade total com v1)
     // ═══════════════════════════════════════════════════════
     const app = {
@@ -2775,11 +2928,13 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             .then(() => { alert(`Solicitação enviada! Senha inicial ao ser aprovado: ${pass}`); document.getElementById('c-n').value = ""; document.getElementById('c-p').value = ""; document.getElementById('c-e').value = ""; });
         },
 
-        start() {
+        async start() {
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('main-system').style.display = 'block';
             document.getElementById('topbar').classList.remove('hidden');
             document.getElementById('topbar-username').textContent = (this.user.nome || '—') + ' · ' + this.user.cargo;
+
+            await permissoes.carregar(this.user.pront);
 
             // Aplica o menu restrito (Professor/SEFE) ou modo SEFE especial
             this.aplicarRestricoesDeMenu();
@@ -2843,21 +2998,22 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             auditoria.registrar('Autenticação', `Login realizado com sucesso no sistema.`);
         },
 
-        // Esconde do menu tudo que é monitoramento/gestão para quem não deve ver
-        // (Professor e SEFE só enxergam: Operacional, Pedagógico, Alunos, Formação, Comunicação)
+        // Domínio NTEI real: remove do DOM (não CSS) os módulos que o prontuário
+        // logado não tem liberado, somando cargo + overrides individuais.
         aplicarRestricoesDeMenu() {
             const cargo = this.user?.cargo;
-            const restrito = (cargo === 'Professor' || cargo === 'SEFE');
-            if (restrito) {
-                const idsEscondidos = ['dashboard', 'patrimonio', 'gemeo', 'editais', 'analise', 'admin'];
-                idsEscondidos.forEach(id => {
-                    document.querySelectorAll(`.topbar-btn[onclick*="'${id}'"]`).forEach(btn => btn.classList.add('hidden'));
-                });
-                // Se o usuário cair em algum desses módulos (ex: estava aberto antes), joga pra Operacional
-                modules.show('operacional');
+            permissoes.aplicarNoMenu();
+            const liberados = permissoes.listaLiberada(cargo);
+            if (cargo !== 'NTEi' && !liberados.has(modules.current)) {
+                modules.show(liberados.has('operacional') ? 'operacional' : [...liberados][0] || 'operacional');
             }
             if (cargo === 'SEFE') {
                 this.ativarModoSEFE();
+            }
+            if (cargo === 'NTEi') {
+                document.getElementById('panel-dominio-ntei')?.classList.remove('hidden');
+                permissoes.renderCheckboxes();
+                permissoes.renderListaOverrides();
             }
         },
 
