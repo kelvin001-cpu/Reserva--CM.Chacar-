@@ -249,6 +249,77 @@
         .h-warn { background: var(--gestao); }
         .h-err { background: var(--ntei); }
 
+        /* ═══════════ CHAMADOS: APP LAUNCHER ═══════════ */
+        .cham-launcher { display: none; }
+        .cham-launcher.active { display: block; }
+        .cham-view { display: none; }
+        .cham-view.active { display: block; animation: fadeIn 0.3s ease; }
+        .cham-back-btn { background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); color: #ccc; padding: 7px 14px; border-radius: 8px; cursor: pointer; font-size: 12px; margin-bottom: 14px; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; }
+        .cham-back-btn:hover { background: rgba(255,255,255,0.12); color: white; }
+        .cham-tipo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 10px; }
+        .cham-tipo-card { border-radius: 16px; padding: 28px 20px; text-align: center; cursor: pointer; transition: 0.25s; border: 1px solid var(--border-subtle); position: relative; overflow: hidden; }
+        .cham-tipo-card:hover { transform: translateY(-3px); }
+        .cham-tipo-card.hw { background: linear-gradient(160deg, rgba(230,126,34,0.18), rgba(230,126,34,0.03)); border-color: rgba(230,126,34,0.35); }
+        .cham-tipo-card.hw:hover { border-color: var(--hw-color); box-shadow: 0 8px 30px rgba(230,126,34,0.2); }
+        .cham-tipo-card.sw { background: linear-gradient(160deg, rgba(52,152,219,0.18), rgba(52,152,219,0.03)); border-color: rgba(52,152,219,0.35); }
+        .cham-tipo-card.sw:hover { border-color: var(--sw-color); box-shadow: 0 8px 30px rgba(52,152,219,0.2); }
+        .cham-tipo-card i.tipo-icon { font-size: 2.6rem; margin-bottom: 10px; display: block; }
+        .cham-tipo-card.hw i.tipo-icon { color: var(--hw-color); }
+        .cham-tipo-card.sw i.tipo-icon { color: var(--sw-color); }
+        .cham-tipo-card h4 { font-family: 'Orbitron'; margin: 6px 0 4px 0; font-size: 1.1rem; }
+        .cham-tipo-card p { font-size: 11px; color: var(--text-muted); margin: 0; }
+
+        .cham-cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; margin-top: 14px; }
+        .cham-cat-item { background: rgba(255,255,255,0.04); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 16px 8px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .cham-cat-item:hover { background: rgba(0,173,239,0.1); border-color: var(--prof); transform: translateY(-2px); }
+        .cham-cat-item i { font-size: 1.6rem; margin-bottom: 8px; display: block; color: var(--prof); }
+        .cham-cat-item span { font-size: 11px; color: #ddd; }
+
+        .cham-form-step { display: none; }
+        .cham-form-step.active { display: block; animation: fadeIn 0.25s ease; }
+        .cham-progress-bar { display: flex; gap: 4px; margin-bottom: 16px; }
+        .cham-progress-seg { flex: 1; height: 4px; border-radius: 4px; background: rgba(255,255,255,0.08); transition: 0.3s; }
+        .cham-progress-seg.done { background: var(--prof); }
+
+        .cham-priority-preview { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.3); border-radius: 10px; padding: 12px 14px; margin: 12px 0; font-size: 12px; }
+        .prio-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .prio-alta { background: var(--ntei); }
+        .prio-media { background: var(--gestao); }
+        .prio-normal { background: var(--cad); }
+        .prio-espera { background: #3498db; }
+        .prio-tag { font-size: 10px; padding: 3px 9px; border-radius: 6px; font-weight: 700; letter-spacing: 0.5px; }
+        .prio-tag.prio-alta { background: rgba(235,77,75,0.2); color: var(--ntei); }
+        .prio-tag.prio-media { background: rgba(241,196,15,0.2); color: var(--gestao); }
+        .prio-tag.prio-normal { background: rgba(46,204,113,0.2); color: var(--cad); }
+        .prio-tag.prio-espera { background: rgba(52,152,219,0.2); color: #3498db; }
+
+        .cham-code-success { text-align: center; padding: 30px 15px; }
+        .cham-code-big { font-family: 'Orbitron'; font-size: 1.8rem; color: var(--prof); text-shadow: 0 0 20px rgba(0,173,239,0.5); margin: 14px 0; letter-spacing: 1px; }
+
+        .cham-filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+        .cham-filter-chip { padding: 6px 13px; border-radius: 20px; border: 1px solid var(--border-subtle); background: rgba(255,255,255,0.04); color: #ccc; font-size: 11px; cursor: pointer; transition: 0.2s; white-space: nowrap; }
+        .cham-filter-chip:hover { border-color: var(--prof); }
+        .cham-filter-chip.active { background: var(--prof); color: white; border-color: var(--prof); }
+
+        .cham-card { background: rgba(255,255,255,0.04); border: 1px solid var(--border-subtle); border-left: 4px solid #666; border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; }
+        .cham-card:hover { background: rgba(255,255,255,0.07); transform: translateX(2px); }
+        .cham-card.prio-border-alta { border-left-color: var(--ntei); }
+        .cham-card.prio-border-media { border-left-color: var(--gestao); }
+        .cham-card.prio-border-normal { border-left-color: var(--cad); }
+        .cham-card.prio-border-espera { border-left-color: #3498db; }
+        .cham-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+        .cham-card-code { font-family: 'Orbitron'; font-size: 10px; color: var(--text-muted); }
+
+        .cham-detail-timeline { margin-top: 16px; }
+        .cham-tl-item { display: flex; gap: 12px; padding-bottom: 18px; position: relative; }
+        .cham-tl-item::before { content: ''; position: absolute; left: 7px; top: 20px; bottom: 0; width: 2px; background: rgba(255,255,255,0.1); }
+        .cham-tl-item:last-child::before { display: none; }
+        .cham-tl-dot { width: 16px; height: 16px; border-radius: 50%; background: rgba(255,255,255,0.1); border: 2px solid var(--text-muted); flex-shrink: 0; margin-top: 2px; }
+        .cham-tl-item.done .cham-tl-dot { background: var(--cad); border-color: var(--cad); }
+        .cham-tl-content { font-size: 12px; }
+        .cham-tl-content b { display: block; font-size: 12px; }
+        .cham-tl-content small { color: var(--text-muted); }
+
         /* ═══════════ UTILITIES ═══════════ */
         .hidden { display: none !important; }
         .tag { font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; display: inline-block; }
@@ -486,23 +557,104 @@
                     </div>
 
                     <div class="center-col">
-                        <!-- Chamados -->
+                        <!-- ═══════ CHAMADOS NTEi — APP LAUNCHER ═══════ -->
                         <div class="panel">
-                            <h3><i class="fa fa-headset" style="color:var(--ntei)"></i> Abrir Chamado</h3>
-                            <select id="chamado-tipo" onchange="app.updateSubCategorias()">
-                                <option value="">Selecione a Categoria...</option>
-                                <option value="Hardware">🛠️ Hardware (Equipamentos)</option>
-                                <option value="Software">💻 Software (Erros/Instalação)</option>
-                                <option value="Senhas">🔑 Senhas (Sisgem / Siseduc / Email)</option>
-                                <option value="Alunos">🎓 Suporte Aluno (Sem conta / Login)</option>
-                                <option value="Rede">🌐 Rede e Internet (Wi-Fi / Cabo)</option>
-                            </select>
-                            <select id="chamado-sub" class="hidden"></select>
-                            <input type="text" id="chamado-desc" placeholder="Qual o problema?">
-                            <button class="btn" style="background:var(--ntei); color:white" onclick="app.abrirChamado()">Abrir Chamado</button>
+                            <h3><i class="fa fa-headset" style="color:var(--ntei)"></i> 🎫 Chamados NTEi</h3>
+
+                            <!-- STEP 0: Tipo (Hardware/Software) -->
+                            <div class="cham-view active" id="cham-step-tipo">
+                                <p style="font-size:12px; color:var(--text-muted); margin:0 0 4px 0">O que você precisa reportar?</p>
+                                <div class="cham-tipo-grid">
+                                    <div class="cham-tipo-card hw" onclick="chamados.escolherTipo('Hardware')">
+                                        <i class="fa fa-microchip tipo-icon"></i>
+                                        <h4>HARDWARE</h4>
+                                        <p>Problemas físicos e equipamentos</p>
+                                    </div>
+                                    <div class="cham-tipo-card sw" onclick="chamados.escolherTipo('Software')">
+                                        <i class="fa fa-laptop-code tipo-icon"></i>
+                                        <h4>SOFTWARE</h4>
+                                        <p>Sistemas, login e plataformas</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- STEP 1: Categoria -->
+                            <div class="cham-view" id="cham-step-categoria">
+                                <button class="cham-back-btn" onclick="chamados.voltar('tipo')"><i class="fa fa-arrow-left"></i> Voltar</button>
+                                <p style="font-size:12px; color:var(--text-muted); margin:0 0 4px 0">Escolha a categoria:</p>
+                                <div class="cham-cat-grid" id="cham-cat-grid"></div>
+                            </div>
+
+                            <!-- STEP 2: Formulário progressivo -->
+                            <div class="cham-view" id="cham-step-form">
+                                <button class="cham-back-btn" onclick="chamados.voltar('categoria')"><i class="fa fa-arrow-left"></i> Voltar</button>
+                                <div class="cham-progress-bar">
+                                    <div class="cham-progress-seg done"></div>
+                                    <div class="cham-progress-seg" id="cham-prog-2"></div>
+                                    <div class="cham-progress-seg" id="cham-prog-3"></div>
+                                </div>
+
+                                <div class="cham-form-step active" id="cham-fstep-1">
+                                    <h4 style="margin:4px 0 10px 0; font-size:13px" id="cham-form-titulo">Descreva o problema</h4>
+                                    <input type="text" id="cham-f-problema" placeholder="Resumo do problema (ex: Chromebook não liga)">
+                                    <textarea id="cham-f-desc" placeholder="Descreva com mais detalhes o que está acontecendo..." style="width:100%; height:70px; border-radius:8px; border:1px solid #333; background:rgba(0,0,0,0.4); color:white; padding:8px; resize:none; font-family:'Poppins'; font-size:12px; margin:6px 0;"></textarea>
+                                    <button class="btn" style="background:var(--prof); color:white" onclick="chamados.proximoStep(2)">Continuar</button>
+                                </div>
+
+                                <div class="cham-form-step" id="cham-fstep-2">
+                                    <h4 style="margin:4px 0 10px 0; font-size:13px">Localização</h4>
+                                    <input type="text" id="cham-f-unidade" placeholder="Unidade" value="NTEi Chácara">
+                                    <input type="text" id="cham-f-local" placeholder="Local (ex: Sala 5º Ano, Lab. Informática)">
+                                    <input type="text" id="cham-f-equip" placeholder="Equipamento (ex: Chromebook 05) — opcional" class="cham-cond-hw">
+                                    <select id="cham-f-impacto">
+                                        <option value="individual">👤 Afeta só a mim</option>
+                                        <option value="sala">🏫 Afeta uma sala/turma</option>
+                                        <option value="setor">🏢 Afeta um setor inteiro</option>
+                                        <option value="escola">🚨 Afeta toda a escola</option>
+                                    </select>
+                                    <label style="font-size:11px; color:var(--text-muted); display:block; margin-top:8px">Anexo (opcional — imagem do problema)</label>
+                                    <input type="file" id="cham-f-anexo" accept="image/*">
+                                    <button class="btn" style="background:var(--prof); color:white; margin-top:8px" onclick="chamados.proximoStep(3)">Continuar</button>
+                                </div>
+
+                                <div class="cham-form-step" id="cham-fstep-3">
+                                    <h4 style="margin:4px 0 10px 0; font-size:13px">Confirmar e enviar</h4>
+                                    <div class="cham-priority-preview" id="cham-prio-preview">
+                                        <i class="fa fa-spin fa-circle-notch"></i> Analisando prioridade...
+                                    </div>
+                                    <div id="cham-resumo" style="font-size:11px; color:#bbb; background:rgba(0,0,0,0.25); padding:10px; border-radius:8px; margin-bottom:8px; line-height:1.7"></div>
+                                    <button class="btn" style="background:var(--ntei); color:white" onclick="chamados.enviar()"><i class="fa fa-paper-plane"></i> Abrir Chamado</button>
+                                </div>
+
+                                <div class="cham-form-step" id="cham-fstep-sucesso">
+                                    <div class="cham-code-success">
+                                        <i class="fa fa-circle-check fa-2x" style="color:var(--cad)"></i>
+                                        <p style="font-size:12px; color:var(--text-muted); margin:8px 0 0 0">Chamado registrado com sucesso!</p>
+                                        <div class="cham-code-big" id="cham-codigo-final">—</div>
+                                        <button class="btn" style="background:var(--prof); color:white; max-width:220px" onclick="chamados.voltar('tipo')">Abrir Outro Chamado</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- STEP: Detalhe de um chamado -->
+                            <div class="cham-view" id="cham-step-detalhe">
+                                <button class="cham-back-btn" onclick="chamados.fecharDetalhe()"><i class="fa fa-arrow-left"></i> Voltar à lista</button>
+                                <div id="cham-detalhe-conteudo"></div>
+                            </div>
                         </div>
+
                         <div class="panel">
-                            <h3><i class="fa fa-tools" style="color:var(--ntei)"></i> Fila de Chamados NTEi</h3>
+                            <h3><i class="fa fa-tools" style="color:var(--ntei)"></i> Central de Chamados</h3>
+                            <div class="cham-filters" id="cham-filtros">
+                                <div class="cham-filter-chip active" data-f="Todos" onclick="chamados.filtrar('Todos')">Todos</div>
+                                <div class="cham-filter-chip" data-f="alta" onclick="chamados.filtrar('alta')">🔴 Alta</div>
+                                <div class="cham-filter-chip" data-f="media" onclick="chamados.filtrar('media')">🟡 Média</div>
+                                <div class="cham-filter-chip" data-f="normal" onclick="chamados.filtrar('normal')">🟢 Normal</div>
+                                <div class="cham-filter-chip" data-f="espera" onclick="chamados.filtrar('espera')">🔵 Em Espera</div>
+                                <div class="cham-filter-chip" data-f="Hardware" onclick="chamados.filtrar('Hardware')">Hardware</div>
+                                <div class="cham-filter-chip" data-f="Software" onclick="chamados.filtrar('Software')">Software</div>
+                                <div class="cham-filter-chip" data-f="meus" onclick="chamados.filtrar('meus')">Meus chamados</div>
+                            </div>
                             <div id="lista-chamados-nti" style="max-height:400px; overflow-y:auto"></div>
                         </div>
                         <div id="active-ticket-area" class="panel hidden" style="border: 1px solid var(--prof)">
@@ -1096,19 +1248,6 @@
                     </div>
 
                     <!-- Usuários & Segurança -->
-                    <div id="panel-dominio-ntei" class="panel hidden" style="border:2px solid var(--prof)">
-                        <h3 style="color:var(--prof)"><i class="fa fa-shield-halved"></i> DOMÍNIO NTEI — Permissões por Prontuário</h3>
-                        <p style="font-size:11px; color:var(--text-muted); margin-top:-6px">Libere ou remova módulos específicos para um prontuário, independente do cargo.</p>
-                        <input type="number" id="dom-pront" placeholder="Prontuário (ex: 46690)">
-                        <div id="dom-checkboxes" style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin:10px 0; font-size:12px"></div>
-                        <div style="display:flex; gap:8px">
-                            <button class="btn" style="background:var(--cad); color:#000" onclick="permissoes.salvarOverride()">Salvar Permissões</button>
-                            <button class="btn" style="background:rgba(255,255,255,0.1)" onclick="permissoes.limparOverride()">Voltar ao padrão do cargo</button>
-                        </div>
-                        <p style="font-size:10px; color:#aaa; margin:14px 0 5px 0">PRONTUÁRIOS COM PERMISSÃO PERSONALIZADA:</p>
-                        <div id="dom-lista-overrides" style="max-height:160px; overflow-y:auto; background:rgba(0,0,0,0.2); padding:6px; border-radius:6px; font-size:11px"></div>
-                    </div>
-
                     <div id="panel-usuarios-ntei" class="panel hidden" style="border:1px solid rgba(235,77,75,0.3)">
                         <h3 style="color:var(--ntei)"><i class="fa fa-user-shield"></i> GERENCIAR CONTAS & SEGURANÇA</h3>
 
@@ -1204,10 +1343,6 @@
     const modules = {
         current: 'dashboard',
         show(id) {
-            if (app.user && !permissoes.pode(id)) {
-                alert('🔒 Você não tem permissão para acessar este módulo. Fale com o NTEi.');
-                return;
-            }
             document.querySelectorAll('.module-view').forEach(m => m.classList.remove('active'));
             document.querySelectorAll('.topbar-btn').forEach(b => b.classList.remove('active'));
             const modEl = document.getElementById('mod-' + id);
@@ -1363,69 +1498,29 @@
     //  GÊMEO DIGITAL
     // ═══════════════════════════════════════════════════════
     const gemeoDigital = {
-        // 12 salas de aula reais: Berçário (3, sendo 2 no térreo e 1 no 2º andar),
-        // Fundamental I (1º ao 5º ano, 2º andar) e Fundamental II (6º ao 9º ano, 2º andar).
-        salas: [
-            {nome:'Berçário 1', seg:'Berçário', andar:'Térreo', icon:'fa-baby'},
-            {nome:'Berçário 2', seg:'Berçário', andar:'Térreo', icon:'fa-baby'},
-            {nome:'Berçário 3', seg:'Berçário', andar:'2º Andar', icon:'fa-baby'},
-            {nome:'1º Ano', seg:'Fundamental I', andar:'2º Andar', icon:'fa-chalkboard'},
-            {nome:'2º Ano', seg:'Fundamental I', andar:'2º Andar', icon:'fa-chalkboard'},
-            {nome:'3º Ano', seg:'Fundamental I', andar:'2º Andar', icon:'fa-chalkboard'},
-            {nome:'4º Ano', seg:'Fundamental I', andar:'2º Andar', icon:'fa-chalkboard'},
-            {nome:'5º Ano', seg:'Fundamental I', andar:'2º Andar', icon:'fa-chalkboard'},
-            {nome:'6º Ano', seg:'Fundamental II', andar:'2º Andar', icon:'fa-chalkboard'},
-            {nome:'7º Ano', seg:'Fundamental II', andar:'2º Andar', icon:'fa-chalkboard'},
-            {nome:'8º Ano', seg:'Fundamental II', andar:'2º Andar', icon:'fa-chalkboard'},
-            {nome:'9º Ano', seg:'Fundamental II', andar:'2º Andar', icon:'fa-chalkboard'}
-        ],
-        // Demais ambientes reais da unidade (não são salas de aula, ficam à parte no filtro).
-        ambientes: [
-            {nome:'Biblioteca', seg:'Ambiente', andar:'Térreo', icon:'fa-book'},
-            {nome:'Lab. Informática', seg:'Ambiente', andar:'Térreo', icon:'fa-computer'},
-            {nome:'Quadra', seg:'Ambiente', andar:'Térreo', icon:'fa-volleyball'},
-            {nome:'Secretaria', seg:'Ambiente', andar:'Térreo', icon:'fa-folder-open'},
-            {nome:'Direção', seg:'Ambiente', andar:'Térreo', icon:'fa-user-tie'},
-            {nome:'Sala dos Professores', seg:'Ambiente', andar:'Térreo', icon:'fa-chalkboard-user'},
-            {nome:'Coordenação', seg:'Ambiente', andar:'2º Andar', icon:'fa-user-graduate'}
-        ],
-        filtro: 'Todos',
-        setFiltro(f) { this.filtro = f; this.render(); },
+        salas: ['Sala 1', 'Sala 2', 'Sala 3', 'Sala 4', 'Sala 5', 'Lab. Info.', 'Sala 6', 'Sala 7', 'Sala 8', 'Sala 9', 'Quadra', 'Biblioteca', 'Sala 10', 'Lab. Ciências', 'Auditório'],
         async render() {
             const grid = document.getElementById('gemeo-grid');
             if (!grid) return;
             const resSnap = await db.ref('reservas').once('value');
             const occupied = new Set();
             resSnap.forEach(r => { const d = r.val(); if (d && d.status === 'em_uso' && d.sl) occupied.add(d.sl); });
-
-            let todos = [...this.salas, ...this.ambientes];
-            const listaFiltrada = this.filtro === 'Todos' ? todos : todos.filter(s => s.seg === this.filtro);
-
             grid.innerHTML = '';
-            listaFiltrada.forEach(sala => {
-                const isOcup = occupied.has(sala.nome);
-                grid.innerHTML += `<div class="gemeo-room ${isOcup ? 'ocupado' : 'disponivel'}" onclick="gemeoDigital.detalhe('${sala.nome}')">
-                    <i class="fa ${sala.icon}"></i>
-                    <b style="font-size:11px">${sala.nome}</b><br>
-                    <span style="font-size:9px; color:var(--text-muted)">${sala.andar}</span><br>
+            const icons = ['fa-chalkboard','fa-chalkboard','fa-chalkboard','fa-chalkboard','fa-chalkboard','fa-computer','fa-chalkboard','fa-chalkboard','fa-chalkboard','fa-chalkboard','fa-volleyball','fa-book','fa-chalkboard','fa-flask','fa-volume-high'];
+            this.salas.forEach((sala, i) => {
+                const isOcup = occupied.has(String(i+1)) || occupied.has(sala);
+                grid.innerHTML += `<div class="gemeo-room ${isOcup ? 'ocupado' : 'disponivel'}" onclick="gemeoDigital.detalhe('${sala}')">
+                    <i class="fa ${icons[i] || 'fa-door-open'}"></i>
+                    <b style="font-size:11px">${sala}</b><br>
                     <span class="tag ${isOcup ? 'tag-red' : 'tag-green'}" style="margin-top:4px">${isOcup ? 'Ocupada' : 'Livre'}</span>
                 </div>`;
             });
-            const livre = todos.length - occupied.size;
-            document.getElementById('gem-salas').textContent = todos.length;
+            const livre = this.salas.length - occupied.size;
+            document.getElementById('gem-salas').textContent = this.salas.length;
             document.getElementById('gem-livre').textContent = Math.max(0, livre);
             document.getElementById('gem-ocup').textContent = occupied.size;
         },
-        detalhe(sala) { alert(`${sala}\nClique em "Operacional" para ver reservas e detalhes deste espaço.`); },
-        // Permite ao NTEi cadastrar novos ambientes sem mexer no código.
-        async adicionarAmbiente() {
-            const nome = prompt('Nome do novo ambiente/sala:');
-            if (!nome) return;
-            const andar = prompt('Andar (ex: Térreo, 2º Andar):', 'Térreo') || 'Térreo';
-            this.ambientes.push({ nome, seg:'Ambiente', andar, icon:'fa-door-open' });
-            await db.ref('gemeo_ambientes_extra').push({ nome, andar });
-            this.render();
-        }
+        detalhe(sala) { alert(`Sala: ${sala}\nClique em "Operacional" para ver reservas e detalhes desta sala.`); }
     };
 
     // ═══════════════════════════════════════════════════════
@@ -1717,6 +1812,315 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             output.textContent = texto;
             auditoria.registrar('Relatórios', `Gerou relatório de ${tipo}`);
         }
+    };
+
+    // ═══════════════════════════════════════════════════════
+    //  CHAMADOS NTEi — APP LAUNCHER (Hardware/Software)
+    // ═══════════════════════════════════════════════════════
+    const chamados = {
+        categorias: {
+            Hardware: [
+                { id: 'Computador', icon: 'fa-desktop', label: 'Computador' },
+                { id: 'Chromebook', icon: 'fa-laptop', label: 'Chromebook' },
+                { id: 'Impressora', icon: 'fa-print', label: 'Impressora' },
+                { id: 'TV', icon: 'fa-tv', label: 'TV' },
+                { id: 'Projetor', icon: 'fa-video', label: 'Projetor' },
+                { id: 'Periféricos', icon: 'fa-mouse', label: 'Periféricos' },
+                { id: 'Cabos', icon: 'fa-plug', label: 'Cabos' },
+                { id: 'Rede (Equip.)', icon: 'fa-satellite-dish', label: 'Equip. de Rede' },
+                { id: 'Outros', icon: 'fa-ellipsis', label: 'Outros' }
+            ],
+            Software: [
+                { id: 'Internet', icon: 'fa-wifi', label: 'Internet' },
+                { id: 'Login', icon: 'fa-right-to-bracket', label: 'Login' },
+                { id: 'Senha', icon: 'fa-key', label: 'Senha' },
+                { id: 'Plataforma', icon: 'fa-book-open', label: 'Plataforma' },
+                { id: 'Sistema', icon: 'fa-gears', label: 'Sistema' },
+                { id: 'Navegador', icon: 'fa-globe', label: 'Navegador' },
+                { id: 'E-mail', icon: 'fa-envelope', label: 'E-mail' },
+                { id: 'Aplicativo', icon: 'fa-mobile-screen', label: 'Aplicativo' },
+                { id: 'Outros', icon: 'fa-ellipsis', label: 'Outros' }
+            ]
+        },
+        tipoAtual: null,
+        categoriaAtual: null,
+        anexoAtual: null,
+        filtroAtivo: 'Todos',
+        cacheChamados: [],
+
+        // ── Navegação entre telas do app launcher ──
+        _mostrarView(id) {
+            document.querySelectorAll('#mod-operacional .cham-view').forEach(v => v.classList.remove('active'));
+            document.getElementById(id)?.classList.add('active');
+        },
+        escolherTipo(tipo) {
+            this.tipoAtual = tipo;
+            const grid = document.getElementById('cham-cat-grid');
+            grid.innerHTML = '';
+            this.categorias[tipo].forEach(c => {
+                grid.innerHTML += `<div class="cham-cat-item" onclick="chamados.escolherCategoria('${c.id}')">
+                    <i class="fa ${c.icon}"></i><span>${c.label}</span>
+                </div>`;
+            });
+            this._mostrarView('cham-step-categoria');
+        },
+        escolherCategoria(catId) {
+            this.categoriaAtual = catId;
+            this.anexoAtual = null;
+            // Reseta o formulário
+            ['cham-f-problema','cham-f-desc','cham-f-local'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+            document.getElementById('cham-f-unidade').value = 'NTEi Chácara';
+            document.getElementById('cham-f-impacto').value = 'individual';
+            document.getElementById('cham-f-anexo').value = '';
+            document.getElementById('cham-form-titulo').textContent = `${this.tipoAtual} · ${catId} — Descreva o problema`;
+            // Campo "Equipamento" só faz sentido para Hardware
+            document.querySelectorAll('.cham-cond-hw').forEach(el => el.style.display = this.tipoAtual === 'Hardware' ? 'block' : 'none');
+            // Reseta os steps do form
+            document.querySelectorAll('#cham-step-form .cham-form-step').forEach(s => s.classList.remove('active'));
+            document.getElementById('cham-fstep-1').classList.add('active');
+            document.getElementById('cham-prog-2').classList.remove('done');
+            document.getElementById('cham-prog-3').classList.remove('done');
+            this._mostrarView('cham-step-form');
+        },
+        voltar(destino) {
+            if (destino === 'tipo') { this.tipoAtual = null; this.categoriaAtual = null; this._mostrarView('cham-step-tipo'); }
+            else if (destino === 'categoria') { this._mostrarView('cham-step-categoria'); }
+        },
+        proximoStep(n) {
+            if (n === 2) {
+                const problema = document.getElementById('cham-f-problema').value.trim();
+                if (!problema) { alert('Descreva resumidamente o problema.'); return; }
+                document.getElementById('cham-fstep-1').classList.remove('active');
+                document.getElementById('cham-fstep-2').classList.add('active');
+                document.getElementById('cham-prog-2').classList.add('done');
+            } else if (n === 3) {
+                const local = document.getElementById('cham-f-local').value.trim();
+                if (!local) { alert('Informe o local.'); return; }
+                document.getElementById('cham-fstep-2').classList.remove('active');
+                document.getElementById('cham-fstep-3').classList.add('active');
+                document.getElementById('cham-prog-3').classList.add('done');
+                this._prepararResumo();
+            }
+        },
+
+        // ── Classificação automática (prioridade + setor + motivo) ──
+        classificar() {
+            const problema = (document.getElementById('cham-f-problema')?.value || '').toLowerCase();
+            const desc = (document.getElementById('cham-f-desc')?.value || '').toLowerCase();
+            const impacto = document.getElementById('cham-f-impacto')?.value || 'individual';
+            const texto = problema + ' ' + desc;
+
+            const palavrasAlta = ['sem internet', 'não liga', 'nao liga', 'travad', 'caiu', 'não funciona nada', 'urgente', 'toda a escola', 'pegando fogo', 'fumaça', 'choque', 'não conecta', 'fora do ar', 'servidor'];
+            const palavrasMedia = ['lento', 'lenta', 'instável', 'instavel', 'erro', 'não abre', 'nao abre', 'travando', 'intermitente'];
+            const palavrasEspera = ['dúvida', 'duvida', 'sugestão', 'sugestao', 'quando possível', 'sem pressa', 'não é urgente'];
+
+            let score = 0;
+            if (palavrasAlta.some(p => texto.includes(p))) score += 3;
+            if (palavrasMedia.some(p => texto.includes(p))) score += 1;
+            if (palavrasEspera.some(p => texto.includes(p))) score -= 2;
+            if (impacto === 'escola') score += 3;
+            else if (impacto === 'setor') score += 2;
+            else if (impacto === 'sala') score += 1;
+            if (this.categoriaAtual === 'Internet' || this.categoriaAtual === 'Rede (Equip.)') score += 1;
+
+            let prioridade, motivo;
+            if (score >= 4) { prioridade = 'alta'; motivo = 'Alto impacto ou indisponibilidade crítica identificada na descrição.'; }
+            else if (score >= 2) { prioridade = 'media'; motivo = 'Problema relevante com impacto moderado.'; }
+            else if (score < 0) { prioridade = 'espera'; motivo = 'Solicitação sem urgência aparente.'; }
+            else { prioridade = 'normal'; motivo = 'Problema pontual, impacto individual ou limitado.'; }
+
+            const setorMap = { Internet: 'Rede', 'Rede (Equip.)': 'Rede', Login: 'Sistemas', Senha: 'Sistemas', Plataforma: 'Plataformas', Sistema: 'Sistemas', Navegador: 'Sistemas', 'E-mail': 'Sistemas', Aplicativo: 'Sistemas' };
+            const setor = this.tipoAtual === 'Hardware' ? 'Hardware/Manutenção' : (setorMap[this.categoriaAtual] || 'Suporte Geral');
+
+            return { prioridade, setor, motivo };
+        },
+
+        _prepararResumo() {
+            const c = this.classificar();
+            const nomes = { alta: '🔴 ALTA', media: '🟡 MÉDIA', normal: '🟢 NORMAL', espera: '🔵 EM ESPERA' };
+            document.getElementById('cham-prio-preview').innerHTML = `
+                <span class="prio-dot prio-${c.prioridade}"></span>
+                <div>
+                    <span class="prio-tag prio-${c.prioridade}">${nomes[c.prioridade]}</span>
+                    <div style="margin-top:4px"><b>Setor:</b> ${c.setor}<br><b>Motivo:</b> ${c.motivo}</div>
+                </div>`;
+            const problema = document.getElementById('cham-f-problema').value;
+            const local = document.getElementById('cham-f-local').value;
+            const unidade = document.getElementById('cham-f-unidade').value;
+            const equip = document.getElementById('cham-f-equip')?.value || '';
+            document.getElementById('cham-resumo').innerHTML = `
+                <b>Categoria:</b> ${this.tipoAtual} · ${this.categoriaAtual}<br>
+                <b>Problema:</b> ${problema}<br>
+                <b>Local:</b> ${local} (${unidade})
+                ${equip ? `<br><b>Equipamento:</b> ${equip}` : ''}`;
+        },
+
+        // ── Gera código único via transação atômica no Firebase ──
+        async gerarCodigoUnico() {
+            const ano = new Date().getFullYear();
+            const contadorRef = db.ref('config/contador_chamados/' + ano);
+            const result = await contadorRef.transaction(atual => (atual || 0) + 1);
+            const num = result.snapshot.val();
+            return `NTEI-${ano}-${String(num).padStart(6, '0')}`;
+        },
+
+        async enviar() {
+            if (!app.user) return;
+            const problema = document.getElementById('cham-f-problema').value.trim();
+            const desc = document.getElementById('cham-f-desc').value.trim();
+            const unidade = document.getElementById('cham-f-unidade').value.trim();
+            const local = document.getElementById('cham-f-local').value.trim();
+            const equip = document.getElementById('cham-f-equip')?.value.trim() || '';
+            const impacto = document.getElementById('cham-f-impacto').value;
+            const c = this.classificar();
+
+            let anexoData = null;
+            try {
+                const arquivo = await fileUtil.lerArquivo(document.getElementById('cham-f-anexo'), 4);
+                if (arquivo) anexoData = arquivo.dados;
+            } catch (e) { alert('Erro no anexo: ' + e.message + ' — o chamado será enviado sem o anexo.'); }
+
+            const codigo = await this.gerarCodigoUnico();
+            const agora = Date.now();
+            const timeline = [{ evento: 'criado', label: 'Chamado criado', ts: agora }, { evento: 'classificado', label: `Classificado automaticamente como prioridade ${c.prioridade.toUpperCase()}`, ts: agora }];
+
+            const novoChamado = {
+                codigo, tipo: this.tipoAtual, categoria: this.categoriaAtual,
+                t: problema, desc, unidade, local, equipamento: equip, impacto,
+                prioridade: c.prioridade, setor: c.setor, motivo_ia: c.motivo,
+                anexo: anexoData,
+                u: app.user.nome, pront: app.user.pront,
+                status: 'aberto', data: new Date().toLocaleString('pt-BR'), timestamp: agora,
+                timeline
+            };
+
+            db.ref('chamados').push(novoChamado).then(() => {
+                document.querySelectorAll('#cham-step-form .cham-form-step').forEach(s => s.classList.remove('active'));
+                document.getElementById('cham-fstep-sucesso').classList.add('active');
+                document.getElementById('cham-codigo-final').textContent = codigo;
+                auditoria.registrar('Chamados', `Chamado ${codigo} aberto: ${this.tipoAtual}/${this.categoriaAtual} — prioridade ${c.prioridade}`);
+            }).catch(e => alert('Erro ao enviar chamado: ' + e.message));
+        },
+
+        // ── Filtros e listagem ──
+        filtrar(f) {
+            this.filtroAtivo = f;
+            document.querySelectorAll('.cham-filter-chip').forEach(chip => chip.classList.toggle('active', chip.dataset.f === f));
+            this._render();
+        },
+        sync() {
+            db.ref('chamados').on('value', snap => {
+                this.cacheChamados = [];
+                snap.forEach(c => { const d = c.val(); if (d) this.cacheChamados.push({ key: c.key, ...d }); });
+                this._render();
+            });
+        },
+        _render() {
+            const box = document.getElementById('lista-chamados-nti');
+            if (!box) return;
+            let itens = this.cacheChamados.filter(d => d.status === 'aberto');
+            const f = this.filtroAtivo;
+            if (f !== 'Todos') {
+                if (f === 'meus') itens = itens.filter(d => app.user && d.pront === app.user.pront);
+                else if (['alta','media','normal','espera'].includes(f)) itens = itens.filter(d => (d.prioridade || 'normal') === f);
+                else itens = itens.filter(d => d.tipo === f);
+            }
+            const ordem = { alta: 0, media: 1, normal: 2, espera: 3 };
+            itens.sort((a, b) => (ordem[a.prioridade ?? 'normal'] ?? 2) - (ordem[b.prioridade ?? 'normal'] ?? 2) || (b.timestamp || 0) - (a.timestamp || 0));
+
+            if (!itens.length) { box.innerHTML = '<p style="text-align:center; color:#666; font-size:12px; padding:16px">Nenhum chamado encontrado para este filtro.</p>'; return; }
+
+            const nomes = { alta: '🔴 Alta', media: '🟡 Média', normal: '🟢 Normal', espera: '🔵 Em Espera' };
+            box.innerHTML = itens.map(d => {
+                const prio = d.prioridade || 'normal';
+                return `<div class="cham-card prio-border-${prio}" onclick="chamados.abrirDetalhe('${d.key}')">
+                    <div class="cham-card-top">
+                        <div>
+                            <span class="prio-tag prio-${prio}">${nomes[prio]}</span>
+                            <span class="cham-card-code" style="margin-left:6px">${d.codigo || '—'}</span>
+                        </div>
+                    </div>
+                    <b style="font-size:12px; display:block; margin-top:6px">${d.t || d.tipo}</b>
+                    <small style="color:#aaa">${d.tipo} · ${d.categoria || '—'} | ${d.u}</small><br>
+                    <small style="color:#666">${d.data || ''}</small>
+                </div>`;
+            }).join('');
+        },
+
+        abrirDetalhe(key) {
+            const d = this.cacheChamados.find(c => c.key === key);
+            if (!d) return;
+            this.detalheKeyAtual = key;
+            const nomes = { alta: '🔴 Alta', media: '🟡 Média', normal: '🟢 Normal', espera: '🔵 Em Espera' };
+            const prio = d.prioridade || 'normal';
+            const timeline = d.timeline || [{ evento: 'criado', label: 'Chamado criado', ts: d.timestamp }];
+            const etapasPadrao = ['criado', 'classificado', 'encaminhado', 'em_atendimento', 'resolvido', 'encerrado'];
+            const labelsPadrao = { criado: 'Chamado criado', classificado: 'Classificado', encaminhado: 'Encaminhado', em_atendimento: 'Em atendimento', resolvido: 'Resolvido', encerrado: 'Encerrado' };
+            const feitos = new Set(timeline.map(t => t.evento));
+
+            const tlHtml = etapasPadrao.map(ev => {
+                const item = timeline.find(t => t.evento === ev);
+                const feito = !!item;
+                return `<div class="cham-tl-item ${feito ? 'done' : ''}">
+                    <div class="cham-tl-dot"></div>
+                    <div class="cham-tl-content"><b>${item ? item.label : labelsPadrao[ev]}</b>${item ? `<small>${new Date(item.ts).toLocaleString('pt-BR')}</small>` : ''}</div>
+                </div>`;
+            }).join('');
+
+            const podeGerenciar = app.user && app.user.cargo === 'NTEi';
+            let acoesHtml = '';
+            if (podeGerenciar) {
+                acoesHtml = `<div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:12px">
+                    <button class="btn" style="width:auto; padding:6px 12px; font-size:10px; background:var(--prof)" onclick="chamados.avancarEtapa('${key}','encaminhado','Chamado encaminhado')">Encaminhar</button>
+                    <button class="btn" style="width:auto; padding:6px 12px; font-size:10px; background:var(--gestao); color:#000" onclick="chamados.avancarEtapa('${key}','em_atendimento','Em atendimento')">Em Atendimento</button>
+                    <button class="btn" style="width:auto; padding:6px 12px; font-size:10px; background:var(--cad)" onclick="chamados.avancarEtapa('${key}','resolvido','Resolvido')">Resolvido</button>
+                    <button class="btn" style="width:auto; padding:6px 12px; font-size:10px; background:#555" onclick="chamados.encerrar('${key}')">Encerrar</button>
+                </div>`;
+            }
+
+            document.getElementById('cham-detalhe-conteudo').innerHTML = `
+                <div class="cham-card-code" style="font-size:13px; margin-bottom:6px">${d.codigo || '—'}</div>
+                <span class="prio-tag prio-${prio}">${nomes[prio]}</span>
+                <h4 style="margin:8px 0 4px 0">${d.t || d.tipo}</h4>
+                <div style="font-size:12px; color:#ccc; line-height:1.8">
+                    <b>Solicitante:</b> ${d.u}<br>
+                    <b>Unidade:</b> ${d.unidade || '—'} &nbsp; <b>Local:</b> ${d.local || '—'}<br>
+                    <b>Categoria:</b> ${d.tipo} · ${d.categoria || '—'} &nbsp; <b>Setor:</b> ${d.setor || '—'}
+                    ${d.equipamento ? `<br><b>Equipamento:</b> ${d.equipamento}` : ''}
+                    <br><b>Descrição:</b> ${d.desc || d.t || '—'}
+                    ${d.motivo_ia ? `<br><b>Motivo (IA):</b> ${d.motivo_ia}` : ''}
+                </div>
+                ${d.anexo ? `<img src="${d.anexo}" style="max-width:100%; border-radius:8px; margin-top:10px">` : ''}
+                ${acoesHtml}
+                <div class="cham-detail-timeline">${tlHtml}</div>
+                <button class="btn" style="background:var(--prof); color:white; margin-top:14px" onclick="app.atenderChamado('${key}'); modules.show('operacional')">Abrir Atendimento Privado</button>
+            `;
+            this._mostrarView('cham-step-detalhe');
+        },
+
+        avancarEtapa(key, evento, label) {
+            const d = this.cacheChamados.find(c => c.key === key);
+            if (!d) return;
+            const timeline = d.timeline || [];
+            if (timeline.some(t => t.evento === evento)) return this.abrirDetalhe(key);
+            timeline.push({ evento, label, ts: Date.now() });
+            db.ref('chamados/' + key).update({ timeline }).then(() => {
+                auditoria.registrar('Chamados', `Chamado ${d.codigo || key} — etapa: ${label}`);
+                setTimeout(() => this.abrirDetalhe(key), 300);
+            });
+        },
+        encerrar(key) {
+            const d = this.cacheChamados.find(c => c.key === key);
+            if (!d) return;
+            if (!confirm('Encerrar este chamado?')) return;
+            const timeline = d.timeline || [];
+            timeline.push({ evento: 'encerrado', label: 'Encerrado', ts: Date.now() });
+            db.ref('chamados/' + key).update({ status: 'resolvido', timeline }).then(() => {
+                auditoria.registrar('Chamados', `Chamado ${d.codigo || key} encerrado`);
+                this.fecharDetalhe();
+            });
+        },
+        fecharDetalhe() { this._mostrarView('cham-step-tipo'); this.tipoAtual = null; this.categoriaAtual = null; }
     };
 
     // ═══════════════════════════════════════════════════════
@@ -2735,102 +3139,6 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
     if ('speechSynthesis' in window) { speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices(); }
 
     // ═══════════════════════════════════════════════════════
-    //  DOMÍNIO NTEI — MOTOR REAL DE PERMISSÕES (RBAC)
-    // ═══════════════════════════════════════════════════════
-    const permissoes = {
-        todosModulos: ['dashboard','operacional','pedagogico','alunos','patrimonio','formacao','gemeo','comunicacao','editais','analise','admin'],
-        padraoPorCargo: {
-            'Professor': ['operacional','pedagogico','alunos','formacao','comunicacao'],
-            'SEFE':      ['operacional','pedagogico','alunos','formacao','comunicacao'],
-            'Gestão':      ['dashboard','operacional','pedagogico','alunos','patrimonio','formacao','gemeo','comunicacao','editais','analise'],
-            'Secretaria':  ['dashboard','operacional','pedagogico','alunos','patrimonio','formacao','gemeo','comunicacao','editais','analise'],
-            'SMETi':       ['dashboard','operacional','pedagogico','alunos','patrimonio','formacao','gemeo','comunicacao','editais','analise'],
-            'NTEi':        ['dashboard','operacional','pedagogico','alunos','patrimonio','formacao','gemeo','comunicacao','editais','analise','admin']
-        },
-        overridesAtual: {},
-        async carregar(pront) {
-            const snap = await db.ref('permissoes_custom/' + pront).once('value');
-            this.overridesAtual = snap.exists() ? snap.val() : {};
-        },
-        listaLiberada(cargo) {
-            const base = new Set(this.padraoPorCargo[cargo] || []);
-            Object.entries(this.overridesAtual || {}).forEach(([mod, liberado]) => {
-                if (liberado) base.add(mod); else base.delete(mod);
-            });
-            return base;
-        },
-        pode(id) {
-            if (!app.user) return false;
-            if (app.user.cargo === 'NTEi') return true;
-            return this.listaLiberada(app.user.cargo).has(id);
-        },
-        aplicarNoMenu() {
-            if (!app.user || app.user.cargo === 'NTEi') return;
-            const liberados = this.listaLiberada(app.user.cargo);
-            this.todosModulos.forEach(id => {
-                document.querySelectorAll(`.topbar-btn[onclick*="'${id}'"]`).forEach(btn => {
-                    if (!liberados.has(id)) btn.remove();
-                });
-            });
-        },
-        renderCheckboxes() {
-            const box = document.getElementById('dom-checkboxes');
-            if (!box) return;
-            const nomes = { dashboard:'Dashboard', operacional:'Operacional', pedagogico:'Pedagógico', alunos:'Alunos', patrimonio:'Patrimônio', formacao:'Formação', gemeo:'Gêmeo Digital', comunicacao:'Comunicação', editais:'Editais', analise:'Análise IA' };
-            box.innerHTML = Object.entries(nomes).map(([id, nome]) =>
-                `<label style="display:flex; align-items:center; gap:6px; cursor:pointer">
-                    <input type="checkbox" data-mod="${id}" style="width:auto; margin:0"> ${nome}
-                </label>`).join('');
-        },
-        async carregarParaEdicao() {
-            const pront = document.getElementById('dom-pront')?.value;
-            if (!pront) return;
-            const snap = await db.ref('permissoes_custom/' + pront).once('value');
-            const overrides = snap.exists() ? snap.val() : {};
-            document.querySelectorAll('#dom-checkboxes input[type=checkbox]').forEach(cb => { cb.checked = !!overrides[cb.dataset.mod]; });
-        },
-        async salvarOverride() {
-            const pront = document.getElementById('dom-pront')?.value;
-            if (!pront) return alert('Informe o prontuário.');
-            const overrides = {};
-            document.querySelectorAll('#dom-checkboxes input[type=checkbox]').forEach(cb => { overrides[cb.dataset.mod] = cb.checked; });
-            await db.ref('permissoes_custom/' + pront).set(overrides);
-            alert(`Permissões do prontuário ${pront} atualizadas.`);
-            if (typeof auditoria !== 'undefined') auditoria.registrar('Domínio NTEi', `Permissões personalizadas atualizadas para o prontuário ${pront}`);
-            this.renderListaOverrides();
-        },
-        async limparOverride() {
-            const pront = document.getElementById('dom-pront')?.value;
-            if (!pront) return alert('Informe o prontuário.');
-            if (!confirm(`Remover permissões personalizadas do prontuário ${pront}?`)) return;
-            await db.ref('permissoes_custom/' + pront).remove();
-            document.querySelectorAll('#dom-checkboxes input[type=checkbox]').forEach(cb => cb.checked = false);
-            if (typeof auditoria !== 'undefined') auditoria.registrar('Domínio NTEi', `Permissões personalizadas removidas do prontuário ${pront}`);
-            this.renderListaOverrides();
-        },
-        renderListaOverrides() {
-            const el = document.getElementById('dom-lista-overrides');
-            if (!el) return;
-            db.ref('permissoes_custom').off('value');
-            db.ref('permissoes_custom').on('value', snap => {
-                el.innerHTML = '';
-                if (!snap.exists()) { el.innerHTML = '<p style="color:#666;text-align:center">Nenhum override cadastrado.</p>'; return; }
-                snap.forEach(c => {
-                    const pront = c.key, overrides = c.val();
-                    const ativos = Object.entries(overrides).filter(([,v]) => v).map(([k]) => k);
-                    const negados = Object.entries(overrides).filter(([,v]) => !v).map(([k]) => k);
-                    el.innerHTML += `<div style="padding:6px; border-bottom:1px solid rgba(255,255,255,0.05)">
-                        <b>${pront}</b> —
-                        ${ativos.length ? `<span style="color:var(--cad)">+${ativos.join(', ')}</span>` : ''}
-                        ${negados.length ? ` <span style="color:var(--ntei)">−${negados.join(', ')}</span>` : ''}
-                        <i class="fa fa-pen" style="cursor:pointer; margin-left:8px; color:var(--prof)" onclick="document.getElementById('dom-pront').value='${pront}'; permissoes.carregarParaEdicao();"></i>
-                    </div>`;
-                });
-            });
-        }
-    };
-
-    // ═══════════════════════════════════════════════════════
     //  APP PRINCIPAL (compatibilidade total com v1)
     // ═══════════════════════════════════════════════════════
     const app = {
@@ -2928,13 +3236,11 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             .then(() => { alert(`Solicitação enviada! Senha inicial ao ser aprovado: ${pass}`); document.getElementById('c-n').value = ""; document.getElementById('c-p').value = ""; document.getElementById('c-e').value = ""; });
         },
 
-        async start() {
+        start() {
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('main-system').style.display = 'block';
             document.getElementById('topbar').classList.remove('hidden');
             document.getElementById('topbar-username').textContent = (this.user.nome || '—') + ' · ' + this.user.cargo;
-
-            await permissoes.carregar(this.user.pront);
 
             // Aplica o menu restrito (Professor/SEFE) ou modo SEFE especial
             this.aplicarRestricoesDeMenu();
@@ -2992,28 +3298,28 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             calendario.render();
             preditiva.analisar();
             riscoEscolar.analisar();
+            chamados.sync();
 
             if (this.user.cargo === 'SMETi' || this.user.cargo === 'NTEi') this.initSMETiChart();
 
             auditoria.registrar('Autenticação', `Login realizado com sucesso no sistema.`);
         },
 
-        // Domínio NTEI real: remove do DOM (não CSS) os módulos que o prontuário
-        // logado não tem liberado, somando cargo + overrides individuais.
+        // Esconde do menu tudo que é monitoramento/gestão para quem não deve ver
+        // (Professor e SEFE só enxergam: Operacional, Pedagógico, Alunos, Formação, Comunicação)
         aplicarRestricoesDeMenu() {
             const cargo = this.user?.cargo;
-            permissoes.aplicarNoMenu();
-            const liberados = permissoes.listaLiberada(cargo);
-            if (cargo !== 'NTEi' && !liberados.has(modules.current)) {
-                modules.show(liberados.has('operacional') ? 'operacional' : [...liberados][0] || 'operacional');
+            const restrito = (cargo === 'Professor' || cargo === 'SEFE');
+            if (restrito) {
+                const idsEscondidos = ['dashboard', 'patrimonio', 'gemeo', 'editais', 'analise', 'admin'];
+                idsEscondidos.forEach(id => {
+                    document.querySelectorAll(`.topbar-btn[onclick*="'${id}'"]`).forEach(btn => btn.classList.add('hidden'));
+                });
+                // Se o usuário cair em algum desses módulos (ex: estava aberto antes), joga pra Operacional
+                modules.show('operacional');
             }
             if (cargo === 'SEFE') {
                 this.ativarModoSEFE();
-            }
-            if (cargo === 'NTEi') {
-                document.getElementById('panel-dominio-ntei')?.classList.remove('hidden');
-                permissoes.renderCheckboxes();
-                permissoes.renderListaOverrides();
             }
         },
 
@@ -3528,22 +3834,7 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
                 snap.forEach(m => { const d = m.val(); box.innerHTML += `<div class="msg ${this.user && d.n === this.user.nome ? 'msg-out' : 'msg-in'}"><b>${d.n}:</b><br>${d.t}</div>`; });
                 box.scrollTop = box.scrollHeight;
             });
-            db.ref('chamados').on('value', snap => {
-                const box = document.getElementById('lista-chamados-nti');
-                if (!box) return;
-                box.innerHTML = '';
-                snap.forEach(c => {
-                    const d = c.val();
-                    if (d && d.status === 'aberto') {
-                        box.innerHTML += `<div style="border-left:4px solid var(--ntei);background:rgba(255,255,255,0.04);padding:10px;margin-bottom:8px;border-radius:6px">
-                            <b style="color:var(--ntei)">${d.tipo}</b> — ${d.u}<br>
-                            <span style="font-size:11px">${d.t}</span><br>
-                            <small style="color:#666">${d.data || ''}</small><br>
-                            <button class="btn" style="padding:4px;font-size:9px;background:var(--prof);width:auto;margin-top:5px" onclick="app.atenderChamado('${c.key}')">Atendimento Privado</button>
-                        </div>`;
-                    }
-                });
-            });
+            // A fila de chamados agora é renderizada por chamados._render() (ver módulo `chamados`).
         },
 
         sendChat() {
