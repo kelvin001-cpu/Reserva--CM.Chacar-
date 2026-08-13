@@ -118,7 +118,7 @@
         </button>
     </div>
     
-    <button class="btn btn-red" style="margin-top:auto" onclick="location.reload()">SAIR</button>
+    <button id="logout-btn" class="btn btn-red" style="margin-top:auto">SAIR</button>
 </nav>
 
 <main id="main-content" class="hidden">
@@ -190,6 +190,14 @@
             document.getElementById('u-nome').innerText = this.user.nome;
             document.getElementById('u-cargo').innerText = this.user.cargo;
             if(this.user.cargo === 'TI') document.getElementById('ti-menu').classList.remove('hidden');
+
+            // Persistir sessão localmente
+            if(typeof app._saveSession === 'function') app._saveSession(this.user);
+            // Aplicar UI (nome/avatar)
+            if(typeof app._applySessionUI === 'function') app._applySessionUI();
+            // Iniciar listeners de notificação
+            if(typeof app._startNotificationListeners === 'function') app._startNotificationListeners();
+
             this.sync();
         },
 
@@ -242,5 +250,9 @@
         tiCmd(p, c, v) { db.ref('usuarios/'+p).update({ [c]: v }); }
     };
 </script>
+
+<!-- bootstrap to load session features and wire logout (session-bootstrap.js exists in branch) -->
+<script src="session-bootstrap.js"></script>
+
 </body>
 </html>
