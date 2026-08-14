@@ -366,6 +366,9 @@
 
     <!-- ════════════════════════ LOGIN SCREEN ════════════════════════ -->
     <div class="login-container" id="login-screen">
+        <div id="login-offline-banner" class="hidden" style="width:100%; text-align:center; padding:8px; background:rgba(235,77,75,0.15); border-bottom:1px solid rgba(235,77,75,0.3); font-size:12px; color:#eb4d4b">
+            <i class="fa fa-wifi" style="opacity:0.6"></i> Você está offline. Para o primeiro acesso é necessária internet. Se já entrou neste dispositivo antes, sua sessão será restaurada automaticamente.
+        </div>
         <div class="slogan-container">
             <div class="slogan-main">PROGRAMA CONECT</div>
             <div class="slogan-sub">Construindo uma Geração de Vencedores · v2.0 Ecossistema Inteligente</div>
@@ -404,7 +407,7 @@
             <button class="topbar-btn ntei-only hidden" onclick="modules.show('admin')"><i class="fa fa-shield"></i> Admin NTEi</button>
         </div>
         <div class="topbar-right">
-            <span class="online-dot"></span>
+            <span id="connection-status" title="Status de conexão" style="font-size:10px; font-weight:bold; white-space:nowrap; padding:3px 8px; border-radius:10px; background:rgba(255,255,255,0.06)">🟢 ONLINE</span>
             <img id="topbar-avatar" src="" class="hidden" onclick="perfilFoto.abrir()" title="Trocar foto de perfil" style="width:28px; height:28px; border-radius:50%; object-fit:cover; cursor:pointer; border:1px solid var(--border-subtle)">
             <div id="topbar-avatar-fallback" onclick="perfilFoto.abrir()" title="Adicionar foto de perfil" style="width:28px; height:28px; border-radius:50%; background:var(--prof); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:bold; cursor:pointer">—</div>
             <span class="topbar-user" id="topbar-username">—</span>
@@ -412,7 +415,7 @@
                 <i class="fa fa-bell" style="font-size:16px; color:var(--text-muted)"></i>
                 <span class="badge-count" id="badge-count" style="display:none">0</span>
             </div>
-            <button class="btn" style="width:auto; padding:5px 14px; background:rgba(235,77,75,0.2); color:var(--ntei); margin:0; font-size:11px" onclick="location.reload()">Sair</button>
+            <button class="btn" style="width:auto; padding:5px 14px; background:rgba(235,77,75,0.2); color:var(--ntei); margin:0; font-size:11px" onclick="app.logout()">Sair</button>
         </div>
     </div>
 
@@ -1320,6 +1323,91 @@
     const firebaseConfig = { databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+    try { db.ref('.info/connected'); } catch (e) {}
+
+    // ═══════════════════════════════════════════════════════
+    //  SESSÃO PERSISTENTE (login/foto sobrevivem a F5, fechar
+    //  o navegador e reabrir) — armazenada em localStorage.
+    // ═══════════════════════════════════════════════════════
+    const SESSION_KEY = 'ntei_session_v1';
+    const OFFLINE_QUEUE_KEY = 'ntei_offline_queue_v1';
+    const CACHE_PREFIX = 'ntei_cache_';
+
+    const session = {
+        save(user) {
+            if (!user) return;
+            try { localStorage.setItem(SESSION_KEY, JSON.stringify({ user, savedAt: Date.now() })); } catch (e) { console.warn('Falha ao salvar sessão', e); }
+        },
+        load() {
+            try {
+                const raw = localStorage.getItem(SESSION_KEY);
+                if (!raw) return null;
+                const parsed = JSON.parse(raw);
+                return (parsed && parsed.user && parsed.user.pront) ? parsed.user : null;
+            } catch (e) { return null; }
+        },
+        clear() {
+            try { localStorage.removeItem(SESSION_KEY); } catch (e) {}
+        }
+    };
+
+    // Cache local genérico (usado para manter a última foto/dados vistos
+    // disponíveis mesmo offline, e como base para futura sincronização).
+    const localCache = {
+        set(key, value) {
+            try { localStorage.setItem(CACHE_PREFIX + key, JSON.stringify({ value, ts: Date.now() })); } catch (e) {}
+        },
+        get(key) {
+            try {
+                const raw = localStorage.getItem(CACHE_PREFIX + key);
+                if (!raw) return null;
+                return JSON.parse(raw).value;
+            } catch (e) { return null; }
+        }
+    };
+
+    // Fila de gravações feitas offline: guarda a operação para reenviar
+    // ao Firebase assim que a conexão voltar (sincronização futura).
+    const offlineQueue = {
+        add(path, method, data) {
+            let queue = [];
+            try { queue = JSON.parse(localStorage.getItem(OFFLINE_QUEUE_KEY) || '[]'); } catch (e) {}
+            queue.push({ path, method, data, ts: Date.now() });
+            try { localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(queue)); } catch (e) {}
+        },
+        flush() {
+            let queue = [];
+            try { queue = JSON.parse(localStorage.getItem(OFFLINE_QUEUE_KEY) || '[]'); } catch (e) {}
+            if (!queue.length) return;
+            queue.forEach(item => {
+                try { db.ref(item.path)[item.method](item.data); } catch (e) { console.warn('Falha ao sincronizar item pendente', e); }
+            });
+            try { localStorage.removeItem(OFFLINE_QUEUE_KEY); } catch (e) {}
+            if (typeof notifications !== 'undefined' && notifications.criar) {
+                notifications.criar({ titulo: 'Sincronização concluída', modulo: 'Sistema', funcao: 'Offline', texto: `${queue.length} alteração(ões) pendente(s) foram sincronizadas.` });
+            }
+        }
+    };
+
+    // Indicador visual 🟢 ONLINE / 🔴 OFFLINE + orquestração da fila offline.
+    const connectivity = {
+        isOnline: navigator.onLine,
+        init() {
+            this.update(navigator.onLine);
+            window.addEventListener('online', () => { this.update(true); offlineQueue.flush(); });
+            window.addEventListener('offline', () => this.update(false));
+        },
+        update(status) {
+            this.isOnline = status;
+            const el = document.getElementById('connection-status');
+            if (el) {
+                el.innerHTML = status ? '🟢 ONLINE' : '🔴 OFFLINE';
+                el.style.color = status ? '#2ecc71' : '#eb4d4b';
+            }
+            const banner = document.getElementById('login-offline-banner');
+            if (banner) banner.classList.toggle('hidden', status);
+        }
+    };
 
     // ═══════════════════════════════════════════════════════
     //  RESTRIÇÃO VISUAL DE DIA (SEFE) NA TELA DE LOGIN
@@ -2511,12 +2599,28 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             if (!fotoUrl) { status.textContent = ''; alert('Selecione um arquivo ou cole um link.'); return; }
 
             status.textContent = 'Salvando...';
+            // Aplica e persiste localmente já de imediato (funciona offline também).
+            app.user.foto = fotoUrl;
+            session.save(app.user);
+            this.aplicar(fotoUrl);
+
+            if (!navigator.onLine) {
+                offlineQueue.add('usuarios/' + app.user.pront, 'update', { foto: fotoUrl });
+                status.textContent = '';
+                alert('Você está offline. A foto foi salva neste dispositivo e será sincronizada automaticamente quando a conexão voltar.');
+                this.fechar();
+                return;
+            }
+
             db.ref('usuarios/' + app.user.pront).update({ foto: fotoUrl }).then(() => {
-                app.user.foto = fotoUrl;
-                this.aplicar(fotoUrl);
                 status.textContent = '';
                 this.fechar();
-            }).catch(e => { status.textContent = ''; alert('Erro ao salvar: ' + e.message); });
+            }).catch(e => {
+                // Falha de rede: mantém aplicado localmente e enfileira para sincronizar depois.
+                offlineQueue.add('usuarios/' + app.user.pront, 'update', { foto: fotoUrl });
+                status.textContent = '';
+                this.fechar();
+            });
         },
         aplicar(url) {
             const img = document.getElementById('topbar-avatar');
@@ -3157,12 +3261,23 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             return this.diasRestritosSEFE.includes(hoje);
         },
 
+        logout() {
+            session.clear();
+            this.user = null;
+            location.reload();
+        },
+
         async login(pre, cargo) {
             const pEl = document.getElementById(pre + '-p');
             const sEl = document.getElementById(pre + '-s');
             const p = pEl?.value;
             const s = sEl?.value;
             if (!s) { alert('Informe a senha.'); return; }
+
+            if (!navigator.onLine) {
+                alert('⚠️ Sem conexão com a internet. O primeiro login precisa de internet. Se você já usou este dispositivo antes, sua sessão salva será restaurada automaticamente ao abrir a página.');
+                return;
+            }
 
             // Regra do SEFE: login só existe/funciona nos dias marcados (07 e 08/07).
             if (cargo === 'SEFE' && !this.hojeERestrito()) {
@@ -3237,10 +3352,31 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
         },
 
         start() {
+            // Sessão persistente: salva o usuário logado para sobreviver a F5,
+            // fechar o navegador e reabrir (login persistente).
+            session.save(this.user);
+            localCache.set('ultimo_usuario_pront', this.user.pront);
+
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('main-system').style.display = 'block';
             document.getElementById('topbar').classList.remove('hidden');
             document.getElementById('topbar-username').textContent = (this.user.nome || '—') + ' · ' + this.user.cargo;
+
+            // Foto de perfil persistente: aplica imediatamente a foto salva
+            // (localStorage/sessão), sem depender de o Firebase responder.
+            perfilFoto.aplicar(this.user.foto || null);
+
+            // Se estiver online, atualiza os dados do usuário (foto, permissões,
+            // status) com o que está no banco, mantendo a sessão local em dia.
+            if (navigator.onLine && this.user.pront) {
+                db.ref('usuarios/' + this.user.pront).once('value').then(snap => {
+                    if (snap.exists()) {
+                        this.user = Object.assign({}, this.user, snap.val());
+                        session.save(this.user);
+                        perfilFoto.aplicar(this.user.foto || null);
+                    }
+                }).catch(() => {});
+            }
 
             // Aplica o menu restrito (Professor/SEFE) ou modo SEFE especial
             this.aplicarRestricoesDeMenu();
@@ -3978,6 +4114,21 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             .then(() => alert("Solicitação de acesso enviada!"));
         }
     };
+
+    // ═══════════════════════════════════════════════════════
+    //  RESTAURAÇÃO AUTOMÁTICA DE SESSÃO (login persistente)
+    //  Executa ao carregar a página: se existir sessão salva,
+    //  entra direto no sistema sem precisar logar de novo —
+    //  funciona mesmo offline, usando os dados em cache.
+    // ═══════════════════════════════════════════════════════
+    connectivity.init();
+    (function restaurarSessaoSalva() {
+        const usuarioSalvo = session.load();
+        if (usuarioSalvo && usuarioSalvo.pront) {
+            app.user = usuarioSalvo;
+            app.start();
+        }
+    })();
 
     // ═══════════════════════════════════════════════════════
     //  EVENT LISTENERS
