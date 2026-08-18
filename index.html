@@ -1364,6 +1364,25 @@
                 <div id="panel-ntei-graficos" class="panel hidden">
                     <h3><i class="fa fa-chart-line"></i> Monitoramento de Tráfego</h3>
                     <div class="chart-container"><canvas id="chart-real-time-chamados"></canvas></div>
+
+                    <p style="font-size:11px; color:var(--text-muted); margin:14px 0 4px 0">Velocidade de conexão do seu dispositivo (medida ao vivo):</p>
+                    <div style="display:flex; align-items:center; gap:18px; flex-wrap:wrap; background:rgba(0,0,0,0.25); border-radius:10px; padding:12px">
+                        <svg viewBox="0 0 200 110" style="width:150px; flex-shrink:0">
+                            <path d="M10,100 A90,90 0 0,1 190,100" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="14"/>
+                            <path id="veloc-arc" d="M10,100 A90,90 0 0,1 190,100" fill="none" stroke="var(--prof)" stroke-width="14" stroke-dasharray="283" stroke-dashoffset="283" stroke-linecap="round"/>
+                            <text x="100" y="90" text-anchor="middle" font-family="Orbitron" font-size="26" fill="white" id="veloc-num">—</text>
+                            <text x="100" y="106" text-anchor="middle" font-family="Poppins" font-size="10" fill="#8b949e">Mbps</text>
+                        </svg>
+                        <div style="font-size:11.5px; color:var(--text-muted); flex:1; min-width:160px">
+                            <div>Ping: <b id="veloc-ping" style="color:white">—</b> ms</div>
+                            <div>Dispositivo: <b id="veloc-dispositivo" style="color:white">—</b></div>
+                            <div>Última medição: <b id="veloc-hora" style="color:white">—</b></div>
+                            <div style="margin-top:6px"><span id="veloc-status" style="color:#888">Aguardando medição...</span></div>
+                        </div>
+                    </div>
+
+                    <p style="font-size:11px; color:var(--text-muted); margin:14px 0 4px 0">Dispositivos monitorados (todos os prontuários logados):</p>
+                    <div id="veloc-lista-dispositivos" style="max-height:180px; overflow-y:auto; background:rgba(0,0,0,0.2); padding:6px; border-radius:8px; font-size:11px"></div>
                 </div>
 
                 <!-- Permissões Individuais por Prontuário -->
@@ -1404,7 +1423,10 @@
                     <div id="menu-perfis-checks" style="display:flex; gap:10px; flex-wrap:wrap; font-size:11px"></div>
                     <input type="text" id="menu-prontuarios" placeholder="Prontuários específicos (opcional, separados por vírgula)" style="margin-top:8px">
                     <label style="display:flex; align-items:center; gap:6px; font-size:11px; margin-top:8px"><input type="checkbox" id="menu-ativo" checked style="width:auto"> Ativo</label>
-                    <button class="btn" style="background:var(--prof); margin-top:10px" onclick="criadorMenus.salvar()">CRIAR / SALVAR MENU</button>
+                    <div style="display:flex; gap:8px">
+                        <button class="btn" style="background:var(--prof); margin-top:10px" onclick="criadorMenus.salvar()" id="menu-btn-salvar">CRIAR / SALVAR MENU</button>
+                        <button class="btn" style="background:rgba(255,255,255,0.1); margin-top:10px; display:none" id="menu-btn-cancelar" onclick="criadorMenus.cancelarEdicao()">CANCELAR EDIÇÃO</button>
+                    </div>
                     <p style="font-size:10px; color:#aaa; margin:16px 0 6px 0">MENUS CRIADOS:</p>
                     <div id="lista-menus-criados" style="max-height:200px; overflow-y:auto; background:rgba(0,0,0,0.2); padding:5px; border-radius:5px"></div>
                 </div>
@@ -1425,8 +1447,20 @@
                         </select>
                     </div>
                     <input type="text" id="funcao-prontuarios" placeholder="Prontuários específicos (opcional, separados por vírgula)" style="margin-top:8px">
+                    <p style="font-size:10px; color:#aaa; margin:10px 0 4px 0">O que a função faz quando o menu é clicado:</p>
+                    <div style="display:grid; grid-template-columns:1fr 2fr; gap:8px">
+                        <select id="funcao-acao-tipo" style="margin:0">
+                            <option value="mensagem">Mostrar mensagem</option>
+                            <option value="link">Abrir link/URL</option>
+                            <option value="acao_padrao">Executar ação já existente na plataforma</option>
+                        </select>
+                        <input type="text" id="funcao-acao-valor" placeholder="Texto da mensagem, URL, ou nome da ação (ex: modules.show('chamados'))" style="margin:0">
+                    </div>
                     <label style="display:flex; align-items:center; gap:6px; font-size:11px; margin-top:8px"><input type="checkbox" id="funcao-ativa" checked style="width:auto"> Ativa</label>
-                    <button class="btn" style="background:var(--secre)" onclick="criadorFuncoes.salvar()">CRIAR / SALVAR FUNÇÃO</button>
+                    <div style="display:flex; gap:8px">
+                        <button class="btn" style="background:var(--secre)" onclick="criadorFuncoes.salvar()" id="funcao-btn-salvar">CRIAR / SALVAR FUNÇÃO</button>
+                        <button class="btn" style="background:rgba(255,255,255,0.1); display:none" id="funcao-btn-cancelar" onclick="criadorFuncoes.cancelarEdicao()">CANCELAR EDIÇÃO</button>
+                    </div>
                     <p style="font-size:10px; color:#aaa; margin:16px 0 6px 0">FUNÇÕES CRIADAS:</p>
                     <div id="lista-funcoes-criadas" style="max-height:200px; overflow-y:auto; background:rgba(0,0,0,0.2); padding:5px; border-radius:5px"></div>
                 </div>
@@ -3680,6 +3714,8 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
     // ═══════════════════════════════════════════════════════
     const criadorMenus = {
         _iniciado: false,
+        _dados: {},
+        _editando: null,
         init() {
             if (this._iniciado) return;
             this._iniciado = true;
@@ -3705,15 +3741,39 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
 
             db.ref('menus_customizados/' + id).set({
                 nome, icone, categoria, ativo, prontuarios, perfis,
-                criadoPor: app.user?.nome || '—', criadoEm: Date.now()
+                criadoPor: app.user?.nome || '—', criadoEm: this._dados[id]?.criadoEm || Date.now(),
+                editadoEm: this._editando ? Date.now() : null
             }).then(() => {
-                auditoria.registrar('Admin NTEi', `Menu "${nome}" (${id}) criado/atualizado.`);
-                document.getElementById('menu-nome').value = '';
-                document.getElementById('menu-icone').value = '';
-                document.getElementById('menu-id').value = '';
-                document.getElementById('menu-prontuarios').value = '';
-                document.querySelectorAll('.menu-perfil-check').forEach(c => c.checked = false);
+                auditoria.registrar('Admin NTEi', this._editando ? `Menu "${nome}" (${id}) editado.` : `Menu "${nome}" (${id}) criado.`);
+                this.cancelarEdicao();
             }).catch(e => alert('Erro ao salvar menu: ' + e.message));
+        },
+
+        editar(id) {
+            const m = this._dados[id];
+            if (!m) return;
+            this._editando = id;
+            document.getElementById('menu-nome').value = m.nome || '';
+            document.getElementById('menu-icone').value = m.icone || '';
+            document.getElementById('menu-id').value = id;
+            document.getElementById('menu-categoria').value = m.categoria || 'Geral';
+            document.getElementById('menu-ativo').checked = !!m.ativo;
+            document.getElementById('menu-prontuarios').value = (m.prontuarios || []).join(', ');
+            document.querySelectorAll('.menu-perfil-check').forEach(c => c.checked = (m.perfis || []).includes(c.value));
+            document.getElementById('menu-btn-salvar').textContent = 'SALVAR ALTERAÇÕES';
+            document.getElementById('menu-btn-cancelar').style.display = 'block';
+            document.getElementById('menu-nome').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        },
+
+        cancelarEdicao() {
+            this._editando = null;
+            document.getElementById('menu-nome').value = '';
+            document.getElementById('menu-icone').value = '';
+            document.getElementById('menu-id').value = '';
+            document.getElementById('menu-prontuarios').value = '';
+            document.querySelectorAll('.menu-perfil-check').forEach(c => c.checked = false);
+            document.getElementById('menu-btn-salvar').textContent = 'CRIAR / SALVAR MENU';
+            document.getElementById('menu-btn-cancelar').style.display = 'none';
         },
 
         excluir(id) {
@@ -3721,10 +3781,12 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             db.ref('menus_customizados/' + id).remove().then(() => {
                 document.querySelectorAll(`.topbar-btn[data-menu-custom="${id}"]`).forEach(b => b.remove());
                 auditoria.registrar('Admin NTEi', `Menu customizado ${id} removido.`);
+                if (this._editando === id) this.cancelarEdicao();
             });
         },
 
         _render(dados) {
+            this._dados = dados || {};
             const lista = document.getElementById('lista-menus-criados');
             const chaves = Object.keys(dados);
             if (lista) {
@@ -3732,7 +3794,10 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
                     const m = dados[id];
                     return `<div style="display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.06); font-size:11.5px">
                         <span><i class="fa ${m.icone}"></i> ${m.nome} <small style="color:#888">(${m.categoria || 'Geral'}${m.ativo ? '' : ' · inativo'})</small></span>
-                        <button class="btn" style="width:auto; margin:0; padding:2px 8px; font-size:10px; background:var(--ntei)" onclick="criadorMenus.excluir('${id}')">Excluir</button>
+                        <span>
+                            <button class="btn" style="width:auto; margin:0 4px 0 0; padding:2px 8px; font-size:10px; background:var(--gestao); color:#000" onclick="criadorMenus.editar('${id}')">Editar</button>
+                            <button class="btn" style="width:auto; margin:0; padding:2px 8px; font-size:10px; background:var(--ntei)" onclick="criadorMenus.excluir('${id}')">Excluir</button>
+                        </span>
                     </div>`;
                 }).join('') : '<div style="color:#888; font-size:11px">Nenhum menu customizado criado ainda.</div>';
             }
@@ -3756,7 +3821,7 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
                 btn.className = 'topbar-btn';
                 btn.dataset.menuCustom = id;
                 btn.innerHTML = `<i class="fa ${m.icone}"></i> ${m.nome}`;
-                btn.onclick = () => alert(`Menu "${m.nome}" criado pelo NTEi. Conteúdo customizável — vincule funções a ele no Criador de Funções.`);
+                btn.onclick = () => criadorFuncoes.executarPorMenu(id, m.nome);
                 if (adminBtn) nav.insertBefore(btn, adminBtn); else nav.appendChild(btn);
             });
         }
@@ -3767,6 +3832,8 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
     // ═══════════════════════════════════════════════════════
     const criadorFuncoes = {
         _iniciado: false,
+        _dados: {},
+        _editando: null,
         init() {
             if (this._iniciado) return;
             this._iniciado = true;
@@ -3790,26 +3857,90 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             const perfil = document.getElementById('funcao-perfil').value;
             const ativa = document.getElementById('funcao-ativa').checked;
             const prontuarios = document.getElementById('funcao-prontuarios').value.split(',').map(s => s.trim()).filter(Boolean);
+            const acaoTipo = document.getElementById('funcao-acao-tipo').value;
+            const acaoValor = document.getElementById('funcao-acao-valor').value.trim();
 
             if (!nome || !id) { alert('Informe nome e ID da função.'); return; }
 
             db.ref('funcoes_customizadas/' + id).set({
-                nome, menu, perfil, prontuarios, ativa,
-                criadoPor: app.user?.nome || '—', criadoEm: Date.now()
+                nome, menu, perfil, prontuarios, ativa, acaoTipo, acaoValor,
+                criadoPor: app.user?.nome || '—', criadoEm: this._dados[id]?.criadoEm || Date.now(),
+                editadoEm: this._editando ? Date.now() : null
             }).then(() => {
-                auditoria.registrar('Admin NTEi', `Função "${nome}" (${id}) criada/atualizada.`);
-                document.getElementById('funcao-nome').value = '';
-                document.getElementById('funcao-id').value = '';
-                document.getElementById('funcao-prontuarios').value = '';
+                auditoria.registrar('Admin NTEi', this._editando ? `Função "${nome}" (${id}) editada.` : `Função "${nome}" (${id}) criada.`);
+                this.cancelarEdicao();
             }).catch(e => alert('Erro ao salvar função: ' + e.message));
+        },
+
+        editar(id) {
+            const f = this._dados[id];
+            if (!f) return;
+            this._editando = id;
+            document.getElementById('funcao-nome').value = f.nome || '';
+            document.getElementById('funcao-id').value = id;
+            document.getElementById('funcao-menu-vinculado').value = f.menu || '';
+            document.getElementById('funcao-perfil').value = f.perfil || 'Todos';
+            document.getElementById('funcao-prontuarios').value = (f.prontuarios || []).join(', ');
+            document.getElementById('funcao-acao-tipo').value = f.acaoTipo || 'mensagem';
+            document.getElementById('funcao-acao-valor').value = f.acaoValor || '';
+            document.getElementById('funcao-ativa').checked = !!f.ativa;
+            document.getElementById('funcao-btn-salvar').textContent = 'SALVAR ALTERAÇÕES';
+            document.getElementById('funcao-btn-cancelar').style.display = 'block';
+            document.getElementById('funcao-nome').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        },
+
+        cancelarEdicao() {
+            this._editando = null;
+            document.getElementById('funcao-nome').value = '';
+            document.getElementById('funcao-id').value = '';
+            document.getElementById('funcao-prontuarios').value = '';
+            document.getElementById('funcao-acao-valor').value = '';
+            document.getElementById('funcao-acao-tipo').value = 'mensagem';
+            document.getElementById('funcao-btn-salvar').textContent = 'CRIAR / SALVAR FUNÇÃO';
+            document.getElementById('funcao-btn-cancelar').style.display = 'none';
         },
 
         excluir(id) {
             if (!confirm('Remover esta função customizada?')) return;
-            db.ref('funcoes_customizadas/' + id).remove().then(() => auditoria.registrar('Admin NTEi', `Função customizada ${id} removida.`));
+            db.ref('funcoes_customizadas/' + id).remove().then(() => {
+                auditoria.registrar('Admin NTEi', `Função customizada ${id} removida.`);
+                if (this._editando === id) this.cancelarEdicao();
+            });
+        },
+
+        // Executa a ação configurada para a(s) função(ões) vinculada(s) a um menu customizado,
+        // respeitando perfil e prontuário do usuário logado. Sem função vinculada, mostra aviso genérico.
+        executarPorMenu(menuId, menuNome) {
+            const funcoes = Object.values(this._dados || {}).filter(f => f.menu === menuId && f.ativa !== false);
+            const doUsuario = funcoes.filter(f => {
+                const okPerfil = !f.perfil || f.perfil === 'Todos' || f.perfil === app.user?.cargo;
+                const okPront = !f.prontuarios?.length || f.prontuarios.includes(String(app.user?.pront));
+                return okPerfil && okPront;
+            });
+            if (!doUsuario.length) {
+                alert(`Menu "${menuNome}" criado pelo NTEi. Nenhuma função ativa vinculada para o seu perfil ainda — configure em Criador de Funções.`);
+                return;
+            }
+            doUsuario.forEach(f => this._executarAcao(f));
+        },
+
+        _executarAcao(f) {
+            try {
+                if (f.acaoTipo === 'link' && f.acaoValor) {
+                    window.open(f.acaoValor, '_blank');
+                } else if (f.acaoTipo === 'acao_padrao' && f.acaoValor) {
+                    // Restrito: só executa ações já cadastradas pelo NTEi neste próprio painel (não é entrada de usuário final).
+                    new Function(f.acaoValor)();
+                } else {
+                    alert(f.acaoValor || `Função "${f.nome}" executada.`);
+                }
+            } catch (e) {
+                alert(`Erro ao executar a função "${f.nome}": ${e.message}`);
+            }
         },
 
         _render(dados) {
+            this._dados = dados || {};
             const lista = document.getElementById('lista-funcoes-criadas');
             if (!lista) return;
             const chaves = Object.keys(dados);
@@ -3817,7 +3948,10 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
                 const f = dados[id];
                 return `<div style="display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.06); font-size:11.5px">
                     <span>${f.nome} <small style="color:#888">(${f.perfil}${f.menu ? ' · ' + f.menu : ''}${f.ativa ? '' : ' · inativa'})</small></span>
-                    <button class="btn" style="width:auto; margin:0; padding:2px 8px; font-size:10px; background:var(--ntei)" onclick="criadorFuncoes.excluir('${id}')">Excluir</button>
+                    <span>
+                        <button class="btn" style="width:auto; margin:0 4px 0 0; padding:2px 8px; font-size:10px; background:var(--gestao); color:#000" onclick="criadorFuncoes.editar('${id}')">Editar</button>
+                        <button class="btn" style="width:auto; margin:0; padding:2px 8px; font-size:10px; background:var(--ntei)" onclick="criadorFuncoes.excluir('${id}')">Excluir</button>
+                    </span>
                 </div>`;
             }).join('') : '<div style="color:#888; font-size:11px">Nenhuma função customizada criada ainda.</div>';
         }
@@ -3828,6 +3962,103 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
     //  (chamados, terminais, reservas e patrimônio via listeners
     //   .on('value') do Firebase — nada é recalculado por polling)
     // ═══════════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════
+    //  MONITOR DE TRÁFEGO — mede a velocidade de conexão de cada
+    //  dispositivo logado e publica em trafego_dispositivos/{pront},
+    //  para ser consumido pelo Painel SMETi ("como anda a escola").
+    // ═══════════════════════════════════════════════════════
+    const trafegoMonitor = {
+        _intervalo: null,
+        TAMANHO_TESTE_KB: 500, // arquivo de teste ~500KB (via jsDelivr, já permitido na rede)
+        URL_TESTE: 'https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js',
+
+        init() {
+            if (!app.user) return;
+            this.medir();
+            if (this._intervalo) clearInterval(this._intervalo);
+            this._intervalo = setInterval(() => this.medir(), 60000); // remede a cada 60s
+            db.ref('trafego_dispositivos').on('value', snap => this._renderLista(snap.val() || {}));
+        },
+
+        async medir() {
+            const statusEl = document.getElementById('veloc-status');
+            if (statusEl) statusEl.textContent = 'Medindo...';
+            try {
+                const inicioPing = performance.now();
+                await fetch(this.URL_TESTE + '?ping=' + Date.now(), { cache: 'no-store', mode: 'no-cors' });
+                const ping = Math.round(performance.now() - inicioPing);
+
+                const inicio = performance.now();
+                const resp = await fetch(this.URL_TESTE + '?t=' + Date.now(), { cache: 'no-store' });
+                const blob = await resp.blob();
+                const duracaoSeg = (performance.now() - inicio) / 1000;
+                const bits = blob.size * 8;
+                let mbps = duracaoSeg > 0 ? (bits / duracaoSeg) / 1_000_000 : 0;
+
+                // Combina com a estimativa nativa do navegador quando disponível (mais estável em conexões rápidas)
+                const nav = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+                if (nav?.downlink) mbps = (mbps + nav.downlink) / 2;
+                mbps = Math.max(0.1, Math.round(mbps * 10) / 10);
+
+                this._atualizarGauge(mbps, ping);
+
+                db.ref('trafego_dispositivos/' + app.user.pront).set({
+                    nome: app.user.nome, cargo: app.user.cargo, mbps, ping,
+                    atualizadoEm: Date.now()
+                });
+            } catch (e) {
+                if (statusEl) statusEl.textContent = 'Não foi possível medir agora (rede/bloqueio).';
+            }
+        },
+
+        _atualizarGauge(mbps, ping) {
+            const arco = document.getElementById('veloc-arc');
+            const num = document.getElementById('veloc-num');
+            const pingEl = document.getElementById('veloc-ping');
+            const dispEl = document.getElementById('veloc-dispositivo');
+            const horaEl = document.getElementById('veloc-hora');
+            const statusEl = document.getElementById('veloc-status');
+            if (!arco) return;
+            const max = 100; // escala do medidor: 0–100 Mbps
+            const pct = Math.min(1, mbps / max);
+            const perimetro = 283;
+            arco.style.strokeDashoffset = String(perimetro - perimetro * pct);
+            arco.style.stroke = mbps < 5 ? 'var(--ntei)' : mbps < 25 ? 'var(--gestao)' : 'var(--cad)';
+            if (num) num.textContent = mbps.toFixed(1);
+            if (pingEl) pingEl.textContent = ping;
+            if (dispEl) dispEl.textContent = `${app.user.nome} (${app.user.cargo})`;
+            if (horaEl) horaEl.textContent = new Date().toLocaleTimeString('pt-BR');
+            if (statusEl) statusEl.textContent = 'Medição concluída.';
+        },
+
+        _renderLista(dados) {
+            const lista = document.getElementById('veloc-lista-dispositivos');
+            const resumoSmeti = document.getElementById('smeti-rede-status');
+            const chaves = Object.keys(dados);
+
+            if (lista) {
+                lista.innerHTML = chaves.length ? chaves.map(pront => {
+                    const d = dados[pront];
+                    const agoraMin = Math.round((Date.now() - (d.atualizadoEm || 0)) / 60000);
+                    const cor = d.mbps < 5 ? 'var(--ntei)' : d.mbps < 25 ? 'var(--gestao)' : 'var(--cad)';
+                    return `<div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.05)">
+                        <span>${d.nome || pront} <small style="color:#888">(${d.cargo || '—'})</small></span>
+                        <span style="color:${cor}">${(d.mbps ?? 0).toFixed(1)} Mbps · ${d.ping ?? '—'}ms <small style="color:#888">· há ${agoraMin}min</small></span>
+                    </div>`;
+                }).join('') : '<div style="color:#888">Nenhum dispositivo reportou dados ainda.</div>';
+            }
+
+            if (resumoSmeti) {
+                if (!chaves.length) { resumoSmeti.textContent = 'Aguardando dados do agente.'; return; }
+                const validos = chaves.map(k => dados[k]).filter(d => (Date.now() - (d.atualizadoEm || 0)) < 10 * 60000);
+                const media = validos.length ? (validos.reduce((s, d) => s + (d.mbps || 0), 0) / validos.length) : 0;
+                const lentos = validos.filter(d => d.mbps < 5).length;
+                resumoSmeti.innerHTML = `<b style="color:white">${validos.length}</b> dispositivo(s) ativo(s) nos últimos 10min · velocidade média <b style="color:white">${media.toFixed(1)} Mbps</b>` +
+                    (lentos ? ` · <span style="color:var(--ntei)">${lentos} com conexão lenta (&lt;5 Mbps)</span>` : ' · rede estável');
+            }
+        }
+    };
+
     const smetiDashboard = {
         _iniciado: false,
         filtro: 'hoje',
@@ -4193,6 +4424,9 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             chamados.sync();
 
             if (this.user.cargo === 'SMETi' || this.user.cargo === 'NTEi') smetiDashboard.init();
+
+            // Mede a velocidade do dispositivo logado (todos os cargos alimentam o painel SMETi)
+            trafegoMonitor.init();
 
             auditoria.registrar('Autenticação', `Login realizado com sucesso no sistema.`);
         },
