@@ -73,13 +73,18 @@
         }
         .search-result-item { padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
         .search-result-item:hover { background: rgba(255,255,255,0.08); }
-        .topbar-nav { display: flex; gap: 4px; overflow-x: auto; }
+        .topbar-nav { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: thin; }
         .topbar-btn {
             padding: 5px 12px; border-radius: 6px; border: none; cursor: pointer;
             font-size: 11px; font-weight: 600; white-space: nowrap; background: transparent;
             color: var(--text-muted); transition: 0.2s; font-family: 'Poppins';
         }
         .topbar-btn:hover, .topbar-btn.active { background: rgba(0,173,239,0.15); color: var(--prof); }
+        .mobile-menu-btn {
+            display: none; background: transparent; border: none; color: var(--text-muted);
+            font-size: 16px; cursor: pointer; padding: 6px 10px; border-radius: 6px; transition: 0.2s;
+        }
+        .mobile-menu-btn:hover, .mobile-menu-btn.active { background: rgba(0,173,239,0.15); color: var(--prof); }
         .topbar-right { display: flex; align-items: center; gap: 10px; margin-left: auto; }
         .topbar-badge { position: relative; cursor: pointer; }
         .badge-count { position: absolute; top: -5px; right: -5px; background: var(--ntei); color: white; border-radius: 50%; width: 16px; height: 16px; font-size: 9px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
@@ -351,7 +356,19 @@
         @media (max-width: 700px) {
             .grid-layout { grid-template-columns: 1fr; }
             .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-            .topbar-nav { display: none; }
+            .mobile-menu-btn { display: inline-flex; align-items: center; justify-content: center; }
+            .topbar-search { max-width: none; order: 3; flex-basis: 100%; margin-top: 8px; }
+            #topbar { flex-wrap: wrap; height: auto; min-height: 52px; padding: 8px 12px; }
+            .topbar-nav {
+                display: none; width: 100%; flex-direction: column; gap: 2px;
+                position: fixed; top: 52px; left: 0; right: 0; z-index: 8999;
+                background: rgba(10,11,16,0.98); backdrop-filter: blur(20px);
+                border-bottom: 1px solid var(--border-subtle); border-radius: 0 0 12px 12px;
+                padding: 10px; max-height: calc(100vh - 52px); overflow-y: auto;
+                box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+            }
+            .topbar-nav.mobile-open { display: flex; }
+            .topbar-nav .topbar-btn { width: 100%; text-align: left; padding: 11px 14px; border-radius: 8px; font-size: 12px; }
         }
     </style>
 </head>
@@ -366,9 +383,6 @@
 
     <!-- ════════════════════════ LOGIN SCREEN ════════════════════════ -->
     <div class="login-container" id="login-screen">
-        <div id="login-offline-banner" class="hidden" style="width:100%; text-align:center; padding:8px; background:rgba(235,77,75,0.15); border-bottom:1px solid rgba(235,77,75,0.3); font-size:12px; color:#eb4d4b">
-            <i class="fa fa-wifi" style="opacity:0.6"></i> Você está offline. Para o primeiro acesso é necessária internet. Se já entrou neste dispositivo antes, sua sessão será restaurada automaticamente.
-        </div>
         <div class="slogan-container">
             <div class="slogan-main">PROGRAMA CONECT</div>
             <div class="slogan-sub">Construindo uma Geração de Vencedores · v2.0 Ecossistema Inteligente</div>
@@ -376,8 +390,8 @@
         <div class="sector-column"><i class="fa fa-graduation-cap fa-3x" style="color:var(--prof)"></i><h2>PROFESSOR</h2><input type="number" id="p-p" placeholder="Prontuário"><input type="password" id="p-s" placeholder="Senha"><button class="btn" style="background:var(--prof); color:white" onclick="app.login('p','Professor')">Acessar</button></div>
         <div class="sector-column"><i class="fa fa-user-tie fa-3x" style="color:var(--gestao)"></i><h2>GESTÃO</h2><input type="number" id="g-p" placeholder="Prontuário"><input type="password" id="g-s" placeholder="Senha"><button class="btn" style="background:var(--gestao)" onclick="app.login('g','Gestão')">Acessar</button></div>
         <div class="sector-column"><i class="fa fa-building-columns fa-3x" style="color:var(--secre)"></i><h2>SECRETARIA</h2><input type="number" id="s-p" placeholder="Prontuário"><input type="password" id="s-s" placeholder="Senha"><button class="btn" style="background:var(--secre); color:white" onclick="app.login('s','Secretaria')">Acessar</button></div>
-        <div class="sector-column" style="background: rgba(46,204,113,0.03)"><h2>CADASTRO</h2><input type="text" id="c-n" placeholder="Nome Completo"><input type="number" id="c-p" placeholder="Prontuário"><input type="email" id="c-e" placeholder="E-mail @edu"><select id="c-c"><option value="Professor">Professor</option><option value="Gestão">Gestão</option><option value="Secretaria">Secretaria</option><option value="SMETi">SMETi</option><option value="SEFE">SEFE (temporário)</option></select><button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Solicitar Cadastro</button></div>
-        <div class="sector-column" id="ntei-column"><i class="fa fa-terminal fa-3x" style="color:var(--ntei)"></i><h2>NTEi</h2><input type="number" id="n-p" placeholder="ID"><input type="password" id="n-s" placeholder="Senha"><button class="btn" style="background:var(--ntei); color:white" onclick="app.login('n','NTEi')">Master Login</button></div>
+        <div class="sector-column" style="background: rgba(46,204,113,0.03)"><i class="fa fa-user-plus fa-3x" style="color:var(--cad)"></i><h2>CADASTRO</h2><input type="text" id="c-n" placeholder="Nome Completo"><input type="number" id="c-p" placeholder="Prontuário"><input type="email" id="c-e" placeholder="E-mail @edu"><select id="c-c"><option value="Professor">Professor</option><option value="Gestão">Gestão</option><option value="Secretaria">Secretaria</option><option value="SMETi">SMETi</option><option value="SEFE">SEFE (temporário)</option></select><button class="btn" style="background:var(--cad); color:white" onclick="app.confirmarCad()">Solicitar Cadastro</button></div>
+        <div class="sector-column" id="ntei-column"><i class="fa fa-terminal fa-3x" style="color:var(--ntei)"></i><h2 title="Núcleo de Tecnologia da Inovação">NTEI</h2><p style="font-size:9.5px; color:var(--text-muted); margin:-6px 0 8px 0; letter-spacing:0.4px; max-width:170px; line-height:1.3">Núcleo de Tecnologia da Inovação</p><input type="number" id="n-p" placeholder="ID"><input type="password" id="n-s" placeholder="Senha"><button class="btn" style="background:var(--ntei); color:white" onclick="app.login('n','NTEi')">Master Login</button></div>
         <div class="sector-column"><i class="fa fa-chart-line fa-3x" style="color:var(--smeti)"></i><h2>SMETi</h2><input type="number" id="sm-p" placeholder="Prontuário"><input type="password" id="sm-s" placeholder="Senha"><button class="btn" style="background:var(--smeti); color:black" onclick="app.login('sm','SMETi')">Gerenciar</button></div>
         <div class="sector-column" id="sefe-column" style="border:none; background:rgba(230,126,34,0.05)"><i class="fa fa-user-shield fa-3x" style="color:#e67e22"></i><h2>SEFE</h2><p style="font-size:10px; color:var(--text-muted); margin:-5px 0 8px 0">Acesso temporário</p><input type="number" id="sf-p" placeholder="Prontuário"><input type="password" id="sf-s" placeholder="Senha"><button class="btn" style="background:#e67e22; color:white" onclick="app.login('sf','SEFE')">Acessar</button></div>
     </div>
@@ -388,6 +402,7 @@
     <!-- ════════════════════════ TOP BAR ════════════════════════ -->
     <div id="topbar" class="hidden">
         <div class="topbar-logo">⬡ CONECT</div>
+        <button class="mobile-menu-btn" id="mobile-menu-btn" onclick="app.toggleMobileMenu()" title="Menu"><i class="fa fa-bars"></i></button>
         <div class="topbar-search">
             <i class="fa fa-search"></i>
             <input type="text" id="global-search-input" placeholder="Busca global: alunos, equipamentos, chamados..." oninput="globalSearch.query(this.value)">
@@ -407,16 +422,39 @@
             <button class="topbar-btn ntei-only hidden" onclick="modules.show('admin')"><i class="fa fa-shield"></i> Admin NTEi</button>
         </div>
         <div class="topbar-right">
-            <span id="connection-status" title="Status de conexão" style="font-size:10px; font-weight:bold; white-space:nowrap; padding:3px 8px; border-radius:10px; background:rgba(255,255,255,0.06)">🟢 ONLINE</span>
+            <span class="online-dot"></span>
             <img id="topbar-avatar" src="" class="hidden" onclick="perfilFoto.abrir()" title="Trocar foto de perfil" style="width:28px; height:28px; border-radius:50%; object-fit:cover; cursor:pointer; border:1px solid var(--border-subtle)">
             <div id="topbar-avatar-fallback" onclick="perfilFoto.abrir()" title="Adicionar foto de perfil" style="width:28px; height:28px; border-radius:50%; background:var(--prof); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:bold; cursor:pointer">—</div>
             <span class="topbar-user" id="topbar-username">—</span>
-            <div class="topbar-badge" onclick="modules.show('comunicacao')" title="Chamados/Alertas">
+            <div class="topbar-badge" onclick="notificacoes.abrirCentral()" title="Notificações" style="position:relative; cursor:pointer">
+                <span id="conn-status-dot" title="Status de conexão" style="position:absolute; top:-4px; left:-6px; width:8px; height:8px; border-radius:50%; background:#2ecc71; box-shadow:0 0 4px #2ecc71"></span>
                 <i class="fa fa-bell" style="font-size:16px; color:var(--text-muted)"></i>
                 <span class="badge-count" id="badge-count" style="display:none">0</span>
             </div>
             <button class="btn" style="width:auto; padding:5px 14px; background:rgba(235,77,75,0.2); color:var(--ntei); margin:0; font-size:11px" onclick="app.logout()">Sair</button>
         </div>
+    </div>
+
+    <!-- ════════════════════════ CENTRAL DE NOTIFICAÇÕES (dropdown) ════════════════════════ -->
+    <div id="notif-central" class="hidden" style="position:fixed; top:56px; right:12px; width:340px; max-width:92vw; max-height:70vh; overflow-y:auto; background:var(--bg-panel,#14161c); border:1px solid var(--border-subtle,#333); border-radius:10px; box-shadow:0 8px 30px rgba(0,0,0,0.5); z-index:99998;">
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 12px; border-bottom:1px solid rgba(255,255,255,0.08)">
+            <b style="font-size:13px"><i class="fa fa-bell"></i> Notificações</b>
+            <div>
+                <span style="font-size:10px; color:var(--text-muted); cursor:pointer; margin-right:10px" onclick="notificacoes.marcarTodasLidas()">Marcar todas como lidas</span>
+                <i class="fa fa-xmark" style="cursor:pointer; color:var(--text-muted)" onclick="notificacoes.abrirCentral()"></i>
+            </div>
+        </div>
+        <div id="notif-central-lista" style="padding:6px"></div>
+    </div>
+
+    <!-- ════════════════════════ TOASTS / CARDS FLUTUANTES ════════════════════════ -->
+    <div id="toast-container" style="position:fixed; top:60px; right:12px; z-index:999999; display:flex; flex-direction:column; gap:8px; max-width:340px; width:92vw; pointer-events:none;"></div>
+
+    <!-- ════════════════════════ BANNER DE EMERGÊNCIA (chamados críticos) ════════════════════════ -->
+    <div id="emergencia-banner" class="hidden" style="position:fixed; top:0; left:0; right:0; z-index:999998; background:linear-gradient(90deg,#c0392b,#e74c3c); color:#fff; padding:10px 14px; display:flex; flex-wrap:wrap; align-items:center; gap:10px; box-shadow:0 2px 10px rgba(0,0,0,0.5); animation:pulseEmergencia 1.2s infinite;">
+        <style>@keyframes pulseEmergencia{0%{box-shadow:0 0 0 rgba(231,76,60,0.7)}50%{box-shadow:0 0 18px rgba(231,76,60,0.9)}100%{box-shadow:0 0 0 rgba(231,76,60,0.7)}}</style>
+        <b style="font-size:13px">🚨 ATENDIMENTO DE EMERGÊNCIA</b>
+        <div id="emergencia-banner-lista" style="display:flex; gap:8px; flex-wrap:wrap; flex:1"></div>
     </div>
 
     <!-- ════════════════════════ MODAL: FOTO DE PERFIL ════════════════════════ -->
@@ -672,8 +710,49 @@
 
                         <!-- SMETi Panel -->
                         <div id="panel-smeti" class="panel hidden" style="border: 2px solid var(--smeti)">
-                            <h3 style="color:var(--smeti)"><i class="fa fa-briefcase"></i> PAINEL SMETi — Métricas Reais</h3>
-                            <div class="chart-container"><canvas id="chart-smeti-colegio"></canvas></div>
+                            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px">
+                                <h3 style="color:var(--smeti); margin:0"><i class="fa fa-briefcase"></i> PAINEL SMETi — Tempo Real <span id="smeti-live-dot" style="display:inline-block; width:7px; height:7px; border-radius:50%; background:#2ecc71; margin-left:4px; box-shadow:0 0 5px #2ecc71; animation:pulse 2s infinite"></span></h3>
+                                <div class="cham-filters" id="smeti-filtros" style="margin:0">
+                                    <button class="btn cham-filtro-btn active" style="width:auto; margin:0; padding:5px 10px; font-size:10px" data-f="hoje" onclick="smetiDashboard.setFiltro('hoje')">Hoje</button>
+                                    <button class="btn cham-filtro-btn" style="width:auto; margin:0; padding:5px 10px; font-size:10px; background:rgba(255,255,255,0.08)" data-f="7d" onclick="smetiDashboard.setFiltro('7d')">7 dias</button>
+                                    <button class="btn cham-filtro-btn" style="width:auto; margin:0; padding:5px 10px; font-size:10px; background:rgba(255,255,255,0.08)" data-f="30d" onclick="smetiDashboard.setFiltro('30d')">30 dias</button>
+                                </div>
+                            </div>
+
+                            <div class="kpi-grid" id="smeti-kpi-grid" style="margin-top:14px">
+                                <div class="kpi-card blue"><div class="kpi-num" id="smeti-kpi-terminais">—</div><div class="kpi-label">Terminais Online</div><div class="kpi-trend trend-up" id="smeti-kpi-terminais-trend">—</div></div>
+                                <div class="kpi-card red"><div class="kpi-num" id="smeti-kpi-chamados-abertos">—</div><div class="kpi-label">Chamados Abertos</div><div class="kpi-trend" id="smeti-kpi-chamados-trend">—</div></div>
+                                <div class="kpi-card purple"><div class="kpi-num" id="smeti-kpi-atendimento">—</div><div class="kpi-label">Em Atendimento</div><div class="kpi-trend">Ativos</div></div>
+                                <div class="kpi-card green"><div class="kpi-num" id="smeti-kpi-resolvidos-hoje">—</div><div class="kpi-label">Resolvidos Hoje</div><div class="kpi-trend trend-up">Concluídos</div></div>
+                                <div class="kpi-card green"><div class="kpi-num" id="smeti-kpi-reservas-hoje">—</div><div class="kpi-label">Reservas Hoje</div><div class="kpi-trend">Agenda</div></div>
+                                <div class="kpi-card yellow"><div class="kpi-num" id="smeti-kpi-devolucao">—</div><div class="kpi-label">Devoluções Pendentes</div><div class="kpi-trend trend-down">Atenção</div></div>
+                                <div class="kpi-card yellow"><div class="kpi-num" id="smeti-kpi-tempo-medio">—</div><div class="kpi-label">Tempo Médio Atend.</div><div class="kpi-trend">Chamados</div></div>
+                                <div class="kpi-card red"><div class="kpi-num" id="smeti-kpi-manutencao">—</div><div class="kpi-label">Equip. em Manutenção</div><div class="kpi-trend trend-down">Patrimônio</div></div>
+                            </div>
+
+                            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:14px; margin-top:6px">
+                                <div>
+                                    <p style="font-size:11px; color:var(--text-muted); margin:0 0 2px 0">Evolução de Chamados</p>
+                                    <div class="chart-container"><canvas id="chart-smeti-chamados"></canvas></div>
+                                </div>
+                                <div>
+                                    <p style="font-size:11px; color:var(--text-muted); margin:0 0 2px 0">Terminais</p>
+                                    <div class="chart-container"><canvas id="chart-smeti-terminais"></canvas></div>
+                                </div>
+                                <div>
+                                    <p style="font-size:11px; color:var(--text-muted); margin:0 0 2px 0">Reservas</p>
+                                    <div class="chart-container"><canvas id="chart-smeti-reservas"></canvas></div>
+                                </div>
+                                <div>
+                                    <p style="font-size:11px; color:var(--text-muted); margin:0 0 2px 0">Patrimônio</p>
+                                    <div class="chart-container"><canvas id="chart-smeti-patrimonio"></canvas></div>
+                                </div>
+                            </div>
+
+                            <div style="margin-top:14px; background:rgba(0,0,0,0.25); border-radius:10px; padding:10px 12px">
+                                <p style="font-size:11px; color:var(--text-muted); margin:0 0 6px 0"><i class="fa fa-network-wired"></i> Monitoramento de Rede</p>
+                                <div id="smeti-rede-status" style="font-size:11.5px; color:#888">Aguardando dados do agente.</div>
+                            </div>
                         </div>
                     </div>
 
@@ -1286,6 +1365,71 @@
                     <h3><i class="fa fa-chart-line"></i> Monitoramento de Tráfego</h3>
                     <div class="chart-container"><canvas id="chart-real-time-chamados"></canvas></div>
                 </div>
+
+                <!-- Permissões Individuais por Prontuário -->
+                <div id="panel-permissoes-individuais" class="panel hidden" style="border:1px solid var(--gestao)">
+                    <h3 style="color:var(--gestao)"><i class="fa fa-user-lock"></i> PERMISSÕES INDIVIDUAIS POR PRONTUÁRIO</h3>
+                    <p style="font-size:11px; color:var(--text-muted); margin-top:-6px">Sobrescreve, para este prontuário específico, o que o perfil dele libera ou bloqueia.</p>
+                    <div style="display:flex; gap:8px; margin-top:8px">
+                        <input type="number" id="permind-pront-input" placeholder="Buscar prontuário..." style="margin:0" onkeypress="if(event.key==='Enter') permissoesIndividuais.buscar()">
+                        <button class="btn" style="width:auto; margin:0; padding:9px 16px; background:var(--gestao); color:#000" onclick="permissoesIndividuais.buscar()">Buscar</button>
+                    </div>
+                    <div id="permind-usuario-info" style="margin-top:10px"></div>
+                    <div id="permind-editor" class="hidden" style="margin-top:12px; background:rgba(0,0,0,0.25); border-radius:10px; padding:12px">
+                        <p style="font-size:11px; color:#fff; font-weight:bold; margin:0 0 8px 0"><i class="fa fa-list-check"></i> Menus</p>
+                        <div id="permind-menus-list" style="display:flex; flex-direction:column; gap:6px; max-height:220px; overflow-y:auto"></div>
+                        <p style="font-size:11px; color:#fff; font-weight:bold; margin:14px 0 8px 0"><i class="fa fa-toggle-on"></i> Funções</p>
+                        <div id="permind-funcoes-list" style="display:flex; flex-direction:column; gap:6px; max-height:220px; overflow-y:auto"></div>
+                        <button class="btn" style="background:var(--gestao); color:#000; margin-top:14px" onclick="permissoesIndividuais.salvar()">SALVAR PERMISSÕES INDIVIDUAIS</button>
+                        <button class="btn" style="background:rgba(255,255,255,0.08); margin-top:6px" onclick="permissoesIndividuais.limpar()">Remover overrides (voltar ao padrão do perfil)</button>
+                    </div>
+                    <p style="font-size:10px; color:#aaa; margin:16px 0 6px 0">HISTÓRICO DE OVERRIDES ATIVOS:</p>
+                    <div id="permind-lista-overrides" style="max-height:160px; overflow-y:auto; background:rgba(0,0,0,0.2); padding:5px; border-radius:5px; font-size:11px"></div>
+                </div>
+
+                <!-- Criador de Menus -->
+                <div id="panel-criador-menus" class="panel hidden" style="border:1px solid var(--prof)">
+                    <h3 style="color:var(--prof)"><i class="fa fa-bars"></i> CRIADOR DE MENUS</h3>
+                    <p style="font-size:11px; color:var(--text-muted); margin-top:-6px">Cria itens que aparecem de verdade na barra de navegação, sem remover os já existentes.</p>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px">
+                        <input type="text" id="menu-nome" placeholder="Nome do menu" style="margin:0">
+                        <input type="text" id="menu-icone" placeholder="Ícone Font Awesome (ex: fa-star)" style="margin:0">
+                        <input type="text" id="menu-id" placeholder="ID único (ex: financeiro)" style="margin:0">
+                        <select id="menu-categoria" style="margin:0">
+                            <option value="Geral">Geral</option><option value="Operacional">Operacional</option>
+                            <option value="Pedagógico">Pedagógico</option><option value="Administrativo">Administrativo</option>
+                        </select>
+                    </div>
+                    <p style="font-size:10px; color:#aaa; margin:10px 0 4px 0">Perfis com acesso:</p>
+                    <div id="menu-perfis-checks" style="display:flex; gap:10px; flex-wrap:wrap; font-size:11px"></div>
+                    <input type="text" id="menu-prontuarios" placeholder="Prontuários específicos (opcional, separados por vírgula)" style="margin-top:8px">
+                    <label style="display:flex; align-items:center; gap:6px; font-size:11px; margin-top:8px"><input type="checkbox" id="menu-ativo" checked style="width:auto"> Ativo</label>
+                    <button class="btn" style="background:var(--prof); margin-top:10px" onclick="criadorMenus.salvar()">CRIAR / SALVAR MENU</button>
+                    <p style="font-size:10px; color:#aaa; margin:16px 0 6px 0">MENUS CRIADOS:</p>
+                    <div id="lista-menus-criados" style="max-height:200px; overflow-y:auto; background:rgba(0,0,0,0.2); padding:5px; border-radius:5px"></div>
+                </div>
+
+                <!-- Criador de Funções -->
+                <div id="panel-criador-funcoes" class="panel hidden" style="border:1px solid var(--secre)">
+                    <h3 style="color:var(--secre)"><i class="fa fa-toolbox"></i> CRIADOR DE FUNÇÕES</h3>
+                    <p style="font-size:11px; color:var(--text-muted); margin-top:-6px">Vincula uma função a um menu, perfil e/ou prontuário. Configuração inválida não derruba a plataforma.</p>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px">
+                        <input type="text" id="funcao-nome" placeholder="Nome da função" style="margin:0">
+                        <input type="text" id="funcao-id" placeholder="ID único (ex: exportar_relatorio)" style="margin:0">
+                        <select id="funcao-menu-vinculado" style="margin:0"><option value="">— vincular a um menu —</option></select>
+                        <select id="funcao-perfil" style="margin:0">
+                            <option value="Todos">Todos os perfis</option>
+                            <option value="Professor">Professor</option><option value="Gestão">Gestão</option>
+                            <option value="Secretaria">Secretaria</option><option value="SMETi">SMETi</option>
+                            <option value="NTEi">NTEi</option><option value="SEFE">SEFE</option>
+                        </select>
+                    </div>
+                    <input type="text" id="funcao-prontuarios" placeholder="Prontuários específicos (opcional, separados por vírgula)" style="margin-top:8px">
+                    <label style="display:flex; align-items:center; gap:6px; font-size:11px; margin-top:8px"><input type="checkbox" id="funcao-ativa" checked style="width:auto"> Ativa</label>
+                    <button class="btn" style="background:var(--secre)" onclick="criadorFuncoes.salvar()">CRIAR / SALVAR FUNÇÃO</button>
+                    <p style="font-size:10px; color:#aaa; margin:16px 0 6px 0">FUNÇÕES CRIADAS:</p>
+                    <div id="lista-funcoes-criadas" style="max-height:200px; overflow-y:auto; background:rgba(0,0,0,0.2); padding:5px; border-radius:5px"></div>
+                </div>
             </div>
 
         </div><!-- /module-container -->
@@ -1323,91 +1467,6 @@
     const firebaseConfig = { databaseURL: "https://escala-chacara-default-rtdb.firebaseio.com" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    try { db.ref('.info/connected'); } catch (e) {}
-
-    // ═══════════════════════════════════════════════════════
-    //  SESSÃO PERSISTENTE (login/foto sobrevivem a F5, fechar
-    //  o navegador e reabrir) — armazenada em localStorage.
-    // ═══════════════════════════════════════════════════════
-    const SESSION_KEY = 'ntei_session_v1';
-    const OFFLINE_QUEUE_KEY = 'ntei_offline_queue_v1';
-    const CACHE_PREFIX = 'ntei_cache_';
-
-    const session = {
-        save(user) {
-            if (!user) return;
-            try { localStorage.setItem(SESSION_KEY, JSON.stringify({ user, savedAt: Date.now() })); } catch (e) { console.warn('Falha ao salvar sessão', e); }
-        },
-        load() {
-            try {
-                const raw = localStorage.getItem(SESSION_KEY);
-                if (!raw) return null;
-                const parsed = JSON.parse(raw);
-                return (parsed && parsed.user && parsed.user.pront) ? parsed.user : null;
-            } catch (e) { return null; }
-        },
-        clear() {
-            try { localStorage.removeItem(SESSION_KEY); } catch (e) {}
-        }
-    };
-
-    // Cache local genérico (usado para manter a última foto/dados vistos
-    // disponíveis mesmo offline, e como base para futura sincronização).
-    const localCache = {
-        set(key, value) {
-            try { localStorage.setItem(CACHE_PREFIX + key, JSON.stringify({ value, ts: Date.now() })); } catch (e) {}
-        },
-        get(key) {
-            try {
-                const raw = localStorage.getItem(CACHE_PREFIX + key);
-                if (!raw) return null;
-                return JSON.parse(raw).value;
-            } catch (e) { return null; }
-        }
-    };
-
-    // Fila de gravações feitas offline: guarda a operação para reenviar
-    // ao Firebase assim que a conexão voltar (sincronização futura).
-    const offlineQueue = {
-        add(path, method, data) {
-            let queue = [];
-            try { queue = JSON.parse(localStorage.getItem(OFFLINE_QUEUE_KEY) || '[]'); } catch (e) {}
-            queue.push({ path, method, data, ts: Date.now() });
-            try { localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(queue)); } catch (e) {}
-        },
-        flush() {
-            let queue = [];
-            try { queue = JSON.parse(localStorage.getItem(OFFLINE_QUEUE_KEY) || '[]'); } catch (e) {}
-            if (!queue.length) return;
-            queue.forEach(item => {
-                try { db.ref(item.path)[item.method](item.data); } catch (e) { console.warn('Falha ao sincronizar item pendente', e); }
-            });
-            try { localStorage.removeItem(OFFLINE_QUEUE_KEY); } catch (e) {}
-            if (typeof notifications !== 'undefined' && notifications.criar) {
-                notifications.criar({ titulo: 'Sincronização concluída', modulo: 'Sistema', funcao: 'Offline', texto: `${queue.length} alteração(ões) pendente(s) foram sincronizadas.` });
-            }
-        }
-    };
-
-    // Indicador visual 🟢 ONLINE / 🔴 OFFLINE + orquestração da fila offline.
-    const connectivity = {
-        isOnline: navigator.onLine,
-        init() {
-            this.update(navigator.onLine);
-            window.addEventListener('online', () => { this.update(true); offlineQueue.flush(); });
-            window.addEventListener('offline', () => this.update(false));
-        },
-        update(status) {
-            this.isOnline = status;
-            const el = document.getElementById('connection-status');
-            if (el) {
-                el.innerHTML = status ? '🟢 ONLINE' : '🔴 OFFLINE';
-                el.style.color = status ? '#2ecc71' : '#eb4d4b';
-            }
-            const banner = document.getElementById('login-offline-banner');
-            if (banner) banner.classList.toggle('hidden', status);
-        }
-    };
 
     // ═══════════════════════════════════════════════════════
     //  RESTRIÇÃO VISUAL DE DIA (SEFE) NA TELA DE LOGIN
@@ -1439,6 +1498,7 @@
                 if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + id + "'")) b.classList.add('active');
             });
             this.current = id;
+            if (typeof app !== 'undefined' && app.fecharMobileMenu) app.fecharMobileMenu();
             // Lazy load específico
             if (id === 'dashboard') dashboard.refresh();
             if (id === 'gemeo') gemeoDigital.render();
@@ -1502,6 +1562,9 @@
         if (!e.target.closest('.topbar-search')) {
             const dd = document.getElementById('search-dropdown');
             if (dd) dd.style.display = 'none';
+        }
+        if (!e.target.closest('.topbar-nav') && !e.target.closest('.mobile-menu-btn')) {
+            if (typeof app !== 'undefined' && app.fecharMobileMenu) app.fecharMobileMenu();
         }
     });
 
@@ -2082,11 +2145,28 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
                 timeline
             };
 
-            db.ref('chamados').push(novoChamado).then(() => {
+            db.ref('chamados').push(novoChamado).then((ref) => {
                 document.querySelectorAll('#cham-step-form .cham-form-step').forEach(s => s.classList.remove('active'));
                 document.getElementById('cham-fstep-sucesso').classList.add('active');
                 document.getElementById('cham-codigo-final').textContent = codigo;
                 auditoria.registrar('Chamados', `Chamado ${codigo} aberto: ${this.tipoAtual}/${this.categoriaAtual} — prioridade ${c.prioridade}`);
+
+                // Notifica o próprio solicitante
+                notificacoes.enviar(app.user.pront, {
+                    titulo: 'Chamado criado', corpo: `Seu chamado ${codigo} foi registrado (prioridade ${c.prioridade.toUpperCase()}).`,
+                    modulo: 'Chamados NTEi', funcao: 'Acompanhamento', tipo: 'sucesso', refChamado: ref.key
+                });
+                // Notifica o NTEi
+                notificacoes.enviarNTEi({
+                    titulo: 'NOVO CHAMADO', corpo: `${app.user.nome} está solicitando suporte. Chamado: ${codigo} · Prioridade: ${c.prioridade.toUpperCase()}`,
+                    modulo: 'Chamados NTEi', funcao: 'Triagem', tipo: c.prioridade === 'alta' ? 'erro' : 'alerta',
+                    acaoLabel: 'ABRIR CHAMADO', refChamado: ref.key
+                });
+                // Prioridade alta → alerta de emergência sonoro/visual para o NTEi
+                if (c.prioridade === 'alta') {
+                    db.ref('chamados/' + ref.key).update({ alertaEmergencia: true, alertaReconhecido: false });
+                    if (app.user.cargo === 'NTEi') emergencia.disparar(ref.key, codigo);
+                }
             }).catch(e => alert('Erro ao enviar chamado: ' + e.message));
         },
 
@@ -2101,12 +2181,24 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
                 this.cacheChamados = [];
                 snap.forEach(c => { const d = c.val(); if (d) this.cacheChamados.push({ key: c.key, ...d }); });
                 this._render();
+
+                // NTEi: dispara/atualiza alarme de emergência para chamados críticos ainda não reconhecidos
+                if (app.user && app.user.cargo === 'NTEi') {
+                    this.cacheChamados.forEach(d => {
+                        const critico = d.prioridade === 'alta' && d.status === 'aberto' && !d.alertaReconhecido;
+                        if (critico) emergencia.disparar(d.key, d.codigo);
+                        else if (emergencia.ativos[d.key]) emergencia._pararSom(d.key);
+                    });
+                }
             });
         },
         _render() {
             const box = document.getElementById('lista-chamados-nti');
-            if (!box) return;
-            let itens = this.cacheChamados.filter(d => d.status === 'aberto');
+            if (!box || !app.user) return;
+            const souNTEi = app.user.cargo === 'NTEi';
+            // 🔒 REGRA ABSOLUTA DE PRIVACIDADE: quem não é NTEi só enxerga os próprios chamados,
+            // independente do filtro escolhido.
+            let itens = this.cacheChamados.filter(d => d.status === 'aberto' && (souNTEi || d.pront === app.user.pront));
             const f = this.filtroAtivo;
             if (f !== 'Todos') {
                 if (f === 'meus') itens = itens.filter(d => app.user && d.pront === app.user.pront);
@@ -2138,6 +2230,16 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
         abrirDetalhe(key) {
             const d = this.cacheChamados.find(c => c.key === key);
             if (!d) return;
+            // 🔒 Mesmo sabendo o ID, só o dono do chamado (ou o NTEi) pode abrir.
+            const podeGerenciar = app.user && app.user.cargo === 'NTEi';
+            if (!podeGerenciar && (!app.user || d.pront !== app.user.pront)) {
+                alert('❌ ACESSO NEGADO: você só pode visualizar os próprios chamados.');
+                return;
+            }
+            // NTEi abriu um chamado crítico ainda não reconhecido → para o alarme
+            if (podeGerenciar && d.prioridade === 'alta' && !d.alertaReconhecido) {
+                emergencia.reconhecer(key);
+            }
             this.detalheKeyAtual = key;
             const nomes = { alta: '🔴 Alta', media: '🟡 Média', normal: '🟢 Normal', espera: '🔵 Em Espera' };
             const prio = d.prioridade || 'normal';
@@ -2155,7 +2257,6 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
                 </div>`;
             }).join('');
 
-            const podeGerenciar = app.user && app.user.cargo === 'NTEi';
             let acoesHtml = '';
             if (podeGerenciar) {
                 acoesHtml = `<div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:12px">
@@ -2192,8 +2293,23 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             const timeline = d.timeline || [];
             if (timeline.some(t => t.evento === evento)) return this.abrirDetalhe(key);
             timeline.push({ evento, label, ts: Date.now() });
-            db.ref('chamados/' + key).update({ timeline }).then(() => {
+            const statusMap = { em_atendimento: 'em_atendimento', resolvido: 'resolvido' };
+            const upd = { timeline };
+            if (statusMap[evento]) upd.status = statusMap[evento];
+            if (evento === 'resolvido') upd.resolvidoEm = Date.now();
+            db.ref('chamados/' + key).update(upd).then(() => {
                 auditoria.registrar('Chamados', `Chamado ${d.codigo || key} — etapa: ${label}`);
+                const msgs = {
+                    encaminhado: 'Seu chamado foi encaminhado para atendimento.',
+                    em_atendimento: 'Seu chamado entrou em atendimento.',
+                    resolvido: 'Seu chamado foi resolvido.'
+                };
+                if (msgs[evento]) {
+                    notificacoes.enviar(d.pront, {
+                        titulo: 'Atualização do chamado ' + (d.codigo || ''), corpo: msgs[evento],
+                        modulo: 'Chamados NTEi', funcao: 'Atendimento', tipo: evento === 'resolvido' ? 'sucesso' : 'info', refChamado: key
+                    });
+                }
                 setTimeout(() => this.abrirDetalhe(key), 300);
             });
         },
@@ -2203,8 +2319,16 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             if (!confirm('Encerrar este chamado?')) return;
             const timeline = d.timeline || [];
             timeline.push({ evento: 'encerrado', label: 'Encerrado', ts: Date.now() });
-            db.ref('chamados/' + key).update({ status: 'resolvido', timeline }).then(() => {
+            db.ref('chamados/' + key).update({
+                status: 'resolvido', timeline,
+                encerradoPor: app.user?.nome || '—', encerradoPront: app.user?.pront || '—', encerradoEm: Date.now()
+            }).then(() => {
                 auditoria.registrar('Chamados', `Chamado ${d.codigo || key} encerrado`);
+                notificacoes.enviar(d.pront, {
+                    titulo: 'Chamado encerrado', corpo: `Seu chamado ${d.codigo || ''} foi encerrado pelo NTEi.`,
+                    modulo: 'Chamados NTEi', funcao: 'Atendimento', tipo: 'sucesso', refChamado: key
+                });
+                if (emergencia.ativos[key]) emergencia._pararSom(key);
                 this.fecharDetalhe();
             });
         },
@@ -2599,28 +2723,12 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             if (!fotoUrl) { status.textContent = ''; alert('Selecione um arquivo ou cole um link.'); return; }
 
             status.textContent = 'Salvando...';
-            // Aplica e persiste localmente já de imediato (funciona offline também).
-            app.user.foto = fotoUrl;
-            session.save(app.user);
-            this.aplicar(fotoUrl);
-
-            if (!navigator.onLine) {
-                offlineQueue.add('usuarios/' + app.user.pront, 'update', { foto: fotoUrl });
-                status.textContent = '';
-                alert('Você está offline. A foto foi salva neste dispositivo e será sincronizada automaticamente quando a conexão voltar.');
-                this.fechar();
-                return;
-            }
-
             db.ref('usuarios/' + app.user.pront).update({ foto: fotoUrl }).then(() => {
+                app.user.foto = fotoUrl;
+                this.aplicar(fotoUrl);
                 status.textContent = '';
                 this.fechar();
-            }).catch(e => {
-                // Falha de rede: mantém aplicado localmente e enfileira para sincronizar depois.
-                offlineQueue.add('usuarios/' + app.user.pront, 'update', { foto: fotoUrl });
-                status.textContent = '';
-                this.fechar();
-            });
+            }).catch(e => { status.textContent = ''; alert('Erro ao salvar: ' + e.message); });
         },
         aplicar(url) {
             const img = document.getElementById('topbar-avatar');
@@ -3245,6 +3353,630 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
     // ═══════════════════════════════════════════════════════
     //  APP PRINCIPAL (compatibilidade total com v1)
     // ═══════════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════
+    //  NOTIFICAÇÕES — central real (Firebase + toast + sino)
+    // ═══════════════════════════════════════════════════════
+    const notificacoes = {
+        cache: [],
+        _refsAtivas: [],
+
+        // Envia notificação para um prontuário específico
+        enviar(pront, { titulo, corpo, modulo = '—', funcao = '—', tipo = 'info', acaoLabel = null, acaoFn = null, refChamado = null }) {
+            if (!pront) return;
+            db.ref('notificacoes/' + pront).push({
+                titulo, corpo, modulo, funcao, tipo,
+                acaoLabel, acaoFn, refChamado,
+                lida: false, ts: Date.now()
+            });
+        },
+        // Envia para a caixa compartilhada do NTEi (todo NTEi logado recebe)
+        enviarNTEi({ titulo, corpo, modulo = '—', funcao = '—', tipo = 'info', acaoLabel = null, acaoFn = null, refChamado = null }) {
+            db.ref('notificacoes/_ntei').push({
+                titulo, corpo, modulo, funcao, tipo,
+                acaoLabel, acaoFn, refChamado,
+                lida: false, ts: Date.now()
+            });
+        },
+
+        sync() {
+            if (!app.user) return;
+            this.cache = [];
+            const caminhos = ['notificacoes/' + app.user.pront];
+            if (app.user.cargo === 'NTEi') caminhos.push('notificacoes/_ntei');
+
+            caminhos.forEach(caminho => {
+                const ref = db.ref(caminho).limitToLast(80);
+                this._refsAtivas.push(ref);
+                ref.on('child_added', snap => {
+                    const d = snap.val(); if (!d) return;
+                    const item = { key: snap.key, escopo: caminho, ...d };
+                    // evita duplicar se já estiver no cache
+                    if (this.cache.some(n => n.key === item.key && n.escopo === item.escopo)) return;
+                    this.cache.push(item);
+                    this._renderBadge();
+                    // Só faz "toast" de itens recentes (últimos 15s) para não bombardear no login
+                    if (Date.now() - (d.ts || 0) < 15000) this.toast(item);
+                    if (document.getElementById('notif-central')?.classList.contains('hidden') === false) this._renderCentral();
+                });
+                ref.on('child_changed', snap => {
+                    const d = snap.val(); if (!d) return;
+                    const idx = this.cache.findIndex(n => n.key === snap.key && n.escopo === caminho);
+                    if (idx > -1) this.cache[idx] = { key: snap.key, escopo: caminho, ...d };
+                    this._renderBadge();
+                    this._renderCentral();
+                });
+            });
+        },
+
+        _renderBadge() {
+            const badge = document.getElementById('badge-count');
+            if (!badge) return;
+            const naoLidas = this.cache.filter(n => !n.lida).length;
+            badge.textContent = naoLidas > 99 ? '99+' : naoLidas;
+            badge.style.display = naoLidas > 0 ? 'flex' : 'none';
+        },
+
+        abrirCentral() {
+            const painel = document.getElementById('notif-central');
+            if (!painel) return;
+            const abrir = painel.classList.contains('hidden');
+            painel.classList.toggle('hidden');
+            if (abrir) this._renderCentral();
+        },
+
+        _renderCentral() {
+            const box = document.getElementById('notif-central-lista');
+            if (!box) return;
+            const itens = [...this.cache].sort((a, b) => (b.ts || 0) - (a.ts || 0));
+            if (!itens.length) { box.innerHTML = '<p style="text-align:center; color:#666; font-size:11px; padding:16px">Nenhuma notificação ainda.</p>'; return; }
+            box.innerHTML = itens.map(n => `
+                <div style="padding:8px 10px; border-radius:8px; margin-bottom:4px; background:${n.lida ? 'transparent' : 'rgba(52,152,219,0.08)'}; cursor:pointer" onclick="notificacoes.clicar('${n.key}','${n.escopo}')">
+                    <div style="display:flex; justify-content:space-between; gap:6px">
+                        <b style="font-size:11.5px">${n.titulo || 'Notificação'}</b>
+                        ${!n.lida ? '<span style="width:7px;height:7px;border-radius:50%;background:var(--prof);flex-shrink:0;margin-top:4px"></span>' : ''}
+                    </div>
+                    <div style="font-size:11px; color:#bbb; margin-top:2px">${n.corpo || ''}</div>
+                    <div style="font-size:9.5px; color:#666; margin-top:4px">${n.modulo} · ${n.funcao} — ${new Date(n.ts).toLocaleString('pt-BR')}</div>
+                </div>`).join('');
+        },
+
+        clicar(key, escopo) {
+            const item = this.cache.find(n => n.key === key && n.escopo === escopo);
+            if (!item) return;
+            if (!item.lida) db.ref(escopo + '/' + key).update({ lida: true });
+            if (item.refChamado) {
+                this.abrirCentral();
+                modules.show('operacional');
+                setTimeout(() => chamados.abrirDetalhe(item.refChamado), 200);
+            }
+        },
+
+        marcarTodasLidas() {
+            this.cache.forEach(n => { if (!n.lida) db.ref(n.escopo + '/' + n.key).update({ lida: true }); });
+        },
+
+        // Toast/card flutuante — some sozinho, mas fica salvo na central
+        toast({ titulo, corpo, tipo = 'info', acaoLabel, refChamado }) {
+            const cont = document.getElementById('toast-container');
+            if (!cont) return;
+            const cores = { info: 'var(--prof)', sucesso: 'var(--cad)', alerta: '#e67e22', erro: '#e74c3c' };
+            const el = document.createElement('div');
+            el.style.cssText = `pointer-events:auto; background:#181a20; border-left:3px solid ${cores[tipo] || cores.info}; border-radius:8px; padding:10px 12px; box-shadow:0 6px 20px rgba(0,0,0,0.5); animation:toastIn .25s ease-out;`;
+            el.innerHTML = `<b style="font-size:12px">🔔 ${titulo || ''}</b><div style="font-size:11.5px; color:#ccc; margin-top:3px">${corpo || ''}</div>${acaoLabel ? `<button class="btn" style="width:auto; margin:8px 0 0 0; padding:4px 10px; font-size:10px; background:${cores[tipo] || cores.info}" onclick="modules.show('operacional'); ${refChamado ? `setTimeout(()=>chamados.abrirDetalhe('${refChamado}'),200);` : ''} this.closest('#toast-container>div').remove()">${acaoLabel}</button>` : ''}`;
+            cont.appendChild(el);
+            setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .3s'; setTimeout(() => el.remove(), 300); }, 6500);
+        }
+    };
+    const _styleToast = document.createElement('style');
+    _styleToast.textContent = '@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}';
+    document.head.appendChild(_styleToast);
+
+    // ═══════════════════════════════════════════════════════
+    //  EMERGÊNCIA — alerta sonoro + visual para chamados críticos
+    // ═══════════════════════════════════════════════════════
+    const emergencia = {
+        ativos: {}, // { chamadoKey: { intervalId, codigo } }
+        _audioUnlocked: false,
+        _canal: (typeof BroadcastChannel !== 'undefined') ? new BroadcastChannel('ntei_emergencia') : null,
+
+        init() {
+            document.addEventListener('click', () => { this._audioUnlocked = true; }, { once: true });
+            if (this._canal) {
+                this._canal.onmessage = (ev) => {
+                    if (!ev.data) return;
+                    if (ev.data.tipo === 'disparo') this.disparar(ev.data.key, ev.data.codigo, false);
+                    if (ev.data.tipo === 'reconhecido') this._pararSom(ev.data.key, false);
+                };
+            }
+        },
+
+        _beep() {
+            if (!this._audioUnlocked) return;
+            try {
+                const ctx = this._ctx || (this._ctx = new (window.AudioContext || window.webkitAudioContext)());
+                const osc = ctx.createOscillator(), gain = ctx.createGain();
+                osc.type = 'square'; osc.frequency.value = 880;
+                gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.start(); osc.stop(ctx.currentTime + 0.35);
+            } catch (e) { /* navegador bloqueou áudio — mantemos só o alerta visual */ }
+        },
+
+        disparar(key, codigo, propagar = true) {
+            if (this.ativos[key]) return; // já está soando pra esse chamado
+            this.ativos[key] = { codigo, intervalId: setInterval(() => this._beep(), 1800) };
+            this._beep();
+            this._renderBanner();
+            if (propagar && this._canal) this._canal.postMessage({ tipo: 'disparo', key, codigo });
+        },
+
+        _pararSom(key, propagar = true) {
+            const item = this.ativos[key];
+            if (item) { clearInterval(item.intervalId); delete this.ativos[key]; }
+            this._renderBanner();
+            if (propagar && this._canal) this._canal.postMessage({ tipo: 'reconhecido', key });
+        },
+
+        reconhecer(key) {
+            const item = this.ativos[key];
+            const agora = Date.now();
+            db.ref('chamados/' + key).update({
+                alertaReconhecido: true,
+                reconhecidoPor: app.user?.nome || '—',
+                reconhecidoPront: app.user?.pront || '—',
+                reconhecidoEm: agora
+            });
+            this._pararSom(key);
+        },
+
+        _renderBanner() {
+            const banner = document.getElementById('emergencia-banner');
+            const lista = document.getElementById('emergencia-banner-lista');
+            if (!banner || !lista) return;
+            const chaves = Object.keys(this.ativos);
+            if (!chaves.length) { banner.classList.add('hidden'); lista.innerHTML = ''; return; }
+            banner.classList.remove('hidden');
+            lista.innerHTML = chaves.map(k => `
+                <span style="background:rgba(0,0,0,0.25); padding:4px 10px; border-radius:14px; font-size:11.5px; display:inline-flex; align-items:center; gap:6px">
+                    ${this.ativos[k].codigo || k}
+                    <button class="btn" style="width:auto; margin:0; padding:2px 8px; font-size:10px; background:#fff; color:#c0392b" onclick="modules.show('operacional'); setTimeout(()=>chamados.abrirDetalhe('${k}'),150)">ABRIR</button>
+                </span>`).join('');
+        }
+    };
+    emergencia.init();
+
+    // ═══════════════════════════════════════════════════════
+    //  PERMISSÕES INDIVIDUAIS POR PRONTUÁRIO
+    //  Sobrescreve, por prontuário, o que o perfil libera/bloqueia.
+    //  Estrutura no Firebase: permissoes_individuais/{prontuario} = {
+    //      menusLiberados: [ids], menusBloqueados: [ids],
+    //      funcoesLiberadas: [ids], funcoesBloqueadas: [ids]
+    //  }
+    // ═══════════════════════════════════════════════════════
+    const permissoesIndividuais = {
+        _iniciado: false,
+        _prontAtual: null,
+        _menusBase: [
+            { id: 'dashboard', nome: 'Dashboard' }, { id: 'operacional', nome: 'Operacional' },
+            { id: 'pedagogico', nome: 'Pedagógico' }, { id: 'alunos', nome: 'Alunos' },
+            { id: 'patrimonio', nome: 'Patrimônio' }, { id: 'formacao', nome: 'Formação' },
+            { id: 'gemeo', nome: 'Gêmeo Digital' }, { id: 'comunicacao', nome: 'Comunicação' },
+            { id: 'editais', nome: 'Editais' }, { id: 'analise', nome: 'Análise IA' }, { id: 'admin', nome: 'Admin NTEi' }
+        ],
+
+        init() {
+            if (this._iniciado) return;
+            this._iniciado = true;
+            db.ref('permissoes_individuais').on('value', snap => this._renderHistorico(snap.val() || {}));
+        },
+
+        async buscar() {
+            const pront = document.getElementById('permind-pront-input')?.value.trim();
+            const info = document.getElementById('permind-usuario-info');
+            const editor = document.getElementById('permind-editor');
+            if (!pront) { alert('Informe um prontuário.'); return; }
+            const snap = await db.ref('usuarios/' + pront).once('value');
+            if (!snap.exists()) {
+                info.innerHTML = `<div style="color:var(--ntei); font-size:12px">Prontuário não cadastrado.</div>`;
+                editor.classList.add('hidden');
+                return;
+            }
+            const u = snap.val();
+            this._prontAtual = pront;
+            info.innerHTML = `<div style="background:rgba(0,0,0,0.25); border-radius:8px; padding:8px 10px; font-size:12px">
+                <b>${u.nome || '—'}</b> · ${u.cargo || '—'} · prontuário ${pront}</div>`;
+            const overSnap = await db.ref('permissoes_individuais/' + pront).once('value');
+            const over = overSnap.val() || { menusLiberados: [], menusBloqueados: [], funcoesLiberadas: [], funcoesBloqueadas: [] };
+
+            const menusList = document.getElementById('permind-menus-list');
+            menusList.innerHTML = this._menusBase.map(m => `
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; background:rgba(255,255,255,0.04); border-radius:6px; padding:5px 8px">
+                    <span style="font-size:11.5px">${m.nome}</span>
+                    <select data-menu="${m.id}" style="margin:0; width:auto; font-size:10.5px; padding:3px 6px">
+                        <option value="padrao" ${!over.menusLiberados.includes(m.id) && !over.menusBloqueados.includes(m.id) ? 'selected' : ''}>Padrão do perfil</option>
+                        <option value="liberar" ${over.menusLiberados.includes(m.id) ? 'selected' : ''}>Liberar</option>
+                        <option value="bloquear" ${over.menusBloqueados.includes(m.id) ? 'selected' : ''}>Bloquear</option>
+                    </select>
+                </div>`).join('');
+
+            const funcSnap = await db.ref('funcoes_customizadas').once('value');
+            const funcoes = [];
+            funcSnap.forEach(f => funcoes.push({ id: f.key, ...f.val() }));
+            const funcList = document.getElementById('permind-funcoes-list');
+            funcList.innerHTML = funcoes.length ? funcoes.map(f => `
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; background:rgba(255,255,255,0.04); border-radius:6px; padding:5px 8px">
+                    <span style="font-size:11.5px">${f.nome}</span>
+                    <select data-funcao="${f.id}" style="margin:0; width:auto; font-size:10.5px; padding:3px 6px">
+                        <option value="padrao" ${!over.funcoesLiberadas.includes(f.id) && !over.funcoesBloqueadas.includes(f.id) ? 'selected' : ''}>Padrão do perfil</option>
+                        <option value="liberar" ${over.funcoesLiberadas.includes(f.id) ? 'selected' : ''}>Liberar</option>
+                        <option value="bloquear" ${over.funcoesBloqueadas.includes(f.id) ? 'selected' : ''}>Bloquear</option>
+                    </select>
+                </div>`).join('') : `<div style="font-size:11px; color:#888">Nenhuma função customizada criada ainda.</div>`;
+
+            editor.classList.remove('hidden');
+        },
+
+        salvar() {
+            if (!this._prontAtual) return;
+            const menusLiberados = [], menusBloqueados = [], funcoesLiberadas = [], funcoesBloqueadas = [];
+            document.querySelectorAll('#permind-menus-list select[data-menu]').forEach(sel => {
+                if (sel.value === 'liberar') menusLiberados.push(sel.dataset.menu);
+                if (sel.value === 'bloquear') menusBloqueados.push(sel.dataset.menu);
+            });
+            document.querySelectorAll('#permind-funcoes-list select[data-funcao]').forEach(sel => {
+                if (sel.value === 'liberar') funcoesLiberadas.push(sel.dataset.funcao);
+                if (sel.value === 'bloquear') funcoesBloqueadas.push(sel.dataset.funcao);
+            });
+            db.ref('permissoes_individuais/' + this._prontAtual).set({
+                menusLiberados, menusBloqueados, funcoesLiberadas, funcoesBloqueadas,
+                atualizadoPor: app.user?.nome || '—', atualizadoEm: Date.now()
+            }).then(() => {
+                auditoria.registrar('Permissões', `Permissões individuais atualizadas para o prontuário ${this._prontAtual}`);
+                notificacoes.enviar(this._prontAtual, { titulo: 'Permissões atualizadas', corpo: 'Suas permissões de acesso foram ajustadas pelo NTEi.', modulo: 'Admin NTEi', funcao: 'Permissões', tipo: 'info' });
+                alert('Permissões individuais salvas.');
+            }).catch(e => alert('Erro ao salvar: ' + e.message));
+        },
+
+        limpar() {
+            if (!this._prontAtual) return;
+            if (!confirm('Remover todos os overrides individuais deste prontuário e voltar ao padrão do perfil?')) return;
+            db.ref('permissoes_individuais/' + this._prontAtual).remove().then(() => {
+                auditoria.registrar('Permissões', `Overrides individuais removidos do prontuário ${this._prontAtual}`);
+                this.buscar();
+            });
+        },
+
+        _renderHistorico(dados) {
+            const cont = document.getElementById('permind-lista-overrides');
+            if (!cont) return;
+            const chaves = Object.keys(dados);
+            if (!chaves.length) { cont.innerHTML = '<div style="color:#888">Nenhum override individual ativo.</div>'; return; }
+            cont.innerHTML = chaves.map(pront => {
+                const d = dados[pront];
+                const total = (d.menusLiberados?.length || 0) + (d.menusBloqueados?.length || 0) + (d.funcoesLiberadas?.length || 0) + (d.funcoesBloqueadas?.length || 0);
+                return `<div style="padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.06)">
+                    <b>${pront}</b> — ${total} override(s) · por ${d.atualizadoPor || '—'}
+                </div>`;
+            }).join('');
+        },
+
+        // Usado pelo restante da plataforma para checar se um menu está liberado para o usuário logado
+        async menuLiberado(idMenu, pront) {
+            try {
+                const snap = await db.ref('permissoes_individuais/' + pront).once('value');
+                const over = snap.val();
+                if (!over) return null; // sem override → decide pelo perfil normalmente
+                if (over.menusBloqueados?.includes(idMenu)) return false;
+                if (over.menusLiberados?.includes(idMenu)) return true;
+                return null;
+            } catch (e) { return null; }
+        }
+    };
+
+    // ═══════════════════════════════════════════════════════
+    //  CRIADOR DE MENUS — cria itens reais na barra de navegação
+    //  sem remover os existentes. Persistido em menus_customizados.
+    // ═══════════════════════════════════════════════════════
+    const criadorMenus = {
+        _iniciado: false,
+        init() {
+            if (this._iniciado) return;
+            this._iniciado = true;
+            const perfis = ['Professor', 'Gestão', 'Secretaria', 'SMETi', 'NTEi', 'SEFE'];
+            document.getElementById('menu-perfis-checks').innerHTML = perfis.map(p =>
+                `<label style="display:flex; align-items:center; gap:4px"><input type="checkbox" class="menu-perfil-check" value="${p}" style="width:auto"> ${p}</label>`).join('');
+            db.ref('menus_customizados').on('value', snap => this._render(snap.val() || {}));
+        },
+
+        salvar() {
+            const nome = document.getElementById('menu-nome').value.trim();
+            const icone = document.getElementById('menu-icone').value.trim() || 'fa-star';
+            let id = document.getElementById('menu-id').value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '_');
+            const categoria = document.getElementById('menu-categoria').value;
+            const ativo = document.getElementById('menu-ativo').checked;
+            const prontuarios = document.getElementById('menu-prontuarios').value.split(',').map(s => s.trim()).filter(Boolean);
+            const perfis = Array.from(document.querySelectorAll('.menu-perfil-check:checked')).map(c => c.value);
+
+            if (!nome || !id) { alert('Informe nome e ID do menu.'); return; }
+            // Não permite duplicar um ID já usado pelos menus fixos da plataforma
+            const idsFixos = permissoesIndividuais._menusBase.map(m => m.id);
+            if (idsFixos.includes(id)) { alert('Esse ID já é usado por um menu existente da plataforma. Escolha outro.'); return; }
+
+            db.ref('menus_customizados/' + id).set({
+                nome, icone, categoria, ativo, prontuarios, perfis,
+                criadoPor: app.user?.nome || '—', criadoEm: Date.now()
+            }).then(() => {
+                auditoria.registrar('Admin NTEi', `Menu "${nome}" (${id}) criado/atualizado.`);
+                document.getElementById('menu-nome').value = '';
+                document.getElementById('menu-icone').value = '';
+                document.getElementById('menu-id').value = '';
+                document.getElementById('menu-prontuarios').value = '';
+                document.querySelectorAll('.menu-perfil-check').forEach(c => c.checked = false);
+            }).catch(e => alert('Erro ao salvar menu: ' + e.message));
+        },
+
+        excluir(id) {
+            if (!confirm('Remover este menu customizado?')) return;
+            db.ref('menus_customizados/' + id).remove().then(() => {
+                document.querySelectorAll(`.topbar-btn[data-menu-custom="${id}"]`).forEach(b => b.remove());
+                auditoria.registrar('Admin NTEi', `Menu customizado ${id} removido.`);
+            });
+        },
+
+        _render(dados) {
+            const lista = document.getElementById('lista-menus-criados');
+            const chaves = Object.keys(dados);
+            if (lista) {
+                lista.innerHTML = chaves.length ? chaves.map(id => {
+                    const m = dados[id];
+                    return `<div style="display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.06); font-size:11.5px">
+                        <span><i class="fa ${m.icone}"></i> ${m.nome} <small style="color:#888">(${m.categoria || 'Geral'}${m.ativo ? '' : ' · inativo'})</small></span>
+                        <button class="btn" style="width:auto; margin:0; padding:2px 8px; font-size:10px; background:var(--ntei)" onclick="criadorMenus.excluir('${id}')">Excluir</button>
+                    </div>`;
+                }).join('') : '<div style="color:#888; font-size:11px">Nenhum menu customizado criado ainda.</div>';
+            }
+            this._renderNaTopbar(dados);
+            criadorFuncoes._atualizarSelectMenus(dados);
+        },
+
+        // Injeta os menus ativos e permitidos para o cargo/prontuário atual na topbar real
+        _renderNaTopbar(dados) {
+            document.querySelectorAll('.topbar-btn[data-menu-custom]').forEach(b => b.remove());
+            if (!app.user) return;
+            const nav = document.getElementById('topbar-nav');
+            const adminBtn = nav?.querySelector('button[onclick*="\'admin\'"]');
+            Object.keys(dados).forEach(id => {
+                const m = dados[id];
+                if (!m.ativo) return;
+                const permitidoPorPerfil = !m.perfis?.length || m.perfis.includes(app.user.cargo);
+                const permitidoPorProntuario = !m.prontuarios?.length || m.prontuarios.includes(String(app.user.pront));
+                if (!(permitidoPorPerfil || permitidoPorProntuario)) return;
+                const btn = document.createElement('button');
+                btn.className = 'topbar-btn';
+                btn.dataset.menuCustom = id;
+                btn.innerHTML = `<i class="fa ${m.icone}"></i> ${m.nome}`;
+                btn.onclick = () => alert(`Menu "${m.nome}" criado pelo NTEi. Conteúdo customizável — vincule funções a ele no Criador de Funções.`);
+                if (adminBtn) nav.insertBefore(btn, adminBtn); else nav.appendChild(btn);
+            });
+        }
+    };
+
+    // ═══════════════════════════════════════════════════════
+    //  CRIADOR DE FUNÇÕES — vincula uma função a menu/perfil/prontuário
+    // ═══════════════════════════════════════════════════════
+    const criadorFuncoes = {
+        _iniciado: false,
+        init() {
+            if (this._iniciado) return;
+            this._iniciado = true;
+            db.ref('funcoes_customizadas').on('value', snap => this._render(snap.val() || {}));
+        },
+
+        _atualizarSelectMenus(menus) {
+            const sel = document.getElementById('funcao-menu-vinculado');
+            if (!sel) return;
+            const atual = sel.value;
+            sel.innerHTML = '<option value="">— vincular a um menu —</option>' +
+                permissoesIndividuais._menusBase.map(m => `<option value="${m.id}">${m.nome} (padrão)</option>`).join('') +
+                Object.keys(menus || {}).map(id => `<option value="${id}">${menus[id].nome} (customizado)</option>`).join('');
+            sel.value = atual;
+        },
+
+        salvar() {
+            const nome = document.getElementById('funcao-nome').value.trim();
+            let id = document.getElementById('funcao-id').value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '_');
+            const menu = document.getElementById('funcao-menu-vinculado').value;
+            const perfil = document.getElementById('funcao-perfil').value;
+            const ativa = document.getElementById('funcao-ativa').checked;
+            const prontuarios = document.getElementById('funcao-prontuarios').value.split(',').map(s => s.trim()).filter(Boolean);
+
+            if (!nome || !id) { alert('Informe nome e ID da função.'); return; }
+
+            db.ref('funcoes_customizadas/' + id).set({
+                nome, menu, perfil, prontuarios, ativa,
+                criadoPor: app.user?.nome || '—', criadoEm: Date.now()
+            }).then(() => {
+                auditoria.registrar('Admin NTEi', `Função "${nome}" (${id}) criada/atualizada.`);
+                document.getElementById('funcao-nome').value = '';
+                document.getElementById('funcao-id').value = '';
+                document.getElementById('funcao-prontuarios').value = '';
+            }).catch(e => alert('Erro ao salvar função: ' + e.message));
+        },
+
+        excluir(id) {
+            if (!confirm('Remover esta função customizada?')) return;
+            db.ref('funcoes_customizadas/' + id).remove().then(() => auditoria.registrar('Admin NTEi', `Função customizada ${id} removida.`));
+        },
+
+        _render(dados) {
+            const lista = document.getElementById('lista-funcoes-criadas');
+            if (!lista) return;
+            const chaves = Object.keys(dados);
+            lista.innerHTML = chaves.length ? chaves.map(id => {
+                const f = dados[id];
+                return `<div style="display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.06); font-size:11.5px">
+                    <span>${f.nome} <small style="color:#888">(${f.perfil}${f.menu ? ' · ' + f.menu : ''}${f.ativa ? '' : ' · inativa'})</small></span>
+                    <button class="btn" style="width:auto; margin:0; padding:2px 8px; font-size:10px; background:var(--ntei)" onclick="criadorFuncoes.excluir('${id}')">Excluir</button>
+                </div>`;
+            }).join('') : '<div style="color:#888; font-size:11px">Nenhuma função customizada criada ainda.</div>';
+        }
+    };
+
+    // ═══════════════════════════════════════════════════════
+    //  PAINEL SMETi — dashboard operacional em tempo real
+    //  (chamados, terminais, reservas e patrimônio via listeners
+    //   .on('value') do Firebase — nada é recalculado por polling)
+    // ═══════════════════════════════════════════════════════
+    const smetiDashboard = {
+        _iniciado: false,
+        filtro: 'hoje',
+        _chamados: {}, _equipamentos: {}, _reservas: {}, _terminais: {},
+        _charts: {},
+
+        init() {
+            if (this._iniciado) return; // evita duplicar listeners/gráficos
+            this._iniciado = true;
+
+            db.ref('chamados').on('value', snap => {
+                this._chamados = snap.val() || {};
+                this._render();
+            });
+            db.ref('equipamentos').on('value', snap => {
+                this._equipamentos = snap.val() || {};
+                this._render();
+            });
+            db.ref('reservas').on('value', snap => {
+                this._reservas = snap.val() || {};
+                this._render();
+            });
+            db.ref('veyon_live').on('value', snap => {
+                this._terminais = snap.val() || {};
+                this._render();
+            });
+
+            // Terminais podem "cair" sem disparar evento novo — reavalia online/offline a cada 10s,
+            // e também reclassifica reservas de hoje/futuras quando o dia virar.
+            if (this._intervalId) clearInterval(this._intervalId);
+            this._intervalId = setInterval(() => this._render(), 10000);
+        },
+
+        setFiltro(f) {
+            this.filtro = f;
+            document.querySelectorAll('#smeti-filtros .cham-filtro-btn').forEach(b => {
+                const ativo = b.dataset.f === f;
+                b.classList.toggle('active', ativo);
+                b.style.background = ativo ? 'var(--smeti)' : 'rgba(255,255,255,0.08)';
+                b.style.color = ativo ? '#000' : '#fff';
+            });
+            this._render();
+        },
+
+        _dentroDoFiltro(ts) {
+            if (!ts) return false;
+            const agora = Date.now();
+            const dias = this.filtro === 'hoje' ? 1 : this.filtro === '7d' ? 7 : 30;
+            if (this.filtro === 'hoje') {
+                return new Date(ts).toDateString() === new Date(agora).toDateString();
+            }
+            return (agora - ts) <= dias * 86400000;
+        },
+
+        _render() {
+            if (document.getElementById('panel-smeti')?.classList.contains('hidden')) return;
+
+            const chamadosArr = Object.values(this._chamados || {});
+            const equipArr = Object.values(this._equipamentos || {});
+            const reservasArr = Object.values(this._reservas || {});
+            const terminaisArr = Object.entries(this._terminais || {});
+            const agora = Date.now();
+            const hojeStr = new Date().toISOString().slice(0, 10);
+
+            // ── Terminais ──
+            const terminaisOnline = terminaisArr.filter(([, s]) => (agora - (s.lastSeen || 0)) < 12000).length;
+            const terminaisOffline = terminaisArr.length - terminaisOnline;
+            app.setKPI('smeti-kpi-terminais', terminaisOnline);
+            const trendTerm = document.getElementById('smeti-kpi-terminais-trend');
+            if (trendTerm) trendTerm.textContent = terminaisArr.length ? `de ${terminaisArr.length} registrados` : 'nenhum registrado';
+
+            // ── Chamados ──
+            const abertos = chamadosArr.filter(c => c.status === 'aberto').length;
+            const emAtendimento = chamadosArr.filter(c => c.status === 'em_atendimento').length;
+            const resolvidosHoje = chamadosArr.filter(c => c.status === 'resolvido' || c.status === 'encerrado')
+                .filter(c => c.resolvidoEm && new Date(c.resolvidoEm).toISOString().slice(0,10) === hojeStr).length;
+            app.setKPI('smeti-kpi-chamados-abertos', abertos);
+            app.setKPI('smeti-kpi-atendimento', emAtendimento);
+            app.setKPI('smeti-kpi-resolvidos-hoje', resolvidosHoje);
+            const trendCham = document.getElementById('smeti-kpi-chamados-trend');
+            const criticos = chamadosArr.filter(c => c.status === 'aberto' && c.prioridade === 'alta').length;
+            if (trendCham) trendCham.textContent = criticos > 0 ? `${criticos} crítico(s)` : 'sem críticos';
+
+            // Tempo médio de atendimento (criação → resolução), últimos concluídos
+            const concluidosComTempo = chamadosArr.filter(c => c.timestamp && c.resolvidoEm);
+            let tempoMedioTxt = '—';
+            if (concluidosComTempo.length) {
+                const mediaMs = concluidosComTempo.reduce((s, c) => s + (c.resolvidoEm - c.timestamp), 0) / concluidosComTempo.length;
+                const min = Math.round(mediaMs / 60000);
+                tempoMedioTxt = min < 60 ? `${min}min` : `${(min / 60).toFixed(1)}h`;
+            }
+            app.setKPI('smeti-kpi-tempo-medio', tempoMedioTxt);
+
+            // ── Reservas ──
+            const reservasHoje = reservasArr.filter(r => (r.dt || '').slice(0, 10) === hojeStr).length;
+            const devolucaoPendente = reservasArr.filter(r => r.status === 'em_uso' || r.status === 'aguardando_validation').length;
+            app.setKPI('smeti-kpi-reservas-hoje', reservasHoje);
+            app.setKPI('smeti-kpi-devolucao', devolucaoPendente);
+
+            // ── Patrimônio ──
+            const disponivel = equipArr.filter(e => e.status === 'disponivel').length;
+            const emUso = equipArr.filter(e => e.status === 'ocupado').length;
+            const manutencao = equipArr.filter(e => e.status === 'manutencao').length;
+            app.setKPI('smeti-kpi-manutencao', manutencao);
+
+            this._renderGraficos({ abertos, emAtendimento, resolvidos: chamadosArr.filter(c=>c.status==='resolvido').length, encerrados: chamadosArr.filter(c=>c.status==='encerrado').length },
+                { terminaisOnline, terminaisOffline },
+                { reservasHoje, futuras: reservasArr.filter(r => (r.dt||'').slice(0,10) > hojeStr).length, concluidas: reservasArr.filter(r => r.status === 'concluido').length, pendentes: devolucaoPendente },
+                { disponivel, emUso, manutencao });
+        },
+
+        _renderGraficos(cham, term, res, pat) {
+            const mk = (id, cfg) => {
+                const ctx = document.getElementById(id);
+                if (!ctx) return;
+                if (this._charts[id]) { this._charts[id].destroy(); }
+                this._charts[id] = new Chart(ctx, cfg);
+            };
+            const legendaBaixo = { legend: { position: 'bottom', labels: { color: '#aaa', font: { size: 9 }, boxWidth: 8 } } };
+
+            mk('chart-smeti-chamados', {
+                type: 'bar',
+                data: { labels: ['Abertos', 'Atendimento', 'Resolvidos', 'Encerrados'],
+                    datasets: [{ data: [cham.abertos, cham.emAtendimento, cham.resolvidos, cham.encerrados],
+                        backgroundColor: ['#eb4d4b', '#a55eea', '#2ecc71', '#555'], borderRadius: 5 }] },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { color: '#aaa', precision: 0 } }, x: { ticks: { color: '#aaa', font: { size: 9 } } } } }
+            });
+
+            mk('chart-smeti-terminais', {
+                type: 'doughnut',
+                data: { labels: ['Online', 'Offline'], datasets: [{ data: [term.terminaisOnline, term.terminaisOffline], backgroundColor: ['#2ecc71', '#eb4d4b'], borderWidth: 0 }] },
+                options: { maintainAspectRatio: false, plugins: legendaBaixo }
+            });
+
+            mk('chart-smeti-reservas', {
+                type: 'doughnut',
+                data: { labels: ['Hoje', 'Futuras', 'Concluídas', 'Pendentes'], datasets: [{ data: [res.reservasHoje, res.futuras, res.concluidas, res.pendentes], backgroundColor: ['#2ecc71', '#f1c40f', '#00adef', '#eb4d4b'], borderWidth: 0 }] },
+                options: { maintainAspectRatio: false, plugins: legendaBaixo }
+            });
+
+            mk('chart-smeti-patrimonio', {
+                type: 'doughnut',
+                data: { labels: ['Disponível', 'Em Uso', 'Manutenção'], datasets: [{ data: [pat.disponivel, pat.emUso, pat.manutencao], backgroundColor: ['#2ecc71', '#00adef', '#eb4d4b'], borderWidth: 0 }] },
+                options: { maintainAspectRatio: false, plugins: legendaBaixo }
+            });
+        }
+    };
+
     const app = {
         user: null,
         currentTicket: null,
@@ -3261,10 +3993,42 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             return this.diasRestritosSEFE.includes(hoje);
         },
 
+        // Encerra a sessão SOMENTE quando o usuário clica em Sair.
+        // Não apaga histórico, chamados, reservas, permissões, foto etc — só a sessão local.
         logout() {
-            session.clear();
-            this.user = null;
+            if (!confirm('Deseja realmente sair?')) return;
+            try { localStorage.removeItem('nteiSession'); } catch (e) {}
+            auditoria.registrar('Autenticação', 'Logout realizado.');
             location.reload();
+        },
+
+        // 🟢 ONLINE / 🔴 OFFLINE — reflete conexão real com o Firebase + navegador
+        iniciarStatusConexao() {
+            const dot = () => document.getElementById('conn-status-dot');
+            const aplicar = (online) => {
+                const d = dot(); if (!d) return;
+                d.style.background = online ? '#2ecc71' : '#e74c3c';
+                d.style.boxShadow = online ? '0 0 4px #2ecc71' : '0 0 4px #e74c3c';
+                d.title = online ? 'Conectado (online)' : 'Sem conexão — operando localmente';
+            };
+            db.ref('.info/connected').on('value', snap => aplicar(!!snap.val() && navigator.onLine));
+            window.addEventListener('online', () => aplicar(navigator.onLine));
+            window.addEventListener('offline', () => aplicar(false));
+        },
+
+        toggleMobileMenu() {
+            const nav = document.getElementById('topbar-nav');
+            const btn = document.getElementById('mobile-menu-btn');
+            if (!nav) return;
+            const abrir = !nav.classList.contains('mobile-open');
+            nav.classList.toggle('mobile-open', abrir);
+            if (btn) { btn.classList.toggle('active', abrir); btn.innerHTML = abrir ? '<i class="fa fa-xmark"></i>' : '<i class="fa fa-bars"></i>'; }
+        },
+        fecharMobileMenu() {
+            const nav = document.getElementById('topbar-nav');
+            const btn = document.getElementById('mobile-menu-btn');
+            if (nav) nav.classList.remove('mobile-open');
+            if (btn) { btn.classList.remove('active'); btn.innerHTML = '<i class="fa fa-bars"></i>'; }
         },
 
         async login(pre, cargo) {
@@ -3273,11 +4037,6 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             const p = pEl?.value;
             const s = sEl?.value;
             if (!s) { alert('Informe a senha.'); return; }
-
-            if (!navigator.onLine) {
-                alert('⚠️ Sem conexão com a internet. O primeiro login precisa de internet. Se você já usou este dispositivo antes, sua sessão salva será restaurada automaticamente ao abrir a página.');
-                return;
-            }
 
             // Regra do SEFE: login só existe/funciona nos dias marcados (07 e 08/07).
             if (cargo === 'SEFE' && !this.hojeERestrito()) {
@@ -3348,35 +4107,26 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             else if (c === "SMETi") pass = "smeti2026";
             else if (c === "SEFE") pass = "sefe2026";
             db.ref('usuarios/' + p).set({ nome: n, pront: p, cargo: c, pass: pass, email: e, status: 'pendente' })
-            .then(() => { alert(`Solicitação enviada! Senha inicial ao ser aprovado: ${pass}`); document.getElementById('c-n').value = ""; document.getElementById('c-p').value = ""; document.getElementById('c-e').value = ""; });
+            .then(() => {
+                alert(`Solicitação enviada! Senha inicial ao ser aprovado: ${pass}`); document.getElementById('c-n').value = ""; document.getElementById('c-p').value = ""; document.getElementById('c-e').value = "";
+                notificacoes.enviarNTEi({
+                    titulo: 'SOLICITAÇÃO DE AUTORIZAÇÃO', corpo: `${n} (${c}) está solicitando autorização da conta. Prontuário: ${p}`,
+                    modulo: 'Admin NTEi', funcao: 'Autorizações', tipo: 'alerta', acaoLabel: 'VER SOLICITAÇÃO'
+                });
+            });
         },
 
         start() {
-            // Sessão persistente: salva o usuário logado para sobreviver a F5,
-            // fechar o navegador e reabrir (login persistente).
-            session.save(this.user);
-            localCache.set('ultimo_usuario_pront', this.user.pront);
+            // Persiste a sessão localmente (login sobrevive a F5 / fechar navegador)
+            try { localStorage.setItem('nteiSession', JSON.stringify(this.user)); } catch (e) {}
 
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('main-system').style.display = 'block';
             document.getElementById('topbar').classList.remove('hidden');
             document.getElementById('topbar-username').textContent = (this.user.nome || '—') + ' · ' + this.user.cargo;
 
-            // Foto de perfil persistente: aplica imediatamente a foto salva
-            // (localStorage/sessão), sem depender de o Firebase responder.
-            perfilFoto.aplicar(this.user.foto || null);
-
-            // Se estiver online, atualiza os dados do usuário (foto, permissões,
-            // status) com o que está no banco, mantendo a sessão local em dia.
-            if (navigator.onLine && this.user.pront) {
-                db.ref('usuarios/' + this.user.pront).once('value').then(snap => {
-                    if (snap.exists()) {
-                        this.user = Object.assign({}, this.user, snap.val());
-                        session.save(this.user);
-                        perfilFoto.aplicar(this.user.foto || null);
-                    }
-                }).catch(() => {});
-            }
+            notificacoes.sync();
+            this.iniciarStatusConexao();
 
             // Aplica o menu restrito (Professor/SEFE) ou modo SEFE especial
             this.aplicarRestricoesDeMenu();
@@ -3395,6 +4145,9 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
                 document.getElementById('panel-veyon-master').classList.remove('hidden');
                 document.getElementById('solicitacoes-acesso-box').classList.remove('hidden');
                 document.getElementById('panel-feedbacks-ntei').classList.remove('hidden');
+                document.getElementById('panel-permissoes-individuais').classList.remove('hidden');
+                document.getElementById('panel-criador-menus').classList.remove('hidden');
+                document.getElementById('panel-criador-funcoes').classList.remove('hidden');
                 document.querySelectorAll('.ntei-only').forEach(el => el.classList.remove('hidden'));
                 this.syncSolicitacoesAcesso();
                 this.syncFeedbacks();
@@ -3403,6 +4156,9 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
                 this.escutarUsuariosSistema();
                 this.startVeyonMasterMonitor();
                 this.initNTEiChart();
+                criadorMenus.init();
+                criadorFuncoes.init();
+                permissoesIndividuais.init();
             }
 
             // Inicia todos os módulos
@@ -3436,7 +4192,7 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             riscoEscolar.analisar();
             chamados.sync();
 
-            if (this.user.cargo === 'SMETi' || this.user.cargo === 'NTEi') this.initSMETiChart();
+            if (this.user.cargo === 'SMETi' || this.user.cargo === 'NTEi') smetiDashboard.init();
 
             auditoria.registrar('Autenticação', `Login realizado com sucesso no sistema.`);
         },
@@ -3543,17 +4299,8 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             new Chart(ctx, { type: 'line', data: { labels: ['-10m','-8m','-6m','-4m','-2m','Agora'], datasets: [{ data: [5,12,8,15,9,14], borderColor: '#eb4d4b', fill: true, backgroundColor: grad, tension: 0.4, borderWidth: 2, pointRadius: 0 }] }, options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false }, ticks: { color: '#666', font: { size: 10 } } } } } });
         },
 
-        async initSMETiChart() {
-            const [resSnap, chamSnap] = await Promise.all([db.ref('reservas').once('value'), db.ref('chamados').once('value')]);
-            let countReservas = 0, countChamados = 0;
-            resSnap.forEach(() => countReservas++);
-            chamSnap.forEach(() => countChamados++);
-            const ctx = document.getElementById('chart-smeti-colegio');
-            if (!ctx) return;
-            const existing = Chart.getChart(ctx);
-            if (existing) existing.destroy();
-            new Chart(ctx, { type: 'bar', data: { labels: ['Reservas', 'Chamados TI', 'Metas %'], datasets: [{ data: [countReservas, countChamados, 92], backgroundColor: ['#2ecc71','#eb4d4b','#a55eea'], borderRadius: 5 }] }, options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { color: '#aaa' } } } } });
-        },
+        // Compat: mantido pois pode ser chamado por outro ponto do sistema; delega ao painel novo.
+        initSMETiChart() { smetiDashboard.init(); },
 
         startSystemHeartbeat() {
             setInterval(() => {
@@ -3676,9 +4423,7 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
                     }
                 });
                 if (!tem) box.innerHTML = '<p style="font-size:11px; color:#555; margin:0">Nenhuma solicitação pendente.</p>';
-                // Badge count
-                const badgeEl = document.getElementById('badge-count');
-                if (badgeEl) { badgeEl.textContent = tem ? '!' : '0'; badgeEl.style.display = tem ? 'flex' : 'none'; }
+                // O badge do sino agora é controlado pela central de notificações (notificacoes._renderBadge).
             });
         },
 
@@ -3686,12 +4431,16 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             const sisgemPass = "sg" + Math.floor(1000 + Math.random() * 9000);
             const siseducPass = "se" + Math.floor(1000 + Math.random() * 9000);
             db.ref('usuarios/' + key).update({ status: 'ativo', siseduc_user: "edu." + key, siseduc_pass: siseducPass, sisgem_user: "gem." + key, sisgem_pass: sisgemPass })
-            .then(() => { alert("Conta Ativada! Credenciais Siseduc e Sisgem criadas."); auditoria.registrar('Usuários', `Conta ${key} ativada`); });
+            .then(() => {
+                alert("Conta Ativada! Credenciais Siseduc e Sisgem criadas."); auditoria.registrar('Usuários', `Conta ${key} ativada`);
+                notificacoes.enviar(key, { titulo: 'Conta autorizada', corpo: 'Sua conta foi aprovada pelo NTEi. Você já pode acessar o sistema.', modulo: 'Admin NTEi', funcao: 'Autorizações', tipo: 'sucesso' });
+            });
         },
 
         deletarConta(key) {
             if (!key || key === "undefined") return alert("Erro ao identificar registro.");
             if (confirm(`Remover permanentemente o registro [${key}]?`)) {
+                notificacoes.enviar(key, { titulo: 'Solicitação recusada', corpo: 'Sua solicitação de conta foi recusada pelo NTEi.', modulo: 'Admin NTEi', funcao: 'Autorizações', tipo: 'erro' });
                 db.ref('usuarios/' + key).remove().then(() => { alert("Removido!"); auditoria.registrar('Usuários', `Conta ${key} removida`); });
             }
         },
@@ -3996,6 +4745,16 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             const campo = (inOp && inOp.value.trim()) ? inOp : (inCom && inCom.value.trim()) ? inCom : null;
             if (!campo || !this.currentTicket) return;
             db.ref('chat_privado_ntei/' + this.currentTicket).push({ n: this.user.nome, t: campo.value });
+            // Se quem respondeu é NTEi, avisa o solicitante do chamado
+            if (this.user.cargo === 'NTEi') {
+                const d = chamados.cacheChamados.find(c => c.key === this.currentTicket);
+                if (d && d.pront) {
+                    notificacoes.enviar(d.pront, {
+                        titulo: 'NTEi respondeu seu chamado', corpo: `Nova mensagem no chamado ${d.codigo || ''}.`,
+                        modulo: 'Chamados NTEi', funcao: 'Atendimento', tipo: 'info', refChamado: this.currentTicket
+                    });
+                }
+            }
             campo.value = '';
         },
 
@@ -4049,38 +4808,86 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             if (!eqId || !sl || !dt) return alert("Preencha todos os campos da reserva.");
             db.ref('equipamentos/' + eqId).update({ status: 'ocupado' });
             db.ref('reservas').push({ equip_id: eqId, eq: eqNome.replace('💻 ', ''), sl, dt, u: this.user.nome, p: this.user.pront, status: 'em_uso', timestamp: Date.now() })
-            .then(() => { alert("Reservado!"); document.getElementById('res-sl').value = ''; document.getElementById('res-dt').value = ''; auditoria.registrar('Reservas', `Nova reserva: ${eqNome} — Sala ${sl}`); });
+            .then(() => {
+                alert("Reservado!"); document.getElementById('res-sl').value = ''; document.getElementById('res-dt').value = '';
+                auditoria.registrar('Reservas', `Nova reserva: ${eqNome} — Sala ${sl}`);
+                notificacoes.enviar(this.user.pront, {
+                    titulo: 'Reserva criada', corpo: `${eqNome.replace('💻 ', '')} · Sala ${sl} · ${dt.replace('T', ' às ')}`,
+                    modulo: 'Reservas', funcao: 'Agendamento', tipo: 'sucesso'
+                });
+            });
+        },
+
+        // 📅 Classifica a reserva pela DATA ATUAL — recalculado sempre que a lista é (re)desenhada,
+        // sem precisar de edição manual.
+        classificarDataReserva(dtStr) {
+            if (!dtStr) return null;
+            const hoje = new Date(); const hojeYMD = hoje.toISOString().split('T')[0];
+            const dataReserva = dtStr.split('T')[0];
+            if (dataReserva === hojeYMD) return { tag: '📅 RESERVA DE HOJE', cor: 'var(--cad)' };
+            if (dataReserva > hojeYMD) return { tag: '🕐 RESERVADO EM BREVE', cor: 'var(--gestao)' };
+            return null; // datas passadas não recebem badge de agenda
         },
 
         escutarReservasTempoReal() {
             db.ref('reservas').on('value', snap => {
-                const container = document.getElementById('lista-reservas-ativas');
-                if (!container) return;
-                container.innerHTML = '';
-                let tem = false;
-                snap.forEach(c => {
-                    const d = c.val(); if (!d) return;
-                    if (d.status === 'em_uso' || d.status === 'aguardando_validation' || d.status === 'manutencao') {
-                        tem = true;
-                        let labelStatus = '', bordaCor = '#fff', btnAcao = '';
-                        if (d.status === 'em_uso') {
-                            labelStatus = `<span class="status-badge" style="color:var(--cad)">⚡ Em Uso</span>`; bordaCor = 'var(--cad)';
-                            if (this.user && (d.p === this.user.pront || this.user.cargo === 'NTEi')) {
-                                btnAcao = `<button class="btn" style="background:var(--ntei);font-size:10px;padding:4px;height:auto;margin-top:6px" onclick="app.gatilhoDarBaixa('${c.key}','${d.equip_id}','${d.eq}')">Dar Baixa / Devolver</button>`;
-                            }
-                        } else if (d.status === 'aguardando_validation') {
-                            labelStatus = `<span class="status-badge" style="color:var(--gestao)">⏳ Devolvido</span>`; bordaCor = 'var(--gestao)';
-                        } else if (d.status === 'manutencao') {
-                            labelStatus = `<span class="status-badge" style="color:var(--ntei)">🛠️ Manutenção</span>`; bordaCor = 'var(--ntei)';
-                            if (this.user && this.user.cargo === 'NTEi') {
-                                btnAcao = `<button class="btn" style="background:var(--cad);font-size:10px;padding:4px;height:auto;margin-top:6px" onclick="app.finalizarManutencaoDireto('${c.key}','${d.equip_id}')">Concluir Manutenção</button>`;
-                            }
-                        }
-                        container.innerHTML += `<div class="res-card-agenda" style="border-left-color:${bordaCor}">${labelStatus}<b>${d.eq}</b><br><small>📍 Sala: ${d.sl} | ⏰ ${(d.dt||'').replace('T',' às ')}</small><br><small>👤 Por: <b>${d.u}</b></small>${btnAcao}</div>`;
-                    }
-                });
-                if (!tem) container.innerHTML = '<p style="text-align:center;color:#444;font-size:12px;padding:10px">🎉 Nenhum equipamento reservado.</p>';
+                this.cacheReservas = [];
+                snap.forEach(c => { const d = c.val(); if (d) this.cacheReservas.push({ key: c.key, ...d }); });
+                this._renderReservas();
+                this._checarNotificacaoReservaHoje();
             });
+            // Recalcula badges hoje/em breve ao mudar de dia, voltar pra aba ou abrir o módulo — sem precisar editar nada
+            if (!this._reservaTickAtivo) {
+                this._reservaTickAtivo = true;
+                document.addEventListener('visibilitychange', () => { if (!document.hidden) this._renderReservas(); });
+                setInterval(() => this._renderReservas(), 60 * 1000);
+            }
+        },
+
+        _checarNotificacaoReservaHoje() {
+            if (!this.user) return;
+            const hojeYMD = new Date().toISOString().split('T')[0];
+            (this.cacheReservas || []).forEach(d => {
+                if (d.status !== 'em_uso' || d.p !== this.user.pront || !d.dt) return;
+                if (d.dt.split('T')[0] !== hojeYMD) return;
+                const flag = 'res_notif_hoje_' + d.key + '_' + hojeYMD;
+                if (localStorage.getItem(flag)) return;
+                localStorage.setItem(flag, '1');
+                notificacoes.enviar(this.user.pront, {
+                    titulo: 'Sua reserva é hoje', corpo: `${d.eq} · Sala ${d.sl} · ${(d.dt||'').replace('T',' às ')}`,
+                    modulo: 'Reservas', funcao: 'Agenda', tipo: 'alerta'
+                });
+            });
+        },
+
+        _renderReservas() {
+            const container = document.getElementById('lista-reservas-ativas');
+            if (!container || !this.cacheReservas) return;
+            container.innerHTML = '';
+            let tem = false;
+            this.cacheReservas.forEach(d => {
+                if (d.status === 'em_uso' || d.status === 'aguardando_validation' || d.status === 'manutencao') {
+                    tem = true;
+                    let labelStatus = '', bordaCor = '#fff', btnAcao = '';
+                    if (d.status === 'em_uso') {
+                        labelStatus = `<span class="status-badge" style="color:var(--cad)">⚡ Em Uso</span>`; bordaCor = 'var(--cad)';
+                        if (this.user && (d.p === this.user.pront || this.user.cargo === 'NTEi')) {
+                            btnAcao = `<button class="btn" style="background:var(--ntei);font-size:10px;padding:4px;height:auto;margin-top:6px" onclick="app.gatilhoDarBaixa('${d.key}','${d.equip_id}','${d.eq}')">Dar Baixa / Devolver</button>`;
+                        }
+                    } else if (d.status === 'aguardando_validation') {
+                        labelStatus = `<span class="status-badge" style="color:var(--gestao)">⏳ Devolvido</span>`; bordaCor = 'var(--gestao)';
+                    } else if (d.status === 'manutencao') {
+                        labelStatus = `<span class="status-badge" style="color:var(--ntei)">🛠️ Manutenção</span>`; bordaCor = 'var(--ntei)';
+                        if (this.user && this.user.cargo === 'NTEi') {
+                            btnAcao = `<button class="btn" style="background:var(--cad);font-size:10px;padding:4px;height:auto;margin-top:6px" onclick="app.finalizarManutencaoDireto('${d.key}','${d.equip_id}')">Concluir Manutenção</button>`;
+                        }
+                    }
+                    const agenda = this.classificarDataReserva(d.dt);
+                    const tagAgenda = agenda ? `<span style="display:inline-block; font-size:9.5px; padding:2px 7px; border-radius:10px; background:${agenda.cor}; color:#000; margin-bottom:4px">${agenda.tag}</span><br>` : '';
+                    container.innerHTML += `<div class="res-card-agenda" style="border-left-color:${bordaCor}">${tagAgenda}${labelStatus}<b>${d.eq}</b><br><small>📍 Sala: ${d.sl} | ⏰ ${(d.dt||'').replace('T',' às ')}</small><br><small>👤 Por: <b>${d.u}</b></small>${btnAcao}</div>`;
+                }
+            });
+            if (!tem) container.innerHTML = '<p style="text-align:center;color:#444;font-size:12px;padding:10px">🎉 Nenhum equipamento reservado.</p>';
         },
 
         finalizarManutencaoDireto(reservaId, equipId) {
@@ -4116,21 +4923,6 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
     };
 
     // ═══════════════════════════════════════════════════════
-    //  RESTAURAÇÃO AUTOMÁTICA DE SESSÃO (login persistente)
-    //  Executa ao carregar a página: se existir sessão salva,
-    //  entra direto no sistema sem precisar logar de novo —
-    //  funciona mesmo offline, usando os dados em cache.
-    // ═══════════════════════════════════════════════════════
-    connectivity.init();
-    (function restaurarSessaoSalva() {
-        const usuarioSalvo = session.load();
-        if (usuarioSalvo && usuarioSalvo.pront) {
-            app.user = usuarioSalvo;
-            app.start();
-        }
-    })();
-
-    // ═══════════════════════════════════════════════════════
     //  EVENT LISTENERS
     // ═══════════════════════════════════════════════════════
     document.getElementById('nuvem-input').addEventListener('keypress', e => { if (e.key === 'Enter') nuvem.ask(); });
@@ -4138,6 +4930,33 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
     document.getElementById('consulta-input')?.addEventListener('keypress', e => { if (e.key === 'Enter') consultaIA.perguntar(); });
     document.getElementById('p2p-chat-in')?.addEventListener('keypress', e => { if (e.key === 'Enter') app.sendP2PMessage(); });
     document.getElementById('chat-in')?.addEventListener('keypress', e => { if (e.key === 'Enter') app.sendChat(); });
+
+    // ═══════════════════════════════════════════════════════
+    //  RESTAURAÇÃO AUTOMÁTICA DE SESSÃO (login persistente)
+    // ═══════════════════════════════════════════════════════
+    (function restaurarSessao() {
+        let sessaoSalva = null;
+        try { sessaoSalva = JSON.parse(localStorage.getItem('nteiSession') || 'null'); } catch (e) { sessaoSalva = null; }
+        if (!sessaoSalva || !sessaoSalva.pront) return; // sem sessão válida → mostra login normalmente
+
+        app.user = sessaoSalva;
+        app.start();
+
+        // Revalida em segundo plano (não trava a entrada): se a conta foi bloqueada/removida
+        // depois do último login, encerra a sessão local na próxima verificação.
+        db.ref('usuarios/' + sessaoSalva.pront).once('value').then(snap => {
+            if (!snap.exists()) return;
+            const dados = snap.val();
+            if (dados.status === 'bloqueado_permanente' || (dados.status === 'bloqueado_temporario' && dados.bloqueado_ate && new Date().toISOString().split('T')[0] <= dados.bloqueado_ate)) {
+                alert('⚠️ Sua conta foi bloqueada. Sessão encerrada.');
+                app.logout();
+                return;
+            }
+            // Atualiza dados locais (permissões, foto, cargo) sem precisar logar de novo
+            app.user = { ...sessaoSalva, ...dados };
+            localStorage.setItem('nteiSession', JSON.stringify(app.user));
+        }).catch(() => {});
+    })();
     </script>
 </body>
 </html>
