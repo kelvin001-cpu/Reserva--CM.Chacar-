@@ -1365,6 +1365,71 @@
                     <h3><i class="fa fa-chart-line"></i> Monitoramento de Tráfego</h3>
                     <div class="chart-container"><canvas id="chart-real-time-chamados"></canvas></div>
                 </div>
+
+                <!-- Permissões Individuais por Prontuário -->
+                <div id="panel-permissoes-individuais" class="panel hidden" style="border:1px solid var(--gestao)">
+                    <h3 style="color:var(--gestao)"><i class="fa fa-user-lock"></i> PERMISSÕES INDIVIDUAIS POR PRONTUÁRIO</h3>
+                    <p style="font-size:11px; color:var(--text-muted); margin-top:-6px">Sobrescreve, para este prontuário específico, o que o perfil dele libera ou bloqueia.</p>
+                    <div style="display:flex; gap:8px; margin-top:8px">
+                        <input type="number" id="permind-pront-input" placeholder="Buscar prontuário..." style="margin:0" onkeypress="if(event.key==='Enter') permissoesIndividuais.buscar()">
+                        <button class="btn" style="width:auto; margin:0; padding:9px 16px; background:var(--gestao); color:#000" onclick="permissoesIndividuais.buscar()">Buscar</button>
+                    </div>
+                    <div id="permind-usuario-info" style="margin-top:10px"></div>
+                    <div id="permind-editor" class="hidden" style="margin-top:12px; background:rgba(0,0,0,0.25); border-radius:10px; padding:12px">
+                        <p style="font-size:11px; color:#fff; font-weight:bold; margin:0 0 8px 0"><i class="fa fa-list-check"></i> Menus</p>
+                        <div id="permind-menus-list" style="display:flex; flex-direction:column; gap:6px; max-height:220px; overflow-y:auto"></div>
+                        <p style="font-size:11px; color:#fff; font-weight:bold; margin:14px 0 8px 0"><i class="fa fa-toggle-on"></i> Funções</p>
+                        <div id="permind-funcoes-list" style="display:flex; flex-direction:column; gap:6px; max-height:220px; overflow-y:auto"></div>
+                        <button class="btn" style="background:var(--gestao); color:#000; margin-top:14px" onclick="permissoesIndividuais.salvar()">SALVAR PERMISSÕES INDIVIDUAIS</button>
+                        <button class="btn" style="background:rgba(255,255,255,0.08); margin-top:6px" onclick="permissoesIndividuais.limpar()">Remover overrides (voltar ao padrão do perfil)</button>
+                    </div>
+                    <p style="font-size:10px; color:#aaa; margin:16px 0 6px 0">HISTÓRICO DE OVERRIDES ATIVOS:</p>
+                    <div id="permind-lista-overrides" style="max-height:160px; overflow-y:auto; background:rgba(0,0,0,0.2); padding:5px; border-radius:5px; font-size:11px"></div>
+                </div>
+
+                <!-- Criador de Menus -->
+                <div id="panel-criador-menus" class="panel hidden" style="border:1px solid var(--prof)">
+                    <h3 style="color:var(--prof)"><i class="fa fa-bars"></i> CRIADOR DE MENUS</h3>
+                    <p style="font-size:11px; color:var(--text-muted); margin-top:-6px">Cria itens que aparecem de verdade na barra de navegação, sem remover os já existentes.</p>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px">
+                        <input type="text" id="menu-nome" placeholder="Nome do menu" style="margin:0">
+                        <input type="text" id="menu-icone" placeholder="Ícone Font Awesome (ex: fa-star)" style="margin:0">
+                        <input type="text" id="menu-id" placeholder="ID único (ex: financeiro)" style="margin:0">
+                        <select id="menu-categoria" style="margin:0">
+                            <option value="Geral">Geral</option><option value="Operacional">Operacional</option>
+                            <option value="Pedagógico">Pedagógico</option><option value="Administrativo">Administrativo</option>
+                        </select>
+                    </div>
+                    <p style="font-size:10px; color:#aaa; margin:10px 0 4px 0">Perfis com acesso:</p>
+                    <div id="menu-perfis-checks" style="display:flex; gap:10px; flex-wrap:wrap; font-size:11px"></div>
+                    <input type="text" id="menu-prontuarios" placeholder="Prontuários específicos (opcional, separados por vírgula)" style="margin-top:8px">
+                    <label style="display:flex; align-items:center; gap:6px; font-size:11px; margin-top:8px"><input type="checkbox" id="menu-ativo" checked style="width:auto"> Ativo</label>
+                    <button class="btn" style="background:var(--prof); margin-top:10px" onclick="criadorMenus.salvar()">CRIAR / SALVAR MENU</button>
+                    <p style="font-size:10px; color:#aaa; margin:16px 0 6px 0">MENUS CRIADOS:</p>
+                    <div id="lista-menus-criados" style="max-height:200px; overflow-y:auto; background:rgba(0,0,0,0.2); padding:5px; border-radius:5px"></div>
+                </div>
+
+                <!-- Criador de Funções -->
+                <div id="panel-criador-funcoes" class="panel hidden" style="border:1px solid var(--secre)">
+                    <h3 style="color:var(--secre)"><i class="fa fa-toolbox"></i> CRIADOR DE FUNÇÕES</h3>
+                    <p style="font-size:11px; color:var(--text-muted); margin-top:-6px">Vincula uma função a um menu, perfil e/ou prontuário. Configuração inválida não derruba a plataforma.</p>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px">
+                        <input type="text" id="funcao-nome" placeholder="Nome da função" style="margin:0">
+                        <input type="text" id="funcao-id" placeholder="ID único (ex: exportar_relatorio)" style="margin:0">
+                        <select id="funcao-menu-vinculado" style="margin:0"><option value="">— vincular a um menu —</option></select>
+                        <select id="funcao-perfil" style="margin:0">
+                            <option value="Todos">Todos os perfis</option>
+                            <option value="Professor">Professor</option><option value="Gestão">Gestão</option>
+                            <option value="Secretaria">Secretaria</option><option value="SMETi">SMETi</option>
+                            <option value="NTEi">NTEi</option><option value="SEFE">SEFE</option>
+                        </select>
+                    </div>
+                    <input type="text" id="funcao-prontuarios" placeholder="Prontuários específicos (opcional, separados por vírgula)" style="margin-top:8px">
+                    <label style="display:flex; align-items:center; gap:6px; font-size:11px; margin-top:8px"><input type="checkbox" id="funcao-ativa" checked style="width:auto"> Ativa</label>
+                    <button class="btn" style="background:var(--secre)" onclick="criadorFuncoes.salvar()">CRIAR / SALVAR FUNÇÃO</button>
+                    <p style="font-size:10px; color:#aaa; margin:16px 0 6px 0">FUNÇÕES CRIADAS:</p>
+                    <div id="lista-funcoes-criadas" style="max-height:200px; overflow-y:auto; background:rgba(0,0,0,0.2); padding:5px; border-radius:5px"></div>
+                </div>
             </div>
 
         </div><!-- /module-container -->
@@ -3482,6 +3547,283 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
     emergencia.init();
 
     // ═══════════════════════════════════════════════════════
+    //  PERMISSÕES INDIVIDUAIS POR PRONTUÁRIO
+    //  Sobrescreve, por prontuário, o que o perfil libera/bloqueia.
+    //  Estrutura no Firebase: permissoes_individuais/{prontuario} = {
+    //      menusLiberados: [ids], menusBloqueados: [ids],
+    //      funcoesLiberadas: [ids], funcoesBloqueadas: [ids]
+    //  }
+    // ═══════════════════════════════════════════════════════
+    const permissoesIndividuais = {
+        _iniciado: false,
+        _prontAtual: null,
+        _menusBase: [
+            { id: 'dashboard', nome: 'Dashboard' }, { id: 'operacional', nome: 'Operacional' },
+            { id: 'pedagogico', nome: 'Pedagógico' }, { id: 'alunos', nome: 'Alunos' },
+            { id: 'patrimonio', nome: 'Patrimônio' }, { id: 'formacao', nome: 'Formação' },
+            { id: 'gemeo', nome: 'Gêmeo Digital' }, { id: 'comunicacao', nome: 'Comunicação' },
+            { id: 'editais', nome: 'Editais' }, { id: 'analise', nome: 'Análise IA' }, { id: 'admin', nome: 'Admin NTEi' }
+        ],
+
+        init() {
+            if (this._iniciado) return;
+            this._iniciado = true;
+            db.ref('permissoes_individuais').on('value', snap => this._renderHistorico(snap.val() || {}));
+        },
+
+        async buscar() {
+            const pront = document.getElementById('permind-pront-input')?.value.trim();
+            const info = document.getElementById('permind-usuario-info');
+            const editor = document.getElementById('permind-editor');
+            if (!pront) { alert('Informe um prontuário.'); return; }
+            const snap = await db.ref('usuarios/' + pront).once('value');
+            if (!snap.exists()) {
+                info.innerHTML = `<div style="color:var(--ntei); font-size:12px">Prontuário não cadastrado.</div>`;
+                editor.classList.add('hidden');
+                return;
+            }
+            const u = snap.val();
+            this._prontAtual = pront;
+            info.innerHTML = `<div style="background:rgba(0,0,0,0.25); border-radius:8px; padding:8px 10px; font-size:12px">
+                <b>${u.nome || '—'}</b> · ${u.cargo || '—'} · prontuário ${pront}</div>`;
+            const overSnap = await db.ref('permissoes_individuais/' + pront).once('value');
+            const over = overSnap.val() || { menusLiberados: [], menusBloqueados: [], funcoesLiberadas: [], funcoesBloqueadas: [] };
+
+            const menusList = document.getElementById('permind-menus-list');
+            menusList.innerHTML = this._menusBase.map(m => `
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; background:rgba(255,255,255,0.04); border-radius:6px; padding:5px 8px">
+                    <span style="font-size:11.5px">${m.nome}</span>
+                    <select data-menu="${m.id}" style="margin:0; width:auto; font-size:10.5px; padding:3px 6px">
+                        <option value="padrao" ${!over.menusLiberados.includes(m.id) && !over.menusBloqueados.includes(m.id) ? 'selected' : ''}>Padrão do perfil</option>
+                        <option value="liberar" ${over.menusLiberados.includes(m.id) ? 'selected' : ''}>Liberar</option>
+                        <option value="bloquear" ${over.menusBloqueados.includes(m.id) ? 'selected' : ''}>Bloquear</option>
+                    </select>
+                </div>`).join('');
+
+            const funcSnap = await db.ref('funcoes_customizadas').once('value');
+            const funcoes = [];
+            funcSnap.forEach(f => funcoes.push({ id: f.key, ...f.val() }));
+            const funcList = document.getElementById('permind-funcoes-list');
+            funcList.innerHTML = funcoes.length ? funcoes.map(f => `
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; background:rgba(255,255,255,0.04); border-radius:6px; padding:5px 8px">
+                    <span style="font-size:11.5px">${f.nome}</span>
+                    <select data-funcao="${f.id}" style="margin:0; width:auto; font-size:10.5px; padding:3px 6px">
+                        <option value="padrao" ${!over.funcoesLiberadas.includes(f.id) && !over.funcoesBloqueadas.includes(f.id) ? 'selected' : ''}>Padrão do perfil</option>
+                        <option value="liberar" ${over.funcoesLiberadas.includes(f.id) ? 'selected' : ''}>Liberar</option>
+                        <option value="bloquear" ${over.funcoesBloqueadas.includes(f.id) ? 'selected' : ''}>Bloquear</option>
+                    </select>
+                </div>`).join('') : `<div style="font-size:11px; color:#888">Nenhuma função customizada criada ainda.</div>`;
+
+            editor.classList.remove('hidden');
+        },
+
+        salvar() {
+            if (!this._prontAtual) return;
+            const menusLiberados = [], menusBloqueados = [], funcoesLiberadas = [], funcoesBloqueadas = [];
+            document.querySelectorAll('#permind-menus-list select[data-menu]').forEach(sel => {
+                if (sel.value === 'liberar') menusLiberados.push(sel.dataset.menu);
+                if (sel.value === 'bloquear') menusBloqueados.push(sel.dataset.menu);
+            });
+            document.querySelectorAll('#permind-funcoes-list select[data-funcao]').forEach(sel => {
+                if (sel.value === 'liberar') funcoesLiberadas.push(sel.dataset.funcao);
+                if (sel.value === 'bloquear') funcoesBloqueadas.push(sel.dataset.funcao);
+            });
+            db.ref('permissoes_individuais/' + this._prontAtual).set({
+                menusLiberados, menusBloqueados, funcoesLiberadas, funcoesBloqueadas,
+                atualizadoPor: app.user?.nome || '—', atualizadoEm: Date.now()
+            }).then(() => {
+                auditoria.registrar('Permissões', `Permissões individuais atualizadas para o prontuário ${this._prontAtual}`);
+                notificacoes.enviar(this._prontAtual, { titulo: 'Permissões atualizadas', corpo: 'Suas permissões de acesso foram ajustadas pelo NTEi.', modulo: 'Admin NTEi', funcao: 'Permissões', tipo: 'info' });
+                alert('Permissões individuais salvas.');
+            }).catch(e => alert('Erro ao salvar: ' + e.message));
+        },
+
+        limpar() {
+            if (!this._prontAtual) return;
+            if (!confirm('Remover todos os overrides individuais deste prontuário e voltar ao padrão do perfil?')) return;
+            db.ref('permissoes_individuais/' + this._prontAtual).remove().then(() => {
+                auditoria.registrar('Permissões', `Overrides individuais removidos do prontuário ${this._prontAtual}`);
+                this.buscar();
+            });
+        },
+
+        _renderHistorico(dados) {
+            const cont = document.getElementById('permind-lista-overrides');
+            if (!cont) return;
+            const chaves = Object.keys(dados);
+            if (!chaves.length) { cont.innerHTML = '<div style="color:#888">Nenhum override individual ativo.</div>'; return; }
+            cont.innerHTML = chaves.map(pront => {
+                const d = dados[pront];
+                const total = (d.menusLiberados?.length || 0) + (d.menusBloqueados?.length || 0) + (d.funcoesLiberadas?.length || 0) + (d.funcoesBloqueadas?.length || 0);
+                return `<div style="padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.06)">
+                    <b>${pront}</b> — ${total} override(s) · por ${d.atualizadoPor || '—'}
+                </div>`;
+            }).join('');
+        },
+
+        // Usado pelo restante da plataforma para checar se um menu está liberado para o usuário logado
+        async menuLiberado(idMenu, pront) {
+            try {
+                const snap = await db.ref('permissoes_individuais/' + pront).once('value');
+                const over = snap.val();
+                if (!over) return null; // sem override → decide pelo perfil normalmente
+                if (over.menusBloqueados?.includes(idMenu)) return false;
+                if (over.menusLiberados?.includes(idMenu)) return true;
+                return null;
+            } catch (e) { return null; }
+        }
+    };
+
+    // ═══════════════════════════════════════════════════════
+    //  CRIADOR DE MENUS — cria itens reais na barra de navegação
+    //  sem remover os existentes. Persistido em menus_customizados.
+    // ═══════════════════════════════════════════════════════
+    const criadorMenus = {
+        _iniciado: false,
+        init() {
+            if (this._iniciado) return;
+            this._iniciado = true;
+            const perfis = ['Professor', 'Gestão', 'Secretaria', 'SMETi', 'NTEi', 'SEFE'];
+            document.getElementById('menu-perfis-checks').innerHTML = perfis.map(p =>
+                `<label style="display:flex; align-items:center; gap:4px"><input type="checkbox" class="menu-perfil-check" value="${p}" style="width:auto"> ${p}</label>`).join('');
+            db.ref('menus_customizados').on('value', snap => this._render(snap.val() || {}));
+        },
+
+        salvar() {
+            const nome = document.getElementById('menu-nome').value.trim();
+            const icone = document.getElementById('menu-icone').value.trim() || 'fa-star';
+            let id = document.getElementById('menu-id').value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '_');
+            const categoria = document.getElementById('menu-categoria').value;
+            const ativo = document.getElementById('menu-ativo').checked;
+            const prontuarios = document.getElementById('menu-prontuarios').value.split(',').map(s => s.trim()).filter(Boolean);
+            const perfis = Array.from(document.querySelectorAll('.menu-perfil-check:checked')).map(c => c.value);
+
+            if (!nome || !id) { alert('Informe nome e ID do menu.'); return; }
+            // Não permite duplicar um ID já usado pelos menus fixos da plataforma
+            const idsFixos = permissoesIndividuais._menusBase.map(m => m.id);
+            if (idsFixos.includes(id)) { alert('Esse ID já é usado por um menu existente da plataforma. Escolha outro.'); return; }
+
+            db.ref('menus_customizados/' + id).set({
+                nome, icone, categoria, ativo, prontuarios, perfis,
+                criadoPor: app.user?.nome || '—', criadoEm: Date.now()
+            }).then(() => {
+                auditoria.registrar('Admin NTEi', `Menu "${nome}" (${id}) criado/atualizado.`);
+                document.getElementById('menu-nome').value = '';
+                document.getElementById('menu-icone').value = '';
+                document.getElementById('menu-id').value = '';
+                document.getElementById('menu-prontuarios').value = '';
+                document.querySelectorAll('.menu-perfil-check').forEach(c => c.checked = false);
+            }).catch(e => alert('Erro ao salvar menu: ' + e.message));
+        },
+
+        excluir(id) {
+            if (!confirm('Remover este menu customizado?')) return;
+            db.ref('menus_customizados/' + id).remove().then(() => {
+                document.querySelectorAll(`.topbar-btn[data-menu-custom="${id}"]`).forEach(b => b.remove());
+                auditoria.registrar('Admin NTEi', `Menu customizado ${id} removido.`);
+            });
+        },
+
+        _render(dados) {
+            const lista = document.getElementById('lista-menus-criados');
+            const chaves = Object.keys(dados);
+            if (lista) {
+                lista.innerHTML = chaves.length ? chaves.map(id => {
+                    const m = dados[id];
+                    return `<div style="display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.06); font-size:11.5px">
+                        <span><i class="fa ${m.icone}"></i> ${m.nome} <small style="color:#888">(${m.categoria || 'Geral'}${m.ativo ? '' : ' · inativo'})</small></span>
+                        <button class="btn" style="width:auto; margin:0; padding:2px 8px; font-size:10px; background:var(--ntei)" onclick="criadorMenus.excluir('${id}')">Excluir</button>
+                    </div>`;
+                }).join('') : '<div style="color:#888; font-size:11px">Nenhum menu customizado criado ainda.</div>';
+            }
+            this._renderNaTopbar(dados);
+            criadorFuncoes._atualizarSelectMenus(dados);
+        },
+
+        // Injeta os menus ativos e permitidos para o cargo/prontuário atual na topbar real
+        _renderNaTopbar(dados) {
+            document.querySelectorAll('.topbar-btn[data-menu-custom]').forEach(b => b.remove());
+            if (!app.user) return;
+            const nav = document.getElementById('topbar-nav');
+            const adminBtn = nav?.querySelector('button[onclick*="\'admin\'"]');
+            Object.keys(dados).forEach(id => {
+                const m = dados[id];
+                if (!m.ativo) return;
+                const permitidoPorPerfil = !m.perfis?.length || m.perfis.includes(app.user.cargo);
+                const permitidoPorProntuario = !m.prontuarios?.length || m.prontuarios.includes(String(app.user.pront));
+                if (!(permitidoPorPerfil || permitidoPorProntuario)) return;
+                const btn = document.createElement('button');
+                btn.className = 'topbar-btn';
+                btn.dataset.menuCustom = id;
+                btn.innerHTML = `<i class="fa ${m.icone}"></i> ${m.nome}`;
+                btn.onclick = () => alert(`Menu "${m.nome}" criado pelo NTEi. Conteúdo customizável — vincule funções a ele no Criador de Funções.`);
+                if (adminBtn) nav.insertBefore(btn, adminBtn); else nav.appendChild(btn);
+            });
+        }
+    };
+
+    // ═══════════════════════════════════════════════════════
+    //  CRIADOR DE FUNÇÕES — vincula uma função a menu/perfil/prontuário
+    // ═══════════════════════════════════════════════════════
+    const criadorFuncoes = {
+        _iniciado: false,
+        init() {
+            if (this._iniciado) return;
+            this._iniciado = true;
+            db.ref('funcoes_customizadas').on('value', snap => this._render(snap.val() || {}));
+        },
+
+        _atualizarSelectMenus(menus) {
+            const sel = document.getElementById('funcao-menu-vinculado');
+            if (!sel) return;
+            const atual = sel.value;
+            sel.innerHTML = '<option value="">— vincular a um menu —</option>' +
+                permissoesIndividuais._menusBase.map(m => `<option value="${m.id}">${m.nome} (padrão)</option>`).join('') +
+                Object.keys(menus || {}).map(id => `<option value="${id}">${menus[id].nome} (customizado)</option>`).join('');
+            sel.value = atual;
+        },
+
+        salvar() {
+            const nome = document.getElementById('funcao-nome').value.trim();
+            let id = document.getElementById('funcao-id').value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '_');
+            const menu = document.getElementById('funcao-menu-vinculado').value;
+            const perfil = document.getElementById('funcao-perfil').value;
+            const ativa = document.getElementById('funcao-ativa').checked;
+            const prontuarios = document.getElementById('funcao-prontuarios').value.split(',').map(s => s.trim()).filter(Boolean);
+
+            if (!nome || !id) { alert('Informe nome e ID da função.'); return; }
+
+            db.ref('funcoes_customizadas/' + id).set({
+                nome, menu, perfil, prontuarios, ativa,
+                criadoPor: app.user?.nome || '—', criadoEm: Date.now()
+            }).then(() => {
+                auditoria.registrar('Admin NTEi', `Função "${nome}" (${id}) criada/atualizada.`);
+                document.getElementById('funcao-nome').value = '';
+                document.getElementById('funcao-id').value = '';
+                document.getElementById('funcao-prontuarios').value = '';
+            }).catch(e => alert('Erro ao salvar função: ' + e.message));
+        },
+
+        excluir(id) {
+            if (!confirm('Remover esta função customizada?')) return;
+            db.ref('funcoes_customizadas/' + id).remove().then(() => auditoria.registrar('Admin NTEi', `Função customizada ${id} removida.`));
+        },
+
+        _render(dados) {
+            const lista = document.getElementById('lista-funcoes-criadas');
+            if (!lista) return;
+            const chaves = Object.keys(dados);
+            lista.innerHTML = chaves.length ? chaves.map(id => {
+                const f = dados[id];
+                return `<div style="display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.06); font-size:11.5px">
+                    <span>${f.nome} <small style="color:#888">(${f.perfil}${f.menu ? ' · ' + f.menu : ''}${f.ativa ? '' : ' · inativa'})</small></span>
+                    <button class="btn" style="width:auto; margin:0; padding:2px 8px; font-size:10px; background:var(--ntei)" onclick="criadorFuncoes.excluir('${id}')">Excluir</button>
+                </div>`;
+            }).join('') : '<div style="color:#888; font-size:11px">Nenhuma função customizada criada ainda.</div>';
+        }
+    };
+
+    // ═══════════════════════════════════════════════════════
     //  PAINEL SMETi — dashboard operacional em tempo real
     //  (chamados, terminais, reservas e patrimônio via listeners
     //   .on('value') do Firebase — nada é recalculado por polling)
@@ -3803,6 +4145,9 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
                 document.getElementById('panel-veyon-master').classList.remove('hidden');
                 document.getElementById('solicitacoes-acesso-box').classList.remove('hidden');
                 document.getElementById('panel-feedbacks-ntei').classList.remove('hidden');
+                document.getElementById('panel-permissoes-individuais').classList.remove('hidden');
+                document.getElementById('panel-criador-menus').classList.remove('hidden');
+                document.getElementById('panel-criador-funcoes').classList.remove('hidden');
                 document.querySelectorAll('.ntei-only').forEach(el => el.classList.remove('hidden'));
                 this.syncSolicitacoesAcesso();
                 this.syncFeedbacks();
@@ -3811,6 +4156,9 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
                 this.escutarUsuariosSistema();
                 this.startVeyonMasterMonitor();
                 this.initNTEiChart();
+                criadorMenus.init();
+                criadorFuncoes.init();
+                permissoesIndividuais.init();
             }
 
             // Inicia todos os módulos
