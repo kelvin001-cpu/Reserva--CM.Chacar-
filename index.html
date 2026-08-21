@@ -20,6 +20,13 @@
             --panel-bg: rgba(22, 27, 34, 0.75);
             --border-subtle: rgba(255,255,255,0.08);
             --text-muted: #8b949e;
+            /* ══ novo sistema visual "foda" ══ */
+            --sidebar-w: 268px;
+            --glass-bg: linear-gradient(160deg, rgba(26,30,40,0.92), rgba(15,17,24,0.88));
+            --glass-border: rgba(255,255,255,0.09);
+            --accent-grad: linear-gradient(120deg, #00adef, #6a5cff);
+            --glow-prof: 0 0 22px rgba(0,173,239,0.25);
+            --card-shadow: 0 10px 30px rgba(0,0,0,0.35);
         }
         *, *::before, *::after { box-sizing: border-box; }
         body, html {
@@ -47,7 +54,74 @@
         .sector-column:hover { background: rgba(255,255,255,0.03); }
 
         /* ═══════════ MAIN SYSTEM ═══════════ */
-        #main-system { display: none; padding: 60px 15px 20px 15px; background: var(--bg-overlay); min-height: 100vh; }
+        #main-system { display: none; padding: 68px 16px 20px 16px; background: var(--bg-overlay); min-height: 100vh; gap: 16px; align-items: flex-start; }
+        #main-system.flex-on { display: flex; }
+        #main-content-col { flex: 1; min-width: 0; }
+
+        /* ═══════════ SIDEBAR "FODA" ═══════════ */
+        #app-sidebar {
+            width: var(--sidebar-w); flex-shrink: 0; position: sticky; top: 68px;
+            max-height: calc(100vh - 88px); overflow-y: auto; display: flex; flex-direction: column; gap: 12px;
+            padding-right: 2px;
+        }
+        .sb-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 14px; padding: 14px; box-shadow: var(--card-shadow); }
+        .sb-card h4 { margin: 0 0 10px 0; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: flex; align-items: center; justify-content: space-between; font-family: 'Orbitron'; }
+        .sb-unit-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .sb-unit-badge { width: 40px; height: 40px; border-radius: 10px; background: var(--accent-grad); display: flex; align-items: center; justify-content: center; font-size: 17px; box-shadow: var(--glow-prof); }
+        .sb-unit-name { font-weight: 700; font-size: 13px; line-height: 1.2; }
+        .sb-unit-code { font-size: 10.5px; color: var(--text-muted); }
+        .sb-status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--cad); display: inline-block; margin-right: 5px; box-shadow: 0 0 6px var(--cad); animation: pulse 2s infinite; }
+        .sb-mini-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+        .sb-mini-stat { background: rgba(255,255,255,0.04); border-radius: 9px; padding: 8px; text-align: center; }
+        .sb-mini-stat b { font-family: 'Orbitron'; font-size: 15px; display: block; }
+        .sb-mini-stat span { font-size: 9.5px; color: var(--text-muted); }
+        .sb-nav-item { display: flex; align-items: center; gap: 9px; padding: 8px 9px; border-radius: 9px; cursor: pointer; font-size: 11.5px; color: #d7dde5; transition: 0.2s; margin-bottom: 3px; border: 1px solid transparent; }
+        .sb-nav-item:hover { background: rgba(0,173,239,0.1); border-color: rgba(0,173,239,0.15); }
+        .sb-nav-item i.fa-circle { font-size: 6px; }
+        .sb-quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .sb-quick-btn { background: rgba(255,255,255,0.045); border: 1px solid var(--glass-border); border-radius: 10px; padding: 10px 6px; text-align: center; cursor: pointer; transition: 0.2s; color: #e6e9ef; }
+        .sb-quick-btn:hover { transform: translateY(-2px); border-color: rgba(0,173,239,0.35); box-shadow: var(--glow-prof); }
+        .sb-quick-btn i { font-size: 15px; margin-bottom: 5px; display: block; }
+        .sb-quick-btn span { font-size: 9.5px; color: var(--text-muted); }
+        .sb-fav-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px; border-radius: 7px; cursor: pointer; font-size: 11.5px; }
+        .sb-fav-item:hover { background: rgba(255,255,255,0.05); }
+        .sb-profile { display: flex; align-items: center; gap: 9px; }
+        .sb-profile-name { font-size: 12px; font-weight: 600; }
+        .sb-profile-role { font-size: 10px; color: var(--text-muted); }
+        @media (max-width: 1100px) { #app-sidebar { display: none; } }
+
+        /* ═══════════ COMUNICADO GERAL BANNER ═══════════ */
+        #comunicado-geral-banner {
+            display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+            background: linear-gradient(90deg, rgba(106,92,255,0.22), rgba(0,173,239,0.14));
+            border: 1px solid rgba(106,92,255,0.35); border-radius: 14px; padding: 12px 16px; margin-bottom: 16px;
+        }
+        #comunicado-geral-banner .cg-badge { background: var(--secre); color: #fff; font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 5px; letter-spacing: 0.5px; }
+        #comunicado-geral-banner .cg-text { flex: 1; min-width: 180px; font-size: 12.5px; }
+        #comunicado-geral-banner .cg-text b { font-family: 'Orbitron'; font-size: 11px; margin-right: 6px; }
+        #comunicado-geral-banner .cg-actions { display: flex; gap: 8px; }
+        #comunicado-geral-banner .cg-btn { padding: 6px 14px; border-radius: 7px; font-size: 10.5px; font-weight: 700; cursor: pointer; border: none; }
+
+        /* ═══════════ DASHBOARD — GRID PREMIUM ═══════════ */
+        .dash-grid-2col { display: grid; grid-template-columns: 1fr 320px; gap: 16px; align-items: start; }
+        @media (max-width: 1300px) { .dash-grid-2col { grid-template-columns: 1fr; } }
+        .kpi-card { display: flex; flex-direction: column; }
+        .kpi-icon { position: absolute; top: 12px; right: 12px; font-size: 14px; opacity: 0.35; }
+        .widget-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 14px; padding: 15px; box-shadow: var(--card-shadow); margin-bottom: 14px; }
+        .widget-card h4 { margin: 0 0 12px 0; font-size: 11px; letter-spacing: 0.6px; text-transform: uppercase; color: var(--text-muted); display: flex; align-items: center; gap: 7px; font-family: 'Orbitron'; }
+        .alert-row { display: flex; gap: 9px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 11.5px; }
+        .alert-row:last-child { border-bottom: none; }
+        .alert-row i { color: var(--gestao); margin-top: 2px; }
+        .alert-row .ar-sub { font-size: 10px; color: var(--text-muted); }
+        .net-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+        .net-stat { background: rgba(255,255,255,0.04); border-radius: 9px; padding: 8px; text-align: center; }
+        .net-stat b { font-family: 'Orbitron'; font-size: 14px; display: block; }
+        .net-stat span { font-size: 9px; color: var(--text-muted); }
+        .session-ok { display: flex; align-items: center; gap: 10px; }
+        .session-ok .so-icon { width: 38px; height: 38px; border-radius: 50%; background: rgba(46,204,113,0.15); display: flex; align-items: center; justify-content: center; color: var(--cad); font-size: 16px; }
+        .map-widget { position: relative; height: 150px; border-radius: 10px; background: radial-gradient(circle at 30% 30%, rgba(0,173,239,0.18), transparent 60%), radial-gradient(circle at 70% 70%, rgba(106,92,255,0.16), transparent 55%), rgba(0,0,0,0.35); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .map-widget .map-dot { position: absolute; width: 7px; height: 7px; border-radius: 50%; background: var(--prof); box-shadow: 0 0 8px var(--prof); animation: pulse 2s infinite; }
+        .map-widget i.fa-map { font-size: 30px; color: rgba(255,255,255,0.12); }
 
         /* ═══════════ TOP BAR ═══════════ */
         #topbar {
@@ -481,62 +555,176 @@
 
     <!-- ════════════════════════ MAIN SYSTEM ════════════════════════ -->
     <div id="main-system">
+
+        <!-- ══════════ SIDEBAR "FODA" ══════════ -->
+        <div id="app-sidebar">
+            <div class="sb-card">
+                <div class="sb-unit-head">
+                    <div class="sb-unit-badge"><i class="fa fa-shield-halved"></i></div>
+                    <div>
+                        <div class="sb-unit-name">Programa Conect</div>
+                        <div class="sb-unit-code"><span class="sb-status-dot"></span>NTEi · Ecossistema Inteligente</div>
+                    </div>
+                </div>
+                <div class="sb-mini-stats">
+                    <div class="sb-mini-stat"><b id="sb-mini-equip">—</b><span>Equipamentos</span></div>
+                    <div class="sb-mini-stat"><b id="sb-mini-usuarios">—</b><span>Usuários</span></div>
+                </div>
+            </div>
+
+            <div class="sb-card">
+                <h4>Acesso Rápido</h4>
+                <div class="sb-quick-grid">
+                    <div class="sb-quick-btn" onclick="modules.show('operacional')"><i class="fa fa-headset" style="color:var(--ntei)"></i><span>Novo Chamado</span></div>
+                    <div class="sb-quick-btn" onclick="modules.show('operacional')"><i class="fa fa-calendar-plus" style="color:var(--cad)"></i><span>Nova Reserva</span></div>
+                    <div class="sb-quick-btn" onclick="modules.show('alunos')"><i class="fa fa-user-plus" style="color:var(--prof)"></i><span>Add. Aluno</span></div>
+                    <div class="sb-quick-btn" onclick="modules.show('analise')"><i class="fa fa-chart-simple" style="color:var(--gestao)"></i><span>Relatórios</span></div>
+                </div>
+            </div>
+
+            <div class="sb-card">
+                <h4>Módulos <span style="font-weight:400; text-transform:none; letter-spacing:0">Ir para ›</span></h4>
+                <div class="sb-nav-item" onclick="modules.show('dashboard')"><i class="fa fa-gauge" style="color:var(--prof)"></i>Dashboard</div>
+                <div class="sb-nav-item" onclick="modules.show('operacional')"><i class="fa fa-tools" style="color:var(--gestao)"></i>Operacional</div>
+                <div class="sb-nav-item" onclick="modules.show('patrimonio')"><i class="fa fa-laptop" style="color:var(--hw-color)"></i>Patrimônio</div>
+                <div class="sb-nav-item" onclick="modules.show('comunicacao')"><i class="fa fa-comments" style="color:var(--secre)"></i>Comunicação</div>
+                <div class="sb-nav-item" onclick="modules.show('analise')"><i class="fa fa-brain" style="color:var(--cad)"></i>Análise IA</div>
+            </div>
+
+            <div class="sb-card" id="sb-fav-card">
+                <h4>Favoritos <i class="fa fa-star" style="color:var(--gestao); font-size:10px"></i></h4>
+                <div class="sb-fav-item" onclick="modules.show('dashboard')"><span><i class="fa fa-gauge" style="width:14px; color:var(--text-muted)"></i> Dashboard</span></div>
+                <div class="sb-fav-item" onclick="modules.show('patrimonio')"><span><i class="fa fa-laptop" style="width:14px; color:var(--text-muted)"></i> Patrimônio</span></div>
+                <div class="sb-fav-item" onclick="modules.show('operacional')"><span><i class="fa fa-headset" style="width:14px; color:var(--text-muted)"></i> Chamados</span></div>
+                <div class="sb-fav-item" onclick="modules.show('analise')"><span><i class="fa fa-brain" style="width:14px; color:var(--text-muted)"></i> Análise IA</span></div>
+            </div>
+
+            <div class="sb-card">
+                <div class="sb-profile">
+                    <img id="sb-avatar" src="" class="hidden" style="width:34px; height:34px; border-radius:50%; object-fit:cover; border:1px solid var(--border-subtle)">
+                    <div id="sb-avatar-fallback" style="width:34px; height:34px; border-radius:50%; background:var(--prof); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold">—</div>
+                    <div>
+                        <div class="sb-profile-name" id="sb-profile-name">—</div>
+                        <div class="sb-profile-role" id="sb-profile-role">—</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="main-content-col">
         <div class="module-container">
 
             <!-- ══════════ MODULE: DASHBOARD ══════════ -->
             <div id="mod-dashboard" class="module-view active animate-in">
                 <div class="section-title"><i class="fa fa-gauge"></i> Dashboard Central Inteligente — Visão em Tempo Real</div>
 
+                <div id="comunicado-geral-banner">
+                    <span class="cg-badge">NOVO</span>
+                    <div class="cg-text"><b>📣 COMUNICADO GERAL:</b><span id="cg-banner-texto">Confira os avisos e manutenções programadas do sistema.</span></div>
+                    <div class="cg-actions">
+                        <button class="cg-btn" style="background:var(--prof); color:#fff" onclick="modules.show('comunicacao')">VER</button>
+                        <button class="cg-btn" style="background:rgba(255,255,255,0.1); color:#fff" onclick="document.getElementById('comunicado-geral-banner').style.display='none'">DISPENSAR</button>
+                    </div>
+                </div>
+
                 <div class="kpi-grid" id="kpi-container">
-                    <div class="kpi-card blue"><div class="kpi-num" id="kpi-equip">—</div><div class="kpi-label">Equipamentos Ativos</div><div class="kpi-trend trend-up">● Online</div></div>
-                    <div class="kpi-card red"><div class="kpi-num" id="kpi-chamados">—</div><div class="kpi-label">Chamados Abertos</div><div class="kpi-trend" id="kpi-chamados-trend">—</div></div>
-                    <div class="kpi-card green"><div class="kpi-num" id="kpi-reservas">—</div><div class="kpi-label">Reservas Ativas</div><div class="kpi-trend trend-up">Em Uso</div></div>
-                    <div class="kpi-card yellow"><div class="kpi-num" id="kpi-usuarios">—</div><div class="kpi-label">Usuários Cadastrados</div><div class="kpi-trend trend-up">Ativos</div></div>
-                    <div class="kpi-card purple"><div class="kpi-num" id="kpi-alunos">—</div><div class="kpi-label">Alunos Cadastrados</div><div class="kpi-trend">Total</div></div>
-                    <div class="kpi-card red"><div class="kpi-num" id="kpi-manutencao">—</div><div class="kpi-label">Em Manutenção</div><div class="kpi-trend trend-down">Atenção</div></div>
+                    <div class="kpi-card blue"><i class="fa fa-laptop kpi-icon"></i><div class="kpi-num" id="kpi-equip">—</div><div class="kpi-label">Equipamentos Ativos</div><div class="kpi-trend trend-up">● Online</div></div>
+                    <div class="kpi-card red"><i class="fa fa-headset kpi-icon"></i><div class="kpi-num" id="kpi-chamados">—</div><div class="kpi-label">Chamados Abertos</div><div class="kpi-trend" id="kpi-chamados-trend">—</div></div>
+                    <div class="kpi-card green"><i class="fa fa-calendar-check kpi-icon"></i><div class="kpi-num" id="kpi-reservas">—</div><div class="kpi-label">Reservas Ativas</div><div class="kpi-trend trend-up">Em Uso</div></div>
+                    <div class="kpi-card yellow"><i class="fa fa-users kpi-icon"></i><div class="kpi-num" id="kpi-usuarios">—</div><div class="kpi-label">Usuários Cadastrados</div><div class="kpi-trend trend-up">Ativos</div></div>
+                    <div class="kpi-card purple"><i class="fa fa-graduation-cap kpi-icon"></i><div class="kpi-num" id="kpi-alunos">—</div><div class="kpi-label">Alunos Cadastrados</div><div class="kpi-trend">Total</div></div>
+                    <div class="kpi-card red"><i class="fa fa-triangle-exclamation kpi-icon"></i><div class="kpi-num" id="kpi-manutencao">—</div><div class="kpi-label">Em Manutenção</div><div class="kpi-trend trend-down">Atenção</div></div>
                 </div>
 
-                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:15px">
-                    <div class="panel">
-                        <h3><i class="fa fa-chart-line" style="color:var(--ntei)"></i> Chamados (Histórico)</h3>
-                        <div class="chart-container"><canvas id="chart-dash-chamados"></canvas></div>
-                    </div>
-                    <div class="panel">
-                        <h3><i class="fa fa-chart-bar" style="color:var(--prof)"></i> Uso de Recursos</h3>
-                        <div class="chart-container"><canvas id="chart-dash-recursos"></canvas></div>
-                    </div>
-                    <div class="panel">
-                        <h3><i class="fa fa-chart-pie" style="color:var(--gestao)"></i> Status Equipamentos</h3>
-                        <div class="chart-container"><canvas id="chart-dash-equip"></canvas></div>
-                    </div>
-                </div>
-
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-top:0">
-                    <div class="panel">
-                        <h3><i class="fa fa-bolt" style="color:var(--gestao)"></i> Alertas Automáticos do Sistema</h3>
-                        <div id="dashboard-alertas-container">
-                            <div class="loading-spinner"><i class="fa fa-spin fa-circle-notch"></i> Analisando dados...</div>
+                <div class="dash-grid-2col">
+                  <div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:15px">
+                        <div class="panel">
+                            <h3><i class="fa fa-chart-line" style="color:var(--ntei)"></i> Chamados (Histórico)</h3>
+                            <div class="chart-container"><canvas id="chart-dash-chamados"></canvas></div>
+                        </div>
+                        <div class="panel">
+                            <h3><i class="fa fa-chart-bar" style="color:var(--prof)"></i> Uso de Recursos</h3>
+                            <div class="chart-container"><canvas id="chart-dash-recursos"></canvas></div>
+                        </div>
+                        <div class="panel">
+                            <h3><i class="fa fa-chart-pie" style="color:var(--gestao)"></i> Status Equipamentos</h3>
+                            <div class="chart-container"><canvas id="chart-dash-equip"></canvas></div>
                         </div>
                     </div>
-                    <div class="panel">
-                        <h3><i class="fa fa-clock" style="color:var(--prof)"></i> Atividades Recentes</h3>
-                        <div id="dashboard-atividades" style="max-height:200px; overflow-y:auto">
-                            <div class="loading-spinner"><i class="fa fa-spin fa-circle-notch"></i> Carregando...</div>
+
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-top:0">
+                        <div class="panel">
+                            <h3><i class="fa fa-bolt" style="color:var(--gestao)"></i> Alertas Automáticos do Sistema</h3>
+                            <div id="dashboard-alertas-container">
+                                <div class="loading-spinner"><i class="fa fa-spin fa-circle-notch"></i> Analisando dados...</div>
+                            </div>
+                        </div>
+                        <div class="panel">
+                            <h3><i class="fa fa-clock" style="color:var(--prof)"></i> Atividades Recentes</h3>
+                            <div id="dashboard-atividades" style="max-height:200px; overflow-y:auto">
+                                <div class="loading-spinner"><i class="fa fa-spin fa-circle-notch"></i> Carregando...</div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- SAÚDE DA PLATAFORMA -->
-                <div class="panel">
-                    <h3><i class="fa fa-heartbeat" style="color:var(--cad)"></i> Saúde da Plataforma</h3>
-                    <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap:10px">
-                        <div class="health-item"><span><span class="health-dot h-ok"></span>Firebase DB</span><span class="tag tag-green">Operacional</span></div>
-                        <div class="health-item"><span><span class="health-dot h-ok" id="h-auth"></span>Autenticação</span><span class="tag tag-green" id="h-auth-tag">OK</span></div>
-                        <div class="health-item"><span><span class="health-dot h-ok" id="h-res"></span>Reservas</span><span class="tag tag-green" id="h-res-tag">OK</span></div>
-                        <div class="health-item"><span><span class="health-dot h-ok" id="h-cham"></span>Chamados</span><span class="tag tag-green" id="h-cham-tag">OK</span></div>
-                        <div class="health-item"><span><span class="health-dot h-ok" id="h-chat"></span>Chat/Comun.</span><span class="tag tag-green" id="h-chat-tag">OK</span></div>
-                        <div class="health-item"><span><span class="health-dot" id="h-plat" style="background:var(--gestao)"></span>Plataformas</span><span class="tag tag-yellow" id="h-plat-tag">Verificando</span></div>
+                    <!-- SAÚDE DA PLATAFORMA -->
+                    <div class="panel">
+                        <h3><i class="fa fa-heartbeat" style="color:var(--cad)"></i> Saúde da Plataforma</h3>
+                        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap:10px">
+                            <div class="health-item"><span><span class="health-dot h-ok"></span>Firebase DB</span><span class="tag tag-green">Operacional</span></div>
+                            <div class="health-item"><span><span class="health-dot h-ok" id="h-auth"></span>Autenticação</span><span class="tag tag-green" id="h-auth-tag">OK</span></div>
+                            <div class="health-item"><span><span class="health-dot h-ok" id="h-res"></span>Reservas</span><span class="tag tag-green" id="h-res-tag">OK</span></div>
+                            <div class="health-item"><span><span class="health-dot h-ok" id="h-cham"></span>Chamados</span><span class="tag tag-green" id="h-cham-tag">OK</span></div>
+                            <div class="health-item"><span><span class="health-dot h-ok" id="h-chat"></span>Chat/Comun.</span><span class="tag tag-green" id="h-chat-tag">OK</span></div>
+                            <div class="health-item"><span><span class="health-dot" id="h-plat" style="background:var(--gestao)"></span>Plataformas</span><span class="tag tag-yellow" id="h-plat-tag">Verificando</span></div>
+                        </div>
                     </div>
+                  </div>
+
+                  <!-- ══════════ COLUNA DIREITA — WIDGETS NOVOS ══════════ -->
+                  <div>
+                    <div class="widget-card">
+                        <h4><i class="fa fa-map-location-dot"></i> Painel de Rede — Tempo Real</h4>
+                        <div class="map-widget">
+                            <i class="fa fa-map"></i>
+                            <span class="map-dot" style="top:35%; left:30%"></span>
+                            <span class="map-dot" style="top:55%; left:60%; animation-delay:0.6s"></span>
+                            <span class="map-dot" style="top:70%; left:40%; animation-delay:1.1s"></span>
+                        </div>
+                        <div class="net-stat-grid">
+                            <div class="net-stat"><b id="net-ativos">—</b><span>Dispositivos Ativos</span></div>
+                            <div class="net-stat"><b id="net-chamados-hoje">—</b><span>Chamados Hoje</span></div>
+                        </div>
+                    </div>
+
+                    <div class="widget-card">
+                        <h4><i class="fa fa-triangle-exclamation" style="color:var(--ntei)"></i> Alertas Importantes</h4>
+                        <div id="widget-alertas-importantes">
+                            <div class="alert-row"><i class="fa fa-circle-exclamation"></i><div><div>Chamados críticos aguardando</div><div class="ar-sub">Ação imediata pode ser necessária</div></div></div>
+                            <div class="alert-row"><i class="fa fa-circle-exclamation"></i><div><div>Equipamentos com falha registrada</div><div class="ar-sub">Verifique o patrimônio</div></div></div>
+                        </div>
+                    </div>
+
+                    <div class="widget-card">
+                        <h4><i class="fa fa-wifi"></i> Monitoramento de Rede</h4>
+                        <div class="net-stat-grid">
+                            <div class="net-stat"><b>ONLINE</b><span>Conectividade</span></div>
+                            <div class="net-stat"><b>100%</b><span>Sincronização</span></div>
+                        </div>
+                    </div>
+
+                    <div class="widget-card">
+                        <h4><i class="fa fa-lock"></i> Sessão Persistente</h4>
+                        <div class="session-ok">
+                            <div class="so-icon"><i class="fa fa-shield-check"></i></div>
+                            <div>
+                                <div style="font-size:12px; font-weight:600; color:var(--cad)">Sessão ativa e segura</div>
+                                <div style="font-size:10.5px; color:var(--text-muted)">Login mantido após fechar o navegador</div>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
                 </div>
             </div>
 
@@ -1467,6 +1655,7 @@
             </div>
 
         </div><!-- /module-container -->
+        </div><!-- /main-content-col -->
     </div><!-- /main-system -->
 
     <!-- ════════════════════════ NUVEM AI ════════════════════════ -->
@@ -4352,9 +4541,13 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             try { localStorage.setItem('nteiSession', JSON.stringify(this.user)); } catch (e) {}
 
             document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('main-system').style.display = 'block';
+            document.getElementById('main-system').classList.add('flex-on');
             document.getElementById('topbar').classList.remove('hidden');
             document.getElementById('topbar-username').textContent = (this.user.nome || '—') + ' · ' + this.user.cargo;
+            // Espelha os dados do usuário no perfil da sidebar nova
+            const sbName = document.getElementById('sb-profile-name'), sbRole = document.getElementById('sb-profile-role');
+            if (sbName) sbName.textContent = this.user.nome || '—';
+            if (sbRole) sbRole.textContent = (this.user.cargo || '—') + (this.user.pront ? ' · ' + this.user.pront : '');
 
             notificacoes.sync();
             this.iniciarStatusConexao();
