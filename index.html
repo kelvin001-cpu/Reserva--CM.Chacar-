@@ -672,12 +672,12 @@
                     <div class="panel">
                         <h3><i class="fa fa-heartbeat" style="color:var(--cad)"></i> Saúde da Plataforma</h3>
                         <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap:10px">
-                            <div class="health-item"><span><span class="health-dot h-ok"></span>Firebase DB</span><span class="tag tag-green">Operacional</span></div>
-                            <div class="health-item"><span><span class="health-dot h-ok" id="h-auth"></span>Autenticação</span><span class="tag tag-green" id="h-auth-tag">OK</span></div>
-                            <div class="health-item"><span><span class="health-dot h-ok" id="h-res"></span>Reservas</span><span class="tag tag-green" id="h-res-tag">OK</span></div>
-                            <div class="health-item"><span><span class="health-dot h-ok" id="h-cham"></span>Chamados</span><span class="tag tag-green" id="h-cham-tag">OK</span></div>
-                            <div class="health-item"><span><span class="health-dot h-ok" id="h-chat"></span>Chat/Comun.</span><span class="tag tag-green" id="h-chat-tag">OK</span></div>
-                            <div class="health-item"><span><span class="health-dot" id="h-plat" style="background:var(--gestao)"></span>Plataformas</span><span class="tag tag-yellow" id="h-plat-tag">Verificando</span></div>
+                            <div class="health-item"><span><span class="health-dot" id="h-fb" style="background:var(--gestao)"></span>Firebase DB</span><span class="tag tag-yellow" id="h-fb-tag">Verificando</span></div>
+                            <div class="health-item"><span><span class="health-dot" id="h-auth" style="background:var(--gestao)"></span>Autenticação</span><span class="tag tag-yellow" id="h-auth-tag">Verificando</span></div>
+                            <div class="health-item"><span><span class="health-dot" id="h-res" style="background:var(--gestao)"></span>Reservas</span><span class="tag tag-yellow" id="h-res-tag">Verificando</span></div>
+                            <div class="health-item"><span><span class="health-dot" id="h-cham" style="background:var(--gestao)"></span>Chamados</span><span class="tag tag-yellow" id="h-cham-tag">Verificando</span></div>
+                            <div class="health-item"><span><span class="health-dot" id="h-chat" style="background:var(--gestao)"></span>Chat/Comun.</span><span class="tag tag-yellow" id="h-chat-tag">Verificando</span></div>
+                            <div class="health-item"><span><span class="health-dot h-ok"></span>Última Sincronização</span><span class="tag tag-green" id="h-sync-tag">—</span></div>
                         </div>
                     </div>
                   </div>
@@ -701,16 +701,15 @@
                     <div class="widget-card">
                         <h4><i class="fa fa-triangle-exclamation" style="color:var(--ntei)"></i> Alertas Importantes</h4>
                         <div id="widget-alertas-importantes">
-                            <div class="alert-row"><i class="fa fa-circle-exclamation"></i><div><div>Chamados críticos aguardando</div><div class="ar-sub">Ação imediata pode ser necessária</div></div></div>
-                            <div class="alert-row"><i class="fa fa-circle-exclamation"></i><div><div>Equipamentos com falha registrada</div><div class="ar-sub">Verifique o patrimônio</div></div></div>
+                            <div class="loading-spinner"><i class="fa fa-spin fa-circle-notch"></i> Analisando dados...</div>
                         </div>
                     </div>
 
                     <div class="widget-card">
                         <h4><i class="fa fa-wifi"></i> Monitoramento de Rede</h4>
                         <div class="net-stat-grid">
-                            <div class="net-stat"><b>ONLINE</b><span>Conectividade</span></div>
-                            <div class="net-stat"><b>100%</b><span>Sincronização</span></div>
+                            <div class="net-stat"><b id="net-conectividade">—</b><span>Conectividade</span></div>
+                            <div class="net-stat"><b id="net-sync-status">—</b><span>Sincronização</span></div>
                         </div>
                     </div>
 
@@ -1796,18 +1795,30 @@
     // ═══════════════════════════════════════════════════════
     const dashboard = {
         charts: {},
+        _atividadesIniciado: false,
         async refresh() {
-            const [eqSnap, chamSnap, resSnap, usrSnap, alunosSnap] = await Promise.all([
-                db.ref('equipamentos').once('value'),
-                db.ref('chamados').once('value'),
-                db.ref('reservas').once('value'),
-                db.ref('usuarios').once('value'),
-                db.ref('alunos').once('value')
-            ]);
+            let eqSnap, chamSnap, resSnap, usrSnap, alunosSnap;
+            try {
+                [eqSnap, chamSnap, resSnap, usrSnap, alunosSnap] = await Promise.all([
+                    db.ref('equipamentos').once('value'),
+                    db.ref('chamados').once('value'),
+                    db.ref('reservas').once('value'),
+                    db.ref('usuarios').once('value'),
+                    db.ref('alunos').once('value')
+                ]);
+                this.setHealth('h-res', true);
+                this.setHealth('h-cham', true);
+            } catch (e) {
+                this.setHealth('h-res', false);
+                this.setHealth('h-cham', false);
+                console.error('Erro ao carregar dados do dashboard:', e);
+                return;
+            }
 
             let totalEq = 0, chamAbertos = 0, resAtivas = 0, totalUsers = 0, totalAlunos = 0, emManut = 0;
-            let dispCount = 0, usoCount = 0, manutCount = 0;
+            let dispCount = 0, usoCount = 0, manutCount = 0, chamHoje = 0, chamCriticosAbertos = 0;
             const tiposCham = {};
+            const hojeStr = new Date().toDateString();
 
             eqSnap.forEach(e => {
                 const d = e.val(); if (!d) return;
@@ -1818,8 +1829,12 @@
             });
             chamSnap.forEach(c => {
                 const d = c.val(); if (!d) return;
-                if (d.status === 'aberto') chamAbertos++;
+                if (d.status === 'aberto') {
+                    chamAbertos++;
+                    if (d.prioridade === 'alta') chamCriticosAbertos++;
+                }
                 if (d.tipo) tiposCham[d.tipo] = (tiposCham[d.tipo] || 0) + 1;
+                if (d.timestamp && new Date(d.timestamp).toDateString() === hojeStr) chamHoje++;
             });
             resSnap.forEach(r => { if (r.val() && r.val().status === 'em_uso') resAtivas++; });
             usrSnap.forEach(u => { const d = u.val(); if (d && d.status === 'ativo') totalUsers++; });
@@ -1837,7 +1852,11 @@
             this.setKPI('inv-uso', usoCount);
             this.setKPI('inv-manut', manutCount);
 
-            // Alertas automáticos
+            // Rede — dados reais derivados de equipamentos/chamados (não há medição de rede real disponível)
+            this.setKPI('net-ativos', usoCount);
+            this.setKPI('net-chamados-hoje', chamHoje);
+
+            // Alertas automáticos (painel central)
             const alertBox = document.getElementById('dashboard-alertas-container');
             if (alertBox) {
                 let html = '';
@@ -1848,10 +1867,98 @@
                 alertBox.innerHTML = html;
             }
 
+            // Alertas importantes (widget lateral) — dados reais, sem invenção
+            const wai = document.getElementById('widget-alertas-importantes');
+            if (wai) {
+                let html = '';
+                if (chamCriticosAbertos > 0) html += `<div class="alert-row"><i class="fa fa-circle-exclamation"></i><div><div>${chamCriticosAbertos} chamado(s) crítico(s) aguardando</div><div class="ar-sub">Prioridade alta — ação imediata pode ser necessária</div></div></div>`;
+                if (emManut > 0) html += `<div class="alert-row"><i class="fa fa-circle-exclamation"></i><div><div>${emManut} equipamento(s) em manutenção</div><div class="ar-sub">Verifique o patrimônio</div></div></div>`;
+                if (!html) html = '<div class="info-box" style="color:var(--cad)">✅ Nenhum alerta importante no momento.</div>';
+                wai.innerHTML = html;
+            }
+
+            // Sincronização — horário real, não simulado
+            const syncTime = new Date().toLocaleTimeString('pt-BR');
+            const syncTag = document.getElementById('h-sync-tag');
+            if (syncTag) syncTag.textContent = syncTime;
+            const netSync = document.getElementById('net-sync-status');
+            if (netSync) netSync.textContent = syncTime;
+
             // Gráfico de chamados
             this.renderCharts(tiposCham, dispCount, usoCount, manutCount);
+
+            // Atividades recentes — inicia listener em tempo real (uma única vez)
+            this.iniciarAtividades();
         },
         setKPI(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; },
+        setHealth(prefix, ok, verificandoMsg) {
+            const dot = document.getElementById(prefix);
+            const tag = document.getElementById(prefix + '-tag');
+            if (dot) { dot.style.background = ok ? '#2ecc71' : '#e74c3c'; }
+            if (tag) {
+                tag.textContent = ok ? 'OK' : 'Erro';
+                tag.className = 'tag ' + (ok ? 'tag-green' : 'tag-red');
+            }
+        },
+        _iconePorModulo(modulo) {
+            const m = (modulo || '').toLowerCase();
+            if (m.includes('chamado')) return 'fa-headset';
+            if (m.includes('patrim')) return 'fa-box';
+            if (m.includes('reserva')) return 'fa-calendar-check';
+            if (m.includes('permiss')) return 'fa-user-shield';
+            if (m.includes('admin')) return 'fa-user-gear';
+            if (m.includes('autentic')) return 'fa-right-to-bracket';
+            if (m.includes('segur')) return 'fa-shield-halved';
+            if (m.includes('usuário') || m.includes('usuario')) return 'fa-user';
+            if (m.includes('pedagóg') || m.includes('pedagog') || m.includes('ia pedag')) return 'fa-chalkboard-user';
+            if (m.includes('comunica')) return 'fa-bullhorn';
+            if (m.includes('edital')) return 'fa-file-contract';
+            if (m.includes('carteira')) return 'fa-id-card';
+            if (m.includes('relatório') || m.includes('relatorio')) return 'fa-file-lines';
+            if (m.includes('sistema')) return 'fa-server';
+            return 'fa-circle-info';
+        },
+        _tempoRelativo(timestamp) {
+            if (!timestamp) return '';
+            const diffMs = Date.now() - timestamp;
+            const min = Math.floor(diffMs / 60000);
+            if (min < 1) return 'agora mesmo';
+            if (min < 60) return `há ${min} min`;
+            const h = Math.floor(min / 60);
+            if (h < 24) return `há ${h}h`;
+            const d = Math.floor(h / 24);
+            return `há ${d}d`;
+        },
+        iniciarAtividades() {
+            if (this._atividadesIniciado) return;
+            this._atividadesIniciado = true;
+            db.ref('auditoria').limitToLast(8).on('value', snap => {
+                const box = document.getElementById('dashboard-atividades');
+                if (!box) return;
+                const items = [];
+                snap.forEach(a => items.unshift(a.val()));
+                if (!items.length) {
+                    box.innerHTML = '<p style="font-size:12px; color:#666; padding:8px 0">Nenhuma atividade registrada recentemente.</p>';
+                    return;
+                }
+                box.innerHTML = items.map(a => {
+                    if (!a) return '';
+                    const icone = this._iconePorModulo(a.modulo);
+                    const rel = this._tempoRelativo(a.timestamp);
+                    return `<div class="audit-item" style="display:flex; gap:8px; align-items:flex-start; padding:6px 0; border-bottom:1px solid var(--border-subtle,#2a2a2a)">
+                        <i class="fa ${icone}" style="color:var(--prof); margin-top:2px; width:14px"></i>
+                        <div style="flex:1; min-width:0">
+                            <div style="font-size:12px; color:var(--text-main,#ddd)"><b>${a.usuario || 'Usuário'}</b> — ${a.acao || ''}</div>
+                            <div style="font-size:10.5px; color:#777">${a.modulo || '—'} · ${rel || a.data || ''}</div>
+                        </div>
+                    </div>`;
+                }).join('');
+            }, err => {
+                console.error('Erro ao carregar atividades:', err);
+                const box = document.getElementById('dashboard-atividades');
+                if (box) box.innerHTML = '<p style="font-size:12px; color:#e74c3c">Não foi possível carregar as atividades.</p>';
+            });
+        },
         renderCharts(tipos, disp, uso, manut) {
             ['chart-dash-chamados','chart-dash-recursos','chart-dash-equip'].forEach(id => {
                 const existing = Chart.getChart(id);
@@ -3113,6 +3220,7 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
         },
         sync() {
             db.ref('comunicados').limitToLast(20).on('value', snap => {
+                if (typeof dashboard !== 'undefined') dashboard.setHealth('h-chat', true);
                 const lista = document.getElementById('comun-lista');
                 if (!lista) return;
                 lista.innerHTML = '';
@@ -4426,10 +4534,16 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
         iniciarStatusConexao() {
             const dot = () => document.getElementById('conn-status-dot');
             const aplicar = (online) => {
-                const d = dot(); if (!d) return;
-                d.style.background = online ? '#2ecc71' : '#e74c3c';
-                d.style.boxShadow = online ? '0 0 4px #2ecc71' : '0 0 4px #e74c3c';
-                d.title = online ? 'Conectado (online)' : 'Sem conexão — operando localmente';
+                const d = dot();
+                if (d) {
+                    d.style.background = online ? '#2ecc71' : '#e74c3c';
+                    d.style.boxShadow = online ? '0 0 4px #2ecc71' : '0 0 4px #e74c3c';
+                    d.title = online ? 'Conectado (online)' : 'Sem conexão — operando localmente';
+                }
+                // Reflete também no painel Saúde da Plataforma do Dashboard
+                if (typeof dashboard !== 'undefined') dashboard.setHealth('h-fb', online);
+                const netConn = document.getElementById('net-conectividade');
+                if (netConn) netConn.textContent = online ? 'ONLINE' : 'OFFLINE';
             };
             db.ref('.info/connected').on('value', snap => aplicar(!!snap.val() && navigator.onLine));
             window.addEventListener('online', () => aplicar(navigator.onLine));
@@ -4622,6 +4736,7 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             trafegoMonitor.init();
 
             auditoria.registrar('Autenticação', `Login realizado com sucesso no sistema.`);
+            if (typeof dashboard !== 'undefined') dashboard.setHealth('h-auth', true);
         },
 
         // Esconde do menu tudo que é monitoramento/gestão para quem não deve ver
