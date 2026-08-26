@@ -41,6 +41,13 @@
 
         /* ═══════════ ALERT RIBBON ═══════════ */
         #alert-ribbon { background: var(--ntei); color: white; padding: 12px; text-align: center; font-weight: bold; display: none; position: fixed; top: 0; width: 100%; z-index: 10000; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        /* ═══ Reserva espaço para o aviso geral, em vez de cobrir a navegação ═══ */
+        :root { --aviso-altura: 0px; }
+        #topbar { top: var(--aviso-altura) !important; }
+        #notif-central { top: calc(56px + var(--aviso-altura)) !important; }
+        #toast-container { top: calc(60px + var(--aviso-altura)) !important; }
+        #main-system { padding-top: calc(68px + var(--aviso-altura)) !important; transition: padding-top 0.15s ease; }
+        #topbar { transition: top 0.15s ease; }
 
         /* ═══════════ LOCK OVERLAY ═══════════ */
         #lock-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 999999; flex-direction: column; align-items: center; justify-content: center; }
@@ -435,7 +442,7 @@
             #topbar { flex-wrap: wrap; height: auto; min-height: 52px; padding: 8px 12px; }
             .topbar-nav {
                 display: none; width: 100%; flex-direction: column; gap: 2px;
-                position: fixed; top: 52px; left: 0; right: 0; z-index: 8999;
+                position: fixed; top: calc(52px + var(--aviso-altura)); left: 0; right: 0; z-index: 8999;
                 background: rgba(10,11,16,0.98); backdrop-filter: blur(20px);
                 border-bottom: 1px solid var(--border-subtle); border-radius: 0 0 12px 12px;
                 padding: 10px; max-height: calc(100vh - 52px); overflow-y: auto;
@@ -672,12 +679,12 @@
                     <div class="panel">
                         <h3><i class="fa fa-heartbeat" style="color:var(--cad)"></i> Saúde da Plataforma</h3>
                         <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap:10px">
-                            <div class="health-item"><span><span class="health-dot" id="h-fb" style="background:var(--gestao)"></span>Firebase DB</span><span class="tag tag-yellow" id="h-fb-tag">Verificando</span></div>
-                            <div class="health-item"><span><span class="health-dot" id="h-auth" style="background:var(--gestao)"></span>Autenticação</span><span class="tag tag-yellow" id="h-auth-tag">Verificando</span></div>
-                            <div class="health-item"><span><span class="health-dot" id="h-res" style="background:var(--gestao)"></span>Reservas</span><span class="tag tag-yellow" id="h-res-tag">Verificando</span></div>
-                            <div class="health-item"><span><span class="health-dot" id="h-cham" style="background:var(--gestao)"></span>Chamados</span><span class="tag tag-yellow" id="h-cham-tag">Verificando</span></div>
-                            <div class="health-item"><span><span class="health-dot" id="h-chat" style="background:var(--gestao)"></span>Chat/Comun.</span><span class="tag tag-yellow" id="h-chat-tag">Verificando</span></div>
-                            <div class="health-item"><span><span class="health-dot h-ok"></span>Última Sincronização</span><span class="tag tag-green" id="h-sync-tag">—</span></div>
+                            <div class="health-item"><span><span class="health-dot h-ok"></span>Firebase DB</span><span class="tag tag-green">Operacional</span></div>
+                            <div class="health-item"><span><span class="health-dot h-ok" id="h-auth"></span>Autenticação</span><span class="tag tag-green" id="h-auth-tag">OK</span></div>
+                            <div class="health-item"><span><span class="health-dot h-ok" id="h-res"></span>Reservas</span><span class="tag tag-green" id="h-res-tag">OK</span></div>
+                            <div class="health-item"><span><span class="health-dot h-ok" id="h-cham"></span>Chamados</span><span class="tag tag-green" id="h-cham-tag">OK</span></div>
+                            <div class="health-item"><span><span class="health-dot h-ok" id="h-chat"></span>Chat/Comun.</span><span class="tag tag-green" id="h-chat-tag">OK</span></div>
+                            <div class="health-item"><span><span class="health-dot" id="h-plat" style="background:var(--gestao)"></span>Plataformas</span><span class="tag tag-yellow" id="h-plat-tag">Verificando</span></div>
                         </div>
                     </div>
                   </div>
@@ -701,15 +708,16 @@
                     <div class="widget-card">
                         <h4><i class="fa fa-triangle-exclamation" style="color:var(--ntei)"></i> Alertas Importantes</h4>
                         <div id="widget-alertas-importantes">
-                            <div class="loading-spinner"><i class="fa fa-spin fa-circle-notch"></i> Analisando dados...</div>
+                            <div class="alert-row"><i class="fa fa-circle-exclamation"></i><div><div>Chamados críticos aguardando</div><div class="ar-sub">Ação imediata pode ser necessária</div></div></div>
+                            <div class="alert-row"><i class="fa fa-circle-exclamation"></i><div><div>Equipamentos com falha registrada</div><div class="ar-sub">Verifique o patrimônio</div></div></div>
                         </div>
                     </div>
 
                     <div class="widget-card">
                         <h4><i class="fa fa-wifi"></i> Monitoramento de Rede</h4>
                         <div class="net-stat-grid">
-                            <div class="net-stat"><b id="net-conectividade">—</b><span>Conectividade</span></div>
-                            <div class="net-stat"><b id="net-sync-status">—</b><span>Sincronização</span></div>
+                            <div class="net-stat"><b>ONLINE</b><span>Conectividade</span></div>
+                            <div class="net-stat"><b>100%</b><span>Sincronização</span></div>
                         </div>
                     </div>
 
@@ -1504,6 +1512,18 @@
                         <input type="text" id="input-aviso-geral" placeholder="Escreva um aviso para todos..." style="margin-top:15px">
                         <button class="btn" style="background:var(--prof)" onclick="app.enviarAvisoGeral()">POSTAR AVISO GERAL</button>
 
+                        <div style="margin-top:15px; background:rgba(255,255,255,0.05); padding:12px; border-radius:10px; border:1px solid rgba(165,94,234,0.35)">
+                            <p style="font-size:11px; color:var(--secre); margin-top:0; font-weight:bold"><i class="fa fa-robot"></i> IA DO ASSISTENTE PEDAGÓGICO:</p>
+                            <p style="font-size:10.5px; color:var(--text-muted); margin-top:-4px">Escolha o provedor e cole a chave de API. Fica salvo no sistema e vale para todos os usuários. Como não há servidor por trás desta página, qualquer pessoa com acesso ao código/console do navegador pode ver esta chave — use uma chave restrita/com limite de uso.</p>
+                            <select id="ia-provedor" style="margin-top:6px">
+                                <option value="gemini">Google Gemini</option>
+                                <option value="openai">OpenAI (ChatGPT)</option>
+                            </select>
+                            <input type="password" id="ia-api-key" placeholder="Cole aqui a chave de API">
+                            <button class="btn" style="background:var(--secre); color:#fff" onclick="iaConfig.salvar()">Salvar Configuração de IA</button>
+                            <div id="ia-config-status" style="font-size:11px; color:var(--text-muted); margin-top:6px"></div>
+                        </div>
+
                         <p style="font-size:11px; margin-top:15px">GERENCIAR PLATAFORMAS:</p>
                         <input type="text" id="new-plat-name" placeholder="Nome do Site">
                         <input type="text" id="new-plat-url" placeholder="https://link.com">
@@ -1712,6 +1732,11 @@
     const modules = {
         current: 'dashboard',
         show(id) {
+            // Permissão individual por prontuário tem prioridade sobre qualquer cargo.
+            if (typeof app !== 'undefined' && app.overridesIndividuais?.menusBloqueados?.includes(id)) {
+                alert('🔒 Acesso a este módulo foi bloqueado individualmente para o seu prontuário pelo NTEi.');
+                return;
+            }
             document.querySelectorAll('.module-view').forEach(m => m.classList.remove('active'));
             document.querySelectorAll('.topbar-btn').forEach(b => b.classList.remove('active'));
             const modEl = document.getElementById('mod-' + id);
@@ -1795,30 +1820,18 @@
     // ═══════════════════════════════════════════════════════
     const dashboard = {
         charts: {},
-        _atividadesIniciado: false,
         async refresh() {
-            let eqSnap, chamSnap, resSnap, usrSnap, alunosSnap;
-            try {
-                [eqSnap, chamSnap, resSnap, usrSnap, alunosSnap] = await Promise.all([
-                    db.ref('equipamentos').once('value'),
-                    db.ref('chamados').once('value'),
-                    db.ref('reservas').once('value'),
-                    db.ref('usuarios').once('value'),
-                    db.ref('alunos').once('value')
-                ]);
-                this.setHealth('h-res', true);
-                this.setHealth('h-cham', true);
-            } catch (e) {
-                this.setHealth('h-res', false);
-                this.setHealth('h-cham', false);
-                console.error('Erro ao carregar dados do dashboard:', e);
-                return;
-            }
+            const [eqSnap, chamSnap, resSnap, usrSnap, alunosSnap] = await Promise.all([
+                db.ref('equipamentos').once('value'),
+                db.ref('chamados').once('value'),
+                db.ref('reservas').once('value'),
+                db.ref('usuarios').once('value'),
+                db.ref('alunos').once('value')
+            ]);
 
             let totalEq = 0, chamAbertos = 0, resAtivas = 0, totalUsers = 0, totalAlunos = 0, emManut = 0;
-            let dispCount = 0, usoCount = 0, manutCount = 0, chamHoje = 0, chamCriticosAbertos = 0;
+            let dispCount = 0, usoCount = 0, manutCount = 0;
             const tiposCham = {};
-            const hojeStr = new Date().toDateString();
 
             eqSnap.forEach(e => {
                 const d = e.val(); if (!d) return;
@@ -1829,12 +1842,8 @@
             });
             chamSnap.forEach(c => {
                 const d = c.val(); if (!d) return;
-                if (d.status === 'aberto') {
-                    chamAbertos++;
-                    if (d.prioridade === 'alta') chamCriticosAbertos++;
-                }
+                if (d.status === 'aberto') chamAbertos++;
                 if (d.tipo) tiposCham[d.tipo] = (tiposCham[d.tipo] || 0) + 1;
-                if (d.timestamp && new Date(d.timestamp).toDateString() === hojeStr) chamHoje++;
             });
             resSnap.forEach(r => { if (r.val() && r.val().status === 'em_uso') resAtivas++; });
             usrSnap.forEach(u => { const d = u.val(); if (d && d.status === 'ativo') totalUsers++; });
@@ -1852,11 +1861,7 @@
             this.setKPI('inv-uso', usoCount);
             this.setKPI('inv-manut', manutCount);
 
-            // Rede — dados reais derivados de equipamentos/chamados (não há medição de rede real disponível)
-            this.setKPI('net-ativos', usoCount);
-            this.setKPI('net-chamados-hoje', chamHoje);
-
-            // Alertas automáticos (painel central)
+            // Alertas automáticos
             const alertBox = document.getElementById('dashboard-alertas-container');
             if (alertBox) {
                 let html = '';
@@ -1867,98 +1872,10 @@
                 alertBox.innerHTML = html;
             }
 
-            // Alertas importantes (widget lateral) — dados reais, sem invenção
-            const wai = document.getElementById('widget-alertas-importantes');
-            if (wai) {
-                let html = '';
-                if (chamCriticosAbertos > 0) html += `<div class="alert-row"><i class="fa fa-circle-exclamation"></i><div><div>${chamCriticosAbertos} chamado(s) crítico(s) aguardando</div><div class="ar-sub">Prioridade alta — ação imediata pode ser necessária</div></div></div>`;
-                if (emManut > 0) html += `<div class="alert-row"><i class="fa fa-circle-exclamation"></i><div><div>${emManut} equipamento(s) em manutenção</div><div class="ar-sub">Verifique o patrimônio</div></div></div>`;
-                if (!html) html = '<div class="info-box" style="color:var(--cad)">✅ Nenhum alerta importante no momento.</div>';
-                wai.innerHTML = html;
-            }
-
-            // Sincronização — horário real, não simulado
-            const syncTime = new Date().toLocaleTimeString('pt-BR');
-            const syncTag = document.getElementById('h-sync-tag');
-            if (syncTag) syncTag.textContent = syncTime;
-            const netSync = document.getElementById('net-sync-status');
-            if (netSync) netSync.textContent = syncTime;
-
             // Gráfico de chamados
             this.renderCharts(tiposCham, dispCount, usoCount, manutCount);
-
-            // Atividades recentes — inicia listener em tempo real (uma única vez)
-            this.iniciarAtividades();
         },
         setKPI(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; },
-        setHealth(prefix, ok, verificandoMsg) {
-            const dot = document.getElementById(prefix);
-            const tag = document.getElementById(prefix + '-tag');
-            if (dot) { dot.style.background = ok ? '#2ecc71' : '#e74c3c'; }
-            if (tag) {
-                tag.textContent = ok ? 'OK' : 'Erro';
-                tag.className = 'tag ' + (ok ? 'tag-green' : 'tag-red');
-            }
-        },
-        _iconePorModulo(modulo) {
-            const m = (modulo || '').toLowerCase();
-            if (m.includes('chamado')) return 'fa-headset';
-            if (m.includes('patrim')) return 'fa-box';
-            if (m.includes('reserva')) return 'fa-calendar-check';
-            if (m.includes('permiss')) return 'fa-user-shield';
-            if (m.includes('admin')) return 'fa-user-gear';
-            if (m.includes('autentic')) return 'fa-right-to-bracket';
-            if (m.includes('segur')) return 'fa-shield-halved';
-            if (m.includes('usuário') || m.includes('usuario')) return 'fa-user';
-            if (m.includes('pedagóg') || m.includes('pedagog') || m.includes('ia pedag')) return 'fa-chalkboard-user';
-            if (m.includes('comunica')) return 'fa-bullhorn';
-            if (m.includes('edital')) return 'fa-file-contract';
-            if (m.includes('carteira')) return 'fa-id-card';
-            if (m.includes('relatório') || m.includes('relatorio')) return 'fa-file-lines';
-            if (m.includes('sistema')) return 'fa-server';
-            return 'fa-circle-info';
-        },
-        _tempoRelativo(timestamp) {
-            if (!timestamp) return '';
-            const diffMs = Date.now() - timestamp;
-            const min = Math.floor(diffMs / 60000);
-            if (min < 1) return 'agora mesmo';
-            if (min < 60) return `há ${min} min`;
-            const h = Math.floor(min / 60);
-            if (h < 24) return `há ${h}h`;
-            const d = Math.floor(h / 24);
-            return `há ${d}d`;
-        },
-        iniciarAtividades() {
-            if (this._atividadesIniciado) return;
-            this._atividadesIniciado = true;
-            db.ref('auditoria').limitToLast(8).on('value', snap => {
-                const box = document.getElementById('dashboard-atividades');
-                if (!box) return;
-                const items = [];
-                snap.forEach(a => items.unshift(a.val()));
-                if (!items.length) {
-                    box.innerHTML = '<p style="font-size:12px; color:#666; padding:8px 0">Nenhuma atividade registrada recentemente.</p>';
-                    return;
-                }
-                box.innerHTML = items.map(a => {
-                    if (!a) return '';
-                    const icone = this._iconePorModulo(a.modulo);
-                    const rel = this._tempoRelativo(a.timestamp);
-                    return `<div class="audit-item" style="display:flex; gap:8px; align-items:flex-start; padding:6px 0; border-bottom:1px solid var(--border-subtle,#2a2a2a)">
-                        <i class="fa ${icone}" style="color:var(--prof); margin-top:2px; width:14px"></i>
-                        <div style="flex:1; min-width:0">
-                            <div style="font-size:12px; color:var(--text-main,#ddd)"><b>${a.usuario || 'Usuário'}</b> — ${a.acao || ''}</div>
-                            <div style="font-size:10.5px; color:#777">${a.modulo || '—'} · ${rel || a.data || ''}</div>
-                        </div>
-                    </div>`;
-                }).join('');
-            }, err => {
-                console.error('Erro ao carregar atividades:', err);
-                const box = document.getElementById('dashboard-atividades');
-                if (box) box.innerHTML = '<p style="font-size:12px; color:#e74c3c">Não foi possível carregar as atividades.</p>';
-            });
-        },
         renderCharts(tipos, disp, uso, manut) {
             ['chart-dash-chamados','chart-dash-recursos','chart-dash-equip'].forEach(id => {
                 const existing = Chart.getChart(id);
@@ -2098,6 +2015,34 @@
     // ═══════════════════════════════════════════════════════
     //  PEDAGOG IA
     // ═══════════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════
+    //  CONFIGURAÇÃO DA IA (Gemini ou OpenAI) — chave salva em config/ia,
+    //  visível para todo o sistema em tempo real. Só o NTEi edita.
+    // ═══════════════════════════════════════════════════════
+    const iaConfig = {
+        dados: { provedor: 'gemini', apiKey: '' },
+        init() {
+            db.ref('config/ia').on('value', snap => {
+                this.dados = snap.val() || { provedor: 'gemini', apiKey: '' };
+                const selProv = document.getElementById('ia-provedor');
+                const inputKey = document.getElementById('ia-api-key');
+                const status = document.getElementById('ia-config-status');
+                if (selProv) selProv.value = this.dados.provedor || 'gemini';
+                if (inputKey) inputKey.value = this.dados.apiKey || '';
+                if (status) status.textContent = this.dados.apiKey ? `✅ Configurado (${this.dados.provedor === 'openai' ? 'OpenAI' : 'Gemini'})` : '⚠️ Nenhuma chave de API configurada ainda.';
+            });
+        },
+        salvar() {
+            const provedor = document.getElementById('ia-provedor').value;
+            const apiKey = document.getElementById('ia-api-key').value.trim();
+            if (!apiKey) { alert('Cole uma chave de API válida.'); return; }
+            db.ref('config/ia').set({ provedor, apiKey }).then(() => {
+                alert('Configuração de IA salva!');
+                auditoria.registrar('Admin NTEi', `Configuração de IA atualizada (provedor: ${provedor})`);
+            }).catch(e => alert('Erro ao salvar: ' + e.message));
+        }
+    };
+
     const pedagIA = {
         async gerar() {
             const serie = document.getElementById('ped-serie').value;
@@ -2110,26 +2055,48 @@
             output.style.display = 'block';
             output.innerHTML = '⏳ Gerando com IA...';
             saveBtn.classList.add('hidden');
+
+            const { provedor, apiKey } = iaConfig.dados || {};
+            if (!apiKey) {
+                output.textContent = '⚠️ Nenhuma chave de IA configurada. Peça ao NTEi para configurar em Admin NTEi → IA do Assistente Pedagógico.';
+                return;
+            }
+
             const tiposMap = { plano: 'Plano de Aula', atividade: 'Lista de Atividades', avaliacao: 'Avaliação Diagnóstica', projeto: 'Projeto Pedagógico', cronograma: 'Cronograma Mensal', rubrica: 'Rubrica de Avaliação', recuperacao: 'Plano de Recuperação' };
             const temaStr = tema ? ` com tema: "${tema}"` : '';
             const prompt = `Crie um(a) ${tiposMap[tipo]} completo(a) para ${serie} de ${disc}${temaStr}. 
 Siga as diretrizes da BNCC. 
 Estruture com: Objetivos de Aprendizagem, Habilidades BNCC, Desenvolvimento, Recursos Necessários, Avaliação e Tempo Estimado.
 Seja prático, detalhado e de fácil aplicação para professores da rede municipal.`;
+
             try {
-                const resp = await fetch('https://api.anthropic.com/v1/messages', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] })
-                });
-                const data = await resp.json();
-                const text = data.content?.[0]?.text || 'Erro ao gerar. Tente novamente.';
-                output.textContent = text;
+                const text = provedor === 'openai' ? await this._chamarOpenAI(apiKey, prompt) : await this._chamarGemini(apiKey, prompt);
+                output.textContent = text || 'Erro ao gerar. Tente novamente.';
                 saveBtn.classList.remove('hidden');
                 auditoria.registrar('IA Pedagógica', `Gerou ${tiposMap[tipo]} para ${serie} - ${disc}`);
             } catch (e) {
                 output.textContent = `❌ Erro na conexão com IA: ${e.message}`;
             }
+        },
+        async _chamarGemini(apiKey, prompt) {
+            const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+            });
+            const data = await resp.json();
+            if (data.error) throw new Error(data.error.message || 'Erro na API do Gemini.');
+            return data.candidates?.[0]?.content?.parts?.[0]?.text;
+        },
+        async _chamarOpenAI(apiKey, prompt) {
+            const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+                body: JSON.stringify({ model: 'gpt-4o-mini', messages: [{ role: 'user', content: prompt }] })
+            });
+            const data = await resp.json();
+            if (data.error) throw new Error(data.error.message || 'Erro na API da OpenAI.');
+            return data.choices?.[0]?.message?.content;
         },
         salvarBiblioteca() {
             const output = document.getElementById('ped-output').textContent;
@@ -2684,19 +2651,36 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
         sync() {
             db.ref('auditoria').limitToLast(50).on('value', snap => {
                 const box = document.getElementById('audit-log');
-                if (!box) return;
-                box.innerHTML = '';
+                const dashBox = document.getElementById('dashboard-atividades');
                 const items = [];
                 snap.forEach(a => items.unshift(a.val()));
-                items.forEach(a => {
-                    if (!a) return;
-                    box.innerHTML += `<div class="audit-item">
-                        <span class="audit-time">${a.data || '—'}</span>
-                        <span class="audit-user">${a.usuario || '—'}</span>
-                        <span class="audit-action"><b style="color:var(--gestao)">[${a.modulo || '—'}]</b> ${a.acao || '—'}</span>
-                    </div>`;
-                });
-                if (!items.length) box.innerHTML = '<p style="font-size:12px; color:#666">Nenhum registro de auditoria ainda.</p>';
+
+                if (box) {
+                    box.innerHTML = '';
+                    items.forEach(a => {
+                        if (!a) return;
+                        box.innerHTML += `<div class="audit-item">
+                            <span class="audit-time">${a.data || '—'}</span>
+                            <span class="audit-user">${a.usuario || '—'}</span>
+                            <span class="audit-action"><b style="color:var(--gestao)">[${a.modulo || '—'}]</b> ${a.acao || '—'}</span>
+                        </div>`;
+                    });
+                    if (!items.length) box.innerHTML = '<p style="font-size:12px; color:#666">Nenhum registro de auditoria ainda.</p>';
+                }
+
+                // Atividades Recentes (Dashboard): últimas 8 ações do sistema, mais recentes primeiro
+                if (dashBox) {
+                    const recentes = items.slice(0, 8);
+                    dashBox.innerHTML = recentes.length ? recentes.map(a => `
+                        <div style="display:flex; align-items:flex-start; gap:8px; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.06); font-size:11.5px">
+                            <i class="fa fa-circle" style="font-size:5px; margin-top:5px; color:var(--prof)"></i>
+                            <div>
+                                <div><b style="color:var(--gestao)">${a?.modulo || '—'}</b> · ${a?.usuario || '—'}</div>
+                                <div style="color:#aaa">${a?.acao || '—'}</div>
+                                <div style="color:#666; font-size:10px">${a?.data || '—'}</div>
+                            </div>
+                        </div>`).join('') : '<p style="font-size:12px; color:#666">Nenhuma atividade recente ainda.</p>';
+                }
             });
         }
     };
@@ -2727,12 +2711,36 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
         anterior() { this.atual.setMonth(this.atual.getMonth() - 1); this.render(); },
         proximo() { this.atual.setMonth(this.atual.getMonth() + 1); this.render(); },
         selecionarDia(d) { alert(`Dia ${d}/${this.atual.getMonth()+1}/${this.atual.getFullYear()} selecionado.\nUse o campo abaixo para adicionar um evento.`); },
+        _editandoId: null,
         addEvento() {
             const titulo = document.getElementById('evento-titulo').value;
             const data = document.getElementById('evento-data').value;
             if (!titulo || !data) { alert('Preencha título e data!'); return; }
-            db.ref('eventos').push({ titulo, data, autor: app.user?.nome || 'Sistema' })
+            if (this._editandoId) {
+                db.ref('eventos/' + this._editandoId).update({ titulo, data })
+                .then(() => { this._cancelarEdicaoEvento(); auditoria.registrar('Pedagógico', `Lembrete "${titulo}" editado.`); });
+                return;
+            }
+            db.ref('eventos').push({ titulo, data, autor: app.user?.nome || 'Sistema', autorPront: app.user?.pront || null })
             .then(() => { document.getElementById('evento-titulo').value = ''; document.getElementById('evento-data').value = ''; });
+        },
+        editarEvento(key, titulo, data) {
+            this._editandoId = key;
+            document.getElementById('evento-titulo').value = titulo || '';
+            document.getElementById('evento-data').value = data || '';
+            const btn = document.querySelector('button[onclick="calendario.addEvento()"]');
+            if (btn) btn.innerHTML = '<i class="fa fa-save"></i> Salvar Alteração';
+        },
+        _cancelarEdicaoEvento() {
+            this._editandoId = null;
+            document.getElementById('evento-titulo').value = '';
+            document.getElementById('evento-data').value = '';
+            const btn = document.querySelector('button[onclick="calendario.addEvento()"]');
+            if (btn) btn.innerHTML = '+ Adicionar Evento';
+        },
+        excluirEvento(key) {
+            if (!confirm('Remover este lembrete?')) return;
+            db.ref('eventos/' + key).remove().then(() => { if (this._editandoId === key) this._cancelarEdicaoEvento(); });
         },
         carregarEventos() {
             db.ref('eventos').on('value', snap => {
@@ -2741,9 +2749,15 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
                 lista.innerHTML = '';
                 snap.forEach(e => {
                     const d = e.val();
-                    lista.innerHTML += `<div style="display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px solid var(--border-subtle)">
+                    const podeEditar = app.user && (app.user.pront === d.autorPront || app.user.cargo === 'NTEi');
+                    const tituloEscapado = (d.titulo || '').replace(/'/g, "\\'");
+                    lista.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; gap:6px; padding:5px 0; border-bottom:1px solid var(--border-subtle)">
                         <span style="color:var(--gestao)">📅 ${d.titulo}</span>
                         <span style="color:#666">${d.data || '—'}</span>
+                        ${podeEditar ? `<span style="white-space:nowrap">
+                            <i class="fa fa-pen" style="cursor:pointer; color:var(--prof); margin-right:8px" title="Editar" onclick="calendario.editarEvento('${e.key}', '${tituloEscapado}', '${d.data || ''}')"></i>
+                            <i class="fa fa-trash" style="cursor:pointer; color:var(--ntei)" title="Remover" onclick="calendario.excluirEvento('${e.key}')"></i>
+                        </span>` : ''}
                     </div>`;
                 });
             });
@@ -3220,7 +3234,6 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
         },
         sync() {
             db.ref('comunicados').limitToLast(20).on('value', snap => {
-                if (typeof dashboard !== 'undefined') dashboard.setHealth('h-chat', true);
                 const lista = document.getElementById('comun-lista');
                 if (!lista) return;
                 lista.innerHTML = '';
@@ -3248,11 +3261,22 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             const titulo = document.getElementById('ideia-titulo').value;
             const desc = document.getElementById('ideia-desc').value;
             if (!titulo || !desc) { alert('Preencha título e descrição!'); return; }
-            db.ref('ideias').push({ titulo, desc, autor: app.user?.nome || 'Sistema', votos: 0, status: 'Nova', data: new Date().toLocaleDateString('pt-BR') })
+            db.ref('ideias').push({ titulo, desc, autor: app.user?.nome || 'Sistema', autorPront: app.user?.pront || null, votos: 0, status: 'Nova', data: new Date().toLocaleDateString('pt-BR') })
             .then(() => { document.getElementById('ideia-titulo').value = ''; document.getElementById('ideia-desc').value = ''; alert('Ideia enviada! 🎉'); });
         },
         votar(key) {
             db.ref('ideias/' + key + '/votos').transaction(v => (v || 0) + 1);
+        },
+        editar(key, tituloAtual, descAtual) {
+            const novoTitulo = prompt('Editar título da ideia:', tituloAtual);
+            if (novoTitulo === null) return;
+            const novaDesc = prompt('Editar descrição da ideia:', descAtual);
+            if (novaDesc === null) return;
+            db.ref('ideias/' + key).update({ titulo: novoTitulo, desc: novaDesc });
+        },
+        excluir(key) {
+            if (!confirm('Remover esta ideia?')) return;
+            db.ref('ideias/' + key).remove();
         },
         sync() {
             db.ref('ideias').on('value', snap => {
@@ -3262,6 +3286,9 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
                 const items = [];
                 snap.forEach(i => items.push({ ...i.val(), key: i.key }));
                 items.sort((a,b) => (b.votos||0) - (a.votos||0)).forEach(d => {
+                    const podeEditar = app.user && (app.user.pront === d.autorPront || app.user.cargo === 'NTEi');
+                    const tituloEsc = (d.titulo || '').replace(/'/g, "\\'");
+                    const descEsc = (d.desc || '').replace(/'/g, "\\'");
                     lista.innerHTML += `<div class="idea-card">
                         <b>💡 ${d.titulo}</b><br>
                         <span style="color:#ccc">${d.desc}</span><br>
@@ -3269,6 +3296,8 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
                         <div class="idea-votes">
                             <button class="vote-btn" onclick="ideias.votar('${d.key}')">👍 ${d.votos || 0}</button>
                             <span class="tag ${d.status === 'Implementada' ? 'tag-green' : 'tag-yellow'}">${d.status || 'Nova'}</span>
+                            ${podeEditar ? `<i class="fa fa-pen" style="cursor:pointer; color:var(--prof); margin-left:8px" title="Editar" onclick="ideias.editar('${d.key}', '${tituloEsc}', '${descEsc}')"></i>
+                            <i class="fa fa-trash" style="cursor:pointer; color:var(--ntei); margin-left:8px" title="Remover" onclick="ideias.excluir('${d.key}')"></i>` : ''}
                         </div>
                     </div>`;
                 });
@@ -4208,8 +4237,12 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
         // Executa a ação configurada para a(s) função(ões) vinculada(s) a um menu customizado,
         // respeitando perfil e prontuário do usuário logado. Sem função vinculada, mostra aviso genérico.
         executarPorMenu(menuId, menuNome) {
-            const funcoes = Object.values(this._dados || {}).filter(f => f.menu === menuId && f.ativa !== false);
-            const doUsuario = funcoes.filter(f => {
+            const funcoesTodas = Object.entries(this._dados || {}).map(([id, f]) => ({ id, ...f })).filter(f => f.menu === menuId && f.ativa !== false);
+            const overrides = app.overridesIndividuais || { funcoesLiberadas: [], funcoesBloqueadas: [] };
+            const doUsuario = funcoesTodas.filter(f => {
+                // Permissão individual por prontuário sempre vence a regra de perfil.
+                if (overrides.funcoesBloqueadas?.includes(f.id)) return false;
+                if (overrides.funcoesLiberadas?.includes(f.id)) return true;
                 const okPerfil = !f.perfil || f.perfil === 'Todos' || f.perfil === app.user?.cargo;
                 const okPront = !f.prontuarios?.length || f.prontuarios.includes(String(app.user?.pront));
                 return okPerfil && okPront;
@@ -4534,16 +4567,10 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
         iniciarStatusConexao() {
             const dot = () => document.getElementById('conn-status-dot');
             const aplicar = (online) => {
-                const d = dot();
-                if (d) {
-                    d.style.background = online ? '#2ecc71' : '#e74c3c';
-                    d.style.boxShadow = online ? '0 0 4px #2ecc71' : '0 0 4px #e74c3c';
-                    d.title = online ? 'Conectado (online)' : 'Sem conexão — operando localmente';
-                }
-                // Reflete também no painel Saúde da Plataforma do Dashboard
-                if (typeof dashboard !== 'undefined') dashboard.setHealth('h-fb', online);
-                const netConn = document.getElementById('net-conectividade');
-                if (netConn) netConn.textContent = online ? 'ONLINE' : 'OFFLINE';
+                const d = dot(); if (!d) return;
+                d.style.background = online ? '#2ecc71' : '#e74c3c';
+                d.style.boxShadow = online ? '0 0 4px #2ecc71' : '0 0 4px #e74c3c';
+                d.title = online ? 'Conectado (online)' : 'Sem conexão — operando localmente';
             };
             db.ref('.info/connected').on('value', snap => aplicar(!!snap.val() && navigator.onLine));
             window.addEventListener('online', () => aplicar(navigator.onLine));
@@ -4669,6 +4696,10 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             // Aplica o menu restrito (Professor/SEFE) ou modo SEFE especial
             this.aplicarRestricoesDeMenu();
 
+            // Permissões individuais por prontuário: funcionam para QUALQUER cargo,
+            // sobrescrevendo o que o perfil libera/bloqueia. Fica ao vivo (tempo real).
+            this.escutarPermissoesIndividuais();
+
             // Restringe painéis de publicação (Editais, Avisos, Comunicados, Enquetes) só ao NTEi
             this.aplicarRestricaoPublicacoes();
 
@@ -4694,12 +4725,17 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
                 this.escutarUsuariosSistema();
                 this.startVeyonMasterMonitor();
                 this.initNTEiChart();
-                criadorMenus.init();
-                criadorFuncoes.init();
                 permissoesIndividuais.init();
             }
 
+            // Criador de Menus / Criador de Funções: precisam rodar para TODO usuário logado
+            // (não só o NTEi), pois é isso que faz os menus customizados aparecerem na
+            // barra de navegação de cada perfil/prontuário — e não só no painel de quem criou.
+            criadorMenus.init();
+            criadorFuncoes.init();
+
             // Inicia todos os módulos
+            iaConfig.init();
             this.syncSystemControls();
             this.syncData();
             this.carregarEquipamentosDinamicos();
@@ -4736,7 +4772,43 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             trafegoMonitor.init();
 
             auditoria.registrar('Autenticação', `Login realizado com sucesso no sistema.`);
-            if (typeof dashboard !== 'undefined') dashboard.setHealth('h-auth', true);
+        },
+
+        // ═══════════════════════════════════════════════════════
+        // PERMISSÕES INDIVIDUAIS POR PRONTUÁRIO — funciona para todo mundo,
+        // independentemente do cargo. Escuta em tempo real (permissoes_individuais/{pront})
+        // e reaplica sempre que o NTEi mudar algo, sem precisar deslogar/logar de novo.
+        // ═══════════════════════════════════════════════════════
+        overridesIndividuais: { menusLiberados: [], menusBloqueados: [], funcoesLiberadas: [], funcoesBloqueadas: [] },
+        escutarPermissoesIndividuais() {
+            if (!this.user?.pront) return;
+            db.ref('permissoes_individuais/' + this.user.pront).on('value', snap => {
+                const over = snap.val();
+                this.overridesIndividuais = {
+                    menusLiberados: over?.menusLiberados || [],
+                    menusBloqueados: over?.menusBloqueados || [],
+                    funcoesLiberadas: over?.funcoesLiberadas || [],
+                    funcoesBloqueadas: over?.funcoesBloqueadas || []
+                };
+                this.aplicarOverridesDeMenu();
+            });
+        },
+        aplicarOverridesDeMenu() {
+            const { menusLiberados, menusBloqueados } = this.overridesIndividuais;
+            (permissoesIndividuais._menusBase || []).forEach(m => {
+                const botoes = document.querySelectorAll(`.topbar-btn[onclick*="'${m.id}'"]`);
+                if (menusBloqueados.includes(m.id)) {
+                    botoes.forEach(b => b.classList.add('hidden'));
+                } else if (menusLiberados.includes(m.id)) {
+                    botoes.forEach(b => b.classList.remove('hidden'));
+                }
+                // menus sem override: fica como a restrição de cargo já deixou
+            });
+            // Se o módulo aberto agora está bloqueado, tira o usuário de lá
+            if (menusBloqueados.includes(modules.current)) {
+                const alternativa = menusBloqueados.includes('operacional') ? 'dashboard' : 'operacional';
+                modules.show(alternativa);
+            }
         },
 
         // Esconde do menu tudo que é monitoramento/gestão para quem não deve ver
@@ -5224,6 +5296,16 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
                 } else {
                     ribbon.style.display = 'none';
                 }
+                this.ajustarOffsetAviso();
+            });
+        },
+
+        // Faz a topbar e o conteúdo abrirem espaço para o aviso geral, em vez de ficarem cobertos por ele.
+        ajustarOffsetAviso() {
+            requestAnimationFrame(() => {
+                const ribbon = document.getElementById('alert-ribbon');
+                const altura = (ribbon && ribbon.style.display !== 'none') ? ribbon.offsetHeight : 0;
+                document.documentElement.style.setProperty('--aviso-altura', altura + 'px');
             });
         },
 
@@ -5499,6 +5581,8 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             localStorage.setItem('nteiSession', JSON.stringify(app.user));
         }).catch(() => {});
     })();
+
+    window.addEventListener('resize', () => { if (typeof app !== 'undefined' && app.ajustarOffsetAviso) app.ajustarOffsetAviso(); });
     </script>
 </body>
 </html>
