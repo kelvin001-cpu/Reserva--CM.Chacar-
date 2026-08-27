@@ -16,6 +16,8 @@
             --prof: #00adef; --gestao: #f1c40f; --secre: #a55eea; --cad: #2ecc71; --ntei: #eb4d4b;
             --smeti: #C0C0C0;
             --hw-color: #e67e22; --sw-color: #3498db; --plat-color: #1dd1a1;
+            --edm-yellow: #f4c521; --edm-green: #2ecc71; --edm-blue: #3498db; --edm-red: #e74c3c;
+            --edm-grad: conic-gradient(from 0deg, var(--edm-yellow), var(--edm-green), var(--edm-blue), var(--edm-red), var(--edm-yellow));
             --bg-overlay: rgba(10, 11, 16, 0.92);
             --panel-bg: rgba(22, 27, 34, 0.75);
             --border-subtle: rgba(255,255,255,0.08);
@@ -475,6 +477,25 @@
         <div class="sector-column" id="ntei-column"><i class="fa fa-terminal fa-3x" style="color:var(--ntei)"></i><h2 title="Núcleo de Tecnologia da Inovação">NTEI</h2><p style="font-size:9.5px; color:var(--text-muted); margin:-6px 0 8px 0; letter-spacing:0.4px; max-width:170px; line-height:1.3">Núcleo de Tecnologia da Inovação</p><input type="number" id="n-p" placeholder="ID"><input type="password" id="n-s" placeholder="Senha"><button class="btn" style="background:var(--ntei); color:white" onclick="app.login('n','NTEi')">Master Login</button></div>
         <div class="sector-column"><i class="fa fa-chart-line fa-3x" style="color:var(--smeti)"></i><h2>SMETi</h2><input type="number" id="sm-p" placeholder="Prontuário"><input type="password" id="sm-s" placeholder="Senha"><button class="btn" style="background:var(--smeti); color:black" onclick="app.login('sm','SMETi')">Gerenciar</button></div>
         <div class="sector-column" id="sefe-column" style="border:none; background:rgba(230,126,34,0.05)"><i class="fa fa-user-shield fa-3x" style="color:#e67e22"></i><h2>SEFE</h2><p style="font-size:10px; color:var(--text-muted); margin:-5px 0 8px 0">Acesso temporário</p><input type="number" id="sf-p" placeholder="Prontuário"><input type="password" id="sf-s" placeholder="Senha"><button class="btn" style="background:#e67e22; color:white" onclick="app.login('sf','SEFE')">Acessar</button></div>
+        <div class="sector-column" id="edm-column" style="border:none; background:linear-gradient(160deg, rgba(244,197,33,0.06), rgba(46,204,113,0.05), rgba(52,152,219,0.05))">
+            <div style="width:52px; height:52px; border-radius:50%; background:var(--edm-grad); display:flex; align-items:center; justify-content:center; margin-bottom:6px">
+                <div style="width:40px; height:40px; border-radius:50%; background:#0a0b10; display:flex; align-items:center; justify-content:center"><i class="fa fa-shield-halved" style="font-size:16px; background:linear-gradient(120deg,var(--edm-yellow),var(--edm-green),var(--edm-blue),var(--edm-red)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent"></i></div>
+            </div>
+            <h2 style="font-size:15px">FUNDAÇÃO<br>EDMÍLSON</h2>
+            <p style="font-size:9px; color:var(--text-muted); margin:-4px 0 8px 0; font-style:italic">Nosso sonho é virar o jogo</p>
+            <select id="edm-tipo" style="margin-bottom:6px">
+                <option value="Instrutor">Instrutor</option>
+                <option value="Coordenador">Coordenador</option>
+            </select>
+            <input type="email" id="edm-email" placeholder="seuemail@gmail.com">
+            <input type="password" id="edm-senha" placeholder="Senha">
+            <button class="btn" style="background:var(--edm-grad); color:#111; font-weight:800" onclick="fundacaoEdmilson.login()">Entrar</button>
+            <p style="font-size:8.5px; color:var(--text-muted); margin-top:8px; cursor:pointer; text-decoration:underline" onclick="fundacaoEdmilson.mostrarCadastro()">Primeiro acesso? Criar conta</p>
+            <div id="edm-cadastro-box" class="hidden" style="margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.08)">
+                <input type="text" id="edm-cad-nome" placeholder="Nome completo">
+                <button class="btn" style="background:var(--edm-green); color:#111; font-size:11px" onclick="fundacaoEdmilson.cadastrar()">Criar Conta</button>
+            </div>
+        </div>
     </div>
     <div id="dia-restrito-aviso" class="hidden" style="width:100%; text-align:center; padding:10px; background:rgba(230,126,34,0.15); border-top:1px solid rgba(230,126,34,0.3); font-size:12px; color:#e67e22">
         <i class="fa fa-triangle-exclamation"></i> Hoje o acesso está temporariamente restrito ao SEFE (dias 07 e 08/07). Os demais setores voltam a funcionar normalmente após esse período.
@@ -947,6 +968,68 @@
                             <div style="margin-top:14px; background:rgba(0,0,0,0.25); border-radius:10px; padding:10px 12px">
                                 <p style="font-size:11px; color:var(--text-muted); margin:0 0 6px 0"><i class="fa fa-network-wired"></i> Monitoramento de Rede</p>
                                 <div id="smeti-rede-status" style="font-size:11.5px; color:#888">Aguardando dados do agente.</div>
+                            </div>
+                        </div>
+
+                        <!-- ═══ FUNDAÇÃO EDMÍLSON — Painel Instrutor ═══ -->
+                        <div id="panel-edm-instrutor" class="panel hidden" style="border:2px solid transparent; border-image:linear-gradient(120deg,var(--edm-yellow),var(--edm-green),var(--edm-blue),var(--edm-red)) 1; background:linear-gradient(160deg, rgba(244,197,33,0.05), rgba(46,204,113,0.04), rgba(52,152,219,0.04))">
+                            <h3 style="margin:0 0 4px 0"><i class="fa fa-shield-halved" style="background:linear-gradient(120deg,var(--edm-yellow),var(--edm-green),var(--edm-blue),var(--edm-red)); -webkit-background-clip:text; -webkit-text-fill-color:transparent"></i> FUNDAÇÃO EDMÍLSON — Painel do Instrutor</h3>
+                            <p style="font-size:10.5px; color:var(--text-muted); margin:0 0 12px 0; font-style:italic">Nosso sonho é virar o jogo</p>
+
+                            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:14px">
+                                <div style="background:rgba(244,197,33,0.08); border:1px solid rgba(244,197,33,0.25); border-radius:12px; padding:12px">
+                                    <h4 style="margin:0 0 8px 0; font-size:12px; color:var(--edm-yellow)"><i class="fa fa-book"></i> Meu Curso</h4>
+                                    <input type="text" id="edm-curso-nome" placeholder="Nome do curso que ministro">
+                                    <input type="text" id="edm-curso-dias" placeholder="Dias/horário (ex: Seg e Qua, 14h)">
+                                    <button class="btn" style="background:var(--edm-yellow); color:#111" onclick="fundacaoEdmilson.salvarCurso()">Salvar Curso</button>
+                                    <div id="edm-meu-curso-info" style="margin-top:8px; font-size:11px; color:#ccc"></div>
+                                </div>
+
+                                <div style="background:rgba(46,204,113,0.08); border:1px solid rgba(46,204,113,0.25); border-radius:12px; padding:12px">
+                                    <h4 style="margin:0 0 8px 0; font-size:12px; color:var(--edm-green)"><i class="fa fa-user-plus"></i> Adicionar Aluno</h4>
+                                    <input type="text" id="edm-aluno-nome" placeholder="Nome do aluno">
+                                    <input type="text" id="edm-aluno-idade" placeholder="Idade (opcional)">
+                                    <button class="btn" style="background:var(--edm-green); color:#111" onclick="fundacaoEdmilson.adicionarAluno()">Adicionar</button>
+                                </div>
+                            </div>
+
+                            <div style="margin-top:14px; background:rgba(52,152,219,0.07); border:1px solid rgba(52,152,219,0.25); border-radius:12px; padding:12px">
+                                <h4 style="margin:0 0 8px 0; font-size:12px; color:var(--edm-blue)"><i class="fa fa-clipboard-check"></i> Registrar Frequência de Hoje</h4>
+                                <div id="edm-lista-frequencia" style="max-height:280px; overflow-y:auto"></div>
+                            </div>
+
+                            <div style="margin-top:14px; background:rgba(231,76,60,0.07); border:1px solid rgba(231,76,60,0.25); border-radius:12px; padding:12px">
+                                <h4 style="margin:0 0 8px 0; font-size:12px; color:var(--edm-red)"><i class="fa fa-users"></i> Meus Alunos</h4>
+                                <div id="edm-lista-alunos" style="max-height:280px; overflow-y:auto"></div>
+                            </div>
+                        </div>
+
+                        <!-- ═══ FUNDAÇÃO EDMÍLSON — Painel Coordenador ═══ -->
+                        <div id="panel-edm-coordenador" class="panel hidden" style="border:2px solid transparent; border-image:linear-gradient(120deg,var(--edm-yellow),var(--edm-green),var(--edm-blue),var(--edm-red)) 1; background:linear-gradient(160deg, rgba(244,197,33,0.05), rgba(46,204,113,0.04), rgba(52,152,219,0.04))">
+                            <h3 style="margin:0 0 4px 0"><i class="fa fa-shield-halved" style="background:linear-gradient(120deg,var(--edm-yellow),var(--edm-green),var(--edm-blue),var(--edm-red)); -webkit-background-clip:text; -webkit-text-fill-color:transparent"></i> FUNDAÇÃO EDMÍLSON — Painel do Coordenador</h3>
+                            <p style="font-size:10.5px; color:var(--text-muted); margin:0 0 12px 0; font-style:italic">Nosso sonho é virar o jogo</p>
+
+                            <div class="kpi-grid">
+                                <div class="kpi-card yellow"><div class="kpi-num" id="edm-kpi-cursos">—</div><div class="kpi-label">Cursos Ativos</div></div>
+                                <div class="kpi-card green"><div class="kpi-num" id="edm-kpi-instrutores">—</div><div class="kpi-label">Instrutores</div></div>
+                                <div class="kpi-card blue"><div class="kpi-num" id="edm-kpi-alunos">—</div><div class="kpi-label">Alunos Cadastrados</div></div>
+                                <div class="kpi-card red"><div class="kpi-num" id="edm-kpi-freq-media">—</div><div class="kpi-label">Frequência Média (%)</div></div>
+                            </div>
+
+                            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr)); gap:14px; margin-top:8px">
+                                <div>
+                                    <p style="font-size:11px; color:var(--text-muted); margin:0 0 2px 0">Frequência por Curso</p>
+                                    <div class="chart-container"><canvas id="chart-edm-frequencia"></canvas></div>
+                                </div>
+                                <div>
+                                    <p style="font-size:11px; color:var(--text-muted); margin:0 0 2px 0">Alunos por Curso</p>
+                                    <div class="chart-container"><canvas id="chart-edm-alunos"></canvas></div>
+                                </div>
+                            </div>
+
+                            <div style="margin-top:14px; background:rgba(0,0,0,0.25); border-radius:10px; padding:10px 12px">
+                                <p style="font-size:11px; color:var(--text-muted); margin:0 0 8px 0"><i class="fa fa-chalkboard-user"></i> Cursos e Instrutores</p>
+                                <div id="edm-lista-cursos-coord" style="max-height:340px; overflow-y:auto"></div>
                             </div>
                         </div>
                     </div>
@@ -1671,6 +1754,19 @@
                     <p style="font-size:10px; color:#aaa; margin:16px 0 6px 0">FUNÇÕES CRIADAS:</p>
                     <div id="lista-funcoes-criadas" style="max-height:200px; overflow-y:auto; background:rgba(0,0,0,0.2); padding:5px; border-radius:5px"></div>
                 </div>
+
+                <!-- ═══ NTEi: Gestão de Contas Fundação Edmílson (por @gmail) ═══ -->
+                <div id="panel-ntei-edm" class="panel hidden" style="border:2px solid transparent; border-image:linear-gradient(120deg,var(--edm-yellow),var(--edm-green),var(--edm-blue),var(--edm-red)) 1">
+                    <h3 style="margin:0 0 4px 0"><i class="fa fa-shield-halved" style="background:linear-gradient(120deg,var(--edm-yellow),var(--edm-green),var(--edm-blue),var(--edm-red)); -webkit-background-clip:text; -webkit-text-fill-color:transparent"></i> ADMIN — Contas Fundação Edmílson</h3>
+                    <p style="font-size:11px; color:var(--text-muted); margin-top:-2px">Resete senha ou altere a função (Instrutor/Coordenador) de qualquer conta cadastrada por @gmail.</p>
+                    <div style="display:flex; gap:8px; margin-top:6px">
+                        <input type="email" id="edm-admin-busca-email" placeholder="Buscar por e-mail @gmail" style="margin:0" onkeypress="if(event.key==='Enter') fundacaoEdmilson.adminBuscar()">
+                        <button class="btn" style="width:auto; margin:0; padding:9px 16px; background:var(--edm-green); color:#111" onclick="fundacaoEdmilson.adminBuscar()">Buscar</button>
+                    </div>
+                    <div id="edm-admin-resultado" style="margin-top:10px"></div>
+                    <p style="font-size:10px; color:#aaa; margin:16px 0 6px 0">TODAS AS CONTAS:</p>
+                    <div id="edm-admin-lista-contas" style="max-height:260px; overflow-y:auto; background:rgba(0,0,0,0.2); padding:5px; border-radius:5px"></div>
+                </div>
             </div>
 
         </div><!-- /module-container -->
@@ -1860,6 +1956,9 @@
             this.setKPI('inv-disp', dispCount);
             this.setKPI('inv-uso', usoCount);
             this.setKPI('inv-manut', manutCount);
+            // Mini-stats da sidebar (Equipamentos / Usuários) — usam os mesmos totais já calculados acima
+            this.setKPI('sb-mini-equip', totalEq);
+            this.setKPI('sb-mini-usuarios', totalUsers);
 
             // Alertas automáticos
             const alertBox = document.getElementById('dashboard-alertas-container');
@@ -4399,27 +4498,47 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             if (this._iniciado) return; // evita duplicar listeners/gráficos
             this._iniciado = true;
 
+            // Cada listener agora trata erro explicitamente (regra de segurança do Firebase negando
+            // leitura, queda de conexão, etc). Antes uma falha ficava muda e o painel travava em "—"
+            // pra sempre sem nenhum aviso. Agora mostra o erro real na área de status do painel.
+            const onErro = (origem) => (err) => {
+                console.error('[Painel SMETi] Falha ao ler "' + origem + '":', err);
+                this._erro = origem + ': ' + (err?.message || err);
+                this._renderErro();
+            };
+
             db.ref('chamados').on('value', snap => {
                 this._chamados = snap.val() || {};
+                this._erro = null;
                 this._render();
-            });
+            }, onErro('chamados'));
             db.ref('equipamentos').on('value', snap => {
                 this._equipamentos = snap.val() || {};
+                this._erro = null;
                 this._render();
-            });
+            }, onErro('equipamentos'));
             db.ref('reservas').on('value', snap => {
                 this._reservas = snap.val() || {};
+                this._erro = null;
                 this._render();
-            });
+            }, onErro('reservas'));
             db.ref('veyon_live').on('value', snap => {
                 this._terminais = snap.val() || {};
+                this._erro = null;
                 this._render();
-            });
+            }, onErro('veyon_live'));
 
             // Terminais podem "cair" sem disparar evento novo — reavalia online/offline a cada 10s,
             // e também reclassifica reservas de hoje/futuras quando o dia virar.
             if (this._intervalId) clearInterval(this._intervalId);
             this._intervalId = setInterval(() => this._render(), 10000);
+        },
+
+        _renderErro() {
+            const box = document.getElementById('smeti-rede-status');
+            if (box && this._erro) {
+                box.innerHTML = `<span style="color:var(--ntei)"><i class="fa fa-triangle-exclamation"></i> Erro ao carregar dados do painel (${this._erro}). Verifique a conexão ou as regras do Firebase.</span>`;
+            }
         },
 
         setFiltro(f) {
@@ -4707,6 +4826,15 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             if (this.user.cargo === 'SMETi' || this.user.cargo === 'NTEi') {
                 document.getElementById('panel-smeti').classList.remove('hidden');
             }
+            // Fundação Edmílson — painéis próprios (contas por @gmail, fora do fluxo padrão de prontuário)
+            if (this.user.cargo === 'Instrutor_EDM') {
+                document.getElementById('panel-edm-instrutor').classList.remove('hidden');
+                fundacaoEdmilson.initInstrutor();
+            }
+            if (this.user.cargo === 'Coordenador_EDM') {
+                document.getElementById('panel-edm-coordenador').classList.remove('hidden');
+                fundacaoEdmilson.initCoordenador();
+            }
             if (this.user.cargo === 'NTEi') {
                 document.getElementById('panel-admin-ntei').classList.remove('hidden');
                 document.getElementById('panel-usuarios-ntei').classList.remove('hidden');
@@ -4717,6 +4845,7 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
                 document.getElementById('panel-permissoes-individuais').classList.remove('hidden');
                 document.getElementById('panel-criador-menus').classList.remove('hidden');
                 document.getElementById('panel-criador-funcoes').classList.remove('hidden');
+                document.getElementById('panel-ntei-edm').classList.remove('hidden');
                 document.querySelectorAll('.ntei-only').forEach(el => el.classList.remove('hidden'));
                 this.syncSolicitacoesAcesso();
                 this.syncFeedbacks();
