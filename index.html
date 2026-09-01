@@ -453,6 +453,104 @@
             .topbar-nav.mobile-open { display: flex; }
             .topbar-nav .topbar-btn { width: 100%; text-align: left; padding: 11px 14px; border-radius: 8px; font-size: 12px; }
         }
+
+        /* ═══════════════════════════════════════════════════════
+           REFORMA NTEi — NAVEGAÇÃO POR ÁREAS
+        ═══════════════════════════════════════════════════════ */
+        .area-nav { display: flex; gap: 3px; }
+        .area-btn { position: relative; background: transparent; border: none; color: var(--text-muted); font-family: 'Poppins', sans-serif; font-size: 11.5px; font-weight: 600; padding: 8px 10px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background .15s, color .15s; white-space: nowrap; }
+        .area-btn:hover, .area-btn:focus-visible { background: rgba(255,255,255,0.08); color: #fff; }
+        .area-btn.area-active { background: rgba(0,173,239,0.16); color: var(--prof); }
+        .area-btn.ntei-area { color: var(--ntei); }
+        .area-btn.ntei-area:hover, .area-btn.ntei-area.area-active { background: rgba(235,77,75,0.16); }
+        .area-caret { font-size: 9px; opacity: .7; }
+        .area-dropdown { display: none; position: absolute; top: calc(100% + 8px); left: 0; min-width: 230px; background: var(--bg-panel, #14161c); border: 1px solid var(--border-subtle); border-radius: 10px; box-shadow: 0 12px 30px rgba(0,0,0,0.5); padding: 6px; z-index: 99997; }
+        .area-dropdown.open { display: block; }
+        .area-dropdown-item { display: flex; align-items: center; gap: 9px; padding: 9px 10px; border-radius: 7px; font-size: 12px; color: #eaeaea; cursor: pointer; }
+        .area-dropdown-item:hover, .area-dropdown-item:focus-visible { background: rgba(255,255,255,0.08); }
+        .area-dropdown-item i { width: 16px; text-align: center; color: var(--prof); }
+        .area-dropdown-hint { font-size: 10px; color: var(--text-muted); padding: 6px 10px 2px 10px; }
+        @media (max-width: 980px) { .area-nav { display: none; } }
+
+        /* Botão de ajuda/acessibilidade no header */
+        .hdr-util-btn { background: transparent; border: 1px solid var(--border-subtle); color: var(--text-muted); width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 13px; margin-right: 4px; }
+        .hdr-util-btn:hover, .hdr-util-btn:focus-visible { color: #fff; border-color: var(--prof); }
+
+        /* ═══════════════════════════════════════════════════════
+           CENTRAL DE ACESSIBILIDADE
+        ═══════════════════════════════════════════════════════ */
+        .a11y-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200010; align-items: flex-start; justify-content: flex-end; }
+        .a11y-overlay.open { display: flex; }
+        .a11y-panel { width: 340px; max-width: 92vw; height: 100%; background: var(--bg-panel, #14161c); border-left: 1px solid var(--border-subtle); overflow-y: auto; padding: 16px; }
+        .a11y-panel h3 { margin: 0 0 4px 0; font-size: 15px; }
+        .a11y-sub { font-size: 11px; color: var(--text-muted); margin-bottom: 14px; }
+        .a11y-group { margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--border-subtle); }
+        .a11y-group h4 { font-size: 10.5px; text-transform: uppercase; letter-spacing: .6px; color: var(--text-muted); margin: 0 0 8px 0; }
+        .a11y-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; font-size: 12.5px; }
+        .a11y-seg { display: flex; border: 1px solid var(--border-subtle); border-radius: 8px; overflow: hidden; }
+        .a11y-seg button { background: transparent; border: none; color: var(--text-muted); padding: 6px 11px; font-size: 12px; cursor: pointer; border-right: 1px solid var(--border-subtle); }
+        .a11y-seg button:last-child { border-right: none; }
+        .a11y-seg button.active { background: var(--prof); color: #001622; font-weight: 700; }
+        .a11y-toggle { position: relative; width: 38px; height: 21px; border-radius: 20px; background: rgba(255,255,255,0.15); cursor: pointer; flex: none; }
+        .a11y-toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 17px; height: 17px; border-radius: 50%; background: #fff; transition: transform .15s; }
+        .a11y-toggle.on { background: var(--prof); }
+        .a11y-toggle.on::after { transform: translateX(17px); }
+        .a11y-theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .a11y-theme-swatch { border: 2px solid transparent; border-radius: 8px; padding: 8px; cursor: pointer; font-size: 11px; text-align: center; background: rgba(255,255,255,0.05); }
+        .a11y-theme-swatch.active { border-color: var(--prof); }
+        .a11y-slider { width: 100%; }
+        .a11y-reset-btn { width: 100%; margin-top: 4px; }
+
+        /* Aplicação real das preferências */
+        html.a11y-font-md body, html.a11y-font-md #main-system { font-size: 1.08em; }
+        html.a11y-font-lg body, html.a11y-font-lg #main-system { font-size: 1.2em; }
+        html.a11y-contrast-alto body { filter: contrast(1.18) saturate(1.15); }
+        html.a11y-contrast-alto .panel, html.a11y-contrast-alto .sb-card, html.a11y-contrast-alto .widget-card { border-width: 2px !important; }
+        html.a11y-motion-reduzir *, html.a11y-motion-reduzir *::before, html.a11y-motion-reduzir *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+        html.a11y-cursor-grande, html.a11y-cursor-grande * { cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24'><path d='M4 2l14 8-6 2-2 6z' fill='white' stroke='black' stroke-width='1'/></svg>") 4 4, auto !important; }
+        html.a11y-destacar a, html.a11y-destacar [onclick], html.a11y-destacar button { outline: 2px solid var(--gestao) !important; outline-offset: 1px; }
+        html.a11y-espaco body, html.a11y-espaco #main-system { line-height: 1.7; }
+        html.a11y-espaco .panel, html.a11y-espaco .sb-card { padding-top: 16px !important; padding-bottom: 16px !important; }
+        html.a11y-foco :focus-visible { outline: 3px solid var(--gestao) !important; outline-offset: 2px; }
+
+        /* Temas */
+        html.tema-claro { --bg-overlay: rgba(244, 246, 250, 0.97); --text-muted: #5b6472; --border-subtle: rgba(20,30,50,0.12); }
+        html.tema-claro body { color: #1b2430; }
+        html.tema-claro .panel, html.tema-claro .sb-card, html.tema-claro .widget-card, html.tema-claro #app-sidebar, html.tema-claro .area-dropdown, html.tema-claro .a11y-panel, html.tema-claro #topbar { background: #ffffff !important; color: #1b2430; }
+        html.tema-claro #topbar { border-bottom: 1px solid rgba(20,30,50,0.1); }
+        html.tema-claro input, html.tema-claro select, html.tema-claro textarea { background: #f2f4f8 !important; color: #1b2430 !important; border-color: rgba(20,30,50,0.15) !important; }
+
+        html.tema-institucional { --bg-overlay: rgba(240, 236, 224, 0.97); --prof: #1b4f8c; --text-muted: #5c6270; --border-subtle: rgba(27,79,140,0.18); }
+        html.tema-institucional body { color: #1c2430; }
+        html.tema-institucional .panel, html.tema-institucional .sb-card, html.tema-institucional .widget-card, html.tema-institucional #app-sidebar, html.tema-institucional .area-dropdown, html.tema-institucional .a11y-panel, html.tema-institucional #topbar { background: #fbf7ee !important; color: #1c2430; }
+        html.tema-institucional input, html.tema-institucional select, html.tema-institucional textarea { background: #ffffff !important; color: #1c2430 !important; border-color: rgba(27,79,140,0.2) !important; }
+
+        html.tema-alto-contraste { --bg-overlay: #000000; --text-muted: #ffff00; --border-subtle: #ffffff; --prof: #00e5ff; }
+        html.tema-alto-contraste body { color: #ffffff; background: #000; }
+        html.tema-alto-contraste .panel, html.tema-alto-contraste .sb-card, html.tema-alto-contraste .widget-card, html.tema-alto-contraste #app-sidebar, html.tema-alto-contraste #topbar { background: #000000 !important; color: #fff !important; border: 2px solid #ffffff !important; }
+        html.tema-alto-contraste a, html.tema-alto-contraste button { text-decoration: underline; }
+
+        /* Papel de parede institucional sutil (cantos, nunca atrás do conteúdo de leitura) */
+        #ntei-wallpaper { position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.10; transition: opacity .2s; }
+        #ntei-wallpaper svg { position: absolute; width: 340px; height: 340px; }
+        #ntei-wallpaper .wp-tl { top: 60px; left: -60px; }
+        #ntei-wallpaper .wp-br { bottom: -60px; right: -60px; }
+        html.tema-claro #ntei-wallpaper, html.tema-institucional #ntei-wallpaper { opacity: 0.14; }
+
+        /* Central de ajuda */
+        .ajuda-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200010; align-items: center; justify-content: center; }
+        .ajuda-overlay.open { display: flex; }
+        .ajuda-box { width: 420px; max-width: 92vw; max-height: 82vh; overflow-y: auto; background: var(--bg-panel, #14161c); border-radius: 12px; padding: 18px; border: 1px solid var(--border-subtle); }
+        .ajuda-exemplo { padding: 9px 12px; border-radius: 8px; background: rgba(255,255,255,0.05); font-size: 12.5px; cursor: pointer; margin-bottom: 6px; }
+        .ajuda-exemplo:hover { background: rgba(0,173,239,0.15); }
+        .ajuda-resultado { margin-top: 12px; padding: 12px; border-radius: 8px; background: rgba(0,173,239,0.1); border: 1px solid rgba(0,173,239,0.3); font-size: 12.5px; }
+        .ajuda-caminho { display: flex; align-items: center; gap: 6px; margin: 8px 0; font-size: 12px; color: var(--text-muted); flex-wrap: wrap; }
+        .ajuda-caminho b { color: #fff; }
+
+        /* Guia de boas-vindas */
+        .guia-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200020; align-items: center; justify-content: center; }
+        .guia-overlay.open { display: flex; }
+        .guia-box { width: 380px; max-width: 90vw; background: var(--bg-panel, #14161c); border: 1px solid var(--prof); border-radius: 14px; padding: 26px; text-align: center; }
     </style>
 </head>
 <body>
@@ -510,20 +608,70 @@
             <input type="text" id="global-search-input" placeholder="Busca global: alunos, equipamentos, chamados..." oninput="globalSearch.query(this.value)">
             <div class="search-results-dropdown" id="search-dropdown"></div>
         </div>
-        <div class="topbar-nav" id="topbar-nav">
-            <button class="topbar-btn active" onclick="modules.show('dashboard')"><i class="fa fa-gauge"></i> Dashboard</button>
-            <button class="topbar-btn" onclick="modules.show('operacional')"><i class="fa fa-tools"></i> Operacional</button>
-            <button class="topbar-btn" onclick="modules.show('pedagogico')"><i class="fa fa-book"></i> Pedagógico</button>
-            <button class="topbar-btn" onclick="modules.show('alunos')"><i class="fa fa-users"></i> Alunos</button>
-            <button class="topbar-btn" onclick="modules.show('patrimonio')"><i class="fa fa-laptop"></i> Patrimônio</button>
-            <button class="topbar-btn" onclick="modules.show('formacao')"><i class="fa fa-graduation-cap"></i> Formação</button>
-            <button class="topbar-btn" onclick="modules.show('gemeo')"><i class="fa fa-map"></i> Gêmeo Digital</button>
-            <button class="topbar-btn" onclick="modules.show('comunicacao')"><i class="fa fa-comments"></i> Comunicação</button>
-            <button class="topbar-btn" onclick="modules.show('editais')"><i class="fa fa-file-contract"></i> Editais</button>
-            <button class="topbar-btn" onclick="modules.show('analise')"><i class="fa fa-brain"></i> Análise IA</button>
-            <button class="topbar-btn ntei-only hidden" onclick="modules.show('admin')"><i class="fa fa-shield"></i> Admin NTEi</button>
+        <div class="area-nav" id="topbar-nav">
+            <div class="area-item">
+                <button class="area-btn area-active" data-area="inicio" onclick="areaNav.click(this,'dashboard')"><i class="fa fa-house"></i> Início</button>
+            </div>
+            <div class="area-item">
+                <button class="area-btn" data-area="ensino" onclick="areaNav.toggle(this,'ensino')"><i class="fa fa-graduation-cap"></i> Ensino <i class="fa fa-chevron-down area-caret"></i></button>
+                <div class="area-dropdown" id="area-dd-ensino">
+                    <div class="area-dropdown-item" onclick="areaNav.go('pedagogico','ensino')"><i class="fa fa-book"></i> Pedagógico (turmas, planejamento, avaliações)</div>
+                    <div class="area-dropdown-item" onclick="areaNav.go('alunos','ensino')"><i class="fa fa-users"></i> Alunos</div>
+                    <div class="area-dropdown-item" onclick="areaNav.go('formacao','ensino')"><i class="fa fa-route"></i> Formação de Professores</div>
+                    <div class="area-dropdown-item" onclick="areaNav.go('operacional','ensino','panel-plataformas')"><i class="fa fa-book-open"></i> Plataformas Educacionais</div>
+                </div>
+            </div>
+            <div class="area-item">
+                <button class="area-btn" data-area="escola" onclick="areaNav.toggle(this,'escola')"><i class="fa fa-school"></i> Escola <i class="fa fa-chevron-down area-caret"></i></button>
+                <div class="area-dropdown" id="area-dd-escola">
+                    <div class="area-dropdown-item" onclick="areaNav.go('operacional','escola')"><i class="fa fa-calendar-plus"></i> Reservas de Equipamentos e Salas</div>
+                    <div class="area-dropdown-item" onclick="areaNav.go('patrimonio','escola')"><i class="fa fa-laptop"></i> Patrimônio</div>
+                    <div class="area-dropdown-item" onclick="areaNav.go('gemeo','escola')"><i class="fa fa-map"></i> Gêmeo Digital da Escola</div>
+                </div>
+            </div>
+            <div class="area-item">
+                <button class="area-btn" data-area="pessoas" onclick="areaNav.toggle(this,'pessoas')"><i class="fa fa-people-group"></i> Pessoas <i class="fa fa-chevron-down area-caret"></i></button>
+                <div class="area-dropdown" id="area-dd-pessoas">
+                    <div class="area-dropdown-item" onclick="areaNav.go('alunos','pessoas')"><i class="fa fa-user-graduate"></i> Alunos</div>
+                    <div class="area-dropdown-item ntei-only hidden" onclick="areaNav.go('admin','pessoas','panel-usuarios-ntei')"><i class="fa fa-user-shield"></i> Usuários e Contas</div>
+                </div>
+            </div>
+            <div class="area-item">
+                <button class="area-btn" data-area="comunicacao" onclick="areaNav.click(this,'comunicacao')"><i class="fa fa-comments"></i> Comunicação</button>
+            </div>
+            <div class="area-item">
+                <button class="area-btn" data-area="suporte" onclick="areaNav.toggle(this,'suporte')"><i class="fa fa-headset"></i> Suporte <i class="fa fa-chevron-down area-caret"></i></button>
+                <div class="area-dropdown" id="area-dd-suporte">
+                    <div class="area-dropdown-item" onclick="areaNav.go('operacional','suporte')"><i class="fa fa-ticket"></i> Chamados NTEi</div>
+                    <div class="area-dropdown-hint">Abrir chamado, acompanhar, emergências</div>
+                </div>
+            </div>
+            <div class="area-item">
+                <button class="area-btn" data-area="gestao" onclick="areaNav.toggle(this,'gestao')"><i class="fa fa-chart-line"></i> Gestão <i class="fa fa-chevron-down area-caret"></i></button>
+                <div class="area-dropdown" id="area-dd-gestao">
+                    <div class="area-dropdown-item" onclick="areaNav.go('analise','gestao')"><i class="fa fa-brain"></i> Análise e Relatórios (IA)</div>
+                    <div class="area-dropdown-item" onclick="areaNav.go('editais','gestao')"><i class="fa fa-file-contract"></i> Editais</div>
+                    <div class="area-dropdown-item" onclick="areaNav.go('patrimonio','gestao')"><i class="fa fa-boxes-stacked"></i> Patrimônio</div>
+                    <div class="area-dropdown-item" onclick="areaNav.go('gemeo','gestao')"><i class="fa fa-map"></i> Gêmeo Digital</div>
+                </div>
+            </div>
+            <div class="area-item ntei-only hidden">
+                <button class="area-btn ntei-area" data-area="ntei" onclick="areaNav.toggle(this,'ntei')"><i class="fa fa-shield-halved"></i> Central NTEi <i class="fa fa-chevron-down area-caret"></i></button>
+                <div class="area-dropdown" id="area-dd-ntei">
+                    <div class="area-dropdown-item" onclick="areaNav.go('admin','ntei','panel-admin-ntei')"><i class="fa fa-gauge"></i> Visão Geral / Controle Master</div>
+                    <div class="area-dropdown-item" onclick="areaNav.go('admin','ntei','panel-usuarios-ntei')"><i class="fa fa-user-shield"></i> Pessoas & Contas</div>
+                    <div class="area-dropdown-item" onclick="areaNav.go('admin','ntei','permind-menus-list')"><i class="fa fa-lock"></i> Permissões</div>
+                    <div class="area-dropdown-item" onclick="areaNav.go('operacional','ntei')"><i class="fa fa-ticket"></i> Atendimento (todos os chamados)</div>
+                    <div class="area-dropdown-item" onclick="areaNav.go('admin','ntei','panel-veyon-master')"><i class="fa fa-desktop"></i> Tecnologia (Veyon / Rede)</div>
+                    <div class="area-dropdown-item" onclick="areaNav.go('operacional','ntei','panel-smeti')"><i class="fa fa-briefcase"></i> Unidade / SMETi</div>
+                    <div class="area-dropdown-item" onclick="areaNav.go('admin','ntei','panel-criador-menus')"><i class="fa fa-sitemap"></i> Plataforma (Criador de Menus/Funções)</div>
+                    <div class="area-dropdown-item" onclick="areaNav.go('admin','ntei','panel-permissoes-individuais')"><i class="fa fa-clipboard-list"></i> Controle / Auditoria</div>
+                </div>
+            </div>
         </div>
         <div class="topbar-right">
+            <button class="hdr-util-btn" title="Preciso de ajuda" onclick="ajudaCentral.abrir()"><i class="fa fa-circle-question"></i></button>
+            <button class="hdr-util-btn" title="Acessibilidade" onclick="a11yCentral.abrir()"><span aria-hidden="true">♿</span></button>
             <span class="online-dot"></span>
             <img id="topbar-avatar" src="" class="hidden" onclick="perfilFoto.abrir()" title="Trocar foto de perfil" style="width:28px; height:28px; border-radius:50%; object-fit:cover; cursor:pointer; border:1px solid var(--border-subtle)">
             <div id="topbar-avatar-fallback" onclick="perfilFoto.abrir()" title="Adicionar foto de perfil" style="width:28px; height:28px; border-radius:50%; background:var(--prof); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:bold; cursor:pointer">—</div>
@@ -551,6 +699,99 @@
 
     <!-- ════════════════════════ TOASTS / CARDS FLUTUANTES ════════════════════════ -->
     <div id="toast-container" style="position:fixed; top:60px; right:12px; z-index:999999; display:flex; flex-direction:column; gap:8px; max-width:340px; width:92vw; pointer-events:none;"></div>
+
+    <!-- ════════════════════════ PAPEL DE PAREDE INSTITUCIONAL (sutil, cantos) ════════════════════════ -->
+    <div id="ntei-wallpaper" aria-hidden="true">
+        <svg class="wp-tl" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <g fill="none" stroke="var(--prof)" stroke-width="2" stroke-linecap="round">
+                <path d="M10 10 L60 10 L90 40"/><circle cx="90" cy="40" r="4" fill="var(--prof)"/>
+                <path d="M10 40 L40 40 L40 90"/><circle cx="40" cy="90" r="4" fill="var(--prof)"/>
+                <path d="M10 70 L20 70 L20 120 L70 120"/><circle cx="70" cy="120" r="4" fill="var(--prof)"/>
+            </g>
+        </svg>
+        <svg class="wp-br" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <g fill="none" stroke="var(--prof)" stroke-width="2" stroke-linecap="round">
+                <path d="M190 190 L140 190 L110 160"/><circle cx="110" cy="160" r="4" fill="var(--prof)"/>
+                <path d="M190 160 L160 160 L160 110"/><circle cx="160" cy="110" r="4" fill="var(--prof)"/>
+                <path d="M190 130 L180 130 L180 80 L130 80"/><circle cx="130" cy="80" r="4" fill="var(--prof)"/>
+            </g>
+        </svg>
+    </div>
+
+    <!-- ════════════════════════ CENTRAL DE ACESSIBILIDADE ════════════════════════ -->
+    <div id="a11y-overlay" class="a11y-overlay" role="dialog" aria-label="Central de Acessibilidade">
+        <div class="a11y-panel" id="a11y-panel">
+            <div style="display:flex; justify-content:space-between; align-items:center">
+                <h3>♿ Acessibilidade</h3>
+                <i class="fa fa-xmark" style="cursor:pointer; font-size:16px" onclick="a11yCentral.fechar()" title="Fechar"></i>
+            </div>
+            <div class="a11y-sub">Ajuste a plataforma às suas necessidades. As opções ficam salvas neste dispositivo.</div>
+
+            <div class="a11y-group">
+                <h4>Tema</h4>
+                <div class="a11y-theme-grid">
+                    <div class="a11y-theme-swatch" data-tema="escuro" onclick="a11yCentral.set('tema','escuro')">🌙 Escuro</div>
+                    <div class="a11y-theme-swatch" data-tema="claro" onclick="a11yCentral.set('tema','claro')">☀️ Claro</div>
+                    <div class="a11y-theme-swatch" data-tema="alto-contraste" onclick="a11yCentral.set('tema','alto-contraste')">🌓 Alto Contraste</div>
+                    <div class="a11y-theme-swatch" data-tema="institucional" onclick="a11yCentral.set('tema','institucional')">💙 NTEi Institucional</div>
+                </div>
+            </div>
+
+            <div class="a11y-group">
+                <h4>Fonte</h4>
+                <div class="a11y-seg">
+                    <button data-fonte="normal" onclick="a11yCentral.set('tamanhoFonte','normal')">A−</button>
+                    <button data-fonte="medio" onclick="a11yCentral.set('tamanhoFonte','medio')">A</button>
+                    <button data-fonte="grande" onclick="a11yCentral.set('tamanhoFonte','grande')">A+</button>
+                </div>
+            </div>
+
+            <div class="a11y-group">
+                <h4>Visual</h4>
+                <div class="a11y-row"><span>👁️ Alto contraste</span><div class="a11y-toggle" id="a11y-tg-contraste" onclick="a11yCentral.set('altoContraste', !a11yCentral.prefs.altoContraste)"></div></div>
+                <div class="a11y-row"><span>🎞️ Reduzir movimento</span><div class="a11y-toggle" id="a11y-tg-movimento" onclick="a11yCentral.set('reduzirMovimento', !a11yCentral.prefs.reduzirMovimento)"></div></div>
+                <div class="a11y-row"><span>🖱️ Cursor maior</span><div class="a11y-toggle" id="a11y-tg-cursor" onclick="a11yCentral.set('cursor', !a11yCentral.prefs.cursor)"></div></div>
+                <div class="a11y-row"><span>🔗 Destacar links/botões</span><div class="a11y-toggle" id="a11y-tg-destacar" onclick="a11yCentral.set('destacarElementos', !a11yCentral.prefs.destacarElementos)"></div></div>
+                <div class="a11y-row"><span>📐 Espaçamento maior</span><div class="a11y-toggle" id="a11y-tg-espaco" onclick="a11yCentral.set('espacamento', !a11yCentral.prefs.espacamento)"></div></div>
+                <div class="a11y-row"><span>🎯 Modo de orientação (foco visível)</span><div class="a11y-toggle" id="a11y-tg-foco" onclick="a11yCentral.set('focoVisivel', !a11yCentral.prefs.focoVisivel)"></div></div>
+            </div>
+
+            <div class="a11y-group">
+                <h4>Papel de parede</h4>
+                <div class="a11y-row"><span>Mostrar papel de parede</span><div class="a11y-toggle" id="a11y-tg-wallpaper" onclick="a11yCentral.set('papelParede', !a11yCentral.prefs.papelParede)"></div></div>
+                <div class="a11y-row" style="flex-direction:column; align-items:stretch; gap:4px">
+                    <span>Intensidade do fundo</span>
+                    <input type="range" class="a11y-slider" id="a11y-slider-wallpaper" min="0" max="30" oninput="a11yCentral.set('intensidadeWallpaper', parseInt(this.value))">
+                </div>
+            </div>
+
+            <button class="btn a11y-reset-btn" style="background:rgba(255,255,255,0.1)" onclick="a11yCentral.restaurarPadrao()"><i class="fa fa-rotate-left"></i> Restaurar padrão</button>
+        </div>
+    </div>
+
+    <!-- ════════════════════════ CENTRAL "PRECISO DE AJUDA" ════════════════════════ -->
+    <div id="ajuda-overlay" class="ajuda-overlay" role="dialog" aria-label="Preciso de ajuda">
+        <div class="ajuda-box">
+            <div style="display:flex; justify-content:space-between; align-items:center">
+                <h3 style="margin:0">❓ Preciso de ajuda</h3>
+                <i class="fa fa-xmark" style="cursor:pointer; font-size:16px" onclick="ajudaCentral.fechar()"></i>
+            </div>
+            <p style="font-size:12px; color:var(--text-muted)">Não sabe onde encontrar uma função? Descreva o que precisa.</p>
+            <input type="text" id="ajuda-input" placeholder="Ex: quero reservar um computador" style="width:100%; margin-bottom:10px" oninput="ajudaCentral.buscar(this.value)">
+            <div style="font-size:10.5px; color:var(--text-muted); margin-bottom:6px">EXEMPLOS</div>
+            <div class="ajuda-exemplo" onclick="document.getElementById('ajuda-input').value='reservar um computador'; ajudaCentral.buscar()">Quero reservar um computador</div>
+            <div class="ajuda-exemplo" onclick="document.getElementById('ajuda-input').value='ver meus alunos'; ajudaCentral.buscar()">Quero ver meus alunos</div>
+            <div class="ajuda-exemplo" onclick="document.getElementById('ajuda-input').value='abrir um chamado'; ajudaCentral.buscar()">Quero abrir um chamado</div>
+            <div class="ajuda-exemplo" onclick="document.getElementById('ajuda-input').value='falar com o ntei'; ajudaCentral.buscar()">Quero falar com o NTEi</div>
+            <div class="ajuda-exemplo" onclick="document.getElementById('ajuda-input').value='acessar uma formação'; ajudaCentral.buscar()">Quero acessar uma formação</div>
+            <div id="ajuda-resultado"></div>
+        </div>
+    </div>
+
+    <!-- ════════════════════════ GUIA DE BOAS-VINDAS ════════════════════════ -->
+    <div id="guia-overlay" class="guia-overlay" role="dialog" aria-label="Guia de boas-vindas">
+        <div class="guia-box" id="guia-conteudo"></div>
+    </div>
 
     <!-- ════════════════════════ BANNER DE EMERGÊNCIA (chamados críticos) ════════════════════════ -->
     <div id="emergencia-banner" class="hidden" style="position:fixed; top:0; left:0; right:0; z-index:999998; background:linear-gradient(90deg,#c0392b,#e74c3c); color:#fff; padding:10px 14px; display:flex; flex-wrap:wrap; align-items:center; gap:10px; box-shadow:0 2px 10px rgba(0,0,0,0.5); animation:pulseEmergencia 1.2s infinite;">
@@ -5712,6 +5953,183 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
     })();
 
     window.addEventListener('resize', () => { if (typeof app !== 'undefined' && app.ajustarOffsetAviso) app.ajustarOffsetAviso(); });
+
+    // ═══════════════════════════════════════════════════════
+    //  REFORMA NTEi — NAVEGAÇÃO POR ÁREAS (não substitui modules.show)
+    // ═══════════════════════════════════════════════════════
+    const areaNav = {
+        toggle(btn, area) {
+            const dd = document.getElementById('area-dd-' + area);
+            const wasOpen = dd.classList.contains('open');
+            document.querySelectorAll('.area-dropdown').forEach(d => d.classList.remove('open'));
+            if (!wasOpen) dd.classList.add('open');
+        },
+        click(btn, moduleId) {
+            document.querySelectorAll('.area-dropdown').forEach(d => d.classList.remove('open'));
+            this._marcarAtiva(btn);
+            modules.show(moduleId);
+        },
+        go(moduleId, area, focarPainelId) {
+            document.querySelectorAll('.area-dropdown').forEach(d => d.classList.remove('open'));
+            const btn = document.querySelector('.area-btn[data-area="' + area + '"]');
+            this._marcarAtiva(btn);
+            modules.show(moduleId);
+            if (focarPainelId) {
+                setTimeout(() => {
+                    const el = document.getElementById(focarPainelId);
+                    if (el) { el.classList.remove('hidden'); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); el.style.boxShadow = '0 0 0 2px var(--prof)'; setTimeout(() => el.style.boxShadow = '', 1600); }
+                }, 60);
+            }
+        },
+        _marcarAtiva(btn) {
+            document.querySelectorAll('.area-btn').forEach(b => b.classList.remove('area-active'));
+            if (btn) btn.classList.add('area-active');
+        }
+    };
+    document.addEventListener('click', e => {
+        if (!e.target.closest('.area-item')) document.querySelectorAll('.area-dropdown').forEach(d => d.classList.remove('open'));
+    });
+
+    // ═══════════════════════════════════════════════════════
+    //  CENTRAL DE ACESSIBILIDADE — controles reais, persistidos
+    // ═══════════════════════════════════════════════════════
+    const a11yCentral = {
+        PREF_KEY: 'nteiPrefs',
+        padrao: { tema: 'escuro', tamanhoFonte: 'normal', altoContraste: false, papelParede: true, intensidadeWallpaper: 10, confortoVisual: false, cursor: false, reduzirMovimento: false, destacarElementos: false, espacamento: false, focoVisivel: false, guiaConcluido: false },
+        prefs: null,
+        carregar() {
+            try { this.prefs = { ...this.padrao, ...(JSON.parse(localStorage.getItem(this.PREF_KEY)) || {}) }; }
+            catch (e) { this.prefs = { ...this.padrao }; }
+            this.aplicar();
+        },
+        salvar() {
+            try { localStorage.setItem(this.PREF_KEY, JSON.stringify(this.prefs)); } catch (e) {}
+        },
+        aplicar() {
+            const html = document.documentElement;
+            html.classList.remove('tema-claro', 'tema-institucional', 'tema-alto-contraste');
+            if (this.prefs.tema === 'claro') html.classList.add('tema-claro');
+            if (this.prefs.tema === 'institucional') html.classList.add('tema-institucional');
+            if (this.prefs.tema === 'alto-contraste') html.classList.add('tema-alto-contraste');
+
+            html.classList.remove('a11y-font-md', 'a11y-font-lg');
+            if (this.prefs.tamanhoFonte === 'medio') html.classList.add('a11y-font-md');
+            if (this.prefs.tamanhoFonte === 'grande') html.classList.add('a11y-font-lg');
+
+            html.classList.toggle('a11y-contrast-alto', !!this.prefs.altoContraste);
+            html.classList.toggle('a11y-motion-reduzir', !!this.prefs.reduzirMovimento);
+            html.classList.toggle('a11y-cursor-grande', !!this.prefs.cursor);
+            html.classList.toggle('a11y-destacar', !!this.prefs.destacarElementos);
+            html.classList.toggle('a11y-espaco', !!this.prefs.espacamento);
+            html.classList.toggle('a11y-foco', !!this.prefs.focoVisivel);
+
+            const wp = document.getElementById('ntei-wallpaper');
+            if (wp) {
+                wp.style.display = this.prefs.papelParede ? 'block' : 'none';
+                wp.style.opacity = (this.prefs.intensidadeWallpaper / 100).toFixed(2);
+            }
+            this._sincronizarUI();
+        },
+        set(chave, valor) { this.prefs[chave] = valor; this.aplicar(); this.salvar(); },
+        abrir() { document.getElementById('a11y-overlay').classList.add('open'); this._sincronizarUI(); },
+        fechar() { document.getElementById('a11y-overlay').classList.remove('open'); },
+        restaurarPadrao() { this.prefs = { ...this.padrao }; this.aplicar(); this.salvar(); },
+        _sincronizarUI() {
+            const p = this.prefs;
+            document.querySelectorAll('#a11y-panel [data-tema]').forEach(el => el.classList.toggle('active', el.dataset.tema === p.tema));
+            document.querySelectorAll('#a11y-panel [data-fonte]').forEach(el => el.classList.toggle('active', el.dataset.fonte === p.tamanhoFonte));
+            const set = (id, on) => { const el = document.getElementById(id); if (el) el.classList.toggle('on', !!on); };
+            set('a11y-tg-contraste', p.altoContraste);
+            set('a11y-tg-movimento', p.reduzirMovimento);
+            set('a11y-tg-cursor', p.cursor);
+            set('a11y-tg-destacar', p.destacarElementos);
+            set('a11y-tg-espaco', p.espacamento);
+            set('a11y-tg-foco', p.focoVisivel);
+            set('a11y-tg-wallpaper', p.papelParede);
+            const sl = document.getElementById('a11y-slider-wallpaper'); if (sl) sl.value = p.intensidadeWallpaper;
+        }
+    };
+
+    // ═══════════════════════════════════════════════════════
+    //  CENTRAL "PRECISO DE AJUDA" — busca por intenção
+    // ═══════════════════════════════════════════════════════
+    const ajudaCentral = {
+        mapa: [
+            { chave: ['reservar', 'reserva', 'chromebook', 'equipamento', 'notebook'], titulo: '📅 Reservar equipamento', area: '🏫 Escola', modulo: 'Reservas', destino: 'operacional' },
+            { chave: ['aluno', 'turma', 'alunos'], titulo: '👥 Ver meus alunos', area: '🎓 Ensino / 👥 Pessoas', modulo: 'Alunos', destino: 'alunos' },
+            { chave: ['chamado', 'problema', 'defeito', 'quebrado', 'não funciona'], titulo: '🎫 Abrir chamado', area: '🛠️ Suporte', modulo: 'Chamados NTEi', destino: 'operacional' },
+            { chave: ['ntei', 'falar com o ntei', 'suporte'], titulo: '💬 Falar com o NTEi', area: '🛠️ Suporte', modulo: 'Atendimento NTEi', destino: 'comunicacao' },
+            { chave: ['formação', 'curso', 'trilha'], titulo: '🎓 Acessar uma formação', area: '🎓 Ensino', modulo: 'Formação', destino: 'formacao' },
+            { chave: ['patrimônio', 'patrimonio', 'inventário'], titulo: '💻 Consultar patrimônio', area: '🏫 Escola', modulo: 'Patrimônio', destino: 'patrimonio' },
+            { chave: ['comunicado', 'mural', 'aviso'], titulo: '📣 Ver mural / comunicados', area: '💬 Comunicação', modulo: 'Comunicação', destino: 'comunicacao' },
+            { chave: ['relatório', 'relatorio', 'indicador', 'análise'], titulo: '📊 Ver relatórios', area: '📊 Gestão', modulo: 'Análise IA', destino: 'analise' },
+        ],
+        abrir() { document.getElementById('ajuda-overlay').classList.add('open'); document.getElementById('ajuda-resultado').innerHTML = ''; document.getElementById('ajuda-input').value = ''; },
+        fechar() { document.getElementById('ajuda-overlay').classList.remove('open'); },
+        buscar(texto) {
+            const q = (texto || document.getElementById('ajuda-input').value || '').toLowerCase().trim();
+            const box = document.getElementById('ajuda-resultado');
+            if (!q) { box.innerHTML = ''; return; }
+            const achado = this.mapa.find(item => item.chave.some(k => q.includes(k)));
+            if (!achado) { box.innerHTML = '<div class="ajuda-resultado">Não encontrei nada específico. Tente abrir um chamado em <b>Suporte</b> para que o NTEi te ajude diretamente.</div>'; return; }
+            box.innerHTML = `<div class="ajuda-resultado">Você está procurando:<br><b style="font-size:14px">${achado.titulo}</b>
+                <div class="ajuda-caminho"><b>${achado.area}</b> → ${achado.modulo}</div>
+                <button class="btn" style="background:var(--prof); margin-top:6px" onclick="ajudaCentral.fechar(); modules.show('${achado.destino}')">IR PARA LÁ</button></div>`;
+        }
+    };
+
+    // ═══════════════════════════════════════════════════════
+    //  GUIA DE BOAS-VINDAS (primeiro acesso)
+    // ═══════════════════════════════════════════════════════
+    const guiaNTEi = {
+        passos: [
+            { t: '🏠 Início', d: 'É aqui que você encontra um resumo das suas atividades.' },
+            { t: '🎓 Ensino', d: 'Aqui estão suas ferramentas pedagógicas.' },
+            { t: '🏫 Escola', d: 'Aqui ficam recursos como reservas, salas e equipamentos.' },
+            { t: '💬 Comunicação', d: 'Aqui você encontra avisos, mural e comunicação.' },
+            { t: '🛠️ Suporte', d: 'Se algo não funcionar, abra um chamado para o NTEi.' },
+            { t: '♿ Acessibilidade', d: 'Aqui você pode adaptar a plataforma às suas necessidades.' }
+        ],
+        indice: 0,
+        checarPrimeiroAcesso() {
+            if (a11yCentral.prefs && a11yCentral.prefs.guiaConcluido) return;
+            this.indice = 0;
+            this._render();
+            document.getElementById('guia-overlay').classList.add('open');
+        },
+        _render() {
+            const box = document.getElementById('guia-conteudo');
+            if (this.indice === -1) {
+                box.innerHTML = `<div style="font-size:30px; margin-bottom:8px">👋</div><h3>Bem-vindo ao NTEi!</h3><p style="font-size:12.5px; color:var(--text-muted)">Vamos conhecer a plataforma?</p>
+                <button class="btn" style="background:var(--prof); margin-top:10px" onclick="guiaNTEi.indice=0; guiaNTEi._render()">COMEÇAR GUIA</button>
+                <button class="btn" style="background:rgba(255,255,255,0.1); margin-top:8px" onclick="guiaNTEi.pular()">PULAR</button>`;
+                return;
+            }
+            const p = this.passos[this.indice];
+            box.innerHTML = `<h3>${p.t}</h3><p style="font-size:12.5px; color:var(--text-muted); min-height:36px">${p.d}</p>
+                <div style="display:flex; gap:8px; margin-top:12px">
+                    <button class="btn" style="background:var(--prof)" onclick="guiaNTEi.proximo()">${this.indice < this.passos.length - 1 ? 'Próximo' : 'Concluir'}</button>
+                    <button class="btn" style="background:rgba(255,255,255,0.1)" onclick="guiaNTEi.pular()">Pular</button>
+                </div>`;
+        },
+        proximo() { if (this.indice < this.passos.length - 1) { this.indice++; this._render(); } else { this.concluir(); } },
+        pular() { this.concluir(); },
+        concluir() { a11yCentral.set('guiaConcluido', true); document.getElementById('guia-overlay').classList.remove('open'); }
+    };
+
+    // ═══════════════════════════════════════════════════════
+    //  INICIALIZAÇÃO DA REFORMA (não interfere no login/Firebase)
+    // ═══════════════════════════════════════════════════════
+    a11yCentral.carregar();
+    const _origAppStart = app.start ? app.start.bind(app) : null;
+    if (_origAppStart) {
+        app.start = function (...args) {
+            const r = _origAppStart(...args);
+            guiaNTEi.indice = -1;
+            setTimeout(() => guiaNTEi.checarPrimeiroAcesso(), 500);
+            return r;
+        };
+    }
     </script>
 </body>
 </html>
