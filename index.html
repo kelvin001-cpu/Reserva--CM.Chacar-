@@ -2456,14 +2456,7 @@ document.addEventListener('DOMContentLoaded', () => escolaIdentidade.aplicar());
     // Cadastro fixo do administrador/desenvolvedor da plataforma (Kelvin, NTEi) nesta unidade.
     // Roda uma vez: se prontuário 46690 ainda não existir no banco desta unidade, cria já ATIVO
     // (sem passar pelo fluxo de "primeiro acesso" com senha de fábrica).
-    db.ref('usuarios/46690').once('value').then(snap => {
-        if (!snap.exists()) {
-            db.ref('usuarios/46690').set({
-                nome: 'Kelvin (NTEi - Administrador)', pront: '46690', cargo: 'NTEi',
-                pass: 'ntei2683', status: 'ativo'
-            });
-        }
-    }).catch(() => {});
+    /* [NTEi Vision] cadastro automático com senha fixa REMOVIDO por segurança. */
 
     // ═══════════════════════════════════════════════════════
     //  RESTRIÇÃO VISUAL DE DIA (SEFE) NA TELA DE LOGIN
@@ -4520,7 +4513,7 @@ input::placeholder, textarea::placeholder { color: #94a3b8 !important; opacity: 
             const box = document.getElementById('nuvem-content');
             const q = input.value.trim();
             if (!q) return;
-            box.innerHTML += `<div class="msg msg-out" style="font-size:12px">${q}</div>`;
+            { const _d = document.createElement('div'); _d.className = 'msg msg-out'; _d.style.fontSize = '12px'; _d.textContent = q; box.appendChild(_d); }
             input.value = '';
             box.innerHTML += `<div class="nuvem-thinking" id="nuvem-thinking-dot"><i class="fa fa-circle-notch fa-spin"></i> Pensando...</div>`;
             box.scrollTop = box.scrollHeight;
@@ -7341,4 +7334,469 @@ input::placeholder, textarea::placeholder { color: #94a3b8 !important; opacity: 
 
 
 
+<script>/* Opcional: URL de servidor seguro da Nuvem IA. Vazio = usa a chave colada no painel Vision (fica só no aparelho). */
+window.NTEI_NUVEM_URL = '';</script>
+<script id="ntei-vision">
+/* NTEi Vision — Controle Gestual (módulo isolado). Chefe NTEi: prontuário 46690. */
+(function (root) {
+'use strict';
+const D = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+const cl = v => Math.max(0, Math.min(1, v));
+
+/* ───────────── MOTOR DE GESTOS (puro, testável) ───────────── */
+function classify(lm) {
+  const hs = D(lm[0], lm[9]) || 1e-6;
+  const [i, m, r, p] = [8, 12, 16, 20].map(t => D(lm[t], lm[0]) > D(lm[t - 2], lm[0]) * 1.15);
+  const th = D(lm[4], lm[17]) > D(lm[3], lm[17]) * 1.1 && D(lm[4], lm[5]) > hs * 0.5;
+  const pinch = D(lm[4], lm[8]) / hs;
+  const reach = D(lm[8], lm[0]) / hs;
+  let pose = 'none';
+  if (i && m && r && p && th) pose = 'open';
+  else if (!i && !m && !r && !p && !th) pose = 'fist';
+  else if (i && m && r && !p) pose = 'three';
+  else if (i && m && !r && !p) pose = 'peace';
+  else if (th && i && !m && !r && !p) pose = 'L';
+  else if (i && !m && !r && !p) pose = 'point';
+  return { pose, pinch, hs, reach };
+}
+const DEF = { sens: 0.5, deadzone: 0.012, minHold: 350, cooldown: 700, hand: 'both', minConf: 0.7, lostMs: 300,
+  dwellMs: 0, pinchOn: 0.28, pinchOff: 0.4, swipeDx: 0.22, scrollGain: 900, area: { x0: .1, x1: .9, y0: .1, y1: .9 } };
+
+function OneEuro() { this.x = null; this.dx = 0; this.t = 0; this.mc = 1; this.b = 0.6; }
+OneEuro.prototype.f = function (v, t) {
+  if (this.x === null) { this.x = v; this.t = t; return v; }
+  const dt = Math.max(0.001, (t - this.t) / 1000); this.t = t;
+  const al = c => 1 / (1 + (1 / (2 * Math.PI * c)) / dt);
+  this.dx += al(1) * ((v - this.x) / dt - this.dx);
+  this.x += al(this.mc + this.b * Math.abs(this.dx)) * (v - this.x); return this.x;
+};
+function Engine(cfg) { this.cfg = Object.assign({}, DEF, cfg); this.reset(); }
+Engine.prototype.reset = function () {
+  this.s = { paused: false, pinch: false, pose: null, poseSince: 0, poseFired: false, cool: {}, cur: null,
+    hist: [], zref: null, sref: null, fx: null, fy: null, pStart: null, drag: false, lastDy: 0, dwell: null, lostAt: null, lostSent: false, lastY: null, calib: null };
+};
+Engine.prototype.ok = function (n, t, ms) {
+  const s = this.s; if (t - (s.cool[n] === undefined ? -1e9 : s.cool[n]) < (ms || this.cfg.cooldown)) return false;
+  s.cool[n] = t; return true;
+};
+Engine.prototype.startCalib = function () { this.s.calib = []; };
+Engine.prototype.finishCalib = function () {
+  const pts = this.s.calib || []; this.s.calib = null;
+  if (pts.length < 20) return null;
+  const xs = pts.map(p => p.x), ys = pts.map(p => p.y), pad = 0.04;
+  const a = { x0: Math.max(0, Math.min(...xs) - pad), x1: Math.min(1, Math.max(...xs) + pad),
+              y0: Math.max(0, Math.min(...ys) - pad), y1: Math.min(1, Math.max(...ys) + pad) };
+  if (a.x1 - a.x0 < 0.15 || a.y1 - a.y0 < 0.15) return null;
+  this.cfg.area = a; return a;
+};
+Engine.prototype.still = function (t) {
+  const h = this.s.hist.filter(e => e.t >= t - this.cfg.minHold); if (h.length < 2) return true;
+  const xs = h.map(e => e.x), ys = h.map(e => e.y);
+  return Math.max(...xs) - Math.min(...xs) < 0.03 && Math.max(...ys) - Math.min(...ys) < 0.03;
+};
+Engine.prototype.step = function (hands, t) {
+  const c = this.cfg, s = this.s, ev = [];
+  hands = hands.filter(h => h.score >= c.minConf && (c.hand === 'both' || h.label === c.hand));
+  if (!hands.length) {
+    if (s.lostAt === null) s.lostAt = t;
+    if (t - s.lostAt > c.lostMs) {
+      if (!s.lostSent) { ev.push({ type: 'lost' }); s.lostSent = true; }
+      s.pinch = false; s.pose = null; s.hist = []; s.zref = null; s.sref = null; s.cur = null; s.fx = s.fy = null; s.dwell = null;
+    }
+    return ev;
+  }
+  s.lostAt = null; s.lostSent = false;
+  const A = c.area, tip = hands[0].lm[8];
+  const raw = { x: 1 - tip.x, y: tip.y };
+  if (s.calib) { s.calib.push(raw); return [{ type: 'calibrating', n: s.calib.length }]; }
+  if (raw.x < A.x0 || raw.x > A.x1 || raw.y < A.y0 || raw.y > A.y1) {
+    s.pinch = false; s.pose = null; s.hist = []; s.cur = null; s.fx = s.fy = null; s.dwell = null; return [{ type: 'outside' }];
+  }
+  if (hands.length >= 2 && !s.paused) {
+    const k0 = classify(hands[0].lm), k1 = classify(hands[1].lm);
+    if (k0.pinch < c.pinchOn && k1.pinch < c.pinchOn && k0.reach > 1.05 && k1.reach > 1.05) {
+      const d = D(hands[0].lm[8], hands[1].lm[8]);
+      if (s.zref === null) s.zref = d;
+      else { const r = d / s.zref; if (Math.abs(r - 1) > 0.04 && this.ok('zoom2', t, 120)) { ev.push({ type: 'zoom', factor: r }); s.zref = d; } }
+    } else s.zref = null;
+    return ev;
+  }
+  s.zref = null;
+  const lm = hands[0].lm, k = classify(lm);
+  let nx = cl((raw.x - A.x0) / (A.x1 - A.x0)), ny = cl((raw.y - A.y0) / (A.y1 - A.y0));
+  s.fx = s.fx || new OneEuro(); s.fy = s.fy || new OneEuro(); s.fx.mc = s.fy.mc = 0.4 + 2.4 * c.sens;
+  nx = s.fx.f(nx, t); ny = s.fy.f(ny, t);
+  if (s.cur && Math.hypot(nx - s.cur.x, ny - s.cur.y) < c.deadzone) { nx = s.cur.x; ny = s.cur.y; }
+  s.cur = { x: nx, y: ny }; ev.push({ type: 'cursor', x: nx, y: ny });
+  if (!s.pinch && k.pinch < c.pinchOn && k.reach > 1.05) s.pinch = true; else if (s.pinch && (k.pinch > c.pinchOff || k.reach < 0.95)) s.pinch = false;
+  const pose = s.pinch ? 'pinch' : k.pose;
+  if (pose !== s.pose) { s.pose = pose; s.poseSince = t; s.poseFired = false; s.hist = []; s.lastY = null; s.sref = null; s.pStart = null; s.drag = false; s.dwell = null; }
+  s.hist.push({ t, x: lm[0].x, y: lm[0].y }); s.hist = s.hist.filter(e => e.t >= t - 500);
+  const held = t - s.poseSince;
+  if (s.paused) {
+    if (pose === 'open' && held >= c.minHold && !s.poseFired && this.still(t) && this.ok('pose:open', t)) { s.poseFired = true; ev.push({ type: 'pose', pose: 'open' }); }
+    return ev;
+  }
+  if (pose === 'pinch') {
+    if (!s.pStart) s.pStart = { x: nx, y: ny };
+    if (!s.drag && Math.hypot(nx - s.pStart.x, ny - s.pStart.y) > 0.04) { s.drag = true; s.poseFired = true; s.lastDy = ny; }
+    if (s.drag) { const dy = ny - s.lastDy; s.lastDy = ny; if (Math.abs(dy) > 0.001) ev.push({ type: 'scroll', dy: -dy * c.scrollGain }); }
+    else if (held >= c.minHold && !s.poseFired && this.ok('click', t)) { s.poseFired = true; ev.push({ type: 'click', x: nx, y: ny }); }
+  }
+  else if (pose === 'open') {
+    const w = s.hist.filter(e => e.t >= t - 400), dx = w.length > 1 ? w[w.length - 1].x - w[0].x : 0;
+    if (Math.abs(dx) > c.swipeDx && !s.poseFired && this.ok('swipe', t)) { s.poseFired = true; s.hist = []; ev.push({ type: 'swipe', dir: dx > 0 ? 'left' : 'right' }); }
+    else if (held >= c.minHold && !s.poseFired && this.still(t) && this.ok('pose:open', t)) { s.poseFired = true; ev.push({ type: 'pose', pose: 'open' }); }
+  } else if ((pose === 'three' || pose === 'fist') && held >= c.minHold && !s.poseFired && this.still(t) && this.ok('pose:' + pose, t)) {
+    s.poseFired = true; ev.push({ type: 'pose', pose });
+  } else if (pose === 'point' && c.dwellMs > 0) {
+    if (!s.dwell || Math.hypot(nx - s.dwell.x, ny - s.dwell.y) > 0.03) s.dwell = { x: nx, y: ny, t };
+    const pr = Math.min(1, (t - s.dwell.t) / c.dwellMs); ev.push({ type: 'dwell', progress: pr });
+    if (pr >= 1 && this.ok('click', t)) { ev.push({ type: 'click', x: nx, y: ny, dwell: true }); s.dwell = { x: nx, y: ny, t }; }
+  } else if (pose === 'peace' && held >= c.minHold) {
+    if (s.lastY !== null) { const dy = lm[8].y - s.lastY; if (Math.abs(dy) > c.deadzone * 0.5) ev.push({ type: 'scroll', dy: dy * c.scrollGain }); }
+    s.lastY = lm[8].y;
+  } else if (pose === 'L' && held >= c.minHold) {
+    if (s.sref === null) s.sref = k.pinch;
+    else { const r = k.pinch / s.sref; if (Math.abs(r - 1) > 0.06 && this.ok('zoom1', t, 120)) { ev.push({ type: 'zoom', factor: r }); s.sref = k.pinch; } }
+  }
+  return ev;
+};
+const API = { classify, Engine, DEF };
+if (typeof module !== 'undefined' && module.exports) { module.exports = API; return; }
+if (typeof document === 'undefined') return;
+
+/* ───────────── CAMADA DE AÇÕES AUTORIZADAS ───────────── */
+const CHEFE = '46690', PERIGO = /exclu|apag|delet|remov|bloque|permiss|publica|senha|sair|logout|reset|limpar|aprovar/i;
+const hist = [];
+const user = () => (typeof app !== 'undefined' && app.user) || null;
+const isChefe = () => user() && String(user().pront) === CHEFE;
+function log(m) { try { if (user()) auditoria.registrar('NTEi Vision', m); } catch (e) {} }
+function permitidos() {
+  const u = user(); if (!u) return [];
+  return [...document.querySelectorAll('#topbar-nav .area-item[data-modulo]')].filter(el => {
+    if (el.classList.contains('hidden') || el.style.display === 'none') return false;
+    if (el.classList.contains('ntei-only') && u.cargo !== 'NTEi') return false;
+    if (el.dataset.modulo === 'admin' && !isChefe()) return false;
+    const b = el.querySelector('.area-btn'); return b && !b.classList.contains('hidden');
+  }).map(el => el.dataset.modulo).filter((v, i, a) => a.indexOf(v) === i);
+}
+const _show = modules.show;
+modules.show = function (id) { const p = modules.current; _show.call(modules, id); if (modules.current !== p) { hist.push(p); const z = document.querySelector('.module-view.active'); if (z) z.style.zoom = ''; } };
+const Acoes = {
+  abrirModulo(id) {
+    if (!user()) return { ok: false, msg: 'Faça login primeiro.' };
+    if (!permitidos().includes(id)) return { ok: false, msg: 'Módulo "' + id + '" não está disponível para o seu perfil.' };
+    const antes = modules.current; modules.show(id);
+    return modules.current === antes && antes !== id ? { ok: false, msg: 'O módulo não abriu (possível bloqueio individual).' } : { ok: true, msg: 'Módulo atual: ' + modules.current };
+  },
+  _ciclo(d) { const l = permitidos(); if (!l.length) return { ok: false, msg: 'Sem módulos disponíveis.' };
+    const i = l.indexOf(modules.current); return this.abrirModulo(l[(i + d + l.length) % l.length]); },
+  proximo() { return this._ciclo(1); }, anterior() { return this._ciclo(-1); },
+  voltar() { const p = hist.pop(); if (!p) return { ok: false, msg: 'Não há tela anterior.' }; const n = hist.length; const r = this.abrirModulo(p); while (hist.length > n) hist.pop(); return r; },
+  rolar(dy) { window.scrollBy(0, dy); return { ok: true, msg: 'Rolagem ' + Math.round(dy) + 'px' }; },
+  zoom(f) { const el = document.querySelector('.module-view.active'); if (!el) return { ok: false, msg: 'Nenhum conteúdo para ampliar.' };
+    const z = Math.max(0.6, Math.min(2.5, (parseFloat(el.style.zoom) || 1) * f)); el.style.zoom = z; return { ok: true, msg: 'Zoom ' + Math.round(z * 100) + '%' }; },
+  buscar(txt) { const i = document.getElementById('global-search-input'); if (!i || !txt) return { ok: false, msg: 'Busca indisponível.' };
+    i.value = txt; globalSearch.query(txt); const n = document.querySelectorAll('#search-dropdown > *').length;
+    return { ok: true, msg: 'Busca "' + txt + '" executada (' + n + ' item(ns) listado(s)).' }; },
+  relatorios() { return this.abrirModulo('analise'); },
+  nuvem() { nuvem.toggle(); return { ok: true, msg: 'Nuvem IA alternada.' }; },
+  menu() { app.toggleMobileMenu(); return { ok: true, msg: 'Menu alternado.' }; },
+  minimizar() { document.querySelectorAll('.area-dropdown.open').forEach(d => d.classList.remove('open'));
+    const w = document.getElementById('nuvem-window'); if (w) w.style.display = 'none'; return { ok: true, msg: 'Painéis recolhidos.' }; },
+  clicar(x, y) {
+    const el = document.elementFromPoint(x, y);
+    if (!el || el.closest('#ntei-vision-root')) return { ok: false, msg: 'Nada clicável sob o cursor.' };
+    if (el.closest('#mod-admin') && !isChefe()) return { ok: false, msg: 'Área administrativa: apenas o NTEi Chefe.' };
+    const alvo = el.closest('button,a,[onclick],input,select,textarea,label,.area-dropdown-item') || el;
+    const txt = (alvo.getAttribute('onclick') || '') + ' ' + (alvo.textContent || '').slice(0, 80) + ' ' + (alvo.title || '') + ' ' + alvo.id;
+    if (PERIGO.test(txt) && !confirm('Ação sensível detectada por gesto:\n"' + (alvo.textContent || alvo.id).trim().slice(0, 60) + '"\nConfirmar?')) return { ok: false, msg: 'Cancelado pelo usuário.' };
+    alvo.click(); return { ok: true, msg: 'Clique em <' + alvo.tagName.toLowerCase() + '> ' + (alvo.textContent || '').trim().slice(0, 30) };
+  }
+};
+
+/* ───────────── INTERFACE + CÂMERA ───────────── */
+const LS = 'nteiVisionCfg_v1', ACT = { none: 'Nenhuma', toggle: 'Ativar/pausar controle', back: 'Voltar', menu: 'Abrir menu', minimize: 'Minimizar painéis', next: 'Próximo módulo', prev: 'Módulo anterior', reports: 'Abrir relatórios', nuvem: 'Ativar Nuvem IA' };
+let st = { sky: false, cfg: null, map: { open: 'toggle', three: 'back', fist: 'none', swipeR: 'next', swipeL: 'prev' }, mode: 'train', preview: true };
+try { const s = JSON.parse(localStorage.getItem(LS) || 'null'); if (s) { st.map = Object.assign(st.map, s.map); st.cfgSaved = s.cfg; } } catch (e) {}
+const eng = new Engine(st.cfgSaved || {});
+const V = { stream: null, lm: null, raf: 0, last: 0, vid: null, ready: false, calibTimer: 0 };
+const $ = id => document.getElementById(id);
+function save() { try { localStorage.setItem(LS, JSON.stringify({ map: st.map, cfg: { sens: eng.cfg.sens, deadzone: eng.cfg.deadzone, minHold: eng.cfg.minHold, cooldown: eng.cfg.cooldown, hand: eng.cfg.hand, area: eng.cfg.area } })); } catch (e) {} }
+function say(id, v) { const e = $(id); if (e) e.textContent = v; }
+function logUI(m) { const b = $('nv-log'); if (!b) return; const d = document.createElement('div'); d.textContent = new Date().toLocaleTimeString('pt-BR') + ' ' + m; b.prepend(d); while (b.children.length > 40) b.lastChild.remove(); }
+
+async function ativar() {
+  if (V.stream) return;
+  if (!user()) return say('nv-state', 'Faça login para usar o controle gestual.');
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return say('nv-state', 'Este navegador não oferece acesso à câmera.');
+  if (!$('nv-consent').checked) { say('nv-state', '☝ Marque a caixa de consentimento acima do botão para ativar a câmera.'); $('nv-consent').focus(); return; }
+  say('nv-state', 'Pedindo acesso à câmera… se aparecer um aviso do navegador (perto da barra de endereço), clique em "Permitir".');
+  try { V.stream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 640 }, height: { ideal: 480 } }, audio: false }); }
+  catch (e) { V.stream = null;
+    const m = { NotAllowedError: 'Câmera negada ou bloqueada. Clique no cadeado da barra de endereço e libere a câmera. Se a página está dentro de um visualizador online, abra o arquivo direto no Chrome.',
+      NotFoundError: 'Nenhuma câmera encontrada neste aparelho.', NotReadableError: 'A câmera está em uso por outro aplicativo (feche Meet, Zoom, etc.).',
+      OverconstrainedError: 'A câmera não aceitou a resolução pedida.', SecurityError: 'Bloqueado por segurança: use HTTPS ou localhost, ou abra fora de um visualizador.', AbortError: 'A câmera não pôde ser iniciada (tente de novo).' }[e.name] || ('Erro de câmera: ' + (e.name || e.message));
+    say('nv-state', '✖ ' + m); logUI(m); diagCamera().then(t => { $('nv-test').textContent = t; }); return; }
+  V.stream.getVideoTracks()[0].addEventListener('ended', () => parar('A câmera foi desconectada.'));
+  V.vid.srcObject = V.stream; await V.vid.play().catch(() => {});
+  $('nv-cam').textContent = '🔴 CÂMERA ATIVA'; $('nv-cam').style.color = '#ff6b6b'; $('nv-toggle').textContent = 'Desativar câmera';
+  say('nv-state', 'Carregando reconhecimento de mãos…');
+  try {
+    if (!V.lib) {
+      const base = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14';
+      const m = await import(base + '/vision_bundle.mjs'), fs = await m.FilesetResolver.forVisionTasks(base + '/wasm');
+      const mk = d => m.HandLandmarker.createFromOptions(fs, { baseOptions: { modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task', delegate: d }, runningMode: 'VIDEO', numHands: 2 });
+      V.lib = await mk('GPU').catch(() => mk('CPU'));
+    }
+  } catch (e) { say('nv-state', '⚠ A câmera abriu, mas a biblioteca de reconhecimento de mãos não carregou (' + (e && e.message ? e.message : 'sem internet ou bloqueada') + '). Os gestos ficam desligados; o NTEi segue normal.'); logUI('Falha ao carregar MediaPipe: ' + (e && e.message)); return; }
+  eng.reset(); say('nv-state', st.mode === 'train' ? 'Ativo — modo TREINAMENTO (nenhuma ação real).' : 'Ativo — modo REAL.'); loop();
+}
+async function diagCamera() {
+  const L = []; L.push('Endereço: ' + location.protocol + '//' + (location.host || '(arquivo local)'));
+  L.push('Contexto seguro: ' + (window.isSecureContext ? 'sim' : 'NÃO — a câmera exige HTTPS ou localhost'));
+  L.push('Dentro de outra página (iframe/visualizador): ' + (window.top !== window ? 'SIM — a câmera costuma ser bloqueada aqui; abra o arquivo direto no Chrome' : 'não'));
+  try { if (document.featurePolicy && !document.featurePolicy.allowsFeature('camera')) L.push('Política do navegador: câmera BLOQUEADA nesta página'); } catch (e) {}
+  L.push('API de câmera: ' + (navigator.mediaDevices && navigator.mediaDevices.getUserMedia ? 'ok' : 'AUSENTE'));
+  try { const d = await navigator.mediaDevices.enumerateDevices(); L.push('Câmeras encontradas: ' + d.filter(x => x.kind === 'videoinput').length); } catch (e) { L.push('Câmeras: não foi possível listar'); }
+  try { const q = await navigator.permissions.query({ name: 'camera' }); L.push('Permissão do site: ' + ({ granted: 'permitida', denied: 'NEGADA (libere no cadeado da barra de endereço)', prompt: 'ainda não perguntada' }[q.state] || q.state)); } catch (e) {}
+  return L.join('\n');
+}
+function parar(motivo) {
+  cancelAnimationFrame(V.raf); clearInterval(V.calibTimer);
+  if (V.stream) V.stream.getTracks().forEach(t => t.stop());
+  V.stream = null; if (V.vid) V.vid.srcObject = null;
+  if (V.lib) { try { V.lib.close(); } catch (e) {} V.lib = null; }
+  const cur = $('nv-cursor'); if (cur) cur.style.display = 'none';
+  const c = $('nv-cam'); if (c) { c.textContent = '⚫ Câmera desligada'; c.style.color = '#9aa7b8'; }
+  const b = $('nv-toggle'); if (b) b.textContent = 'Ativar câmera';
+  if (motivo) { say('nv-state', motivo); logUI(motivo); }
+}
+function emergencia() { if (V.abort) { try { V.abort.abort(); } catch (e) {} } st.mode = 'train'; const m = $('nv-mode'); if (m) m.value = 'train'; parar('⛔ Controle gestual interrompido.'); log('Emergência: controle gestual interrompido'); }
+function loop() {
+  V.raf = requestAnimationFrame(loop);
+  const now = performance.now(); if (now - V.last < 50 || !V.lib || V.vid.readyState < 2) return; V.last = now;
+  let res; try { res = V.lib.detectForVideo(V.vid, now); } catch (e) { return; }
+  const hands = (res.landmarks || []).map((lm, i) => { const h = (res.handednesses || res.handedness || [])[i]; const c = h && h[0];
+    return { lm, score: c ? c.score : 0, label: c ? (c.categoryName === 'Left' ? 'Right' : 'Left') : '' }; });
+  draw(hands);
+  say('nv-conf', hands.length ? 'Confiança: ' + Math.round(hands[0].score * 100) + '% · mãos: ' + hands.length : 'Nenhuma mão detectada');
+  if (hands.length) say('nv-pose', 'Gesto: ' + classify(hands[0].lm).pose);
+  V.dwSeen = false; eng.step(hands, now).forEach(onEvent);
+  if (!V.dwSeen) $('nv-cursor').style.background = 'rgba(244,197,33,.25)';
+  if (now - (V.lt || 0) > 2000) { V.lt = now; try { const c = V.bc || (V.bc = document.createElement('canvas')); c.width = 32; c.height = 24; const g = c.getContext('2d'); g.drawImage(V.vid, 0, 0, 32, 24);
+    const d = g.getImageData(0, 0, 32, 24).data; let sum = 0; for (let i = 0; i < d.length; i += 4) sum += d[i] * .299 + d[i + 1] * .587 + d[i + 2] * .114; const lum = sum / (d.length / 4);
+    say('nv-light', lum < 45 ? '⚠ Pouca luz: o reconhecimento pode falhar. Acenda a luz ou aproxime-se de uma janela.' : lum > 230 ? '⚠ Imagem muito clara/contraluz.' : ''); } catch (e) {} }
+  say('nv-ctl', 'Controle: ' + (eng.s.paused ? 'PAUSADO' : 'ativo'));
+}
+const BONES = [[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],[13,17],[17,18],[18,19],[19,20],[0,17]];
+function draw(hands) {
+  const cv = $('nv-canvas'), g = cv.getContext('2d'); g.clearRect(0, 0, cv.width, cv.height);
+  if (st.preview) { g.fillStyle = '#00adef'; hands.forEach(h => h.lm.forEach(p => { g.beginPath(); g.arc((1 - p.x) * cv.width, p.y * cv.height, 2.5, 0, 6.3); g.fill(); })); }
+  const sk = $('nv-sky'); if (!sk) return; sk.style.display = st.sky && V.stream ? 'block' : 'none';
+  if (!st.sky) return; if (sk.width !== innerWidth || sk.height !== innerHeight) { sk.width = innerWidth; sk.height = innerHeight; }
+  const q = sk.getContext('2d'), A = eng.cfg.area; q.clearRect(0, 0, sk.width, sk.height); q.lineWidth = 3;
+  hands.forEach((h, hi) => { q.strokeStyle = hi ? '#2ecc71' : '#00adef';
+    const P = h.lm.map(p => ({ x: ((1 - p.x) - A.x0) / (A.x1 - A.x0) * sk.width, y: (p.y - A.y0) / (A.y1 - A.y0) * sk.height }));
+    BONES.forEach(([a, b]) => { q.beginPath(); q.moveTo(P[a].x, P[a].y); q.lineTo(P[b].x, P[b].y); q.stroke(); });
+    q.fillStyle = '#fff'; P.forEach(p => { q.beginPath(); q.arc(p.x, p.y, 4, 0, 6.3); q.fill(); }); });
+}
+const SEL = 'button,a,[onclick],input,select,textarea,label,.area-dropdown-item,summary,[role=button]';
+function alvoSob(x, y) {
+  for (const [dx, dy] of [[0,0],[24,0],[-24,0],[0,24],[0,-24]]) { const el = document.elementFromPoint(x + dx, y + dy);
+    if (!el || el.closest('#ntei-vision-root')) continue; const a = el.closest(SEL); if (a && a.offsetParent !== null) return a; }
+  return null;
+}
+function hover(x, y) {
+  const h = $('nv-hover'), a = alvoSob(x, y); V.alvo = a; if (!a) { h.style.display = 'none'; return; }
+  const r = a.getBoundingClientRect(); Object.assign(h.style, { display: 'block', left: r.left - 3 + 'px', top: r.top - 3 + 'px', width: r.width + 6 + 'px', height: r.height + 6 + 'px' });
+}
+function exec(name, r) { logUI((st.mode === 'train' ? '[TESTE] ' : '') + name); if (st.mode === 'train') return; const x = r(); logUI((x.ok ? '✔ ' : '✖ ') + x.msg); if (x.ok) log(name + ': ' + x.msg); }
+function aplicarMapa(a) {
+  const f = { back: () => Acoes.voltar(), menu: () => Acoes.menu(), minimize: () => Acoes.minimizar(), next: () => Acoes.proximo(), prev: () => Acoes.anterior(), reports: () => Acoes.relatorios(), nuvem: () => Acoes.nuvem() };
+  if (a === 'toggle') { eng.s.paused = !eng.s.paused; logUI(eng.s.paused ? 'Controle pausado' : 'Controle retomado'); return; }
+  if (f[a]) exec('Ação: ' + ACT[a], f[a]);
+}
+function onEvent(e) {
+  const cur = $('nv-cursor');
+  if (e.type === 'cursor') { const X = e.x * innerWidth, Y = e.y * innerHeight; cur.style.display = 'block'; cur.style.left = X + 'px'; cur.style.top = Y + 'px'; V.cx = X; V.cy = Y; hover(X, Y); }
+  else if (e.type === 'dwell') { V.dwSeen = true; cur.style.background = 'conic-gradient(#f4c521 ' + e.progress * 360 + 'deg, rgba(244,197,33,.15) 0)'; }
+  else if (e.type === 'lost' || e.type === 'outside') { cur.style.display = 'none'; $('nv-hover').style.display = 'none'; V.alvo = null; say('nv-state', e.type === 'lost' ? 'Rastreamento perdido — comandos suspensos.' : 'Mão fora da área calibrada — comandos suspensos.'); }
+  else if (e.type === 'calibrating') say('nv-state', 'Calibrando… mova a mão pelos cantos da área (' + e.n + ' pontos)');
+  else if (e.type === 'click') exec(e.dwell ? 'Gesto: permanência (clique)' : 'Gesto: pinça (clique)', () => { const r = V.alvo && V.alvo.getBoundingClientRect(); return r ? Acoes.clicar(r.left + r.width / 2, r.top + r.height / 2) : Acoes.clicar(V.cx, V.cy); });
+  else if (e.type === 'scroll') { if (st.mode === 'real') Acoes.rolar(e.dy); }
+  else if (e.type === 'zoom') exec('Gesto: zoom x' + e.factor.toFixed(2), () => Acoes.zoom(e.factor));
+  else if (e.type === 'swipe') aplicarMapa(e.dir === 'right' ? st.map.swipeR : st.map.swipeL);
+  else if (e.type === 'pose') aplicarMapa(st.map[e.pose]);
+}
+function calibrar() {
+  if (!V.stream || !V.lib) return say('nv-state', 'Ative a câmera antes de calibrar.');
+  eng.startCalib(); say('nv-state', 'Calibrando por 6 s: percorra com a ponta do indicador os limites do movimento confortável.');
+  setTimeout(() => { const a = eng.finishCalib(); say('nv-state', a ? 'Calibração salva.' : 'Calibração insuficiente — repita movendo mais a mão.'); if (a) save(); }, 6000);
+}
+
+function autotestes() {
+  const out = []; let ok = 0, bad = 0; const T = (n, c) => { c ? ok++ : bad++; out.push((c ? '✔ ' : '✖ ') + n); };
+  const mk = (o = {}) => { const { ext = [1,1,1,1], thumb = 1, pinch = false, x = 0.5, y = 0.6 } = o, lm = Array.from({ length: 21 }, () => ({ x, y })); lm[0] = { x, y: y + 0.2 };
+    [[8,6,5,-0.03],[12,10,9,0],[16,14,13,0.03],[20,18,17,0.06]].forEach(([t, p, m, dx], i) => { lm[m] = { x: x + dx, y: y + 0.02 }; lm[p] = { x: x + dx, y: y - 0.05 }; lm[t] = { x: x + dx, y: ext[i] ? y - 0.15 : y + 0.08 }; });
+    if (thumb) { lm[3] = { x: x - 0.08, y: y + 0.12 }; lm[4] = { x: x - 0.15, y: y + 0.1 }; } else { lm[3] = { x: x - 0.02, y: y + 0.12 }; lm[4] = { x: x + 0.02, y: y + 0.08 }; }
+    if (pinch) lm[4] = { x: lm[8].x + 0.01, y: lm[8].y }; return lm; };
+  const H = (o, sc = 0.95) => ({ lm: mk(o), score: sc, label: 'Right' }), N = (h, n) => Array(n).fill(h);
+  const run = (e, fr) => { let t = 0, o = []; fr.forEach(f => { o.push(...e.step(f, t)); t += 50; }); return o; }, ty = (o, k) => o.filter(z => z.type === k);
+  T('gesto: palma aberta', classify(mk()).pose === 'open'); T('gesto: mão fechada', classify(mk({ ext: [0,0,0,0], thumb: 0 })).pose === 'fist');
+  T('gesto: 3 dedos', classify(mk({ ext: [1,1,1,0], thumb: 0 })).pose === 'three'); T('gesto: indicador+médio', classify(mk({ ext: [1,1,0,0], thumb: 0 })).pose === 'peace');
+  T('gesto: L', classify(mk({ ext: [1,0,0,0], thumb: 1 })).pose === 'L');
+  T('pinça segurada = 1 clique', ty(run(new Engine(), N([H({ pinch: true })], 20)), 'click').length === 1);
+  T('mão fechada NÃO clica', ty(run(new Engine(), N([H({ ext: [0,0,0,0], thumb: 0 })], 20)), 'click').length === 0);
+  T('baixa confiança não executa', ty(run(new Engine(), N([H({ pinch: true }, 0.4)], 20)), 'click').length === 0);
+  T('fora da área calibrada não executa', ty(run(new Engine(), N([H({ pinch: true, x: 0.97 })], 20)), 'click').length === 0);
+  T('perda de rastreamento detectada', ty(run(new Engine(), [...N([H()], 4), ...N([], 12)]), 'lost').length === 1);
+  T('pinça+arrastar rola sem clicar', (o => ty(o, 'scroll').length > 0 && ty(o, 'click').length === 0)(run(new Engine(), [0,1,2,3,4,5,6,7].map(i => [H({ pinch: true, y: 0.4 + i * 0.03 })]))));
+  T('duas mãos soltas NÃO dão zoom', ty(run(new Engine(), [...N([H({ x: 0.4 }), H({ x: 0.6 })], 2), ...N([H({ x: 0.3 }), H({ x: 0.7 })], 3)]), 'zoom').length === 0);
+  T('duas mãos em pinça dão zoom', ty(run(new Engine(), [...N([H({ x: 0.4, pinch: true }), H({ x: 0.6, pinch: true })], 2), ...N([H({ x: 0.3, pinch: true }), H({ x: 0.7, pinch: true })], 3)]), 'zoom').length >= 1);
+  T('mão fechada está em "nenhuma" (padrão seguro)', st.map.fist === 'none');
+  T('ambiente: contexto seguro (HTTPS/localhost)', window.isSecureContext); T('ambiente: API de câmera disponível', !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia));
+  T('ambiente: IndexedDB', !!window.indexedDB); try { localStorage.setItem('_nv', '1'); localStorage.removeItem('_nv'); T('ambiente: armazenamento local', true); } catch (e) { T('ambiente: armazenamento local', false); }
+  T('ambiente: reconhecimento de voz', !!(window.SpeechRecognition || window.webkitSpeechRecognition));
+  T('NTEi: módulos acessíveis ao seu perfil: ' + (permitidos().join(', ') || '(faça login)'), permitidos().length > 0);
+  const f = $('nv-test'); f.textContent = out.join('\n') + '\n\n' + ok + ' aprovados, ' + bad + ' reprovados'; logUI('Autotestes: ' + ok + ' ok / ' + bad + ' falhas');
+  fetch('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs', { mode: 'no-cors' }).then(() => { f.textContent += '\n✔ rede: biblioteca de visão alcançável'; }).catch(() => { f.textContent += '\n✖ rede: biblioteca de visão inacessível (offline ou bloqueada)'; });
+}
+function montar() {
+  const r = document.createElement('div'); r.id = 'ntei-vision-root';
+  const opt = (o, sel) => Object.keys(o).map(k => '<option value="' + k + '"' + (k === sel ? ' selected' : '') + '>' + o[k] + '</option>').join('');
+  const mp = (id, lbl, sel) => '<label>' + lbl + '<select id="nvm-' + id + '">' + opt(ACT, sel) + '</select></label>';
+  const rg = (id, lbl, mn, mx, sp, v) => '<label>' + lbl + ' <b id="' + id + '-v"></b><input type="range" id="' + id + '" min="' + mn + '" max="' + mx + '" step="' + sp + '" value="' + v + '"></label>';
+  r.innerHTML = '<style>#nv-fab{position:fixed;left:14px;bottom:14px;z-index:99990;background:#0d3161;color:#fff;border:1px solid #00adef;border-radius:24px;padding:9px 14px;cursor:pointer;font:600 12px Poppins,sans-serif;display:none}' +
+    '#nv-panel{position:fixed;left:14px;bottom:60px;width:340px;max-width:94vw;max-height:78vh;overflow:auto;z-index:99991;background:#10151f;color:#e8eef7;border:1px solid #2a3a55;border-radius:12px;padding:12px;font:12px Poppins,sans-serif;display:none}' +
+    '#nv-panel label{display:block;margin:6px 0}#nv-panel select,#nv-panel input[type=range]{width:100%}#nv-panel button{cursor:pointer;border:0;border-radius:8px;padding:8px 10px;margin:3px 0;font-weight:600}' +
+    '#nv-stop{position:fixed;right:14px;bottom:14px;z-index:99999;background:#e74c3c;color:#fff;border:2px solid #fff;border-radius:28px;padding:12px 18px;font-weight:800;cursor:pointer;display:none}' +
+    '#nv-cursor{position:fixed;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;border:3px solid #f4c521;background:rgba(244,197,33,.25);z-index:99998;pointer-events:none;display:none}' +
+    '#nv-hover{position:fixed;border:2px solid #f4c521;border-radius:6px;box-shadow:0 0 12px #f4c521;z-index:99997;pointer-events:none;display:none;transition:all .08s}#nv-sky{position:fixed;left:0;top:0;z-index:99996;pointer-events:none;display:none}#nv-log{max-height:110px;overflow:auto;font-size:10.5px;color:#9aa7b8;border-top:1px solid #2a3a55;margin-top:6px;padding-top:6px}.nv-box{position:relative;width:100%;aspect-ratio:4/3;background:#000;border-radius:8px;overflow:hidden}.nv-box video,.nv-box canvas{position:absolute;inset:0;width:100%;height:100%;transform:scaleX(-1)}.nv-box canvas{transform:none}</style>' +
+    '<button id="nv-fab">🖐 Vision</button><button id="nv-stop">⛔ PARAR GESTOS</button><div id="nv-cursor"></div><div id="nv-hover"></div><canvas id="nv-sky"></canvas>' +
+    '<div id="nv-panel"><b style="font-size:13px">NTEi Vision — Controle Gestual</b><div id="nv-cam" style="margin:4px 0;font-weight:700">⚫ Câmera desligada</div>' +
+    '<div class="nv-box" id="nv-box"><video id="nv-video" muted playsinline></video><canvas id="nv-canvas" width="320" height="240"></canvas></div>' +
+    '<div id="nv-state" style="margin:6px 0">Câmera nunca é ativada automaticamente.</div><div id="nv-conf"></div><div id="nv-pose"></div><div id="nv-ctl"></div>' +
+    '<label><input type="checkbox" id="nv-consent"> Autorizo o uso da câmera só para reconhecer gestos. O vídeo é processado neste computador, não é gravado nem enviado.</label><button id="nv-toggle" style="background:#00adef;color:#06121f;width:100%">Ativar câmera</button><button id="nv-diag" style="background:#2a3a55;color:#fff;width:100%">Diagnosticar câmera</button><button id="nv-calib" style="background:#2a3a55;color:#fff;width:100%">Calibrar área de movimento</button>' +
+    '<label>Modo<select id="nv-mode"><option value="train">Treinamento/teste (não executa ações)</option><option value="real">Real (executa ações)</option></select></label>' +
+    '<label><input type="checkbox" id="nv-prev" checked> Mostrar pré-visualização e pontos</label>' +
+    '<label><input type="checkbox" id="nv-sky-c"> Mostrar esqueleto das mãos sobre a tela</label><label><input type="checkbox" id="nv-dwell"> Clique por permanência (apontar e esperar, sem pinça)</label><div id="nv-light" style="color:#f4c521"></div>' +
+    '<label>Mão<select id="nv-hand"><option value="both">Ambas</option><option value="Left">Esquerda</option><option value="Right">Direita</option></select></label>' +
+    rg('nv-sens', 'Sensibilidade', 0, 1, 0.05, eng.cfg.sens) + rg('nv-dz', 'Zona morta', 0.002, 0.05, 0.002, eng.cfg.deadzone) + rg('nv-hold', 'Tempo mínimo (ms)', 150, 1200, 50, eng.cfg.minHold) + rg('nv-cd', 'Intervalo entre comandos (ms)', 200, 2500, 100, eng.cfg.cooldown) +
+    '<b>Nuvem IA (Gemini)</b><div id="nv-gstat"></div><input type="password" id="nv-gkey" placeholder="Cole aqui sua chave do Gemini" autocomplete="off" style="width:100%;margin:4px 0"><input id="nv-gmodel" placeholder="Modelo (padrão gemini-2.0-flash)" style="width:100%"><button id="nv-gsave" style="background:#2ecc71;color:#06121f;width:100%">Salvar e ligar Gemini neste aparelho</button><button id="nv-gdel" style="background:#2a3a55;color:#fff;width:100%">Remover chave</button><div style="font-size:10.5px;color:#9aa7b8">A chave fica só neste navegador. Use apenas em aparelho seu/confiável; para vários usuários use o servidor seguro.</div>' +
+    '<button id="nv-selftest" style="background:#f4c521;color:#06121f;width:100%">Rodar autotestes</button><div id="nv-test" style="white-space:pre-wrap;font-size:10.5px;color:#cfe3ff"></div>' +
+    '<b>Mapeamento</b>' + mp('open', '🖐 Palma aberta', st.map.open) + mp('three', '3 dedos', st.map.three) + mp('fist', '✊ Mão fechada (desligada por padrão)', st.map.fist) + mp('swipeR', '➡ Deslizar p/ direita', st.map.swipeR) + mp('swipeL', '⬅ Deslizar p/ esquerda', st.map.swipeL) +
+    '<div style="font-size:10.5px;color:#9aa7b8">Pinça = clicar · Indicador+médio subindo/descendo = rolar · Polegar+indicador (L) abrindo/fechando ou duas mãos afastando = zoom.</div><div id="nv-log"></div></div>';
+  document.body.appendChild(r); V.vid = $('nv-video');
+  $('nv-fab').onclick = () => { const p = $('nv-panel'); p.style.display = p.style.display === 'block' ? 'none' : 'block'; };
+  $('nv-toggle').onclick = () => V.stream ? parar('Câmera desativada.') : ativar();
+  $('nv-diag').onclick = async () => { $('nv-test').textContent = 'Verificando…'; $('nv-test').textContent = await diagCamera(); };
+  $('nv-calib').onclick = calibrar; $('nv-stop').onclick = emergencia;
+  $('nv-mode').onchange = e => { st.mode = e.target.value; logUI('Modo: ' + st.mode); };
+  const gs = () => say('nv-gstat', window.NTEI_NUVEM_URL ? 'Gemini: via servidor seguro (ativo)' : keyLocal() ? 'Gemini: ATIVO automaticamente neste aparelho' : 'Gemini: desligado (cole uma chave)');
+  $('nv-gmodel').value = (function () { try { return localStorage.getItem(KEYLS + '_model') || ''; } catch (e) { return ''; } })();
+  $('nv-gsave').onclick = () => { const v = $('nv-gkey').value.trim(); if (v.length < 20) return say('nv-gstat', 'Chave inválida.');
+    try { localStorage.setItem(KEYLS, v); localStorage.setItem(KEYLS + '_model', $('nv-gmodel').value.trim()); } catch (e) { return say('nv-gstat', 'Não foi possível salvar neste navegador.'); } $('nv-gkey').value = ''; gs(); logUI('Gemini ligado (chave salva localmente).'); };
+  $('nv-gdel').onclick = () => { try { localStorage.removeItem(KEYLS); } catch (e) {} gs(); logUI('Chave do Gemini removida.'); };
+  $('nv-selftest').onclick = autotestes; gs();
+  $('nv-sky-c').onchange = e => { st.sky = e.target.checked; };
+  $('nv-dwell').onchange = e => { eng.cfg.dwellMs = e.target.checked ? 1200 : 0; logUI('Permanência: ' + (e.target.checked ? 'ligada (1,2 s)' : 'desligada')); };
+  $('nv-prev').onchange = e => { st.preview = e.target.checked; $('nv-box').style.display = st.preview ? '' : 'none'; };
+  $('nv-hand').value = eng.cfg.hand; $('nv-hand').onchange = e => { eng.cfg.hand = e.target.value; save(); };
+  [['nv-sens', 'sens'], ['nv-dz', 'deadzone'], ['nv-hold', 'minHold'], ['nv-cd', 'cooldown']].forEach(([id, k]) => { const f = () => { eng.cfg[k] = +$(id).value; say(id + '-v', $(id).value); save(); }; $(id).oninput = f; say(id + '-v', $(id).value); });
+  Object.keys(st.map).forEach(k => { $('nvm-' + k).onchange = e => { st.map[k] = e.target.value; save(); }; });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && V.stream) emergencia(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden && V.stream) parar('Câmera desligada ao trocar de aba.'); });
+  window.addEventListener('pagehide', () => parar());
+  setInterval(() => { const on = !!user(); $('nv-fab').style.display = on ? 'block' : 'none'; $('nv-stop').style.display = V.stream ? 'block' : 'none'; if (!on && V.stream) parar('Sessão encerrada.'); }, 800);
+}
+
+/* ───────────── NUVEM IA: intenções estruturadas (sem executar código vindo de IA) ───────────── */
+const norm = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/^nuvem[,:\s]+/, '').trim();
+const MODS = { patrimonio: 'patrimonio', inventario: 'patrimonio', alunos: 'alunos', comunicacao: 'comunicacao', editais: 'editais', operacional: 'operacional', pedagogico: 'pedagogico', chamada: 'chamada', gemeo: 'gemeo', analise: 'analise', inicio: 'dashboard' };
+let pend = null, ctx = { busca: '' };
+function nuvemMsg(txt, out) { const b = $('nuvem-content'); if (!b) return; const d = document.createElement('div'); d.className = 'msg ' + (out ? 'msg-out' : 'msg-in'); d.style.fontSize = '12px'; d.textContent = out ? txt : 'Nuvem AI: ' + txt; b.appendChild(d); b.scrollTop = b.scrollHeight; if (!out) { try { nuvem.falar(txt); } catch (e) {} } }
+function intencao(raw) {
+  const q = norm(raw), m = q.match(/(?:procur[ae]|busque|pesquis[ae])\s+(?:o |a |um |uma )?(.*?)(?:\s+no inventario)?$/);
+  if (pend) { const p = pend; pend = null; if (/^(sim|confirmo|pode|isso|ok)$/.test(q)) { const r = p(); return r.msg; } if (/^(nao|cancela|cancelar)/.test(q)) return 'Certo, cancelei.'; }
+  if (/(pare|parar|desligue|desative).*(controle gestual|gestos|gestual)/.test(q)) { emergencia(); return 'Controle gestual interrompido e câmera desligada.'; }
+  if (/relatorio/.test(q) && /(abr|va |ir |mostr)/.test(q)) return Acoes.relatorios().msg;
+  const mod = q.match(/(?:abr[ae]|va para|ir para|mostre)\s+(?:o |a |os |as )?(\w+)/);
+  if (mod && MODS[mod[1]]) return Acoes.abrirModulo(MODS[mod[1]]).msg;
+  if (/^(volte|voltar|volta)\b/.test(q)) return Acoes.voltar().msg;
+  if (/^(amplie|aumente|ampliar|aumentar)/.test(q)) return Acoes.zoom(1.2).msg;
+  if (/^(reduza|diminua|reduzir)/.test(q)) return Acoes.zoom(0.85).msg;
+  if (/abra (esse|este|essa|esta)\b/.test(q)) return 'Não sei qual item você quer dizer. Estamos em "' + modules.current + '". Diga o nome do módulo ou do item.';
+  if (m) { const t = (m[1] || '').replace(/^(esse|este|essa|esta)\b\s*/, '').replace(/^equipamento\s*/, '').trim() || (/(esse|este|essa|esta)/.test(q) ? ctx.busca : '');
+    if (!t) return 'Qual equipamento? Diga o nome ou o número de patrimônio.';
+    pend = () => { ctx.busca = t; return Acoes.buscar(t); }; return 'Entendi: pesquisar "' + t + '" na busca global. Confirma? (diga "sim" ou "não")'; }
+  if (/explique.*(painel|dados|tela|grafico)/.test(q)) return 'Só sei qual módulo está aberto ("' + modules.current + '"). Não consigo ver nem ler o conteúdo da tela, então não vou inventar uma explicação dos dados.';
+  if (/(pesquis|web|internet|google)/.test(q) && /(web|internet|google|online)/.test(q)) return 'A pesquisa na web não está disponível: ela exige um serviço de backend autorizado que ainda não foi configurado.';
+  return null;
+}
+const KEYLS = 'nteiGeminiKey_v1', conv = [];
+const keyLocal = () => { try { return localStorage.getItem(KEYLS); } catch (e) { return null; } };
+async function geminiDireto(q, ctrl) {
+  const mods = permitidos(), fns = [{ name: 'voltar', description: 'Volta para a tela anterior.' }, { name: 'relatorios', description: 'Abre a área de relatórios.' },
+    { name: 'proximo', description: 'Próximo módulo.' }, { name: 'anterior', description: 'Módulo anterior.' }, { name: 'pararGestos', description: 'Interrompe o controle gestual.' },
+    { name: 'zoom', description: 'Amplia (>1) ou reduz (<1) o conteúdo.', parameters: { type: 'OBJECT', properties: { fator: { type: 'NUMBER' } }, required: ['fator'] } },
+    { name: 'buscar', description: 'Pesquisa na busca global (equipamentos, chamados).', parameters: { type: 'OBJECT', properties: { texto: { type: 'STRING' } }, required: ['texto'] } }];
+  if (mods.length) fns.push({ name: 'abrirModulo', description: 'Abre um módulo da plataforma.', parameters: { type: 'OBJECT', properties: { id: { type: 'STRING', enum: mods } }, required: ['id'] } });
+  let h = conv.slice(-9).map(m => ({ role: m.role === 'user' ? 'user' : 'model', parts: [{ text: String(m.text).slice(0, 1000) }] })); while (h.length && h[0].role !== 'user') h.shift();
+  const model = (localStorage.getItem(KEYLS + '_model') || 'gemini-2.0-flash').replace(/[^a-zA-Z0-9.\-]/g, '');
+  const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent', { method: 'POST', signal: ctrl.signal,
+    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': keyLocal() },
+    body: JSON.stringify({ systemInstruction: { parts: [{ text: 'Você é a Nuvem, assistente do NTEi. Responda em português do Brasil, de forma curta. Use as funções somente quando o usuário pedir uma ação na plataforma. Você NÃO vê a tela; só sabe o módulo atual: ' + modules.current + '. Não invente dados, resultados ou pesquisas.' }] }, contents: h, tools: [{ functionDeclarations: fns }] }) });
+  if (r.status === 400 || r.status === 401 || r.status === 403) return { texto: 'O Gemini recusou a chave ou o modelo (' + r.status + '). Confira a chave e o nome do modelo no painel Vision.' };
+  if (r.status === 429) return { texto: 'Limite de uso do Gemini atingido. Tente em instantes.' };
+  if (!r.ok) return { texto: 'O Gemini respondeu com erro ' + r.status + '.' };
+  const parts = ((await r.json()).candidates || [{}])[0].content?.parts || [], fc = parts.find(x => x.functionCall)?.functionCall;
+  const texto = parts.map(x => x.text || '').join('').trim();
+  return { texto: texto || (fc ? 'Certo.' : 'Não consegui responder agora.'), acao: fc ? { nome: fc.name, args: fc.args || {} } : null };
+}
+async function gemini(q) {
+  const url = window.NTEI_NUVEM_URL; if (!url && !keyLocal()) return null;
+  if (!navigator.onLine) return { texto: 'Sem conexão: a IA remota precisa de internet. Os comandos locais continuam funcionando.' };
+  const ctrl = new AbortController(); V.abort = ctrl; const to = setTimeout(() => ctrl.abort(), 25000);
+  if (!url) { try { return await geminiDireto(q, ctrl); } catch (e) { return { texto: e.name === 'AbortError' ? 'Pedido cancelado ou demorou demais.' : 'Não consegui falar com o Gemini (sem internet ou bloqueado).' }; } finally { clearTimeout(to); } }
+  try {
+    const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: ctrl.signal,
+      body: JSON.stringify({ mensagem: q, historico: conv.slice(-8), contexto: { modulo: modules.current, cargo: user().cargo, modulosPermitidos: permitidos() } }) });
+    if (!r.ok) return { texto: 'O servidor da IA respondeu com erro ' + r.status + '.' };
+    return await r.json();
+  } catch (e) { return { texto: e.name === 'AbortError' ? 'Pedido cancelado ou demorou demais.' : 'Não consegui falar com o servidor da IA.' }; }
+  finally { clearTimeout(to); }
+}
+const ACOES_IA = { abrirModulo: a => typeof a.id === 'string' && /^[a-z-]{2,20}$/.test(a.id), voltar: () => true, relatorios: () => true, proximo: () => true, anterior: () => true,
+  zoom: a => typeof a.fator === 'number' && a.fator >= 0.5 && a.fator <= 2, buscar: a => typeof a.texto === 'string' && a.texto.length > 0 && a.texto.length <= 80, pararGestos: () => true };
+function executarIA(ac) {
+  if (!ac || !ACOES_IA[ac.nome] || !ACOES_IA[ac.nome](ac.args || {})) return 'Ignorei uma ação não permitida sugerida pela IA.';
+  const a = ac.args || {};
+  if (ac.nome === 'buscar') { pend = () => Acoes.buscar(a.texto); return 'Entendi: pesquisar "' + a.texto + '" na busca global. Confirma? (sim/não)'; }
+  if (ac.nome === 'pararGestos') { emergencia(); return 'Controle gestual interrompido.'; }
+  return (ac.nome === 'abrirModulo' ? Acoes.abrirModulo(a.id) : ac.nome === 'zoom' ? Acoes.zoom(a.fator) : Acoes[ac.nome]()).msg;
+}
+function ligarNuvem() {
+  if (typeof nuvem === 'undefined' || nuvem._visionLigada) return; nuvem._visionLigada = true;
+  const orig = nuvem.ask.bind(nuvem);
+  nuvem.ask = async function () {
+    const i = $('nuvem-input'), q = i && i.value.trim(); if (!q) return;
+    let r = null; try { r = intencao(q); } catch (e) { r = 'Não consegui executar isso: ' + e.message; }
+    if (r === null && (window.NTEI_NUVEM_URL || keyLocal())) {
+      i.value = ''; nuvemMsg(q, true); conv.push({ role: 'user', text: q }); const g = await gemini(q);
+      if (g && g.texto) { nuvemMsg(g.texto, false); conv.push({ role: 'model', text: g.texto }); }
+      if (g && g.acao) nuvemMsg(executarIA(g.acao), false); return;
+    }
+    if (r === null) return orig();
+    i.value = ''; nuvemMsg(q, true); nuvemMsg(r, false);
+  };
+}
+
+function iniciar() { montar(); ligarNuvem(); }
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar); else iniciar();
+root.NteiVision = { Acoes, emergencia, Engine, classify };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
 </body></html>
