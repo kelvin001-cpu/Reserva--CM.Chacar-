@@ -7564,7 +7564,7 @@ async function ativar() {
       OverconstrainedError: 'A câmera não aceitou a resolução pedida.', SecurityError: 'Bloqueado por segurança: use HTTPS ou localhost, ou abra fora de um visualizador.', AbortError: 'A câmera não pôde ser iniciada (tente de novo).' }[e.name] || ('Erro de câmera: ' + (e.name || e.message));
     say('nv-state', '✖ ' + m); logUI(m); diagCamera().then(t => { $('nv-test').textContent = t; }); return; }
   V.stream.getVideoTracks()[0].addEventListener('ended', () => parar('A câmera foi desconectada.'));
-  V.vid.srcObject = V.stream; await V.vid.play().catch(() => {});
+  V.vid.srcObject = V.stream; await V.vid.play().catch(() => {}); window.__nteiCamOn = true;
   $('nv-cam').textContent = '🔴 CÂMERA ATIVA'; $('nv-cam').style.color = '#ff6b6b'; $('nv-toggle').textContent = 'Desativar câmera';
   say('nv-state', 'Carregando reconhecimento de mãos…');
   try {
@@ -7588,7 +7588,7 @@ async function diagCamera() {
   return L.join('\n');
 }
 function parar(motivo) {
-  V.rx = null; V.pend = null; V.zel = null; V.zt = 0; V.gate = 50; V.dta = 0; V.hk = '';
+  window.__nteiCamOn = false; V.rx = null; V.pend = null; V.zel = null; V.zt = 0; V.gate = 50; V.dta = 0; V.hk = '';
   cancelAnimationFrame(V.raf); clearInterval(V.calibTimer);
   if (V.stream) V.stream.getTracks().forEach(t => t.stop());
   V.stream = null; if (V.vid) V.vid.srcObject = null;
@@ -7689,7 +7689,7 @@ function toqueRelease(e) {
 function toqueCancel() { const s = TQ.s; TQ.s = null; $('nv-hover').style.borderColor = '#f4c521'; if (s && s.mode === 'dnd' && s.started) dnd('dragend', s.drg, V.cx || 0, V.cy || 0, s.dt); logUI('Toque cancelado (rastreamento perdido ou segunda mão).'); }
 function onEvent(e) {
   const cur = $('nv-cursor');
-  if (e.type === 'cursor') { const X = e.x * innerWidth, Y = e.y * innerHeight; if (V.rx == null) { V.rx = X; V.ry = Y; } cur.style.display = 'block'; V.cx = X; V.cy = Y; }
+  if (e.type === 'cursor') { window.__nteiAtv = performance.now(); const X = e.x * innerWidth, Y = e.y * innerHeight; if (V.rx == null) { V.rx = X; V.ry = Y; } cur.style.display = 'block'; V.cx = X; V.cy = Y; }
   else if (e.type === 'dwell') { V.dwSeen = true; V.dwOn = true; if (Math.abs((V.dwp || 0) - e.progress) > 0.03) { V.dwp = e.progress; cur.style.background = 'conic-gradient(#f4c521 ' + e.progress * 360 + 'deg, rgba(244,197,33,.15) 0)'; } }
   else if (e.type === 'lost' || e.type === 'outside') { cur.style.display = 'none'; $('nv-hover').style.display = 'none'; V.alvo = null; V.hk = ''; V.rx = null; say('nv-state', e.type === 'lost' ? 'Rastreamento perdido — comandos suspensos.' : 'Mão fora da área calibrada — comandos suspensos.'); }
   else if (e.type === 'calibrating') say('nv-state', 'Calibrando… mova a mão pelos cantos da área (' + e.n + ' pontos)');
@@ -7871,6 +7871,255 @@ function iniciar() { montar(); ligarNuvem(); }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar); else iniciar();
 root.NteiVision = { Acoes, emergencia, Engine, classify };
 })(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script id="ntei-face">
+/* NTEi Face — desbloqueio facial local (tela de bloqueio). NÃO substitui senha. Modelo matemático fica só neste navegador (IndexedDB). */
+(function (root) {
+'use strict';
+/* ───────── NÚCLEO PURO (testável em Node) ───────── */
+const IDX = [33,133,362,263,159,145,386,374,70,63,105,66,107,336,296,334,293,300,1,2,4,5,6,168,195,197,98,327,61,291,0,17,13,14,78,308,234,454,152,10,127,356,93,323,132,361,58,288,50,280,101,330];
+const hyp = (a, b, c) => Math.hypot(a, b, c || 0);
+function feat(lm, asp) {
+  const P = IDX.map(i => ({ x: lm[i].x * asp, y: lm[i].y, z: (lm[i].z || 0) * asp })), iod = hyp(P[0].x - P[3].x, P[0].y - P[3].y, P[0].z - P[3].z) || 1e-6, f = [];
+  for (let i = 0; i < P.length; i++) for (let j = i + 1; j < P.length; j++) f.push(hyp(P[i].x - P[j].x, P[i].y - P[j].y, P[i].z - P[j].z) / iod);
+  return f;
+}
+function yawRatio(lm, asp) { const n = lm[1], a = lm[33], b = lm[263]; return hyp((n.x - a.x) * asp, n.y - a.y) / (hyp((n.x - b.x) * asp, n.y - b.y) || 1e-6); }
+const frontal = (lm, asp) => { const r = yawRatio(lm, asp); return r > 0.8 && r < 1.25; };
+const tamanhoOk = (lm, asp) => hyp((lm[33].x - lm[263].x) * asp, lm[33].y - lm[263].y) > 0.13;
+const dif = (a, b) => { let s = 0; for (let i = 0; i < a.length; i++) s += Math.abs(a[i] - b[i]); return s / a.length; };
+function criarTemplate(feats) {
+  const n = feats.length, L = feats[0].length, tpl = new Array(L).fill(0);
+  feats.forEach(f => { for (let i = 0; i < L; i++) tpl[i] += f[i] / n; });
+  const ds = feats.map(f => dif(f, tpl)), mu = ds.reduce((p, q) => p + q, 0) / n, sd = Math.sqrt(ds.reduce((p, q) => p + (q - mu) ** 2, 0) / n);
+  return { tpl, mu, sd, thr: Math.max(0.006, Math.min(0.015, mu + 4 * sd)) };
+}
+function pontuar(feats, tpl) { const d = feats.map(f => dif(f, tpl)).sort((a, b) => a - b); return d[d.length >> 1]; }
+function Liveness(tipo) { this.tipo = tipo; this.done = false; this.n = 0; this.closed = false; this.hold = 0; }
+Liveness.prototype.update = function (o) {
+  if (this.done) return;
+  if (this.tipo === 'blink2') { const b = Math.min(o.blinkL, o.blinkR); if (!this.closed && b > 0.55) this.closed = true; else if (this.closed && b < 0.25) { this.closed = false; this.n++; } this.done = this.n >= 2; }
+  else if (this.tipo === 'smile') { this.hold = o.smile > 0.55 ? this.hold + 1 : 0; this.done = this.hold >= 3; }
+  else if (this.tipo === 'turn') { if (!this.closed && (o.ratio < 0.7 || o.ratio > 1.45)) this.closed = true; else if (this.closed && o.ratio > 0.85 && o.ratio < 1.18) this.done = true; }
+};
+function desafios(rand) { const a = ['blink2', 'smile', 'turn']; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor((rand || Math.random)() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a.slice(0, 2); }
+function Trava() { this.falhas = 0; this.ate = 0; }
+Trava.prototype.registrar = function (ok, now) { if (ok) { this.falhas = 0; return; } if (++this.falhas >= 3) { this.ate = now + 60000; this.falhas = 0; } };
+Trava.prototype.liberado = function (now) { return now >= this.ate; };
+const CORE = { IDX, feat, yawRatio, frontal, tamanhoOk, dif, criarTemplate, pontuar, Liveness, desafios, Trava };
+if (typeof module !== 'undefined' && module.exports) { module.exports = CORE; return; }
+if (typeof document === 'undefined') return;
+
+/* ───────── NAVEGADOR ───────── */
+const $ = id => document.getElementById(id), U = () => (typeof app !== 'undefined' && app.user) || null;
+const S = { rec: null, pront: null, locked: false, cancel: false, busy: false, tec: false, rigor: 1, auto: 0, trava: new Trava(), act: performance.now() };
+const CFG = 'nteiFaceCfg_v1', TXT = { blink2: 'Pisque os dois olhos 2 vezes.', smile: 'Dê um sorriso.', turn: 'Vire a cabeça para um lado e volte a olhar de frente.' };
+try { const c = JSON.parse(localStorage.getItem(CFG) || '{}'); S.auto = +c.auto || 0; S.rigor = +c.rigor || 1; } catch (e) {}
+const audit = m => { try { if (U()) auditoria.registrar('NTEi Face', m); } catch (e) {} };
+const say = (id, v) => { const e = $(id); if (e && e.textContent !== v) e.textContent = v; };
+const esperar = ms => new Promise(r => setTimeout(r, ms));
+function idb(modo, fn) { return new Promise((res, rej) => { const rq = indexedDB.open('ntei_face_v1', 1); rq.onupgradeneeded = () => rq.result.createObjectStore('tpl'); rq.onerror = () => rej(rq.error);
+  rq.onsuccess = () => { const tx = rq.result.transaction('tpl', modo), r = fn(tx.objectStore('tpl')); tx.oncomplete = () => { rq.result.close(); res(r && r.result); }; tx.onerror = () => rej(tx.error); }; }); }
+const getRec = p => idb('readonly', s => s.get(String(p))), putRec = (p, v) => idb('readwrite', s => s.put(v, String(p))), delRec = p => idb('readwrite', s => s.delete(String(p)));
+const lockKey = () => 'nteiFaceLock_' + S.pront;
+
+const C = { stream: null, lm: null, vid: null };
+const msgErro = e => ({ NotAllowedError: 'Câmera negada ou bloqueada (libere no cadeado da barra de endereço; em visualizador online, abra o arquivo direto no Chrome).', NotFoundError: 'Nenhuma câmera encontrada.', NotReadableError: 'A câmera está em uso por outro aplicativo (desligue a câmera do Vision e feche Meet/Zoom).', SecurityError: 'Bloqueado por segurança: use HTTPS ou localhost.' }[e && e.name] || ('Erro: ' + ((e && (e.message || e.name)) || e)));
+async function abrir(aviso) {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('Este navegador não oferece acesso à câmera.');
+  aviso('Pedindo acesso à câmera… clique em "Permitir" se o navegador perguntar.');
+  C.stream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 480 }, height: { ideal: 360 }, facingMode: 'user' }, audio: false });
+  C.vid.srcObject = C.stream; await C.vid.play().catch(() => {});
+  if (!C.lm) { aviso('Carregando leitor de rosto…'); const base = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14', m = await import(base + '/vision_bundle.mjs'), fs = await m.FilesetResolver.forVisionTasks(base + '/wasm');
+    const mk = d => m.FaceLandmarker.createFromOptions(fs, { baseOptions: { modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task', delegate: d }, runningMode: 'VIDEO', numFaces: 2, outputFaceBlendshapes: true });
+    C.lm = await mk('GPU').catch(() => mk('CPU')); }
+}
+function fechar() { if (C.stream) C.stream.getTracks().forEach(t => t.stop()); C.stream = null; if (C.vid) C.vid.srcObject = null; if (C.lm) { try { C.lm.close(); } catch (e) {} C.lm = null; } }
+function ler() {
+  const r = C.lm.detectForVideo(C.vid, performance.now()), n = (r.faceLandmarks || []).length; if (n !== 1) return { n };
+  const bs = {}; (((r.faceBlendshapes || [])[0] || {}).categories || []).forEach(c => { bs[c.categoryName] = c.score; }); return { n, lm: r.faceLandmarks[0], bs };
+}
+const asp = () => (C.vid.videoWidth / C.vid.videoHeight) || 1.333;
+async function coletar(n, ms, aviso) {
+  const fs = [], t0 = performance.now();
+  while (fs.length < n && performance.now() - t0 < ms) { if (S.cancel) throw new Error('cancelado'); await esperar(60); if (C.vid.readyState < 2) continue;
+    const d = ler(), a = asp();
+    if (d.n === 0) aviso('Não vejo seu rosto. Olhe para a câmera.'); else if (d.n > 1) aviso('Há mais de um rosto. Fique sozinho(a) na frente da câmera.');
+    else if (!tamanhoOk(d.lm, a)) aviso('Aproxime-se um pouco da câmera.'); else if (!frontal(d.lm, a)) aviso('Olhe de frente para a câmera.');
+    else { fs.push(feat(d.lm, a)); aviso('Lendo o rosto… ' + fs.length + '/' + n); } }
+  return fs;
+}
+async function desafio(tipo, aviso) {
+  const L = new Liveness(tipo), t0 = performance.now(); aviso('👉 ' + TXT[tipo]);
+  while (!L.done && performance.now() - t0 < 7000) { if (S.cancel) throw new Error('cancelado'); await esperar(50); const d = ler(); if (d.n !== 1) continue;
+    L.update({ blinkL: d.bs.eyeBlinkLeft || 0, blinkR: d.bs.eyeBlinkRight || 0, smile: ((d.bs.mouthSmileLeft || 0) + (d.bs.mouthSmileRight || 0)) / 2, ratio: yawRatio(d.lm, asp()) }); }
+  return L.done;
+}
+async function verificar(rec, aviso) {
+  const lim = rec.thr * S.rigor, f1 = await coletar(8, 9000, aviso);
+  if (f1.length < 8) return { ok: false, motivo: 'Não consegui ler seu rosto de frente. Tente com mais luz.' };
+  const s1 = pontuar(f1, rec.tpl); if (s1 > lim) return { ok: false, score: s1, lim, motivo: 'O rosto não confere.' };
+  for (const t of desafios()) if (!await desafio(t, aviso)) return { ok: false, score: s1, lim, motivo: 'Teste de vida não concluído: "' + TXT[t] + '"' };
+  const f2 = await coletar(4, 6000, aviso); if (f2.length < 4) return { ok: false, score: s1, lim, motivo: 'Não consegui reler o rosto após o teste.' };
+  const s2 = pontuar(f2, rec.tpl); if (s2 > lim * 1.15) return { ok: false, score: s2, lim, motivo: 'O rosto não confere após o teste.' };
+  return { ok: true, score: Math.max(s1, s2), lim };
+}
+async function sessao(aviso, fn) {
+  if (S.busy) return; S.busy = true; S.cancel = false; S.tec = false;
+  try { await abrir(aviso); return await fn(); } catch (e) { if (e.message === 'cancelado') aviso('Leitura cancelada.'); else { S.tec = true; aviso('✖ ' + msgErro(e)); } } finally { fechar(); S.busy = false; }
+}
+
+/* ───────── cadastro / teste / bloqueio ───────── */
+async function cadastrar() {
+  const u = U(), av = m => say('nf-state', m); if (!u) return av('Faça login primeiro.');
+  if (!$('nf-consent').checked) return av('☝ Marque a autorização (LGPD) para continuar.');
+  if (!u.pass || $('nf-pass').value !== String(u.pass)) return av('✖ Digite sua senha atual do NTEi para confirmar que é você.');
+  await sessao(av, async () => {
+    const f = await coletar(14, 14000, av); if (f.length < 10) return av('✖ Não consegui ler o rosto de frente o suficiente. Mais luz, olhe para a câmera.');
+    if (!await desafio('blink2', av)) return av('✖ Pisque 2 vezes para provar que é uma pessoa. Tente de novo.');
+    const t = criarTemplate(f), rec = { tpl: t.tpl, thr: t.thr, mu: t.mu, sd: t.sd, criado: new Date().toISOString(), consentimento: new Date().toISOString(), versao: 1, exigir: $('nf-exigir').checked };
+    await putRec(S.pront, rec); S.rec = rec; $('nf-pass').value = ''; audit('Rosto cadastrado neste aparelho (modelo local, sem foto)'); av('✔ Rosto cadastrado neste aparelho. Limite pessoal: ' + t.thr.toFixed(4)); atualizar();
+  });
+}
+async function testar() { if (!S.rec) return say('nf-state', 'Cadastre seu rosto primeiro.');
+  await sessao(m => say('nf-state', m), async () => { const r = await verificar(S.rec, m => say('nf-state', m)); say('nf-state', (r.ok ? '✔ Confere' : '✖ ' + r.motivo) + (r.score != null ? ' (distância ' + r.score.toFixed(4) + ' / limite ' + r.lim.toFixed(4) + ')' : '')); }); }
+async function apagar() { if (!S.pront) return; if (!confirm('Apagar seus dados faciais deste aparelho?')) return; try { await delRec(S.pront); } catch (e) {} S.rec = null; try { localStorage.removeItem(lockKey()); } catch (e) {} audit('Dados faciais apagados neste aparelho'); say('nf-state', 'Dados faciais apagados.'); atualizar(); }
+
+function bloquear(auto, login) {
+  if (!U() || !S.rec) return say('nf-state', 'Cadastre seu rosto antes de usar o bloqueio.'); if (S.locked) return;
+  S.locked = true; try { localStorage.setItem(lockKey(), '1'); } catch (e) {} try { if (root.NteiVision) root.NteiVision.emergencia(); } catch (e) {}
+  const ov = document.createElement('div'); ov.id = 'nf-lock';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:2147483000;background:radial-gradient(circle at 50% 30%,#0d3161,#07152d 70%);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;font:14px Poppins,sans-serif;text-align:center;padding:20px';
+  ov.innerHTML = '<div style="font-size:42px">🔒</div><b style="font-size:20px">' + (login ? 'Verificação em 2 etapas' : 'NTEi bloqueado') + '</b><div id="nfl-nome"></div><video id="nfl-vid" muted playsinline style="width:220px;height:165px;border-radius:14px;background:#000;transform:scaleX(-1);border:2px solid #00adef"></video><div id="nfl-state" style="min-height:40px;max-width:360px">' + (login ? 'Senha confirmada. Agora confirme seu rosto.' : auto ? 'Bloqueado por inatividade.' : '') + '</div>' +
+    '<button id="nfl-go" style="background:#00adef;color:#06121f;border:0;border-radius:10px;padding:12px 22px;font-weight:700;cursor:pointer">Desbloquear com o rosto</button><button id="nfl-stop" style="display:none;background:#2a3a55;color:#fff;border:0;border-radius:10px;padding:8px 16px;cursor:pointer">Cancelar leitura</button><button id="nfl-out" style="background:none;color:#9aa7b8;border:1px solid #2a3a55;border-radius:10px;padding:8px 16px;cursor:pointer">Sair e entrar com senha</button>';
+  document.body.appendChild(ov); $('nfl-nome').textContent = (U().nome || '') + ' · usuário ' + (U().pront || '');
+  [...document.body.children].forEach(el => { if (el !== ov) { el.inert = true; el.dataset.nfInert = '1'; } });
+  const prev = C.vid; C.vid = $('nfl-vid'); const av = m => say('nfl-state', m);
+  $('nfl-out').onclick = () => { S.cancel = true; desbloquear(true); try { app.logout(); } catch (e) { location.reload(); } };
+  $('nfl-stop').onclick = () => { S.cancel = true; };
+  $('nfl-go').onclick = async () => {
+    if (!S.trava.liberado(performance.now())) return av('Muitas tentativas. Aguarde 1 minuto ou entre com a senha.');
+    $('nfl-go').style.display = 'none'; $('nfl-stop').style.display = 'inline-block';
+    let ok = false; await sessao(av, async () => { const r = await verificar(S.rec, av); ok = r.ok; S.trava.registrar(r.ok, performance.now());
+      if (r.ok) { audit('Desbloqueio facial concluído'); } else { audit('Tentativa de desbloqueio facial falhou'); av('✖ ' + r.motivo + (S.trava.liberado(performance.now()) ? '' : ' Bloqueado por 1 minuto.')); } });
+    $('nfl-stop').style.display = 'none';
+    if (!ok && login && S.tec) { audit('Entrada só com senha: rosto não verificado (câmera ou leitor indisponível)'); av('⚠ Câmera ou leitor indisponível: entrando só com a senha (fica registrado).'); await esperar(1800); C.vid = prev; desbloquear(); return; }
+    if (ok) { C.vid = prev; desbloquear(); } else { $('nfl-go').style.display = 'inline-block'; if (login) av($('nfl-state').textContent + ' Se o rosto não funciona neste aparelho, use outro computador ou peça ao NTEi para limpar os dados do site.'); }
+  };
+  if (login) setTimeout(() => { const b = $('nfl-go'); if (b && b.onclick) b.onclick(); }, 500);
+}
+function desbloquear() {
+  S.locked = false; try { localStorage.removeItem(lockKey()); } catch (e) {} const ov = $('nf-lock'); if (ov) ov.remove();
+  document.querySelectorAll('[data-nf-inert]').forEach(el => { el.inert = false; delete el.dataset.nfInert; }); C.vid = $('nf-vid');
+}
+
+/* ───────── painel ───────── */
+function atualizar() {
+  if (S.rec && $('nf-exigir')) $('nf-exigir').checked = !!S.rec.exigir;
+  say('nf-status', S.rec ? '✔ Rosto cadastrado neste aparelho (' + new Date(S.rec.criado).toLocaleDateString('pt-BR') + ')' : 'Nenhum rosto cadastrado neste aparelho.');
+  $('nf-lock-now').style.display = S.rec ? '' : 'none'; $('nf-test').style.display = S.rec ? '' : 'none'; $('nf-del').style.display = S.rec ? '' : 'none';
+}
+function montar() {
+  const r = document.createElement('div'); r.id = 'ntei-face-root';
+  r.innerHTML = '<style>#nf-fab{position:fixed;left:122px;bottom:14px;z-index:99990;background:#0d3161;color:#fff;border:1px solid #2ecc71;border-radius:24px;padding:9px 14px;cursor:pointer;font:600 12px Poppins,sans-serif;display:none}' +
+    '#nf-panel{position:fixed;left:14px;bottom:60px;width:330px;max-width:94vw;max-height:78vh;overflow:auto;z-index:99992;background:#10151f;color:#e8eef7;border:1px solid #2a3a55;border-radius:12px;padding:12px;font:12px Poppins,sans-serif;display:none}' +
+    '#nf-panel label{display:block;margin:6px 0}#nf-panel select,#nf-panel input[type=range],#nf-panel input[type=password]{width:100%}#nf-panel button{cursor:pointer;border:0;border-radius:8px;padding:8px 10px;margin:3px 0;font-weight:600;width:100%}</style>' +
+    '<button id="nf-fab">🔒 Face</button><div id="nf-panel"><b style="font-size:13px">NTEi Face — desbloqueio facial</b>' +
+    '<video id="nf-vid" muted playsinline style="width:100%;border-radius:8px;background:#000;margin:6px 0;transform:scaleX(-1);max-height:150px"></video>' +
+    '<div id="nf-status" style="font-weight:700"></div><div id="nf-state" style="margin:6px 0;min-height:32px">É um bloqueio de tela de conveniência: não substitui a senha.</div>' +
+    '<label><input type="checkbox" id="nf-consent"> Autorizo o NTEi a ler meu rosto pela câmera para criar um <b>modelo matemático</b> (não é foto), usado só para desbloquear a tela <b>neste aparelho</b>. Fica só neste navegador, não é enviado a nenhum servidor e posso apagar quando quiser.</label>' +
+    '<label>Confirme sua senha do NTEi<input type="password" id="nf-pass" autocomplete="off"></label>' +
+    '<label><input type="checkbox" id="nf-exigir" checked> <b>2 etapas no login:</b> exigir meu rosto sempre que eu entrar com a senha neste aparelho (a câmera liga só nessa hora).</label><button id="nf-enroll" style="background:#2ecc71;color:#06121f">Cadastrar meu rosto</button><button id="nf-test" style="background:#f4c521;color:#06121f">Testar reconhecimento</button><button id="nf-lock-now" style="background:#00adef;color:#06121f">🔒 Bloquear tela agora</button><button id="nf-cancel" style="background:#2a3a55;color:#fff">Cancelar leitura</button><button id="nf-del" style="background:#7a2a2a;color:#fff">Apagar meus dados faciais</button>' +
+    '<label>Bloquear sozinho após inatividade<select id="nf-auto"><option value="0">Desligado</option><option value="2">2 minutos</option><option value="5">5 minutos</option><option value="10">10 minutos</option></select></label>' +
+    '<label>Rigor da comparação <b id="nf-rig-v"></b><input type="range" id="nf-rig" min="0.6" max="1.4" step="0.05"></label>' +
+    '<div style="font-size:10.5px;color:#9aa7b8">Menor rigor = mais seguro, mas pode recusar você. Teste com um colega: ele <b>não</b> deve conseguir desbloquear. Uma foto ou vídeo pode enganar câmeras comuns; o teste de vida (piscar, sorrir, virar) reduz, mas não elimina isso.</div></div>';
+  document.body.appendChild(r); C.vid = $('nf-vid');
+  $('nf-fab').onclick = () => { const p = $('nf-panel'), v = document.getElementById('nv-panel'); if (v) v.style.display = 'none'; p.style.display = p.style.display === 'block' ? 'none' : 'block'; };
+  $('nf-enroll').onclick = cadastrar;
+  $('nf-exigir').onchange = async e => { if (S.rec) { S.rec.exigir = e.target.checked; try { await putRec(S.pront, S.rec); audit('2 etapas no login: ' + (e.target.checked ? 'ligado' : 'desligado')); } catch (x) {} } }; $('nf-test').onclick = testar; $('nf-lock-now').onclick = () => bloquear(false); $('nf-del').onclick = apagar; $('nf-cancel').onclick = () => { S.cancel = true; };
+  $('nf-auto').value = String(S.auto); $('nf-auto').onchange = e => { S.auto = +e.target.value; salvarCfg(); };
+  $('nf-rig').value = S.rigor; say('nf-rig-v', S.rigor.toFixed(2)); $('nf-rig').oninput = e => { S.rigor = +e.target.value; say('nf-rig-v', S.rigor.toFixed(2)); salvarCfg(); };
+  ['pointerdown', 'pointermove', 'keydown', 'wheel', 'touchstart'].forEach(ev => document.addEventListener(ev, () => { S.act = performance.now(); }, { passive: true }));
+  document.addEventListener('visibilitychange', () => { if (document.hidden && S.busy) S.cancel = true; });
+  window.addEventListener('pagehide', fechar);
+  setInterval(tique, 1000);
+}
+const salvarCfg = () => { try { localStorage.setItem(CFG, JSON.stringify({ auto: S.auto, rigor: S.rigor })); } catch (e) {} };
+async function tique() {
+  const u = U(), fab = $('nf-fab'); if (!fab) return; fab.style.display = u ? 'block' : 'none';
+  if (!u) { if (S.pront) { S.pront = null; S.rec = null; if (S.locked) desbloquear(); fechar(); } return; }
+  if (S.pront !== String(u.pront)) { S.pront = String(u.pront); S.rec = null; try { S.rec = (await getRec(S.pront)) || null; } catch (e) {} atualizar();
+    try { if (S.rec && localStorage.getItem(lockKey()) === '1') bloquear(false); } catch (e) {} return; }
+  if (S.auto > 0 && S.rec && !S.locked && !S.busy && performance.now() - Math.max(S.act, root.__nteiAtv || 0) > S.auto * 60000) bloquear(true);
+}
+async function aposLogin() { const u = U(); if (!u) return; S.pront = String(u.pront); let rec = null; try { rec = await getRec(S.pront); } catch (e) {} S.rec = rec || null; atualizar(); if (rec && rec.exigir) bloquear(false, true); }
+function iniciar() { montar();
+  if (typeof app !== 'undefined' && typeof app.login === 'function' && !app.login.__face) { const o = app.login, w = async function (...a) { const antes = app.user, r = await o.apply(this, a); if (app.user && app.user !== antes) { try { await aposLogin(); } catch (e) {} } return r; }; w.__face = true; app.login = w; } }
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar); else iniciar();
+root.NteiFace = { bloquear: () => bloquear(false), cadastrado: () => !!S.rec };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script id="ntei-nano">
+/* NTEi Nano — camada visual futurista (só aparência; não altera layout nem lógica). Níveis: off | leve | max */
+(function () {
+'use strict';
+if (typeof document === 'undefined') return;
+const KEY = 'nteiNano_v1'; let nivel = 'leve'; try { nivel = localStorage.getItem(KEY) || nivel; } catch (e) {}
+const C = '#00adef', corners = (c) => ['top left', 'top right', 'bottom left', 'bottom right'].map((p, i) => `linear-gradient(${c},${c}) ${p}/14px 2px no-repeat,linear-gradient(${c},${c}) ${p}/2px 14px no-repeat`).join(',');
+const CSS = `
+html.nano-on{--glass-border:rgba(0,173,239,.30);--border-subtle:rgba(0,173,239,.17);--panel-bg:rgba(8,20,42,.80);--card-shadow:0 10px 30px rgba(0,0,0,.45),0 0 0 1px rgba(0,173,239,.10) inset;--glow-prof:0 0 24px rgba(0,173,239,.38);scrollbar-width:thin;scrollbar-color:rgba(0,173,239,.45) transparent}
+html.nano-on .panel,html.nano-on .login-container{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html.nano-on .panel{border-color:var(--border-subtle);box-shadow:var(--card-shadow);background-image:linear-gradient(180deg,rgba(0,173,239,.07),transparent 45%);transition:border-color .25s,box-shadow .25s}
+html.nano-on .panel:hover{border-color:rgba(0,173,239,.50);box-shadow:var(--card-shadow),var(--glow-prof)}
+html.nano-on .btn:hover{box-shadow:0 0 18px rgba(0,173,239,.55);filter:brightness(1.1)}
+html.nano-on input:focus,html.nano-on select:focus,html.nano-on textarea:focus{outline:none;border-color:${C}!important;box-shadow:0 0 0 2px rgba(0,173,239,.35),0 0 16px rgba(0,173,239,.35)}
+html.nano-on #topbar::after{content:'';position:absolute;left:0;right:0;bottom:-2px;height:2px;pointer-events:none;background:linear-gradient(90deg,transparent,${C},#f4c521,${C},transparent);background-size:200% 100%;animation:nano-run 6s linear infinite}
+html.nano-on .module-view.active{animation:nano-in .35s ease}
+html.nano-on body::before{content:'';position:fixed;inset:-60px;pointer-events:none;z-index:0;opacity:.06;will-change:transform;background-image:linear-gradient(${C} 1px,transparent 1px),linear-gradient(90deg,${C} 1px,transparent 1px);background-size:60px 60px;animation:nano-grid 30s linear infinite}
+html.nano-max .panel{-webkit-backdrop-filter:blur(10px)!important;backdrop-filter:blur(10px)!important;background-image:${corners(C)},linear-gradient(180deg,rgba(0,173,239,.07),transparent 45%)}
+html.nano-max .login-container{background:radial-gradient(circle at 20% 20%,rgba(0,173,239,.20),transparent 50%),radial-gradient(circle at 80% 70%,rgba(106,92,255,.18),transparent 50%),var(--bg-overlay)}
+html.nano-max h1,html.nano-max h2,html.nano-max h3{text-shadow:0 0 14px rgba(0,173,239,.35)}
+#nano-particulas{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:1}
+.nano-p{position:absolute;bottom:-12px;border-radius:50%;background:radial-gradient(circle,#9be7ff,rgba(0,173,239,0) 70%);opacity:0;will-change:transform,opacity;animation:nano-float linear infinite}
+html.nano-pausa *,html.nano-pausa *::before,html.nano-pausa *::after{animation-play-state:paused!important}
+html.nano-pausa #nano-particulas{display:none}
+@keyframes nano-run{to{background-position:-200% 0}}@keyframes nano-grid{to{transform:translate3d(60px,60px,0)}}
+@keyframes nano-in{from{opacity:0;transform:translate3d(0,8px,0)}}
+@keyframes nano-float{0%{transform:translate3d(0,0,0);opacity:0}10%{opacity:.8}100%{transform:translate3d(var(--dx),-105vh,0);opacity:0}}
+@media (prefers-reduced-motion:reduce){html.nano-on *,html.nano-on *::before,html.nano-on *::after{animation:none!important}#nano-particulas{display:none}}
+#nn-fab{position:fixed;left:208px;bottom:14px;z-index:99990;background:#0d3161;color:#fff;border:1px solid #f4c521;border-radius:24px;padding:9px 14px;cursor:pointer;font:600 12px Poppins,sans-serif}
+#nn-panel{position:fixed;left:14px;bottom:60px;width:300px;max-width:94vw;z-index:99993;background:#10151f;color:#e8eef7;border:1px solid #2a3a55;border-radius:12px;padding:12px;font:12px Poppins,sans-serif;display:none}
+#nn-panel label{display:block;margin:7px 0;cursor:pointer}`;
+const st = document.createElement('style'); st.id = 'ntei-nano-css'; st.textContent = CSS; document.head.appendChild(st);
+function particulas(on) {
+  let c = document.getElementById('nano-particulas'); if (!on) { if (c) c.remove(); return; } if (c) return;
+  c = document.createElement('div'); c.id = 'nano-particulas'; c.setAttribute('aria-hidden', 'true');
+  for (let i = 0; i < 14; i++) { const p = document.createElement('i'), s = 4 + Math.round(Math.random() * 6); p.className = 'nano-p';
+    p.style.cssText = 'left:' + Math.round(Math.random() * 100) + '%;width:' + s + 'px;height:' + s + 'px;animation-duration:' + (14 + Math.random() * 16).toFixed(1) + 's;animation-delay:-' + (Math.random() * 20).toFixed(1) + 's;--dx:' + Math.round((Math.random() - .5) * 160) + 'px'; c.appendChild(p); }
+  document.body.appendChild(c);
+}
+function aplicar(n) {
+  nivel = n; const h = document.documentElement; h.classList.remove('nano-on', 'nano-max'); if (n !== 'off') h.classList.add('nano-on'); if (n === 'max') h.classList.add('nano-max');
+  particulas(n === 'max'); try { localStorage.setItem(KEY, n); } catch (e) {}
+  document.querySelectorAll('input[name=nn-r]').forEach(r => { r.checked = r.value === n; });
+}
+function montar() {
+  const r = document.createElement('div'); r.id = 'ntei-nano-root';
+  r.innerHTML = '<button id="nn-fab" aria-label="Aparência Nano">✨ Nano</button><div id="nn-panel"><b style="font-size:13px">NTEi Nano — aparência</b>' +
+    '<label><input type="radio" name="nn-r" value="off"> Desligado (visual original)</label><label><input type="radio" name="nn-r" value="leve"> <b>Leve</b> — brilho, bordas de luz e grade; corta o desfoque pesado dos painéis (recomendado)</label>' +
+    '<label><input type="radio" name="nn-r" value="max"> <b>Máximo</b> — partículas, cantos HUD e desfoque suave (precisa de computador mais forte)</label>' +
+    '<div id="nn-info" style="font-size:10.5px;color:#9aa7b8">As animações pausam sozinhas enquanto a câmera dos gestos está ligada, para não pesar. Respeita a opção "reduzir movimento" do sistema.</div></div>';
+  document.body.appendChild(r);
+  $('nn-fab').onclick = () => { const p = $('nn-panel'); ['nv-panel', 'nf-panel'].forEach(i => { const e = document.getElementById(i); if (e) e.style.display = 'none'; }); p.style.display = p.style.display === 'block' ? 'none' : 'block'; };
+  document.querySelectorAll('input[name=nn-r]').forEach(x => { x.onchange = () => aplicar(x.value); });
+  aplicar(nivel);
+  setInterval(() => document.documentElement.classList.toggle('nano-pausa', !!window.__nteiCamOn || document.hidden), 1000);
+}
+const $ = id => document.getElementById(id);
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', montar); else montar();
+})();
 
 </script>
 </body></html>
