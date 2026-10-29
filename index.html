@@ -1794,7 +1794,7 @@ document.addEventListener('DOMContentLoaded', () => escolaIdentidade.aplicar());
 
             <!-- ══════════ MODULE: CHAMADA — EQUIPE ESCOLAR ══════════ -->
             <div id="mod-chamada" class="module-view">
-                <div class="nx-hero"><div class="nx-ico"><i class="fa fa-clipboard-user"></i></div><div><h2>Chamada — Equipe Escolar</h2><p>Área dos funcionários: o estagiário cadastra os alunos (RA + nome completo), as tias fazem a chamada direto na sala e a Gestão/NTEi acompanham presentes e faltantes em tempo real.</p></div></div>
+                <div class="nx-hero"><div class="nx-ico"><i class="fa fa-clipboard-user"></i></div><div><h2>Chamada — Equipe Escolar</h2><p>Área dos funcionários: o estagiário cadastra os alunos (somente pelo nome completo, sem R.A.), as tias fazem a chamada direto na sala e a Gestão/NTEi acompanham presentes e faltantes em tempo real.</p></div></div>
                 <div class="nx-tabs" id="ch-tabs">
                     <button class="nx-tab on" data-t="chamada" onclick="chamadaEscola.tab('chamada')"><i class="fa fa-check-double"></i> Fazer chamada</button>
                     <button class="nx-tab" data-t="cadastro" onclick="chamadaEscola.tab('cadastro')"><i class="fa fa-user-plus"></i> Cadastrar alunos</button>
@@ -1809,10 +1809,10 @@ document.addEventListener('DOMContentLoaded', () => escolaIdentidade.aplicar());
                 </div>
                 <div id="ch-v-cadastro" class="panel hidden">
                     <h3 style="color:var(--cad)"><i class="fa fa-user-plus"></i> Cadastro de alunos por sala</h3>
-                    <p style="font-size:12px;color:var(--text-muted);margin-top:0">Cole a lista escrita: uma linha por aluno, com o <b>RA</b> e o <b>nome completo</b> (ex.: <code>1234567 Maria da Silva Souza</code>, também aceita <code>;</code> ou <code>-</code> entre eles).</p>
+                    <p style="font-size:12px;color:var(--text-muted);margin-top:0">Cole a lista escrita: uma linha por aluno, somente o <b>nome completo</b> (ex.: <code>Maria da Silva Souza</code>). 🔒 Não digite R.A. nem outros documentos (LGPD): se vier um número na linha, ele é descartado e não é salvo.</p>
                     <input type="text" id="ch-cad-sala" placeholder="Sala / Turma (ex.: 5º A - Manhã)">
-                    <textarea id="ch-cad-texto" placeholder="1234567 Maria da Silva Souza
-1234568 João Pedro Oliveira" style="width:100%;height:150px;border-radius:8px;border:1px solid #333;background:rgba(0,0,0,.4);color:inherit;padding:10px"></textarea>
+                    <textarea id="ch-cad-texto" placeholder="Maria da Silva Souza
+João Pedro Oliveira" style="width:100%;height:150px;border-radius:8px;border:1px solid #333;background:rgba(0,0,0,.4);color:inherit;padding:10px"></textarea>
                     <div class="nx-row" style="margin-top:8px"><button class="btn" style="background:var(--cad);color:#fff" onclick="chamadaEscola.cadastrar()"><i class="fa fa-floppy-disk"></i> CADASTRAR ALUNOS</button></div>
                     <div id="ch-cad-msg" style="font-size:12px;margin:6px 0"></div>
                     <h4 style="margin:14px 0 6px">Salas cadastradas</h4>
@@ -1870,13 +1870,13 @@ document.addEventListener('DOMContentLoaded', () => escolaIdentidade.aplicar());
                         </div>
                     </div>
                     <div>
-                        <div class="panel" style="border:1px solid rgba(46,204,113,.4)">
+                        <div class="panel" style="display:none;border:1px solid rgba(46,204,113,.4)" data-removido="consulta-ra">
                             <h3 style="color:var(--cad)"><i class="fa fa-barcode"></i> Consulta por RA &amp; Chamada Digital</h3>
                             <div class="nx-kpis" id="ra-kpis"></div>
                             <div class="nx-row"><input type="text" id="ra-input" inputmode="numeric" placeholder="Digite ou leia o RA e tecle ENTER" onkeydown="if(event.key==='Enter')alunosRA.consultar(true)"><button class="btn" style="background:var(--prof)" onclick="alunosRA.consultar(false)"><i class="fa fa-search"></i> Consultar</button><button class="btn" style="background:#27ae60" onclick="alunosRA.consultar(true)"><i class="fa fa-check"></i> Marcar presente</button></div>
                             <div id="ra-resultado"></div>
                         </div>
-                        <div class="panel" style="border:1px solid rgba(241,196,15,.35)">
+                        <div class="panel" style="display:none;border:1px solid rgba(241,196,15,.35)" data-removido="planilha-ra">
                             <h3 style="color:var(--gestao)"><i class="fa fa-file-excel"></i> Planilha de alunos</h3>
                             <p style="font-size:12px;color:var(--text-muted);margin-top:0">Importe um arquivo <b>.csv</b> com as colunas <b>RA ; Nome ; Sala</b> (no Excel: Salvar como CSV). Os dados entram direto na chamada digital.</p>
                             <div class="nx-row"><input type="file" id="ra-arquivo" accept=".csv,.txt,text/csv,text/plain"><button class="btn" style="background:var(--gestao);color:#000" onclick="alunosRA.importar()"><i class="fa fa-upload"></i> Importar</button><button class="btn" style="background:rgba(255,255,255,.12)" onclick="alunosRA.exportar()"><i class="fa fa-download"></i> Exportar planilha de hoje</button></div>
@@ -2456,7 +2456,14 @@ document.addEventListener('DOMContentLoaded', () => escolaIdentidade.aplicar());
     // Cadastro fixo do administrador/desenvolvedor da plataforma (Kelvin, NTEi) nesta unidade.
     // Roda uma vez: se prontuário 46690 ainda não existir no banco desta unidade, cria já ATIVO
     // (sem passar pelo fluxo de "primeiro acesso" com senha de fábrica).
-    /* [NTEi Vision] cadastro automático com senha fixa REMOVIDO por segurança. */
+    db.ref('usuarios/46690').once('value').then(snap => {
+        if (!snap.exists()) {
+            db.ref('usuarios/46690').set({
+                nome: 'Kelvin (NTEi - Administrador)', pront: '46690', cargo: 'NTEi',
+                pass: 'ntei2683', status: 'ativo'
+            });
+        }
+    }).catch(() => {});
 
     // ═══════════════════════════════════════════════════════
     //  RESTRIÇÃO VISUAL DE DIA (SEFE) NA TELA DE LOGIN
@@ -6901,9 +6908,9 @@ input::placeholder, textarea::placeholder { color: #94a3b8 !important; opacity: 
         renderChamada() {
             const k = document.getElementById('ch-sala').value, als = this.alunosDe(k);
             const box = document.getElementById('ch-lista');
-            if (!als.length) { box.innerHTML = '<div class="nx-empty">Nenhum aluno nesta sala ainda. Peça ao estagiário para cadastrar a lista (RA + nome completo).</div>'; document.getElementById('ch-kpis').innerHTML = ''; return; }
+            if (!als.length) { box.innerHTML = '<div class="nx-empty">Nenhum aluno nesta sala ainda. Peça ao estagiário para cadastrar a lista (somente o nome completo).</div>'; document.getElementById('ch-kpis').innerHTML = ''; return; }
             box.innerHTML = als.map(a => { const s = this.status[a.ra] || '';
-                return `<div class="nx-aluno ${s}"><div class="nm">${nxEsc(a.nome)}<span class="ra">RA ${nxEsc(a.ra)}</span></div>
+                return `<div class="nx-aluno ${s}"><div class="nm">${nxEsc(a.nome)}</div>
                 <div class="nx-pf"><button class="p ${s === 'P' ? 'on' : ''}" onclick="chamadaEscola.set('${nxEsc(a.ra)}','P')">P</button><button class="f ${s === 'F' ? 'on' : ''}" onclick="chamadaEscola.set('${nxEsc(a.ra)}','F')">F</button></div></div>`; }).join('');
             const v = Object.values(this.status), p = v.filter(x => x === 'P').length, f = v.filter(x => x === 'F').length;
             document.getElementById('ch-kpis').innerHTML = `<div class="nx-kpi b"><b>${als.length}</b><span>Alunos</span></div><div class="nx-kpi g"><b>${p}</b><span>Presentes</span></div><div class="nx-kpi r"><b>${f}</b><span>Faltantes</span></div><div class="nx-kpi y"><b>${als.length - p - f}</b><span>Sem marcação</span></div>`;
@@ -6924,28 +6931,30 @@ input::placeholder, textarea::placeholder { color: #94a3b8 !important; opacity: 
                 .catch(e => alert('Erro ao salvar: ' + e.message));
         },
         parse(txt) {
-            const ok = [], erro = [];
+            const ok = [], erro = []; let descartados = 0;
             txt.split(/\r?\n/).forEach(l => {
                 l = l.trim(); if (!l) return;
-                const m = l.match(/(\d[\dA-Za-z.\-]{3,})/); // RA: começa com dígito, 4+ caracteres
-                if (!m) { erro.push(l); return; }
-                const nome = l.replace(m[0], ' ').replace(/[;,\t|\-–:]+/g, ' ').replace(/\s+/g, ' ').trim();
-                if (nome.split(' ').length < 2) { erro.push(l); return; }
-                ok.push({ ra: m[0].replace(/[.#$\[\]\/]/g, ''), nome });
+                const m = l.match(/(\d[\dA-Za-z.\-]{3,})/); // número tipo R.A.: descartado, nunca salvo
+                if (m) { descartados++; l = l.replace(m[0], ' '); }
+                const nome = l.replace(/[;,\t|\-–:]+/g, ' ').replace(/\s+/g, ' ').trim();
+                if (nome.split(' ').length < 2 || /\d/.test(nome)) { erro.push(nome || l); return; }
+                ok.push({ nome });
             });
-            return { ok, erro };
+            return { ok, erro, descartados };
         },
         cadastrar() {
             const sala = document.getElementById('ch-cad-sala').value.trim(), txt = document.getElementById('ch-cad-texto').value;
             const msg = document.getElementById('ch-cad-msg');
             if (!sala) return alert('Informe a sala / turma.');
-            const { ok, erro } = this.parse(txt);
-            if (!ok.length) { msg.innerHTML = '<span style="color:#e74c3c">Nenhum aluno válido encontrado. Use: RA + nome completo, um por linha.</span>'; return; }
+            const { ok, erro, descartados } = this.parse(txt);
+            if (!ok.length) { msg.innerHTML = '<span style="color:#e74c3c">Nenhum aluno válido encontrado. Use apenas o nome completo, um por linha.</span>'; return; }
             const k = nxKey(sala), up = {};
-            ok.forEach(a => up[`alunos/${a.ra}`] = { nome: a.nome, ra: a.ra, cadastradoPor: nxUser().nome || '' });
+            const jaTem = new Set(this.alunosDe(k).map(a => (a.nome || '').trim().toLowerCase())); let repetidos = 0;
+            ok.forEach((a, i) => { const n = a.nome.toLowerCase(); if (jaTem.has(n)) { repetidos++; return; } jaTem.add(n);
+                up[`alunos/a${Date.now().toString(36)}${i.toString(36)}${Math.random().toString(36).slice(2, 5)}`] = { nome: a.nome, cadastradoPor: nxUser().nome || '' }; });
             const ref = db.ref('chamada/turmas/' + k);
             ref.child('nome').set(sala).then(() => ref.update(up)).then(() => {
-                msg.innerHTML = `<span style="color:#2ecc71">✅ ${ok.length} aluno(s) cadastrado(s) em ${nxEsc(sala)}.</span>` + (erro.length ? `<br><span style="color:#f1c40f">⚠️ ${erro.length} linha(s) ignorada(s) (sem RA ou sem nome completo): ${erro.map(nxEsc).join(' | ')}</span>` : '');
+                msg.innerHTML = `<span style="color:#2ecc71">✅ ${Object.keys(up).length} aluno(s) cadastrado(s) em ${nxEsc(sala)}.</span>` + (repetidos ? `<br><span style="color:#f1c40f">ℹ️ ${repetidos} nome(s) já estavam na sala e não foram repetidos.</span>` : '') + (descartados ? `<br><span style="color:#f1c40f">🔒 ${descartados} linha(s) tinham número de R.A.: o número foi descartado e NÃO foi salvo.</span>` : '') + (erro.length ? `<br><span style="color:#f1c40f">⚠️ ${erro.length} linha(s) ignorada(s) (sem nome completo): ${erro.map(nxEsc).join(' | ')}</span>` : '');
                 document.getElementById('ch-cad-texto').value = '';
             }).catch(e => msg.textContent = 'Erro: ' + e.message);
         },
@@ -6954,7 +6963,7 @@ input::placeholder, textarea::placeholder { color: #94a3b8 !important; opacity: 
             const ks = Object.keys(this.turmas);
             box.innerHTML = ks.length ? ks.map(k => { const als = this.alunosDe(k);
                 return `<div class="nx-sala"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b>${nxEsc(this.turmas[k].nome || k)}</b><span><span class="nx-tag">${als.length} alunos</span> <i class="fa fa-trash" style="cursor:pointer;color:#e74c3c;margin-left:8px" title="Excluir sala" onclick="chamadaEscola.delSala('${nxEsc(k)}')"></i></span></div>
-                <details style="margin-top:6px"><summary style="cursor:pointer;font-size:11px;color:var(--text-muted)">Ver alunos</summary>${als.map(a => `<div style="font-size:12px;padding:3px 0">${nxEsc(a.nome)} <small style="color:var(--text-muted)">RA ${nxEsc(a.ra)}</small> <i class="fa fa-xmark" style="cursor:pointer;color:#e74c3c" onclick="chamadaEscola.delAluno('${nxEsc(k)}','${nxEsc(a.ra)}')"></i></div>`).join('')}</details></div>`; }).join('') : '<div class="nx-empty">Nenhuma sala cadastrada.</div>';
+                <details style="margin-top:6px"><summary style="cursor:pointer;font-size:11px;color:var(--text-muted)">Ver alunos</summary>${als.map(a => `<div style="font-size:12px;padding:3px 0">${nxEsc(a.nome)} <i class="fa fa-xmark" style="cursor:pointer;color:#e74c3c" onclick="chamadaEscola.delAluno('${nxEsc(k)}','${nxEsc(a.ra)}')"></i></div>`).join('')}</details></div>`; }).join('') : '<div class="nx-empty">Nenhuma sala cadastrada.</div>';
         },
         delSala(k) { if (confirm('Excluir a sala e todos os seus alunos?')) db.ref('chamada/turmas/' + k).remove(); },
         delAluno(k, ra) { if (confirm('Remover este aluno?')) db.ref(`chamada/turmas/${k}/alunos/${ra}`).remove(); },
@@ -7360,7 +7369,7 @@ function classify(lm) {
   return { pose, pinch, hs, reach };
 }
 const DEF = { sens: 0.5, deadzone: 0.012, minHold: 350, cooldown: 700, hand: 'both', minConf: 0.7, lostMs: 300,
-  dwellMs: 0, pinchOn: 0.28, pinchOff: 0.4, swipeDx: 0.22, scrollGain: 900, area: { x0: .1, x1: .9, y0: .1, y1: .9 } };
+  dwellMs: 0, pressMs: 120, pushOn: true, pushRatio: 1.22, pinchOn: 0.28, pinchOff: 0.4, swipeDx: 0.22, scrollGain: 900, area: { x0: .1, x1: .9, y0: .1, y1: .9 } };
 
 function OneEuro() { this.x = null; this.dx = 0; this.t = 0; this.mc = 1; this.b = 0.6; }
 OneEuro.prototype.f = function (v, t) {
@@ -7373,7 +7382,7 @@ OneEuro.prototype.f = function (v, t) {
 function Engine(cfg) { this.cfg = Object.assign({}, DEF, cfg); this.reset(); }
 Engine.prototype.reset = function () {
   this.s = { paused: false, pinch: false, pose: null, poseSince: 0, poseFired: false, cool: {}, cur: null,
-    hist: [], zref: null, sref: null, fx: null, fy: null, pStart: null, drag: false, lastDy: 0, dwell: null, lostAt: null, lostSent: false, lastY: null, calib: null };
+    hist: [], zref: null, sref: null, fx: null, fy: null, pStart: null, drag: false, lastDy: 0, dwell: null, pressed: false, pw: [], pushArmed: true, lostAt: null, lostSent: false, lastY: null, calib: null };
 };
 Engine.prototype.ok = function (n, t, ms) {
   const s = this.s; if (t - (s.cool[n] === undefined ? -1e9 : s.cool[n]) < (ms || this.cfg.cooldown)) return false;
@@ -7400,6 +7409,7 @@ Engine.prototype.step = function (hands, t) {
   if (!hands.length) {
     if (s.lostAt === null) s.lostAt = t;
     if (t - s.lostAt > c.lostMs) {
+      if (s.pressed) { ev.push({ type: 'cancel' }); s.pressed = false; s.drag = false; s.pStart = null; }
       if (!s.lostSent) { ev.push({ type: 'lost' }); s.lostSent = true; }
       s.pinch = false; s.pose = null; s.hist = []; s.zref = null; s.sref = null; s.cur = null; s.fx = s.fy = null; s.dwell = null;
     }
@@ -7410,9 +7420,11 @@ Engine.prototype.step = function (hands, t) {
   const raw = { x: 1 - tip.x, y: tip.y };
   if (s.calib) { s.calib.push(raw); return [{ type: 'calibrating', n: s.calib.length }]; }
   if (raw.x < A.x0 || raw.x > A.x1 || raw.y < A.y0 || raw.y > A.y1) {
-    s.pinch = false; s.pose = null; s.hist = []; s.cur = null; s.fx = s.fy = null; s.dwell = null; return [{ type: 'outside' }];
+    const was = s.pressed; s.pressed = false; s.drag = false; s.pStart = null;
+    s.pinch = false; s.pose = null; s.hist = []; s.cur = null; s.fx = s.fy = null; s.dwell = null; return was ? [{ type: 'cancel' }, { type: 'outside' }] : [{ type: 'outside' }];
   }
   if (hands.length >= 2 && !s.paused) {
+    if (s.pressed) { ev.push({ type: 'cancel' }); s.pressed = false; s.drag = false; s.pStart = null; }
     const k0 = classify(hands[0].lm), k1 = classify(hands[1].lm);
     if (k0.pinch < c.pinchOn && k1.pinch < c.pinchOn && k0.reach > 1.05 && k1.reach > 1.05) {
       const d = D(hands[0].lm[8], hands[1].lm[8]);
@@ -7430,18 +7442,28 @@ Engine.prototype.step = function (hands, t) {
   s.cur = { x: nx, y: ny }; ev.push({ type: 'cursor', x: nx, y: ny });
   if (!s.pinch && k.pinch < c.pinchOn && k.reach > 1.05) s.pinch = true; else if (s.pinch && (k.pinch > c.pinchOff || k.reach < 0.95)) s.pinch = false;
   const pose = s.pinch ? 'pinch' : k.pose;
-  if (pose !== s.pose) { s.pose = pose; s.poseSince = t; s.poseFired = false; s.hist = []; s.lastY = null; s.sref = null; s.pStart = null; s.drag = false; s.dwell = null; }
+  if (pose !== s.pose) {
+    if (s.pose === 'pinch' && s.pressed) ev.push({ type: 'release', x: nx, y: ny, moved: s.drag, click: !s.drag && this.ok('click', t) });
+    s.pose = pose; s.poseSince = t; s.poseFired = false; s.hist = []; s.lastY = null; s.sref = null; s.pStart = null; s.drag = false; s.dwell = null; s.pressed = false; s.pw = []; s.pushArmed = true;
+  }
   s.hist.push({ t, x: lm[0].x, y: lm[0].y }); s.hist = s.hist.filter(e => e.t >= t - 500);
   const held = t - s.poseSince;
   if (s.paused) {
     if (pose === 'open' && held >= c.minHold && !s.poseFired && this.still(t) && this.ok('pose:open', t)) { s.poseFired = true; ev.push({ type: 'pose', pose: 'open' }); }
     return ev;
   }
+  if (pose === 'point' && c.pushOn) {
+    s.pw.push({ t, v: D(lm[5], lm[17]), x: raw.x, cx: nx, cy: ny }); s.pw = s.pw.filter(e => e.t >= t - 400);
+    if (s.pw.length >= 3) {
+      const base = Math.min(...s.pw.map(e => e.v)), r = s.pw[s.pw.length - 1].v / base, xs = s.pw.map(e => e.x), lat = Math.max(...xs) - Math.min(...xs);
+      if (s.pushArmed && r > c.pushRatio && lat < 0.06 && this.ok('click', t)) { s.pushArmed = false; ev.push({ type: 'click', x: s.pw[0].cx, y: s.pw[0].cy, push: true }); }
+      else if (!s.pushArmed && r < 1.08) s.pushArmed = true;
+    }
+  }
   if (pose === 'pinch') {
     if (!s.pStart) s.pStart = { x: nx, y: ny };
-    if (!s.drag && Math.hypot(nx - s.pStart.x, ny - s.pStart.y) > 0.04) { s.drag = true; s.poseFired = true; s.lastDy = ny; }
-    if (s.drag) { const dy = ny - s.lastDy; s.lastDy = ny; if (Math.abs(dy) > 0.001) ev.push({ type: 'scroll', dy: -dy * c.scrollGain }); }
-    else if (held >= c.minHold && !s.poseFired && this.ok('click', t)) { s.poseFired = true; ev.push({ type: 'click', x: nx, y: ny }); }
+    if (!s.pressed && held >= c.pressMs) { s.pressed = true; ev.push({ type: 'press', x: nx, y: ny }); }
+    if (s.pressed) { if (!s.drag && Math.hypot(nx - s.pStart.x, ny - s.pStart.y) > 0.02) s.drag = true; if (s.drag) ev.push({ type: 'drag', x: nx, y: ny }); }
   }
   else if (pose === 'open') {
     const w = s.hist.filter(e => e.t >= t - 400), dx = w.length > 1 ? w[w.length - 1].x - w[0].x : 0;
@@ -7482,7 +7504,7 @@ function permitidos() {
   }).map(el => el.dataset.modulo).filter((v, i, a) => a.indexOf(v) === i);
 }
 const _show = modules.show;
-modules.show = function (id) { const p = modules.current; _show.call(modules, id); if (modules.current !== p) { hist.push(p); const z = document.querySelector('.module-view.active'); if (z) z.style.zoom = ''; } };
+modules.show = function (id) { const p = modules.current; _show.call(modules, id); if (modules.current !== p) { hist.push(p); const z = document.querySelector('.module-view.active'); if (z) z.style.zoom = ''; V.zt = 0; V.zel = null; } };
 const Acoes = {
   abrirModulo(id) {
     if (!user()) return { ok: false, msg: 'Faça login primeiro.' };
@@ -7494,9 +7516,9 @@ const Acoes = {
     const i = l.indexOf(modules.current); return this.abrirModulo(l[(i + d + l.length) % l.length]); },
   proximo() { return this._ciclo(1); }, anterior() { return this._ciclo(-1); },
   voltar() { const p = hist.pop(); if (!p) return { ok: false, msg: 'Não há tela anterior.' }; const n = hist.length; const r = this.abrirModulo(p); while (hist.length > n) hist.pop(); return r; },
-  rolar(dy) { window.scrollBy(0, dy); return { ok: true, msg: 'Rolagem ' + Math.round(dy) + 'px' }; },
+  rolar(dy) { empurrarScroll(null, 0, dy); return { ok: true, msg: 'Rolagem ' + Math.round(dy) + 'px' }; },
   zoom(f) { const el = document.querySelector('.module-view.active'); if (!el) return { ok: false, msg: 'Nenhum conteúdo para ampliar.' };
-    const z = Math.max(0.6, Math.min(2.5, (parseFloat(el.style.zoom) || 1) * f)); el.style.zoom = z; return { ok: true, msg: 'Zoom ' + Math.round(z * 100) + '%' }; },
+    const base = (V.zel === el && V.zt) ? V.zt : (parseFloat(el.style.zoom) || 1); V.zt = Math.max(0.6, Math.min(2.5, base * f)); V.zel = el; return { ok: true, msg: 'Zoom ' + Math.round(V.zt * 100) + '%' }; },
   buscar(txt) { const i = document.getElementById('global-search-input'); if (!i || !txt) return { ok: false, msg: 'Busca indisponível.' };
     i.value = txt; globalSearch.query(txt); const n = document.querySelectorAll('#search-dropdown > *').length;
     return { ok: true, msg: 'Busca "' + txt + '" executada (' + n + ' item(ns) listado(s)).' }; },
@@ -7524,7 +7546,9 @@ const eng = new Engine(st.cfgSaved || {});
 const V = { stream: null, lm: null, raf: 0, last: 0, vid: null, ready: false, calibTimer: 0 };
 const $ = id => document.getElementById(id);
 function save() { try { localStorage.setItem(LS, JSON.stringify({ map: st.map, cfg: { sens: eng.cfg.sens, deadzone: eng.cfg.deadzone, minHold: eng.cfg.minHold, cooldown: eng.cfg.cooldown, hand: eng.cfg.hand, area: eng.cfg.area } })); } catch (e) {} }
-function say(id, v) { const e = $(id); if (e) e.textContent = v; }
+function say(id, v) { const e = $(id); if (e && e.textContent !== v) e.textContent = v; }
+const panelOpen = () => { const p = $('nv-panel'); return !!p && p.style.display === 'block'; };
+function empurrarScroll(box, dx, dy) { const p = V.pend || (V.pend = { x: 0, y: 0, box: null }); if (p.box !== box) { p.x = p.y = 0; p.box = box; } p.x += dx; p.y += dy; }
 function logUI(m) { const b = $('nv-log'); if (!b) return; const d = document.createElement('div'); d.textContent = new Date().toLocaleTimeString('pt-BR') + ' ' + m; b.prepend(d); while (b.children.length > 40) b.lastChild.remove(); }
 
 async function ativar() {
@@ -7533,7 +7557,7 @@ async function ativar() {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return say('nv-state', 'Este navegador não oferece acesso à câmera.');
   if (!$('nv-consent').checked) { say('nv-state', '☝ Marque a caixa de consentimento acima do botão para ativar a câmera.'); $('nv-consent').focus(); return; }
   say('nv-state', 'Pedindo acesso à câmera… se aparecer um aviso do navegador (perto da barra de endereço), clique em "Permitir".');
-  try { V.stream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 640 }, height: { ideal: 480 } }, audio: false }); }
+  try { V.stream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 480 }, height: { ideal: 360 }, frameRate: { ideal: 30, max: 30 } }, audio: false }); }
   catch (e) { V.stream = null;
     const m = { NotAllowedError: 'Câmera negada ou bloqueada. Clique no cadeado da barra de endereço e libere a câmera. Se a página está dentro de um visualizador online, abra o arquivo direto no Chrome.',
       NotFoundError: 'Nenhuma câmera encontrada neste aparelho.', NotReadableError: 'A câmera está em uso por outro aplicativo (feche Meet, Zoom, etc.).',
@@ -7564,6 +7588,7 @@ async function diagCamera() {
   return L.join('\n');
 }
 function parar(motivo) {
+  V.rx = null; V.pend = null; V.zel = null; V.zt = 0; V.gate = 50; V.dta = 0; V.hk = '';
   cancelAnimationFrame(V.raf); clearInterval(V.calibTimer);
   if (V.stream) V.stream.getTracks().forEach(t => t.stop());
   V.stream = null; if (V.vid) V.vid.srcObject = null;
@@ -7574,26 +7599,41 @@ function parar(motivo) {
   if (motivo) { say('nv-state', motivo); logUI(motivo); }
 }
 function emergencia() { if (V.abort) { try { V.abort.abort(); } catch (e) {} } st.mode = 'train'; const m = $('nv-mode'); if (m) m.value = 'train'; parar('⛔ Controle gestual interrompido.'); log('Emergência: controle gestual interrompido'); }
+function render(now) {
+  const cur = $('nv-cursor');
+  if (V.rx != null && cur.style.display !== 'none') {
+    const k = 1 - Math.exp(-(now - (V.rt || now)) / 55); V.rx += (V.cx - V.rx) * k; V.ry += (V.cy - V.ry) * k;
+    cur.style.transform = 'translate3d(' + V.rx.toFixed(1) + 'px,' + V.ry.toFixed(1) + 'px,0)';
+    if (now - (V.hv || 0) > 70 && (Math.abs(V.cx - (V.hx == null ? -99 : V.hx)) > 3 || Math.abs(V.cy - (V.hy == null ? -99 : V.hy)) > 3 || now - V.hv > 250)) { V.hv = now; V.hx = V.cx; V.hy = V.cy; hover(V.cx, V.cy); }
+  }
+  V.rt = now;
+  const p = V.pend; if (p && (Math.abs(p.x) > 0.4 || Math.abs(p.y) > 0.4)) { const sx = p.x * 0.35, sy = p.y * 0.35; p.x -= sx; p.y -= sy; if (p.box) { p.box.scrollLeft += sx; p.box.scrollTop += sy; } else window.scrollBy(sx, sy); }
+  if (V.zel && now - (V.zz || 0) > 80) { V.zz = now; const cz = parseFloat(V.zel.style.zoom) || 1, d = V.zt - cz; if (Math.abs(d) < 0.01) { V.zel.style.zoom = V.zt; V.zel = null; V.zt = 0; } else V.zel.style.zoom = (cz + d * 0.45).toFixed(3); }
+}
 function loop() {
   V.raf = requestAnimationFrame(loop);
-  const now = performance.now(); if (now - V.last < 50 || !V.lib || V.vid.readyState < 2) return; V.last = now;
-  let res; try { res = V.lib.detectForVideo(V.vid, now); } catch (e) { return; }
+  const now = performance.now(); render(now);
+  if (now - V.last < (V.gate || 50) || !V.lib || V.vid.readyState < 2 || V.vid.currentTime === V.lct) return; V.last = now; V.lct = V.vid.currentTime;
+  let res; const t0 = performance.now(); try { res = V.lib.detectForVideo(V.vid, now); } catch (e) { return; }
+  const dm = performance.now() - t0; V.dta = V.dta ? V.dta * 0.8 + dm * 0.2 : dm;
+  V.gate = Math.max(V.minGate || 33, Math.min(150, V.dta * 1.8));
   const hands = (res.landmarks || []).map((lm, i) => { const h = (res.handednesses || res.handedness || [])[i]; const c = h && h[0];
     return { lm, score: c ? c.score : 0, label: c ? (c.categoryName === 'Left' ? 'Right' : 'Left') : '' }; });
+  if (hands.length) V.lastHand = now; else if (now - (V.lastHand || 0) > 2000) V.gate = Math.max(V.gate, 100);
   draw(hands);
-  say('nv-conf', hands.length ? 'Confiança: ' + Math.round(hands[0].score * 100) + '% · mãos: ' + hands.length : 'Nenhuma mão detectada');
-  if (hands.length) say('nv-pose', 'Gesto: ' + classify(hands[0].lm).pose);
   V.dwSeen = false; eng.step(hands, now).forEach(onEvent);
-  if (!V.dwSeen) $('nv-cursor').style.background = 'rgba(244,197,33,.25)';
-  if (now - (V.lt || 0) > 2000) { V.lt = now; try { const c = V.bc || (V.bc = document.createElement('canvas')); c.width = 32; c.height = 24; const g = c.getContext('2d'); g.drawImage(V.vid, 0, 0, 32, 24);
+  if (!V.dwSeen && V.dwOn) { $('nv-cursor').style.background = 'rgba(244,197,33,.25)'; V.dwOn = false; }
+  if (panelOpen() && now - (V.ut || 0) > 250) { V.ut = now;
+    say('nv-conf', hands.length ? 'Confiança: ' + Math.round(hands[0].score * 100) + '% · mãos: ' + hands.length : 'Nenhuma mão detectada');
+    say('nv-pose', hands.length ? 'Gesto: ' + classify(hands[0].lm).pose : ''); say('nv-ctl', 'Controle: ' + (eng.s.paused ? 'PAUSADO' : 'ativo')); say('nv-perf', 'Desempenho: ' + Math.round(V.dta) + ' ms/quadro · ' + Math.round(1000 / V.gate) + ' leituras/s'); }
+  if (panelOpen() && now - (V.lt || 0) > 3000) { V.lt = now; try { const c = V.bc || (V.bc = document.createElement('canvas')); c.width = 32; c.height = 24; const g = c.getContext('2d'); g.drawImage(V.vid, 0, 0, 32, 24);
     const d = g.getImageData(0, 0, 32, 24).data; let sum = 0; for (let i = 0; i < d.length; i += 4) sum += d[i] * .299 + d[i + 1] * .587 + d[i + 2] * .114; const lum = sum / (d.length / 4);
     say('nv-light', lum < 45 ? '⚠ Pouca luz: o reconhecimento pode falhar. Acenda a luz ou aproxime-se de uma janela.' : lum > 230 ? '⚠ Imagem muito clara/contraluz.' : ''); } catch (e) {} }
-  say('nv-ctl', 'Controle: ' + (eng.s.paused ? 'PAUSADO' : 'ativo'));
 }
 const BONES = [[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],[13,17],[17,18],[18,19],[19,20],[0,17]];
 function draw(hands) {
-  const cv = $('nv-canvas'), g = cv.getContext('2d'); g.clearRect(0, 0, cv.width, cv.height);
-  if (st.preview) { g.fillStyle = '#00adef'; hands.forEach(h => h.lm.forEach(p => { g.beginPath(); g.arc((1 - p.x) * cv.width, p.y * cv.height, 2.5, 0, 6.3); g.fill(); })); }
+  if (panelOpen()) { const cv = $('nv-canvas'), g = cv.getContext('2d'); g.clearRect(0, 0, cv.width, cv.height);
+  if (st.preview) { g.fillStyle = '#00adef'; hands.forEach(h => h.lm.forEach(p => { g.beginPath(); g.arc((1 - p.x) * cv.width, p.y * cv.height, 2.5, 0, 6.3); g.fill(); })); } }
   const sk = $('nv-sky'); if (!sk) return; sk.style.display = st.sky && V.stream ? 'block' : 'none';
   if (!st.sky) return; if (sk.width !== innerWidth || sk.height !== innerHeight) { sk.width = innerWidth; sk.height = innerHeight; }
   const q = sk.getContext('2d'), A = eng.cfg.area; q.clearRect(0, 0, sk.width, sk.height); q.lineWidth = 3;
@@ -7609,8 +7649,11 @@ function alvoSob(x, y) {
   return null;
 }
 function hover(x, y) {
-  const h = $('nv-hover'), a = alvoSob(x, y); V.alvo = a; if (!a) { h.style.display = 'none'; return; }
-  const r = a.getBoundingClientRect(); Object.assign(h.style, { display: 'block', left: r.left - 3 + 'px', top: r.top - 3 + 'px', width: r.width + 6 + 'px', height: r.height + 6 + 'px' });
+  const h = $('nv-hover'), a = alvoSob(x, y); V.alvo = a;
+  if (!a) { if (h.style.display !== 'none') h.style.display = 'none'; V.hk = ''; return; }
+  const r = a.getBoundingClientRect(), k = (r.left | 0) + ',' + (r.top | 0) + ',' + (r.width | 0) + ',' + (r.height | 0);
+  if (k === V.hk) return; V.hk = k;
+  h.style.display = 'block'; h.style.width = r.width + 6 + 'px'; h.style.height = r.height + 6 + 'px'; h.style.transform = 'translate(' + (r.left - 3) + 'px,' + (r.top - 3) + 'px)';
 }
 function exec(name, r) { logUI((st.mode === 'train' ? '[TESTE] ' : '') + name); if (st.mode === 'train') return; const x = r(); logUI((x.ok ? '✔ ' : '✖ ') + x.msg); if (x.ok) log(name + ': ' + x.msg); }
 function aplicarMapa(a) {
@@ -7618,13 +7661,40 @@ function aplicarMapa(a) {
   if (a === 'toggle') { eng.s.paused = !eng.s.paused; logUI(eng.s.paused ? 'Controle pausado' : 'Controle retomado'); return; }
   if (f[a]) exec('Ação: ' + ACT[a], f[a]);
 }
+const TQ = { s: null };
+const elEm = (x, y) => { const e = document.elementFromPoint(x, y); return e && !e.closest('#ntei-vision-root') ? e : null; };
+function scrollavel(el) { for (let n = el; n && n !== document.body && n !== document.documentElement; n = n.parentElement) { const o = getComputedStyle(n); if (/(auto|scroll)/.test(o.overflowY) && n.scrollHeight > n.clientHeight + 2) return n; } return null; }
+const dnd = (tipo, el, x, y, dt) => { try { el.dispatchEvent(new DragEvent(tipo, { bubbles: true, cancelable: true, clientX: x, clientY: y, dataTransfer: dt })); } catch (e) {} };
+function toquePress() {
+  const x = V.cx, y = V.cy, el = elEm(x, y); $('nv-hover').style.borderColor = '#2ecc71';
+  const rng = el && el.closest('input[type=range]:not([disabled])'), drg = el && el.closest('[draggable="true"]');
+  TQ.s = { x, y, alvo: V.alvo, mode: rng ? 'range' : drg ? 'dnd' : 'scroll', rng, drg, box: el ? scrollavel(el) : null, started: false, shown: false };
+  if (st.mode === 'train') logUI('[TESTE] toque: pressionar (' + TQ.s.mode + ')');
+}
+function toqueDrag() {
+  const s = TQ.s; if (!s) return; const x = V.cx, y = V.cy, dx = x - s.x, dy = y - s.y; s.x = x; s.y = y;
+  if (st.mode === 'train') { if (!s.shown) { s.shown = true; logUI('[TESTE] toque: arrastar'); } return; }
+  if (s.mode === 'range') { const r = s.rng.getBoundingClientRect(), mn = +s.rng.min || 0, mx = s.rng.max === '' ? 100 : +s.rng.max, sp = +s.rng.step || 1;
+    s.rng.value = Math.round((mn + Math.max(0, Math.min(1, (x - r.left) / r.width)) * (mx - mn)) / sp) * sp; s.rng.dispatchEvent(new Event('input', { bubbles: true })); }
+  else if (s.mode === 'dnd') { try { if (!s.started) { s.dt = new DataTransfer(); s.started = true; dnd('dragstart', s.drg, x, y, s.dt); } const t = elEm(x, y); if (t) { dnd('dragenter', t, x, y, s.dt); dnd('dragover', t, x, y, s.dt); } } catch (e) { s.mode = 'scroll'; } }
+  else empurrarScroll(s.box, -dx, -dy);
+}
+function toqueRelease(e) {
+  const s = TQ.s; TQ.s = null; $('nv-hover').style.borderColor = '#f4c521'; if (!s) return;
+  if (st.mode === 'train') { logUI('[TESTE] toque: soltar' + (e.click ? ' (clique)' : '')); return; }
+  if (s.mode === 'range' && e.moved) s.rng.dispatchEvent(new Event('change', { bubbles: true }));
+  else if (s.mode === 'dnd' && s.started) { const t = elEm(V.cx, V.cy) || s.drg; dnd('drop', t, V.cx, V.cy, s.dt); dnd('dragend', s.drg, V.cx, V.cy, s.dt); }
+  else if (e.click) exec('Gesto: pinça (clique)', () => { const r = s.alvo && s.alvo.getBoundingClientRect(); return r ? Acoes.clicar(r.left + r.width / 2, r.top + r.height / 2) : Acoes.clicar(V.cx, V.cy); });
+}
+function toqueCancel() { const s = TQ.s; TQ.s = null; $('nv-hover').style.borderColor = '#f4c521'; if (s && s.mode === 'dnd' && s.started) dnd('dragend', s.drg, V.cx || 0, V.cy || 0, s.dt); logUI('Toque cancelado (rastreamento perdido ou segunda mão).'); }
 function onEvent(e) {
   const cur = $('nv-cursor');
-  if (e.type === 'cursor') { const X = e.x * innerWidth, Y = e.y * innerHeight; cur.style.display = 'block'; cur.style.left = X + 'px'; cur.style.top = Y + 'px'; V.cx = X; V.cy = Y; hover(X, Y); }
-  else if (e.type === 'dwell') { V.dwSeen = true; cur.style.background = 'conic-gradient(#f4c521 ' + e.progress * 360 + 'deg, rgba(244,197,33,.15) 0)'; }
-  else if (e.type === 'lost' || e.type === 'outside') { cur.style.display = 'none'; $('nv-hover').style.display = 'none'; V.alvo = null; say('nv-state', e.type === 'lost' ? 'Rastreamento perdido — comandos suspensos.' : 'Mão fora da área calibrada — comandos suspensos.'); }
+  if (e.type === 'cursor') { const X = e.x * innerWidth, Y = e.y * innerHeight; if (V.rx == null) { V.rx = X; V.ry = Y; } cur.style.display = 'block'; V.cx = X; V.cy = Y; }
+  else if (e.type === 'dwell') { V.dwSeen = true; V.dwOn = true; if (Math.abs((V.dwp || 0) - e.progress) > 0.03) { V.dwp = e.progress; cur.style.background = 'conic-gradient(#f4c521 ' + e.progress * 360 + 'deg, rgba(244,197,33,.15) 0)'; } }
+  else if (e.type === 'lost' || e.type === 'outside') { cur.style.display = 'none'; $('nv-hover').style.display = 'none'; V.alvo = null; V.hk = ''; V.rx = null; say('nv-state', e.type === 'lost' ? 'Rastreamento perdido — comandos suspensos.' : 'Mão fora da área calibrada — comandos suspensos.'); }
   else if (e.type === 'calibrating') say('nv-state', 'Calibrando… mova a mão pelos cantos da área (' + e.n + ' pontos)');
-  else if (e.type === 'click') exec(e.dwell ? 'Gesto: permanência (clique)' : 'Gesto: pinça (clique)', () => { const r = V.alvo && V.alvo.getBoundingClientRect(); return r ? Acoes.clicar(r.left + r.width / 2, r.top + r.height / 2) : Acoes.clicar(V.cx, V.cy); });
+  else if (e.type === 'click') exec(e.push ? 'Gesto: empurrar p/ frente (clique)' : e.dwell ? 'Gesto: permanência (clique)' : 'Gesto: pinça (clique)', () => { const r = V.alvo && V.alvo.getBoundingClientRect(); return r ? Acoes.clicar(r.left + r.width / 2, r.top + r.height / 2) : Acoes.clicar(V.cx, V.cy); });
+  else if (e.type === 'press') toquePress(); else if (e.type === 'drag') toqueDrag(); else if (e.type === 'release') toqueRelease(e); else if (e.type === 'cancel') toqueCancel();
   else if (e.type === 'scroll') { if (st.mode === 'real') Acoes.rolar(e.dy); }
   else if (e.type === 'zoom') exec('Gesto: zoom x' + e.factor.toFixed(2), () => Acoes.zoom(e.factor));
   else if (e.type === 'swipe') aplicarMapa(e.dir === 'right' ? st.map.swipeR : st.map.swipeL);
@@ -7638,21 +7708,23 @@ function calibrar() {
 
 function autotestes() {
   const out = []; let ok = 0, bad = 0; const T = (n, c) => { c ? ok++ : bad++; out.push((c ? '✔ ' : '✖ ') + n); };
-  const mk = (o = {}) => { const { ext = [1,1,1,1], thumb = 1, pinch = false, x = 0.5, y = 0.6 } = o, lm = Array.from({ length: 21 }, () => ({ x, y })); lm[0] = { x, y: y + 0.2 };
-    [[8,6,5,-0.03],[12,10,9,0],[16,14,13,0.03],[20,18,17,0.06]].forEach(([t, p, m, dx], i) => { lm[m] = { x: x + dx, y: y + 0.02 }; lm[p] = { x: x + dx, y: y - 0.05 }; lm[t] = { x: x + dx, y: ext[i] ? y - 0.15 : y + 0.08 }; });
-    if (thumb) { lm[3] = { x: x - 0.08, y: y + 0.12 }; lm[4] = { x: x - 0.15, y: y + 0.1 }; } else { lm[3] = { x: x - 0.02, y: y + 0.12 }; lm[4] = { x: x + 0.02, y: y + 0.08 }; }
-    if (pinch) lm[4] = { x: lm[8].x + 0.01, y: lm[8].y }; return lm; };
+  const mk = (q = {}) => { const { ext = [1,1,1,1], thumb = 1, pinch = false, x = 0.5, y = 0.6, sc = 1 } = q, o = (dx, dy) => ({ x: x + dx * sc, y: y + dy * sc }), lm = Array.from({ length: 21 }, () => o(0, 0)); lm[0] = o(0, 0.2);
+    [[8,6,5,-0.03],[12,10,9,0],[16,14,13,0.03],[20,18,17,0.06]].forEach(([t, p, m, dx], k) => { lm[m] = o(dx, 0.02); lm[p] = o(dx, -0.05); lm[t] = o(dx, ext[k] ? -0.15 : 0.08); });
+    if (thumb) { lm[3] = o(-0.08, 0.12); lm[4] = o(-0.15, 0.1); } else { lm[3] = o(-0.02, 0.12); lm[4] = o(0.02, 0.08); }
+    if (pinch) lm[4] = { x: lm[8].x + 0.01 * sc, y: lm[8].y }; return lm; };
   const H = (o, sc = 0.95) => ({ lm: mk(o), score: sc, label: 'Right' }), N = (h, n) => Array(n).fill(h);
   const run = (e, fr) => { let t = 0, o = []; fr.forEach(f => { o.push(...e.step(f, t)); t += 50; }); return o; }, ty = (o, k) => o.filter(z => z.type === k);
   T('gesto: palma aberta', classify(mk()).pose === 'open'); T('gesto: mão fechada', classify(mk({ ext: [0,0,0,0], thumb: 0 })).pose === 'fist');
   T('gesto: 3 dedos', classify(mk({ ext: [1,1,1,0], thumb: 0 })).pose === 'three'); T('gesto: indicador+médio', classify(mk({ ext: [1,1,0,0], thumb: 0 })).pose === 'peace');
   T('gesto: L', classify(mk({ ext: [1,0,0,0], thumb: 1 })).pose === 'L');
-  T('pinça segurada = 1 clique', ty(run(new Engine(), N([H({ pinch: true })], 20)), 'click').length === 1);
-  T('mão fechada NÃO clica', ty(run(new Engine(), N([H({ ext: [0,0,0,0], thumb: 0 })], 20)), 'click').length === 0);
-  T('baixa confiança não executa', ty(run(new Engine(), N([H({ pinch: true }, 0.4)], 20)), 'click').length === 0);
-  T('fora da área calibrada não executa', ty(run(new Engine(), N([H({ pinch: true, x: 0.97 })], 20)), 'click').length === 0);
+  T('pinça rápida (toque) = 1 clique ao soltar', ty(run(new Engine(), [...N([H({ pinch: true })], 6), ...N([H()], 2)]), 'release').filter(z => z.click).length === 1);
+  T('mão fechada NÃO seleciona', ty(run(new Engine(), N([H({ ext: [0,0,0,0], thumb: 0 })], 20)), 'press').length === 0);
+  T('baixa confiança não executa', ty(run(new Engine(), N([H({ pinch: true }, 0.4)], 20)), 'press').length === 0);
+  T('fora da área calibrada não executa', ty(run(new Engine(), N([H({ pinch: true, x: 0.97 })], 20)), 'press').length === 0);
   T('perda de rastreamento detectada', ty(run(new Engine(), [...N([H()], 4), ...N([], 12)]), 'lost').length === 1);
-  T('pinça+arrastar rola sem clicar', (o => ty(o, 'scroll').length > 0 && ty(o, 'click').length === 0)(run(new Engine(), [0,1,2,3,4,5,6,7].map(i => [H({ pinch: true, y: 0.4 + i * 0.03 })]))));
+  T('pinça segurada + mover = arrastar (sem clique)', (o => ty(o, 'press').length === 1 && ty(o, 'drag').length > 0 && ty(o, 'release').length === 1 && ty(o, 'release').every(z => z.moved && !z.click))(run(new Engine(), [...[0,1,2,3,4,5,6,7].map(k => [H({ pinch: true, y: 0.4 + k * 0.03 })]), ...N([H()], 2)])));
+  T('empurrar a mão p/ frente = clique', ty(run(new Engine(), [1,1,1,1.1,1.2,1.3,1.35].map(c => [H({ ext: [1,0,0,0], thumb: 0, sc: c })])), 'click').filter(z => z.push).length === 1);
+  T('apontar parado (sem empurrar) NÃO clica', ty(run(new Engine(), N([H({ ext: [1,0,0,0], thumb: 0 })], 15)), 'click').length === 0);
   T('duas mãos soltas NÃO dão zoom', ty(run(new Engine(), [...N([H({ x: 0.4 }), H({ x: 0.6 })], 2), ...N([H({ x: 0.3 }), H({ x: 0.7 })], 3)]), 'zoom').length === 0);
   T('duas mãos em pinça dão zoom', ty(run(new Engine(), [...N([H({ x: 0.4, pinch: true }), H({ x: 0.6, pinch: true })], 2), ...N([H({ x: 0.3, pinch: true }), H({ x: 0.7, pinch: true })], 3)]), 'zoom').length >= 1);
   T('mão fechada está em "nenhuma" (padrão seguro)', st.map.fist === 'none');
@@ -7672,8 +7744,8 @@ function montar() {
     '#nv-panel{position:fixed;left:14px;bottom:60px;width:340px;max-width:94vw;max-height:78vh;overflow:auto;z-index:99991;background:#10151f;color:#e8eef7;border:1px solid #2a3a55;border-radius:12px;padding:12px;font:12px Poppins,sans-serif;display:none}' +
     '#nv-panel label{display:block;margin:6px 0}#nv-panel select,#nv-panel input[type=range]{width:100%}#nv-panel button{cursor:pointer;border:0;border-radius:8px;padding:8px 10px;margin:3px 0;font-weight:600}' +
     '#nv-stop{position:fixed;right:14px;bottom:14px;z-index:99999;background:#e74c3c;color:#fff;border:2px solid #fff;border-radius:28px;padding:12px 18px;font-weight:800;cursor:pointer;display:none}' +
-    '#nv-cursor{position:fixed;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;border:3px solid #f4c521;background:rgba(244,197,33,.25);z-index:99998;pointer-events:none;display:none}' +
-    '#nv-hover{position:fixed;border:2px solid #f4c521;border-radius:6px;box-shadow:0 0 12px #f4c521;z-index:99997;pointer-events:none;display:none;transition:all .08s}#nv-sky{position:fixed;left:0;top:0;z-index:99996;pointer-events:none;display:none}#nv-log{max-height:110px;overflow:auto;font-size:10.5px;color:#9aa7b8;border-top:1px solid #2a3a55;margin-top:6px;padding-top:6px}.nv-box{position:relative;width:100%;aspect-ratio:4/3;background:#000;border-radius:8px;overflow:hidden}.nv-box video,.nv-box canvas{position:absolute;inset:0;width:100%;height:100%;transform:scaleX(-1)}.nv-box canvas{transform:none}</style>' +
+    '#nv-cursor{position:fixed;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;border:3px solid #f4c521;background:rgba(244,197,33,.25);z-index:99998;pointer-events:none;display:none;left:0;top:0;will-change:transform}' +
+    '#nv-hover{position:fixed;border:2px solid #f4c521;border-radius:6px;box-shadow:0 0 12px #f4c521;z-index:99997;pointer-events:none;display:none;left:0;top:0;will-change:transform}#nv-sky{position:fixed;left:0;top:0;z-index:99996;pointer-events:none;display:none}#nv-log{max-height:110px;overflow:auto;font-size:10.5px;color:#9aa7b8;border-top:1px solid #2a3a55;margin-top:6px;padding-top:6px}.nv-box{position:relative;width:100%;aspect-ratio:4/3;background:#000;border-radius:8px;overflow:hidden}.nv-box video,.nv-box canvas{position:absolute;inset:0;width:100%;height:100%;transform:scaleX(-1)}.nv-box canvas{transform:none}</style>' +
     '<button id="nv-fab">🖐 Vision</button><button id="nv-stop">⛔ PARAR GESTOS</button><div id="nv-cursor"></div><div id="nv-hover"></div><canvas id="nv-sky"></canvas>' +
     '<div id="nv-panel"><b style="font-size:13px">NTEi Vision — Controle Gestual</b><div id="nv-cam" style="margin:4px 0;font-weight:700">⚫ Câmera desligada</div>' +
     '<div class="nv-box" id="nv-box"><video id="nv-video" muted playsinline></video><canvas id="nv-canvas" width="320" height="240"></canvas></div>' +
@@ -7681,13 +7753,13 @@ function montar() {
     '<label><input type="checkbox" id="nv-consent"> Autorizo o uso da câmera só para reconhecer gestos. O vídeo é processado neste computador, não é gravado nem enviado.</label><button id="nv-toggle" style="background:#00adef;color:#06121f;width:100%">Ativar câmera</button><button id="nv-diag" style="background:#2a3a55;color:#fff;width:100%">Diagnosticar câmera</button><button id="nv-calib" style="background:#2a3a55;color:#fff;width:100%">Calibrar área de movimento</button>' +
     '<label>Modo<select id="nv-mode"><option value="train">Treinamento/teste (não executa ações)</option><option value="real">Real (executa ações)</option></select></label>' +
     '<label><input type="checkbox" id="nv-prev" checked> Mostrar pré-visualização e pontos</label>' +
-    '<label><input type="checkbox" id="nv-sky-c"> Mostrar esqueleto das mãos sobre a tela</label><label><input type="checkbox" id="nv-dwell"> Clique por permanência (apontar e esperar, sem pinça)</label><div id="nv-light" style="color:#f4c521"></div>' +
+    '<label><input type="checkbox" id="nv-sky-c"> Mostrar esqueleto das mãos sobre a tela</label><label><input type="checkbox" id="nv-lite"> Modo desempenho (menos leituras por segundo, sem esqueleto) — use em computador mais fraco</label><div id="nv-perf" style="color:#9aa7b8"></div><label><input type="checkbox" id="nv-push" checked> Empurrar a mão para frente = clicar (indicador apontado)</label><label><input type="checkbox" id="nv-dwell"> Clique por permanência (apontar e esperar, sem pinça)</label><div id="nv-light" style="color:#f4c521"></div>' +
     '<label>Mão<select id="nv-hand"><option value="both">Ambas</option><option value="Left">Esquerda</option><option value="Right">Direita</option></select></label>' +
     rg('nv-sens', 'Sensibilidade', 0, 1, 0.05, eng.cfg.sens) + rg('nv-dz', 'Zona morta', 0.002, 0.05, 0.002, eng.cfg.deadzone) + rg('nv-hold', 'Tempo mínimo (ms)', 150, 1200, 50, eng.cfg.minHold) + rg('nv-cd', 'Intervalo entre comandos (ms)', 200, 2500, 100, eng.cfg.cooldown) +
     '<b>Nuvem IA (Gemini)</b><div id="nv-gstat"></div><input type="password" id="nv-gkey" placeholder="Cole aqui sua chave do Gemini" autocomplete="off" style="width:100%;margin:4px 0"><input id="nv-gmodel" placeholder="Modelo (padrão gemini-2.0-flash)" style="width:100%"><button id="nv-gsave" style="background:#2ecc71;color:#06121f;width:100%">Salvar e ligar Gemini neste aparelho</button><button id="nv-gdel" style="background:#2a3a55;color:#fff;width:100%">Remover chave</button><div style="font-size:10.5px;color:#9aa7b8">A chave fica só neste navegador. Use apenas em aparelho seu/confiável; para vários usuários use o servidor seguro.</div>' +
     '<button id="nv-selftest" style="background:#f4c521;color:#06121f;width:100%">Rodar autotestes</button><div id="nv-test" style="white-space:pre-wrap;font-size:10.5px;color:#cfe3ff"></div>' +
     '<b>Mapeamento</b>' + mp('open', '🖐 Palma aberta', st.map.open) + mp('three', '3 dedos', st.map.three) + mp('fist', '✊ Mão fechada (desligada por padrão)', st.map.fist) + mp('swipeR', '➡ Deslizar p/ direita', st.map.swipeR) + mp('swipeL', '⬅ Deslizar p/ esquerda', st.map.swipeL) +
-    '<div style="font-size:10.5px;color:#9aa7b8">Pinça = clicar · Indicador+médio subindo/descendo = rolar · Polegar+indicador (L) abrindo/fechando ou duas mãos afastando = zoom.</div><div id="nv-log"></div></div>';
+    '<div style="font-size:10.5px;color:#9aa7b8">Toque virtual: pinça rápida = clicar · segurar a pinça e mover = arrastar (rola a página e move controles deslizantes) · apontar com o indicador e empurrar a mão para a câmera = clicar · indicador+médio subindo/descendo = rolar · &quot;L&quot; abrindo/fechando ou duas mãos em pinça = zoom.</div><div id="nv-log"></div></div>';
   document.body.appendChild(r); V.vid = $('nv-video');
   $('nv-fab').onclick = () => { const p = $('nv-panel'); p.style.display = p.style.display === 'block' ? 'none' : 'block'; };
   $('nv-toggle').onclick = () => V.stream ? parar('Câmera desativada.') : ativar();
@@ -7701,6 +7773,8 @@ function montar() {
   $('nv-gdel').onclick = () => { try { localStorage.removeItem(KEYLS); } catch (e) {} gs(); logUI('Chave do Gemini removida.'); };
   $('nv-selftest').onclick = autotestes; gs();
   $('nv-sky-c').onchange = e => { st.sky = e.target.checked; };
+  $('nv-lite').onchange = e => { V.minGate = e.target.checked ? 66 : 33; if (e.target.checked) { st.sky = false; $('nv-sky-c').checked = false; } logUI('Modo desempenho: ' + (e.target.checked ? 'ligado' : 'desligado')); };
+  $('nv-push').onchange = e => { eng.cfg.pushOn = e.target.checked; };
   $('nv-dwell').onchange = e => { eng.cfg.dwellMs = e.target.checked ? 1200 : 0; logUI('Permanência: ' + (e.target.checked ? 'ligada (1,2 s)' : 'desligada')); };
   $('nv-prev').onchange = e => { st.preview = e.target.checked; $('nv-box').style.display = st.preview ? '' : 'none'; };
   $('nv-hand').value = eng.cfg.hand; $('nv-hand').onchange = e => { eng.cfg.hand = e.target.value; save(); };
