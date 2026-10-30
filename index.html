@@ -1082,7 +1082,7 @@ document.addEventListener('DOMContentLoaded', () => escolaIdentidade.aplicar());
                 <button class="area-btn" data-area="analise" onclick="areaNav.click(this,'analise')"><i class="fa fa-brain"></i> Análise IA</button>
             </div>
             <div class="area-item" data-modulo="chatgpt">
-                <button class="area-btn" data-area="chatgpt" onclick="areaNav.click(this,'chatgpt')"><i class="fa fa-robot"></i> AI ChatGPT</button>
+                <button class="area-btn" data-area="chatgpt" onclick="areaNav.click(this,'chatgpt')"><i class="fa fa-robot"></i> Assistente IA</button>
             </div>
             <div class="area-item ntei-only hidden" data-modulo="admin">
                 <button class="area-btn ntei-area" data-area="admin" onclick="areaNav.toggle(this,'admin')"><i class="fa fa-shield-halved"></i> Admin NTEi <i class="fa fa-chevron-down area-caret"></i></button>
@@ -1291,7 +1291,7 @@ document.addEventListener('DOMContentLoaded', () => escolaIdentidade.aplicar());
                 <div class="sb-nav-item" data-modulo="comunicacao" onclick="modules.show('comunicacao')"><i class="fa fa-comments" style="color:var(--secre)"></i>Comunicação</div>
                 <div class="sb-nav-item" data-modulo="editais" onclick="modules.show('editais')"><i class="fa fa-file-signature" style="color:var(--gestao)"></i>Editais</div>
                 <div class="sb-nav-item" data-modulo="analise" onclick="modules.show('analise')"><i class="fa fa-brain" style="color:var(--cad)"></i>Análise IA</div>
-                <div class="sb-nav-item" data-modulo="chatgpt" onclick="modules.show('chatgpt')"><i class="fa fa-robot" style="color:var(--sw-color)"></i>AI ChatGPT</div>
+                <div class="sb-nav-item" data-modulo="chatgpt" onclick="modules.show('chatgpt')"><i class="fa fa-robot" style="color:var(--sw-color)"></i>Assistente IA</div>
                 <div class="sb-nav-item ntei-only hidden" data-modulo="admin" onclick="modules.show('admin')"><i class="fa fa-shield-halved" style="color:var(--ntei)"></i>Admin NTEi</div>
             </div>
 
@@ -1362,7 +1362,7 @@ document.addEventListener('DOMContentLoaded', () => escolaIdentidade.aplicar());
                     <div class="dash-atalho" data-modulo="comunicacao" onclick="areaNav.go('comunicacao','comunicacao')"><i class="fa fa-comments" style="color:var(--secre)"></i>Comunicação</div>
                     <div class="dash-atalho" data-modulo="editais" onclick="areaNav.go('editais','editais')"><i class="fa fa-file-signature" style="color:var(--gestao)"></i>Editais</div>
                     <div class="dash-atalho" data-modulo="analise" onclick="areaNav.go('analise','analise')"><i class="fa fa-brain" style="color:var(--cad)"></i>Análise IA</div>
-                    <div class="dash-atalho" data-modulo="chatgpt" onclick="areaNav.go('chatgpt','chatgpt')"><i class="fa fa-robot" style="color:var(--sw-color)"></i>AI ChatGPT</div>
+                    <div class="dash-atalho" data-modulo="chatgpt" onclick="areaNav.go('chatgpt','chatgpt')"><i class="fa fa-robot" style="color:var(--sw-color)"></i>Assistente IA</div>
                 </div>
 
                 <div id="comunicado-geral-banner" style="display: none;">
@@ -2174,9 +2174,9 @@ João Pedro Oliveira" style="width:100%;height:150px;border-radius:8px;border:1p
                 </div>
             </div>
 
-            <!-- ══════════ MODULE: AI CHATGPT ══════════ -->
+            <!-- ══════════ MODULE: ASSISTENTE IA ══════════ -->
             <div id="mod-chatgpt" class="module-view">
-                <div class="nx-hero"><div class="nx-ico"><i class="fa fa-robot"></i></div><div><h2>AI ChatGPT</h2><p>Assistente de IA do NTEi. Usa o provedor e a chave configurados em Admin NTEi.</p></div></div>
+                <div class="nx-hero"><div class="nx-ico"><i class="fa fa-robot"></i></div><div><h2>Assistente IA</h2><p>Assistente de IA do NTEi. Usa o provedor e a chave configurados em Admin NTEi.</p></div></div>
                 <div class="panel">
                     <div id="chat-ia-status" style="font-size:11px; color:var(--text-muted); margin-bottom:8px"></div>
                     <div class="chat-ia-box" id="chat-ia-box"><div class="chat-ia-msg ia">Olá! Como posso ajudar?</div></div>
@@ -2221,13 +2221,12 @@ João Pedro Oliveira" style="width:100%;height:150px;border-radius:8px;border:1p
 
                         <div id="panel-ia-config" style="margin-top:15px; background:rgba(255,255,255,0.05); padding:12px; border-radius:10px; border:1px solid rgba(165,94,234,0.35)">
                             <p style="font-size:11px; color:var(--secre); margin-top:0; font-weight:bold"><i class="fa fa-robot"></i> IA DO ASSISTENTE PEDAGÓGICO:</p>
-                            <p style="font-size:10.5px; color:var(--text-muted); margin-top:-4px">Escolha o provedor e cole a chave de API. Fica salvo no sistema e vale para todos os usuários. Como não há servidor por trás desta página, qualquer pessoa com acesso ao código/console do navegador pode ver esta chave — use uma chave restrita/com limite de uso.</p>
-                            <select id="ia-provedor" style="margin-top:6px">
-                                <option value="gemini">Google Gemini</option>
-                                <option value="openai">OpenAI (ChatGPT)</option>
-                            </select>
-                            <input type="password" id="ia-api-key" placeholder="Cole aqui a chave de API">
-                            <button class="btn" style="background:var(--secre); color:#fff" onclick="iaConfig.salvar()">Salvar Configuração de IA</button>
+                            <p style="font-size:10.5px; color:var(--text-muted); margin-top:-4px">Cole a chave de API de qualquer provedor. Chaves gsk_ (Groq), sk-ant- (Anthropic), sk-or- (OpenRouter), xai- e pplx- são reconhecidas sozinhas; para qualquer outra, informe a URL da API e o modelo. Fica salvo no sistema e vale para todos os usuários. Como não há servidor por trás desta página, qualquer pessoa com acesso ao código/console do navegador pode ver esta chave — use uma chave restrita/com limite de uso.</p>
+                            <input type="password" id="ia-api-key" placeholder="Cole aqui a chave de API (qualquer provedor)" autocomplete="off">
+                            <input type="text" id="ia-url" placeholder="URL da API (opcional se a chave for reconhecida)" autocomplete="off">
+                            <input type="text" id="ia-modelo" placeholder="Modelo (opcional se a chave for reconhecida)" autocomplete="off">
+                            <button class="btn" style="background:rgba(255,255,255,0.12); color:#fff" onclick="iaConfig.testar()">Testar conexão</button>
+                            \1
                             <div id="ia-config-status" style="font-size:11px; color:var(--text-muted); margin-top:6px">⚠️ Nenhuma chave de API configurada ainda.</div>
                         </div>
 
@@ -2793,29 +2792,128 @@ João Pedro Oliveira" style="width:100%;height:150px;border-radius:8px;border:1p
     //  PEDAGOG IA
     // ═══════════════════════════════════════════════════════
     // ═══════════════════════════════════════════════════════
-    //  CONFIGURAÇÃO DA IA (Gemini ou OpenAI) — chave salva em config/ia,
-    //  visível para todo o sistema em tempo real. Só o NTEi edita.
+    //  IA UNIVERSAL — aceita QUALQUER chave de API.
+    //  Chaves reconhecidas sozinhas pelo prefixo: gsk_ (Groq), sk-ant- (Anthropic),
+    //  sk-or- (OpenRouter), xai- (xAI), pplx- (Perplexity).
+    //  Qualquer outra chave: informe a URL da API + o modelo (formato compatível
+    //  com "chat/completions" ou "messages"). A config fica em config/ia (Admin NTEi);
+    //  o painel Vision pode ter uma chave local própria (localStorage).
     // ═══════════════════════════════════════════════════════
+    const NTEI_IA = {
+        LSK: 'nteiIA_local_v1',
+        PRESETS: [
+            { re: /^sk-ant-/i, url: 'https://api.anthropic.com/v1/messages', fmt: 'anthropic', model: 'claude-sonnet-4-20250514' },
+            { re: /^gsk_/i,    url: 'https://api.groq.com/openai/v1/chat/completions', fmt: 'openai', model: 'llama-3.3-70b-versatile' },
+            { re: /^sk-or-/i,  url: 'https://openrouter.ai/api/v1/chat/completions', fmt: 'openai', model: 'openrouter/auto' },
+            { re: /^xai-/i,    url: 'https://api.x.ai/v1/chat/completions', fmt: 'openai', model: 'grok-3-mini' },
+            { re: /^pplx-/i,   url: 'https://api.perplexity.ai/chat/completions', fmt: 'openai', model: 'sonar' }
+        ],
+        local() { try { return JSON.parse(localStorage.getItem(this.LSK) || 'null'); } catch (e) { return null; } },
+        cfg() { const l = this.local(); if (l && l.apiKey) return l; return (typeof iaConfig !== 'undefined' && iaConfig.dados) || {}; },
+        resolve(c) {
+            c = c || {};
+            const key = String(c.apiKey || '').trim(); if (!key) return null;
+            let url = String(c.baseUrl || '').trim(), model = String(c.model || '').trim(), fmt = null;
+            const p = this.PRESETS.find(x => x.re.test(key));
+            if (!url && p) { url = p.url; fmt = p.fmt; model = model || p.model; }
+            if (!url) throw new Error('Não reconheci o tipo desta chave. Informe também a URL da API do seu provedor (e o modelo).');
+            if (!/^https:\/\//i.test(url)) throw new Error('A URL da API precisa começar com https://');
+            if (!fmt) fmt = /anthropic|\/messages\/?$/i.test(url) ? 'anthropic' : 'openai';
+            if (fmt === 'openai' && !/\/completions\/?$/i.test(url)) url = url.replace(/\/+$/, '') + '/chat/completions';
+            if (fmt === 'anthropic' && !/\/messages\/?$/i.test(url)) url = url.replace(/\/+$/, '') + (/\/v1$/i.test(url.replace(/\/+$/, '')) ? '' : '/v1') + '/messages';
+            if (!model) throw new Error('Informe o nome do modelo (o provedor desta chave não foi reconhecido).');
+            return { key, url, model, fmt };
+        },
+        ativo() { try { return !!this.resolve(this.cfg()); } catch (e) { return false; } },
+        descricao() { try { const r = this.resolve(this.cfg()); return r ? new URL(r.url).host + ' · ' + r.model : ''; } catch (e) { return ''; } },
+        async chat(o) {
+            o = o || {};
+            const r = this.resolve(o.cfg || this.cfg());
+            if (!r) throw new Error('Nenhuma chave de IA configurada. Peça ao NTEi para configurar em Admin NTEi → Configuração de IA.');
+            let msgs = (o.messages || []).map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', text: String(m.text == null ? '' : m.text) })).filter(m => m.text);
+            const maxTokens = o.maxTokens || 1024;
+            const tools = o.tools && o.tools.length ? o.tools : null;
+            const build = (comTools) => {
+                if (r.fmt === 'anthropic') {
+                    const merged = []; msgs.forEach(m => { const u = merged[merged.length - 1]; if (u && u.role === m.role) u.content += '\n\n' + m.text; else merged.push({ role: m.role, content: m.text }); });
+                    while (merged.length && merged[0].role !== 'user') merged.shift();
+                    const body = { model: r.model, max_tokens: maxTokens, messages: merged };
+                    if (o.system) body.system = o.system;
+                    if (comTools) body.tools = tools.map(t => ({ name: t.name, description: t.description || t.name, input_schema: t.parameters || { type: 'object', properties: {} } }));
+                    return { headers: { 'Content-Type': 'application/json', 'x-api-key': r.key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' }, body };
+                }
+                const body = { model: r.model, max_tokens: maxTokens, messages: [...(o.system ? [{ role: 'system', content: o.system }] : []), ...msgs.map(m => ({ role: m.role, content: m.text }))] };
+                if (comTools) { body.tools = tools.map(t => ({ type: 'function', function: { name: t.name, description: t.description || t.name, parameters: t.parameters || { type: 'object', properties: {} } } })); body.tool_choice = 'auto'; }
+                return { headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + r.key }, body };
+            };
+            const enviar = async (comTools) => {
+                const b = build(comTools);
+                const resp = await fetch(r.url, { method: 'POST', headers: b.headers, body: JSON.stringify(b.body), signal: o.signal });
+                let d = null; try { d = await resp.json(); } catch (e) {}
+                return { resp, d };
+            };
+            let { resp, d } = await enviar(!!tools);
+            if (!resp.ok && tools && resp.status === 400) ({ resp, d } = await enviar(false));
+            if (!resp.ok || (d && d.error)) {
+                const em = d && (d.error && (d.error.message || (typeof d.error === 'string' ? d.error : '')) || d.message);
+                throw new Error(em || ('A API respondeu com erro ' + resp.status + (resp.status === 401 || resp.status === 403 ? ' (chave recusada)' : resp.status === 429 ? ' (limite de uso atingido)' : '') + '.'));
+            }
+            let texto = '', acao = null, fontes = [];
+            if (r.fmt === 'anthropic') {
+                (d.content || []).forEach(bk => { if (bk.type === 'text') texto += bk.text || ''; else if (bk.type === 'tool_use' && !acao) acao = { nome: bk.name, args: bk.input || {} }; });
+            } else {
+                const msg = (d.choices && d.choices[0] && d.choices[0].message) || {};
+                texto = typeof msg.content === 'string' ? msg.content : (Array.isArray(msg.content) ? msg.content.map(x => x.text || '').join('') : '');
+                const tc = msg.tool_calls && msg.tool_calls[0];
+                if (tc && tc.function) { let a = {}; try { a = JSON.parse(tc.function.arguments || '{}'); } catch (e) {} acao = { nome: tc.function.name, args: a }; }
+                if (Array.isArray(d.citations)) fontes = d.citations.filter(u => typeof u === 'string').map(u => ({ uri: u, title: u }));
+            }
+            return { texto: (texto || '').trim(), acao, fontes };
+        },
+        async ask(prompt, o) {
+            o = Object.assign({}, o || {});
+            if (prompt != null) o.messages = [{ role: 'user', text: prompt }];
+            return (await this.chat(o)).texto;
+        }
+    };
+    window.NTEI_IA = NTEI_IA;
+
     const iaConfig = {
-        dados: { provedor: 'gemini', apiKey: '' },
+        dados: { apiKey: '', baseUrl: '', model: '' },
         init() {
             db.ref('config/ia').on('value', snap => {
-                this.dados = snap.val() || { provedor: 'gemini', apiKey: '' };
-                const selProv = document.getElementById('ia-provedor');
-                const inputKey = document.getElementById('ia-api-key');
-                const status = document.getElementById('ia-config-status');
-                if (selProv) selProv.value = this.dados.provedor || 'gemini';
-                if (inputKey) inputKey.value = this.dados.apiKey || '';
-                if (status) status.textContent = this.dados.apiKey ? `✅ Configurado (${this.dados.provedor === 'openai' ? 'OpenAI' : 'Gemini'})` : '⚠️ Nenhuma chave de API configurada ainda.';
+                this.dados = snap.val() || { apiKey: '', baseUrl: '', model: '' };
+                const g = id => document.getElementById(id);
+                if (g('ia-api-key')) g('ia-api-key').value = this.dados.apiKey || '';
+                if (g('ia-url')) g('ia-url').value = this.dados.baseUrl || '';
+                if (g('ia-modelo')) g('ia-modelo').value = this.dados.model || '';
+                if (g('ia-config-status')) g('ia-config-status').textContent = this.status();
             });
         },
+        status() {
+            if (!this.dados.apiKey) return '⚠️ Nenhuma chave de API configurada ainda.';
+            try { const r = NTEI_IA.resolve(this.dados); return r ? `✅ Configurado (${new URL(r.url).host} · ${r.model})` : '⚠️ Nenhuma chave de API configurada ainda.'; }
+            catch (e) { return '⚠️ ' + e.message; }
+        },
+        lerCampos() {
+            const g = id => (document.getElementById(id)?.value || '').trim();
+            return { apiKey: g('ia-api-key'), baseUrl: g('ia-url'), model: g('ia-modelo') };
+        },
+        async testar() {
+            const st = document.getElementById('ia-config-status'); const c = this.lerCampos();
+            if (!c.apiKey) { alert('Cole uma chave de API primeiro.'); return; }
+            try { NTEI_IA.resolve(c); } catch (e) { if (st) st.textContent = '⚠️ ' + e.message; return; }
+            if (st) st.textContent = '⏳ Testando conexão...';
+            try { const t = await NTEI_IA.ask('Responda apenas: OK', { cfg: c, maxTokens: 20 }); if (st) st.textContent = '✅ Conexão OK — resposta: ' + (t || '(vazia)').slice(0, 60); }
+            catch (e) { if (st) st.textContent = '❌ Falhou: ' + e.message; }
+        },
         salvar() {
-            const provedor = document.getElementById('ia-provedor').value;
-            const apiKey = document.getElementById('ia-api-key').value.trim();
-            if (!apiKey) { alert('Cole uma chave de API válida.'); return; }
-            db.ref('config/ia').set({ provedor, apiKey }).then(() => {
+            const c = this.lerCampos();
+            if (!c.apiKey) { alert('Cole uma chave de API válida.'); return; }
+            try { NTEI_IA.resolve(c); } catch (e) { alert(e.message); return; }
+            db.ref('config/ia').set(c).then(() => {
                 alert('Configuração de IA salva!');
-                auditoria.registrar('Admin NTEi', `Configuração de IA atualizada (provedor: ${provedor})`);
+                auditoria.registrar('Admin NTEi', 'Configuração de IA atualizada');
             }).catch(e => alert('Erro ao salvar: ' + e.message));
         }
     };
@@ -2833,8 +2931,7 @@ João Pedro Oliveira" style="width:100%;height:150px;border-radius:8px;border:1p
             output.innerHTML = '⏳ Gerando com IA...';
             saveBtn.classList.add('hidden');
 
-            const { provedor, apiKey } = iaConfig.dados || {};
-            if (!apiKey) {
+            if (!NTEI_IA.ativo()) {
                 output.textContent = '⚠️ Nenhuma chave de IA configurada. Peça ao NTEi para configurar em Admin NTEi → IA do Assistente Pedagógico.';
                 return;
             }
@@ -2847,33 +2944,13 @@ Estruture com: Objetivos de Aprendizagem, Habilidades BNCC, Desenvolvimento, Rec
 Seja prático, detalhado e de fácil aplicação para professores da rede municipal.`;
 
             try {
-                const text = provedor === 'openai' ? await this._chamarOpenAI(apiKey, prompt) : await this._chamarGemini(apiKey, prompt);
+                const text = await NTEI_IA.ask(prompt, { maxTokens: 2500 });
                 output.textContent = text || 'Erro ao gerar. Tente novamente.';
                 saveBtn.classList.remove('hidden');
                 auditoria.registrar('IA Pedagógica', `Gerou ${tiposMap[tipo]} para ${serie} - ${disc}`);
             } catch (e) {
                 output.textContent = `❌ Erro na conexão com IA: ${e.message}`;
             }
-        },
-        async _chamarGemini(apiKey, prompt) {
-            const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-            });
-            const data = await resp.json();
-            if (data.error) throw new Error(data.error.message || 'Erro na API do Gemini.');
-            return data.candidates?.[0]?.content?.parts?.[0]?.text;
-        },
-        async _chamarOpenAI(apiKey, prompt) {
-            const resp = await fetch('https://api.openai.com/v1/chat/completions', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-                body: JSON.stringify({ model: 'gpt-4o-mini', messages: [{ role: 'user', content: prompt }] })
-            });
-            const data = await resp.json();
-            if (data.error) throw new Error(data.error.message || 'Erro na API da OpenAI.');
-            return data.choices?.[0]?.message?.content;
         },
         salvarBiblioteca() {
             const output = document.getElementById('ped-output').textContent;
@@ -2898,13 +2975,8 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             output.style.display = 'block';
             output.textContent = '⏳ Gerando atividade...';
             try {
-                const resp = await fetch('https://api.anthropic.com/v1/messages', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 800, messages: [{ role: 'user', content: `Crie um(a) ${tipo} de ${disc} para ${serie} do Ensino Fundamental. Seja criativo, envolvente e adequado para a faixa etária. Inclua instruções claras para o professor e para os alunos.` }] })
-                });
-                const data = await resp.json();
-                output.textContent = data.content?.[0]?.text || 'Erro ao gerar.';
+                const _txt = await NTEI_IA.ask(`Crie um(a) ${tipo} de ${disc} para ${serie} do Ensino Fundamental. Seja criativo, envolvente e adequado para a faixa etária. Inclua instruções claras para o professor e para os alunos.`, { maxTokens: 800 });
+                output.textContent = _txt || 'Erro ao gerar.';
             } catch (e) { output.textContent = `❌ Erro: ${e.message}`; }
         }
     };
@@ -2935,13 +3007,8 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
             let resCount = 0; resSnap.forEach(() => resCount++);
             contexto += `Total de reservas no sistema: ${resCount}\n`;
             try {
-                const apiResp = await fetch('https://api.anthropic.com/v1/messages', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 400, messages: [{ role: 'user', content: `${contexto}\n\nPergunta do gestor: "${pergunta}"\n\nResponda de forma objetiva e clara baseando-se nos dados acima. Se não houver dados suficientes, informe o que pode ser inferido.` }] })
-                });
-                const data = await apiResp.json();
-                resp.textContent = data.content?.[0]?.text || 'Não foi possível processar.';
+                const _txt = await NTEI_IA.ask(`${contexto}\n\nPergunta do gestor: "${pergunta}"\n\nResponda de forma objetiva e clara baseando-se nos dados acima. Se não houver dados suficientes, informe o que pode ser inferido.`, { maxTokens: 400 });
+                resp.textContent = _txt || 'Não foi possível processar.';
             } catch (e) { resp.textContent = `❌ Erro: ${e.message}`; }
         }
     };
@@ -2976,12 +3043,8 @@ Seja prático, detalhado e de fácil aplicação para professores da rede munici
 - Total de reservas: ${totalRes}
 - Total de alunos cadastrados: ${totalAlunos}`;
             try {
-                const resp = await fetch('https://api.anthropic.com/v1/messages', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 500, messages: [{ role: 'user', content: `${contexto}\n\nPergunta: "${q}"\n\nResponda de forma direta e útil para o gestor escolar.` }] })
-                });
-                const data = await resp.json();
-                const text = data.content?.[0]?.text || 'Sem resposta.';
+                const _txt = await NTEI_IA.ask(`${contexto}\n\nPergunta: "${q}"\n\nResponda de forma direta e útil para o gestor escolar.`, { maxTokens: 500 });
+                const text = _txt || 'Sem resposta.';
                 const thinking = hist.querySelector('.nuvem-thinking');
                 if (thinking) thinking.remove();
                 hist.innerHTML += `<div class="msg msg-in" style="font-size:12px"><b>IA Analítica:</b><br>${text.replace(/\n/g,'<br>')}</div>`;
@@ -4796,7 +4859,7 @@ input::placeholder, textarea::placeholder { color: #94a3b8 !important; opacity: 
             { id: 'pedagogico', nome: 'Pedagógico' }, { id: 'alunos', nome: 'Alunos' },
             { id: 'patrimonio', nome: 'Patrimônio' },
             { id: 'gemeo', nome: 'Gêmeo Digital' }, { id: 'comunicacao', nome: 'Comunicação' },
-            { id: 'editais', nome: 'Editais' }, { id: 'analise', nome: 'Análise IA' }, { id: 'chatgpt', nome: 'AI ChatGPT' }, { id: 'admin', nome: 'Admin NTEi' }
+            { id: 'editais', nome: 'Editais' }, { id: 'analise', nome: 'Análise IA' }, { id: 'chatgpt', nome: 'Assistente IA' }, { id: 'admin', nome: 'Admin NTEi' }
         ],
 
         init() {
@@ -6566,14 +6629,13 @@ input::placeholder, textarea::placeholder { color: #94a3b8 !important; opacity: 
 
 
     // ═══════════════════════════════════════════════════════
-    //  AI ChatGPT — conversa com o provedor configurado em Admin NTEi (config/ia)
+    //  Assistente IA — conversa com o provedor configurado em Admin NTEi (config/ia)
     // ═══════════════════════════════════════════════════════
     const chatIA = {
         historico: [], ocupado: false,
         abrir() {
             const st = document.getElementById('chat-ia-status');
-            const { provedor, apiKey } = iaConfig.dados || {};
-            if (st) st.textContent = apiKey ? `Provedor: ${provedor === 'openai' ? 'OpenAI (ChatGPT)' : 'Google Gemini'}` : '⚠️ Nenhuma chave de IA configurada. Peça ao NTEi para configurar em Admin NTEi → Configuração de IA.';
+            if (st) st.textContent = NTEI_IA.ativo() ? `IA: ${NTEI_IA.descricao()}` : '⚠️ Nenhuma chave de IA configurada. Peça ao NTEi para configurar em Admin NTEi → Configuração de IA.';
         },
         _add(papel, texto) {
             const box = document.getElementById('chat-ia-box'); if (!box) return null;
@@ -6589,33 +6651,20 @@ input::placeholder, textarea::placeholder { color: #94a3b8 !important; opacity: 
             if (this.ocupado) return;
             const inp = document.getElementById('chat-ia-input'); const txt = (inp.value || '').trim();
             if (!txt) return;
-            const { provedor, apiKey } = iaConfig.dados || {};
-            if (!apiKey) { this.abrir(); alert('Nenhuma chave de IA configurada. Peça ao NTEi para configurar.'); return; }
+            if (!NTEI_IA.ativo()) { this.abrir(); alert('Nenhuma chave de IA configurada. Peça ao NTEi para configurar.'); return; }
             inp.value = ''; this._add('eu', txt); this.historico.push({ role: 'user', text: txt });
             const espera = this._add('ia', '⏳ Pensando...'); this.ocupado = true;
             const btn = document.getElementById('chat-ia-send'); if (btn) btn.disabled = true;
             try {
-                const resp = provedor === 'openai' ? await this._openai(apiKey) : await this._gemini(apiKey);
+                const resp = await NTEI_IA.ask(null, { system: this._sistema(), messages: this.historico, maxTokens: 1500 });
                 espera.textContent = resp || 'Sem resposta. Tente novamente.';
                 if (resp) this.historico.push({ role: 'assistant', text: resp });
-                auditoria.registrar?.('AI ChatGPT', 'Consulta realizada');
+                auditoria.registrar?.('Assistente IA', 'Consulta realizada');
             } catch (e) { espera.textContent = '❌ Erro na conexão com a IA: ' + e.message; this.historico.pop(); }
             this.ocupado = false; if (btn) btn.disabled = false;
             document.getElementById('chat-ia-box').scrollTop = 1e9;
         },
         _sistema() { return `Você é o assistente do Programa CONECT / NTEi da unidade ${ESCOLA.nomeCompleto}. Responda em português do Brasil, de forma clara e objetiva.`; },
-        async _openai(apiKey) {
-            const messages = [{ role: 'system', content: this._sistema() }, ...this.historico.map(h => ({ role: h.role, content: h.text }))];
-            const r = await fetch('https://api.openai.com/v1/chat/completions', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` }, body: JSON.stringify({ model: 'gpt-4o-mini', messages }) });
-            const d = await r.json(); if (d.error) throw new Error(d.error.message || 'Erro na API da OpenAI.');
-            return d.choices?.[0]?.message?.content;
-        },
-        async _gemini(apiKey) {
-            const contents = this.historico.map(h => ({ role: h.role === 'user' ? 'user' : 'model', parts: [{ text: h.text }] }));
-            const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ systemInstruction: { parts: [{ text: this._sistema() }] }, contents }) });
-            const d = await r.json(); if (d.error) throw new Error(d.error.message || 'Erro na API do Gemini.');
-            return d.candidates?.[0]?.content?.parts?.[0]?.text;
-        }
     };
 
     // Dashboard padrão: status da rede e comunicados recentes (dados reais da unidade)
@@ -7758,7 +7807,7 @@ function montar() {
     '<label><input type="checkbox" id="nv-sky-c"> Mostrar esqueleto das mãos sobre a tela</label><label>Fluidez da página<select id="nv-fluid"><option value="fluido">Máxima fluidez (recomendado) — página nunca trava</option><option value="equilibrado">Equilibrado</option><option value="preciso">Mais precisão (pode pesar)</option></select></label><label>Processador do reconhecimento<select id="nv-proc"><option value="auto">Automático (placa de vídeo se houver)</option><option value="cpu">Só processador (CPU)</option></select></label><div id="nv-perf" style="color:#9aa7b8"></div><label><input type="checkbox" id="nv-push" checked> Empurrar a mão para frente = clicar (indicador apontado)</label><label><input type="checkbox" id="nv-dwell"> Clique por permanência (apontar e esperar, sem pinça)</label><div id="nv-light" style="color:#f4c521"></div>' +
     '<label>Mão<select id="nv-hand"><option value="both">Ambas</option><option value="Left">Esquerda</option><option value="Right">Direita</option></select></label>' +
     rg('nv-sens', 'Sensibilidade', 0, 1, 0.05, eng.cfg.sens) + rg('nv-dz', 'Zona morta', 0.002, 0.05, 0.002, eng.cfg.deadzone) + rg('nv-hold', 'Tempo mínimo (ms)', 150, 1200, 50, eng.cfg.minHold) + rg('nv-cd', 'Intervalo entre comandos (ms)', 200, 2500, 100, eng.cfg.cooldown) +
-    '<b>Nuvem IA (Gemini)</b><div id="nv-gstat"></div><input type="password" id="nv-gkey" placeholder="Cole aqui sua chave do Gemini" autocomplete="off" style="width:100%;margin:4px 0"><input id="nv-gmodel" placeholder="Modelo (padrão gemini-2.0-flash)" style="width:100%"><button id="nv-gsave" style="background:#2ecc71;color:#06121f;width:100%">Salvar e ligar Gemini neste aparelho</button><button id="nv-gdel" style="background:#2a3a55;color:#fff;width:100%">Remover chave</button><div style="font-size:10.5px;color:#9aa7b8">A chave fica só neste navegador. Use apenas em aparelho seu/confiável; para vários usuários use o servidor seguro.</div>' +
+    '<b>Nuvem IA (qualquer chave)</b><div id="nv-gstat"></div><input type="password" id="nv-gkey" placeholder="Cole aqui sua chave de API" autocomplete="off" style="width:100%;margin:4px 0"><input id="nv-gurl" placeholder="URL da API (opcional se a chave for reconhecida)" autocomplete="off" style="width:100%;margin-bottom:4px"><input id="nv-gmodel" placeholder="Modelo (opcional se a chave for reconhecida)" autocomplete="off" style="width:100%"><button id="nv-gsave" style="background:#2ecc71;color:#06121f;width:100%">Salvar e ligar IA neste aparelho</button><button id="nv-gdel" style="background:#2a3a55;color:#fff;width:100%">Remover chave</button><div style="font-size:10.5px;color:#9aa7b8">A chave fica só neste navegador. Use apenas em aparelho seu/confiável; para vários usuários use o servidor seguro.</div>' +
     '<button id="nv-selftest" style="background:#f4c521;color:#06121f;width:100%">Rodar autotestes</button><div id="nv-test" style="white-space:pre-wrap;font-size:10.5px;color:#cfe3ff"></div>' +
     '<b>Mapeamento</b>' + mp('open', '🖐 Palma aberta', st.map.open) + mp('three', '3 dedos', st.map.three) + mp('fist', '✊ Mão fechada (desligada por padrão)', st.map.fist) + mp('swipeR', '➡ Deslizar p/ direita', st.map.swipeR) + mp('swipeL', '⬅ Deslizar p/ esquerda', st.map.swipeL) +
     '<div style="font-size:10.5px;color:#9aa7b8">Toque virtual: pinça rápida = clicar · segurar a pinça e mover = arrastar (rola a página e move controles deslizantes) · apontar com o indicador e empurrar a mão para a câmera = clicar · indicador+médio subindo/descendo = rolar · &quot;L&quot; abrindo/fechando ou duas mãos em pinça = zoom.</div><div id="nv-log"></div></div>';
@@ -7768,11 +7817,13 @@ function montar() {
   $('nv-diag').onclick = async () => { $('nv-test').textContent = 'Verificando…'; $('nv-test').textContent = await diagCamera(); };
   $('nv-calib').onclick = calibrar; $('nv-stop').onclick = emergencia;
   $('nv-mode').onchange = e => { st.mode = e.target.value; logUI('Modo: ' + st.mode); };
-  const gs = () => say('nv-gstat', window.NTEI_NUVEM_URL ? 'Gemini: via servidor seguro (ativo)' : keyLocal() ? 'Gemini: ATIVO automaticamente neste aparelho' : 'Gemini: desligado (cole uma chave)');
-  $('nv-gmodel').value = (function () { try { return localStorage.getItem(KEYLS + '_model') || ''; } catch (e) { return ''; } })();
-  $('nv-gsave').onclick = () => { const v = $('nv-gkey').value.trim(); if (v.length < 20) return say('nv-gstat', 'Chave inválida.');
-    try { localStorage.setItem(KEYLS, v); localStorage.setItem(KEYLS + '_model', $('nv-gmodel').value.trim()); } catch (e) { return say('nv-gstat', 'Não foi possível salvar neste navegador.'); } $('nv-gkey').value = ''; gs(); logUI('Gemini ligado (chave salva localmente).'); };
-  $('nv-gdel').onclick = () => { try { localStorage.removeItem(KEYLS); } catch (e) {} gs(); logUI('Chave do Gemini removida.'); };
+  const gs = () => say('nv-gstat', window.NTEI_NUVEM_URL ? 'IA: via servidor seguro (ativo)' : keyLocal() ? 'IA: ATIVA (' + root.NTEI_IA.descricao() + ')' : 'IA: desligada (cole uma chave)');
+  { const l = (root.NTEI_IA && root.NTEI_IA.local()) || {}; $('nv-gurl').value = l.baseUrl || ''; $('nv-gmodel').value = l.model || ''; }
+  $('nv-gsave').onclick = () => { const v = $('nv-gkey').value.trim(); if (v.length < 8) return say('nv-gstat', 'Chave inválida.');
+    const c = { apiKey: v, baseUrl: $('nv-gurl').value.trim(), model: $('nv-gmodel').value.trim() };
+    try { root.NTEI_IA.resolve(c); } catch (e) { return say('nv-gstat', e.message); }
+    try { localStorage.setItem(root.NTEI_IA.LSK, JSON.stringify(c)); } catch (e) { return say('nv-gstat', 'Não foi possível salvar neste navegador.'); } $('nv-gkey').value = ''; gs(); logUI('IA ligada (chave salva localmente).'); };
+  $('nv-gdel').onclick = () => { try { localStorage.removeItem(root.NTEI_IA.LSK); } catch (e) {} gs(); logUI('Chave de IA local removida.'); };
   $('nv-selftest').onclick = autotestes; gs();
   $('nv-sky-c').onchange = e => { st.sky = e.target.checked; };
   const PF = 'nteiVisionPerf_v1', PM = { fluido: [4, 40], equilibrado: [2.5, 33], preciso: [1.8, 33] }; let pf = { f: 'fluido', p: 'auto' }; try { pf = Object.assign(pf, JSON.parse(localStorage.getItem(PF) || '{}')); } catch (e) {}
@@ -7812,34 +7863,29 @@ function intencao(raw) {
     if (!t) return 'Qual equipamento? Diga o nome ou o número de patrimônio.';
     pend = () => { ctx.busca = t; return Acoes.buscar(t); }; return 'Entendi: pesquisar "' + t + '" na busca global. Confirma? (diga "sim" ou "não")'; }
   if (/explique.*(painel|dados|tela|grafico)/.test(q)) return 'Só sei qual módulo está aberto ("' + modules.current + '"). Não consigo ver nem ler o conteúdo da tela, então não vou inventar uma explicação dos dados.';
-  if (/(pesquis|web|internet|google)/.test(q) && /(web|internet|google|online)/.test(q)) return 'Para pesquisar na web use o Jarvis (botão 🤖 Jarvis): ele consulta a Busca Google pelo Gemini.';
+  if (/(pesquis|web|internet|google)/.test(q) && /(web|internet|google|online)/.test(q)) return 'Para pesquisar na web use o Jarvis (botão 🤖 Jarvis): ele responde perguntas usando a IA configurada.';
   return null;
 }
-const KEYLS = 'nteiGeminiKey_v1', conv = [];
-const keyLocal = () => { try { return localStorage.getItem(KEYLS); } catch (e) { return null; } };
-async function geminiDireto(q, ctrl) {
+const conv = [];
+const keyLocal = () => (root.NTEI_IA && root.NTEI_IA.ativo()) ? 'ok' : null;
+async function iaDireto(q, ctrl) {
   const mods = permitidos(), fns = [{ name: 'voltar', description: 'Volta para a tela anterior.' }, { name: 'relatorios', description: 'Abre a área de relatórios.' },
     { name: 'proximo', description: 'Próximo módulo.' }, { name: 'anterior', description: 'Módulo anterior.' }, { name: 'pararGestos', description: 'Interrompe o controle gestual.' },
-    { name: 'zoom', description: 'Amplia (>1) ou reduz (<1) o conteúdo.', parameters: { type: 'OBJECT', properties: { fator: { type: 'NUMBER' } }, required: ['fator'] } },
-    { name: 'buscar', description: 'Pesquisa na busca global (equipamentos, chamados).', parameters: { type: 'OBJECT', properties: { texto: { type: 'STRING' } }, required: ['texto'] } }];
-  if (mods.length) fns.push({ name: 'abrirModulo', description: 'Abre um módulo da plataforma.', parameters: { type: 'OBJECT', properties: { id: { type: 'STRING', enum: mods } }, required: ['id'] } });
-  let h = conv.slice(-9).map(m => ({ role: m.role === 'user' ? 'user' : 'model', parts: [{ text: String(m.text).slice(0, 1000) }] })); while (h.length && h[0].role !== 'user') h.shift();
-  const model = (localStorage.getItem(KEYLS + '_model') || 'gemini-2.0-flash').replace(/[^a-zA-Z0-9.\-]/g, '');
-  const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent', { method: 'POST', signal: ctrl.signal,
-    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': keyLocal() },
-    body: JSON.stringify({ systemInstruction: { parts: [{ text: 'Você é a Nuvem, assistente do NTEi. Responda em português do Brasil, de forma curta. Use as funções somente quando o usuário pedir uma ação na plataforma. Você NÃO vê a tela; só sabe o módulo atual: ' + modules.current + '. Não invente dados, resultados ou pesquisas.' }] }, contents: h, tools: [{ functionDeclarations: fns }] }) });
-  if (r.status === 400 || r.status === 401 || r.status === 403) return { texto: 'O Gemini recusou a chave ou o modelo (' + r.status + '). Confira a chave e o nome do modelo no painel Vision.' };
-  if (r.status === 429) return { texto: 'Limite de uso do Gemini atingido. Tente em instantes.' };
-  if (!r.ok) return { texto: 'O Gemini respondeu com erro ' + r.status + '.' };
-  const parts = ((await r.json()).candidates || [{}])[0].content?.parts || [], fc = parts.find(x => x.functionCall)?.functionCall;
-  const texto = parts.map(x => x.text || '').join('').trim();
-  return { texto: texto || (fc ? 'Certo.' : 'Não consegui responder agora.'), acao: fc ? { nome: fc.name, args: fc.args || {} } : null };
+    { name: 'zoom', description: 'Amplia (>1) ou reduz (<1) o conteúdo.', parameters: { type: 'object', properties: { fator: { type: 'number' } }, required: ['fator'] } },
+    { name: 'buscar', description: 'Pesquisa na busca global (equipamentos, chamados).', parameters: { type: 'object', properties: { texto: { type: 'string' } }, required: ['texto'] } }];
+  if (mods.length) fns.push({ name: 'abrirModulo', description: 'Abre um módulo da plataforma.', parameters: { type: 'object', properties: { id: { type: 'string', enum: mods } }, required: ['id'] } });
+  let h = conv.slice(-9).map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', text: String(m.text).slice(0, 1000) })); while (h.length && h[0].role !== 'user') h.shift();
+  try {
+    const r = await root.NTEI_IA.chat({ signal: ctrl.signal, messages: h, tools: fns, maxTokens: 600,
+      system: 'Você é a Nuvem, assistente do NTEi. Responda em português do Brasil, de forma curta. Use as funções somente quando o usuário pedir uma ação na plataforma. Você NÃO vê a tela; só sabe o módulo atual: ' + modules.current + '. Não invente dados, resultados ou pesquisas.' });
+    return { texto: r.texto || (r.acao ? 'Certo.' : 'Não consegui responder agora.'), acao: r.acao };
+  } catch (e) { if (e && e.name === 'AbortError') throw e; return { texto: 'A IA retornou um erro: ' + (e && e.message || e) }; }
 }
-async function gemini(q) {
+async function ia(q) {
   const url = window.NTEI_NUVEM_URL; if (!url && !keyLocal()) return null;
   if (!navigator.onLine) return { texto: 'Sem conexão: a IA remota precisa de internet. Os comandos locais continuam funcionando.' };
   const ctrl = new AbortController(); V.abort = ctrl; const to = setTimeout(() => ctrl.abort(), 25000);
-  if (!url) { try { return await geminiDireto(q, ctrl); } catch (e) { return { texto: e.name === 'AbortError' ? 'Pedido cancelado ou demorou demais.' : 'Não consegui falar com o Gemini (sem internet ou bloqueado).' }; } finally { clearTimeout(to); } }
+  if (!url) { try { return await iaDireto(q, ctrl); } catch (e) { return { texto: e.name === 'AbortError' ? 'Pedido cancelado ou demorou demais.' : 'Não consegui falar com a IA (sem internet ou bloqueado).' }; } finally { clearTimeout(to); } }
   try {
     const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: ctrl.signal,
       body: JSON.stringify({ mensagem: q, historico: conv.slice(-8), contexto: { modulo: modules.current, cargo: user().cargo, modulosPermitidos: permitidos() } }) });
@@ -7864,7 +7910,7 @@ function ligarNuvem() {
     const i = $('nuvem-input'), q = i && i.value.trim(); if (!q) return;
     let r = null; try { r = intencao(q); } catch (e) { r = 'Não consegui executar isso: ' + e.message; }
     if (r === null && (window.NTEI_NUVEM_URL || keyLocal())) {
-      i.value = ''; nuvemMsg(q, true); conv.push({ role: 'user', text: q }); const g = await gemini(q);
+      i.value = ''; nuvemMsg(q, true); conv.push({ role: 'user', text: q }); const g = await ia(q);
       if (g && g.texto) { nuvemMsg(g.texto, false); conv.push({ role: 'model', text: g.texto }); }
       if (g && g.acao) nuvemMsg(executarIA(g.acao), false); return;
     }
@@ -7875,7 +7921,7 @@ function ligarNuvem() {
 
 function iniciar() { montar(); ligarNuvem(); }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar); else iniciar();
-root.NteiVision = { Acoes, emergencia, Engine, classify, intencao, gemini, executarIA, conv, stream: () => V.stream };
+root.NteiVision = { Acoes, emergencia, Engine, classify, intencao, ia, executarIA, conv, stream: () => V.stream };
 })(typeof window !== 'undefined' ? window : globalThis);
 
 </script>
@@ -8181,7 +8227,7 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
 
 </script>
 <script id="ntei-jarvis">
-/* NTEi Jarvis — voz atenta (opt-in), respostas com Busca Google (Gemini), abrir sites e holograma RA. */
+/* NTEi Jarvis — voz atenta (opt-in), respostas pela IA configurada, abrir sites e holograma RA. */
 (function (root) {
 'use strict';
 /* ───────── NÚCLEO PURO (testável em Node) ───────── */
@@ -8190,7 +8236,7 @@ const WAKE = /\b(jarvis|jarvi|jarves|jarbis|garvis|jarvs)\b/;
 function extrairComando(t) { const n = norm(t); if (!WAKE.test(n)) return { ouviu: false, comando: '' }; return { ouviu: true, comando: n.replace(WAKE, ' ').replace(/^[,:\s]+|[,:\s]+$/g, '').replace(/\s+/g, ' ').trim() }; }
 const SITES = { youtube: 'https://www.youtube.com', google: 'https://www.google.com', gmail: 'https://mail.google.com', 'e-mail': 'https://mail.google.com', drive: 'https://drive.google.com', classroom: 'https://classroom.google.com', whatsapp: 'https://web.whatsapp.com',
   agenda: 'https://calendar.google.com', 'google agenda': 'https://calendar.google.com', maps: 'https://maps.google.com', mapas: 'https://maps.google.com', meet: 'https://meet.google.com', docs: 'https://docs.google.com/document', planilhas: 'https://docs.google.com/spreadsheets',
-  sheets: 'https://docs.google.com/spreadsheets', slides: 'https://docs.google.com/presentation', apresentacoes: 'https://docs.google.com/presentation', wikipedia: 'https://pt.wikipedia.org', gemini: 'https://gemini.google.com', 'google academico': 'https://scholar.google.com.br' };
+  sheets: 'https://docs.google.com/spreadsheets', slides: 'https://docs.google.com/presentation', apresentacoes: 'https://docs.google.com/presentation', wikipedia: 'https://pt.wikipedia.org', 'google academico': 'https://scholar.google.com.br' };
 function resolverSite(t) {
   const n = norm(t).replace(/\s+ponto\s+/g, '.').replace(/\s+barra\s+/g, '/');
   const m = n.match(/^(?:abr[ae]|abrir|entr[ae]|acesse|acessar|va para|ir para|me leve para|navegue para)\s+(?:no |na |o |a |em |para )*(?:site |pagina |aplicativo )?(?:do |da |de )?(.+)$/); if (!m) return null;
@@ -8219,7 +8265,7 @@ const J = { rec: null, on: false, falando: false, janela: 0, rs: 0, block: false
 try { const c = JSON.parse(localStorage.getItem(LS) || '{}'); J.pref = !!c.sempre; J.voz = c.voz !== false; } catch (e) {}
 const salvar = () => { try { localStorage.setItem(LS, JSON.stringify({ sempre: J.pref, voz: J.voz })); } catch (e) {} };
 const say = (id, v) => { const e = $(id); if (e && e.textContent !== v) e.textContent = v; };
-const key = () => { try { return localStorage.getItem('nteiGeminiKey_v1'); } catch (e) { return null; } };
+const key = () => (root.NTEI_IA && root.NTEI_IA.ativo()) ? 'ok' : null;
 const audit = m => { try { if (U()) auditoria.registrar('NTEi Jarvis', m); } catch (e) {} };
 function orb(estado) { const o = $('jv-orb'); if (o) o.className = estado || ''; }
 function falar(txt) {
@@ -8229,28 +8275,24 @@ function falar(txt) {
 function linhaLog(quem, t) { J.log.push(quem + ': ' + t); J.log = J.log.slice(-6); const b = $('jv-log'); if (b) b.textContent = J.log.join('\n'); }
 function resp(texto, fontes) {
   say('jv-resp', texto); const f = $('jv-fontes'), f3 = $('jv-p3f'); [f, f3].forEach(box => { if (!box) return; box.textContent = ''; (fontes || []).forEach(s => { const a = document.createElement('a'); a.href = s.uri; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = '↗ ' + (s.title || s.uri); a.style.cssText = 'display:block;color:#7fd8ff;font-size:11px;margin-top:3px'; box.appendChild(a); }); });
-  if (fontes && fontes.length) { const t = document.createElement('div'); t.textContent = 'Fonte: Busca Google (via Gemini)'; t.style.cssText = 'color:#9aa7b8;font-size:10px;margin-top:4px'; if (f) f.appendChild(t); }
+  if (fontes && fontes.length) { const t = document.createElement('div'); t.textContent = 'Fontes informadas pela IA'; t.style.cssText = 'color:#9aa7b8;font-size:10px;margin-top:4px'; if (f) f.appendChild(t); }
   say('jv-p3b', texto); linhaLog('Jarvis', texto); falar(texto); orb(J.on ? 'ouvindo' : '');
 }
 
-/* ───────── Google (Gemini com Busca Google) ───────── */
-async function geminiWeb(q) {
-  const k = key(); if (!k) return { texto: 'Para pesquisar no Google eu preciso da chave do Gemini (painel Vision → Nuvem IA).' };
-  if (!navigator.onLine) return { texto: 'Sem internet: a pesquisa no Google precisa de conexão.' };
-  let model = 'gemini-2.0-flash'; try { model = (localStorage.getItem('nteiGeminiKey_v1_model') || model).replace(/[^a-zA-Z0-9.\-]/g, ''); } catch (e) {}
+/* ───────── Consulta à IA ───────── */
+async function iaWeb(q) {
+  if (!key()) return { texto: 'Para responder perguntas eu preciso de uma chave de IA (Admin NTEi → Configuração de IA, ou painel Vision → Nuvem IA).' };
+  if (!navigator.onLine) return { texto: 'Sem internet: a consulta à IA precisa de conexão.' };
   const ctrl = new AbortController(), to = setTimeout(() => ctrl.abort(), 30000); J.abort = ctrl;
   try {
-    const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent', { method: 'POST', signal: ctrl.signal, headers: { 'Content-Type': 'application/json', 'x-goog-api-key': k },
-      body: JSON.stringify({ systemInstruction: { parts: [{ text: 'Você é o Jarvis do NTEi. Responda em português do Brasil, em até 4 frases, usando a Busca Google. Se não achar fonte confiável, diga que não encontrou. Não invente.' }] }, contents: [{ role: 'user', parts: [{ text: q }] }], tools: [{ google_search: {} }] }) });
-    if ([400, 401, 403].includes(r.status)) return { texto: 'O Gemini recusou a chave ou o modelo (' + r.status + '). Confira no painel Vision.' };
-    if (r.status === 429) return { texto: 'Limite de uso do Gemini atingido. Tente em instantes.' }; if (!r.ok) return { texto: 'O Gemini respondeu com erro ' + r.status + '.' };
-    const c = ((await r.json()).candidates || [{}])[0], texto = ((c.content || {}).parts || []).map(p => p.text || '').join('').trim();
-    const fontes = (((c.groundingMetadata || {}).groundingChunks) || []).map(g => g.web).filter(w => w && /^https:\/\//.test(w.uri)).slice(0, 4);
-    if (!texto) return { texto: 'O Google não retornou resposta para isso.' };
-    return fontes.length ? { texto, fontes } : { texto: texto + ' (Atenção: o Google não devolveu fontes para confirmar esta resposta.)', fontes: [] };
-  } catch (e) { return { texto: e.name === 'AbortError' ? 'Pedido cancelado ou demorou demais.' : 'Não consegui falar com o Google/Gemini (sem internet ou bloqueado).' }; } finally { clearTimeout(to); }
+    const r = await root.NTEI_IA.chat({ signal: ctrl.signal, messages: [{ role: 'user', text: q }], maxTokens: 500,
+      system: 'Você é o Jarvis do NTEi. Responda em português do Brasil, em até 4 frases. Se não souber ou não tiver certeza, diga que não sabe. Não invente fatos, links ou fontes.' });
+    if (!r.texto) return { texto: 'A IA não retornou resposta para isso.' };
+    const fontes = (r.fontes || []).filter(w => w && /^https:\/\//.test(w.uri)).slice(0, 4);
+    return fontes.length ? { texto: r.texto, fontes } : { texto: r.texto + ' (Atenção: resposta da IA sem fontes verificáveis; confira antes de usar.)', fontes: [] };
+  } catch (e) { return { texto: e.name === 'AbortError' ? 'Pedido cancelado ou demorou demais.' : 'Não consegui falar com a IA: ' + (e.message || e) }; } finally { clearTimeout(to); }
 }
-async function web(q) { orb('pensando'); say('jv-resp', 'Pesquisando no Google…'); audit('Pesquisa Google por voz/texto'); const r = await geminiWeb(q); resp(r.texto, r.fontes); }
+async function web(q) { orb('pensando'); say('jv-resp', 'Consultando a IA…'); audit('Consulta à IA por voz/texto'); const r = await iaWeb(q); resp(r.texto, r.fontes); }
 
 /* ───────── sites ───────── */
 function abrirSite(r) {
@@ -8271,8 +8313,8 @@ async function processar(cmd) {
     let txt = null; try { txt = NV() && NV().intencao ? NV().intencao(cmd) : null; } catch (e) { txt = 'Não consegui executar: ' + e.message; }
     if (txt) return resp(txt);
     if (r.busca) return await web(cmd);
-    if (!key() && !root.NTEI_NUVEM_URL) return resp('Não entendi esse pedido. Para eu entender pedidos livres e responder perguntas, cole a chave do Gemini no painel Vision.');
-    const v = NV(); v.conv.push({ role: 'user', text: cmd }); const g = await v.gemini(cmd); if (g && g.texto) v.conv.push({ role: 'model', text: g.texto });
+    if (!key() && !root.NTEI_NUVEM_URL) return resp('Não entendi esse pedido. Para eu entender pedidos livres e responder perguntas, configure uma chave de IA (Admin NTEi ou painel Vision).');
+    const v = NV(); v.conv.push({ role: 'user', text: cmd }); const g = await v.ia(cmd); if (g && g.texto) v.conv.push({ role: 'model', text: g.texto });
     const ac = g && g.acao ? v.executarIA(g.acao) : ''; resp([g && g.texto, ac].filter(Boolean).join(' ') || 'Não consegui entender esse pedido.');
   } catch (e) { resp('Algo deu errado: ' + (e && e.message || e)); }
 }
@@ -8335,7 +8377,7 @@ function montar() {
     '<div id="jv-panel"><b style="font-size:13px">Jarvis — assistente por voz</b><div id="jv-status" style="margin:6px 0;font-weight:700">Jarvis não está ouvindo.</div>' +
     '<label><input type="checkbox" id="jv-sempre"> Deixar o Jarvis <b>sempre ouvindo</b> neste aparelho (diga “Jarvis, …”)</label><div class="jv-n">Aviso: o Chrome envia o áudio ao serviço de voz do Google para transcrever. O Jarvis só age depois da palavra “Jarvis”, mas em escola evite deixar ligado perto de conversas sensíveis ou de alunos.</div>' +
     '<label><input type="checkbox" id="jv-voz" checked> Jarvis responde falando</label><input type="text" id="jv-txt" placeholder="…ou digite um comando e tecle Enter" autocomplete="off"><button id="jv-ra-btn" style="background:#00adef;color:#06121f">🥽 Modo holograma (RA)</button>' +
-    '<div id="jv-resp" style="margin-top:8px;min-height:30px"></div><div id="jv-fontes"></div><div class="jv-n" style="margin-top:6px">Perguntas usam a Busca Google pelo Gemini (precisa da chave no painel Vision). O Jarvis abre sites por link, mas não controla páginas de terceiros.</div></div>' +
+    '<div id="jv-resp" style="margin-top:8px;min-height:30px"></div><div id="jv-fontes"></div><div class="jv-n" style="margin-top:6px">Perguntas usam a IA configurada (chave em Admin NTEi ou no painel Vision). O Jarvis abre sites por link, mas não controla páginas de terceiros.</div></div>' +
     '<div id="jv-ra"><video id="jv-rav" muted playsinline></video><div class="ra-vig"></div><div class="ra-scan"></div></div>';
   document.body.appendChild(r);
   $('jv-sempre').checked = J.pref; $('jv-voz').checked = J.voz;
